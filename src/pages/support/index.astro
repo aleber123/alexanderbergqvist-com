@@ -1,0 +1,103 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+---
+
+<BaseLayout
+  title="Support"
+  description="Hjälp och support för apparna — felsök, vanliga frågor, och kontakt direkt med utvecklaren."
+>
+  <article class="max-w-3xl mx-auto px-6 py-8 md:py-12">
+    <Breadcrumbs trail={[{ name: 'Hem', url: '/' }, { name: 'Support' }]} />
+    <h1 class="mt-6 text-3xl md:text-4xl font-black tracking-tight">Support</h1>
+
+    <div class="prose mt-8">
+      <p>
+        Hej. Apparna byggs av en person — mig, Alexander Bergqvist.
+        Det betyder att supporten är personlig (du pratar direkt med
+        utvecklaren) och svarstiderna är 1-3 arbetsdagar.
+      </p>
+
+      <h2>Snabbaste vägen — mejl</h2>
+      <p>
+        Skicka mejl till
+        <a href="mailto:alexander.bergqvist@gmail.com?subject=App%20support">
+          alexander.bergqvist@gmail.com</a>.
+      </p>
+      <p>
+        För snabbare svar, inkludera:
+      </p>
+      <ul>
+        <li>Vilken app det gäller</li>
+        <li>Versionsnummer (i appens inställningar)</li>
+        <li>iPhone-modell och iOS-version</li>
+        <li>Skärmdump om något ser fel ut</li>
+        <li>Stegen som leder till problemet</li>
+      </ul>
+
+      <h2>Vanliga frågor</h2>
+
+      <h3>Hur säger jag upp en prenumeration?</h3>
+      <p>
+        Premium-prenumerationer hanteras av Apple. Gå till:
+      </p>
+      <ol>
+        <li>Inställningar (på din iPhone)</li>
+        <li>Tryck på ditt namn högst upp</li>
+        <li>Prenumerationer</li>
+        <li>Hitta appen &rarr; Avbryt</li>
+      </ol>
+      <p>
+        Du behåller premium-funktioner till slutet av betald period.
+      </p>
+
+      <h3>Jag har redan betalat — varför syns inte Premium?</h3>
+      <p>
+        Öppna appens paywall och klicka "Återställ köp". Det hämtar
+        in betaluppgifterna från Apple igen.
+      </p>
+      <p>
+        Om det fortfarande inte fungerar — mejla mig med din
+        Apple-receipt-screenshot, så fixar jag.
+      </p>
+
+      <h3>Hur byter jag iPhone — följer min data med?</h3>
+      <p>
+        Om du har iCloud Sync på (i appens inställningar), ja —
+        data följer med automatiskt till nya iPhone vid backup-
+        återställning eller direktöverföring.
+      </p>
+      <p>
+        Annars ligger data lokalt på enheten och måste exporteras
+        manuellt först.
+      </p>
+
+      <h3>Annonser dyker upp för ofta</h3>
+      <p>
+        Annonser visas för gratisanvändare. Premium-prenumeration tar
+        bort dem helt — kostar mellan 29-39 kr/månad beroende på app.
+        Om annonser dyker upp i Premium-läget — mejla mig.
+      </p>
+
+      <h3>Funktion saknas / förslag</h3>
+      <p>
+        Mejla! Apparna byggs aktivt och feedback från riktiga användare
+        är det som driver prioriteringen. Inga garantier på att en
+        specifik förfrågan implementeras, men jag läser allt.
+      </p>
+
+      <h2>Hittade en bugg?</h2>
+      <p>
+        Var snäll och rapportera så fort som möjligt så jag kan fixa
+        i nästa update. Mejlet ovan + skärmdump + steg-för-steg.
+      </p>
+
+      <h2>Begär återbetalning</h2>
+      <p>
+        Återbetalningar görs av Apple, inte mig.
+        <a href="https://reportaproblem.apple.com">reportaproblem.apple.com</a> &rarr;
+        logga in &rarr; hitta köpet &rarr; "Begär återbetalning".
+      </p>
+    </div>
+  </article>
+</BaseLayout>

@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+
+const updated = '4 maj 2026';
+---
+
+<BaseLayout
+  title="Användarvillkor"
+  description="Användarvillkor för iOS-apparna byggda av Alexander Bergqvist."
+>
+  <article class="max-w-3xl mx-auto px-6 py-8 md:py-12">
+    <Breadcrumbs trail={[{ name: 'Hem', url: '/' }, { name: 'Användarvillkor' }]} />
+    <h1 class="mt-6 text-3xl md:text-4xl font-black tracking-tight">Användarvillkor</h1>
+    <p class="mt-2 text-slate-500 text-sm">Senast uppdaterad: {updated}</p>
+
+    <div class="prose mt-8">
+      <p>
+        Genom att ladda ner och använda någon av apparna byggda av
+        Alexander Bergqvist (samlat: "Apparna") godkänner du de här
+        användarvillkoren. Apple's standardiserade användarvillkor
+        (EULA) gäller också parallellt — se
+        <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/">
+          Apples standardvillkor</a>.
+      </p>
+
+      <h2>Användning av Apparna</h2>
+      <p>
+        Du får använda Apparna för personligt bruk. Du får inte:
+      </p>
+      <ul>
+        <li>Dekompilera, reverse-engineera eller försöka extrahera
+          källkoden</li>
+        <li>Använda Apparna för olagliga ändamål</li>
+        <li>Distribuera Apparna eller dess innehåll till tredje part</li>
+      </ul>
+
+      <h2>Premium-prenumerationer</h2>
+      <p>
+        Vissa appar erbjuder Premium-prenumerationer och engångsköp.
+        Dessa hanteras helt av Apple via App Store.
+      </p>
+      <ul>
+        <li>
+          <strong>Auto-förnyelse:</strong> Prenumerationer förnyas
+          automatiskt om de inte sägs upp minst 24 timmar före
+          periodens slut. Avgiften dras 24h innan ny period börjar.
+        </li>
+        <li>
+          <strong>Säga upp:</strong> Hantera prenumerationer i din
+          iPhones inställningar &rarr; ditt namn &rarr; Prenumerationer.
+        </li>
+        <li>
+          <strong>Återbetalning:</strong> Begär återbetalning från
+          Apple på <a href="https://reportaproblem.apple.com">
+            reportaproblem.apple.com</a>.
+        </li>
+        <li>
+          <strong>Free Trial:</strong> Prov-perioder övergår
+          automatiskt till betald prenumeration efter att provet tar
+          slut, om inte uppsagd.
+        </li>
+      </ul>
+
+      <h2>Innehåll i Apparna</h2>
+      <p>
+        Information i Apparna (recept, hälsotidslinjer, regler kring
+        VAB osv) är allmän information och inte professionell
+        rådgivning. Konsultera läkare, jurist eller revisor för
+        specifika råd kring din situation.
+      </p>
+
+      <h2>Dataansvar</h2>
+      <p>
+        Vi tar inget ansvar för förlorad data. Säkerhetskopiera dina
+        viktiga data via iCloud eller manuell export.
+      </p>
+
+      <h2>Ansvarsbegränsning</h2>
+      <p>
+        Apparna tillhandahålls "som de är". Vi tar inget ansvar för
+        skador, förluster eller olägenheter som kan uppstå genom
+        användning av Apparna utöver vad svensk lag föreskriver för
+        konsumenter.
+      </p>
+
+      <h2>Ändringar</h2>
+      <p>
+        Vi kan uppdatera dessa villkor. Större ändringar meddelas via
+        appens "Vad är nytt"-information vid uppdatering eller på
+        denna sida.
+      </p>
+
+      <h2>Tillämplig lag</h2>
+      <p>
+        Svensk lag gäller. Tvister avgörs i Stockholms tingsrätt om
+        inte annat följer av tvingande konsumentlagstiftning.
+      </p>
+
+      <h2>Kontakt</h2>
+      <p>
+        <a href="mailto:alexander.bergqvist@gmail.com">alexander.bergqvist@gmail.com</a>
+      </p>
+    </div>
+  </article>
+</BaseLayout>
