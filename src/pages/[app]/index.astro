@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
 
 export const getStaticPaths = (async () => {
@@ -13,16 +14,63 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 const { app } = Astro.props;
-const { name, tagline, description, icon, accent, accentDark, status,
-        appStoreUrl, features, keywords, category } = app.data;
+const {
+  name,
+  tagline,
+  description,
+  icon,
+  accent,
+  accentDark,
+  status,
+  appStoreUrl,
+  features,
+  keywords,
+  category,
+} = app.data;
 
-// Articles for this specific app — surfaced in the "Läs mer"-section.
 const allArticles = await getCollection('articles', (a) => !a.data.draft);
 const appArticles = allArticles
   .filter((a) => a.data.app === app.id)
   .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
 
-// JSON-LD for SoftwareApplication — gives Google's rich snippet potential.
+// Hand-curated map of free tool slugs per app. Each entry shows up
+// as a card on the landing page.
+const toolsByApp: Record<
+  string,
+  { slug: string; title: string; description: string }[]
+> = {
+  'snusfri-resa': [
+    {
+      slug: 'kalkylator',
+      title: 'Snusfri-kalkylator',
+      description:
+        'Hur mycket sparar du på att sluta snusa? Räkna ut exakt belopp.',
+    },
+  ],
+  fodelsedagar: [
+    {
+      slug: 'aldersrakna',
+      title: 'Hur gammal är jag?',
+      description: 'Räkna ut exakt ålder i år, månader, dagar och sekunder.',
+    },
+  ],
+  'vab-koll': [
+    {
+      slug: 'dagar-rakna',
+      title: 'Vab-dagar-räknare',
+      description: 'Räkna ut hur många vab-dagar du har kvar för året.',
+    },
+  ],
+  tidrapport: [
+    {
+      slug: 'timlone-rakna',
+      title: 'Timlöne-räknare',
+      description: 'Räkna ut din effektiva timlön som konsult eller anställd.',
+    },
+  ],
+};
+const tools = toolsByApp[app.id] ?? [];
+
 const ldJson = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
@@ -44,7 +92,6 @@ const ldJson = {
   <script
     type="application/ld+json"
     set:html={JSON.stringify(ldJson)}
-    slot="head"
   />
 
   <section
@@ -53,12 +100,13 @@ const ldJson = {
   >
     <div class="max-w-6xl mx-auto px-6 py-20 md:py-28 text-white relative">
       <div class="grid md:grid-cols-[200px_1fr] gap-8 md:gap-12 items-center">
-        <div class="w-32 h-32 md:w-40 md:h-40 rounded-3xl shadow-2xl overflow-hidden bg-white/10 mx-auto md:mx-0">
+        <div
+          class="w-32 h-32 md:w-40 md:h-40 rounded-3xl shadow-2xl overflow-hidden bg-white/10 mx-auto md:mx-0"
+        >
           <img
             src={icon}
             alt={`${name} app-ikon`}
             class="w-full h-full object-cover"
-            onerror={`this.style.display='none'; this.parentElement.innerHTML='<div class=&quot;w-full h-full flex items-center justify-center text-6xl font-black&quot;>${name[0]}</div>'`}
           />
         </div>
         <div class="text-center md:text-left">
@@ -79,7 +127,17 @@ const ldJson = {
     </div>
   </section>
 
-  <section class="max-w-3xl mx-auto px-6 py-16">
+  <div class="max-w-6xl mx-auto px-6 pt-6">
+    <Breadcrumbs
+      trail={[
+        { name: 'Hem', url: '/' },
+        { name: 'Appar', url: '/appar/' },
+        { name },
+      ]}
+    />
+  </div>
+
+  <section class="max-w-3xl mx-auto px-6 py-12">
     <p class="text-lg text-slate-700 leading-relaxed">{description}</p>
   </section>
 
@@ -104,19 +162,52 @@ const ldJson = {
     </section>
   )}
 
-  {appArticles.length > 0 && (
+  {tools.length > 0 && (
     <section class="max-w-6xl mx-auto px-6 py-16">
-      <h2 class="text-2xl md:text-3xl font-black mb-8">Läs mer</h2>
+      <h2 class="text-2xl md:text-3xl font-black mb-3">Fria verktyg</h2>
+      <p class="text-slate-600 mb-8 max-w-2xl">
+        Räknare och kalkylatorer du kan använda direkt i webbläsaren —
+        utan inloggning eller installation.
+      </p>
       <div class="grid md:grid-cols-2 gap-4">
-        {appArticles.map((a) => (
+        {tools.map((t) => (
           <a
-            href={`/${app.id}/${a.id.split('/').pop()}/`}
-            class="block rounded-xl border border-slate-200 p-5 hover:border-slate-300 hover:shadow-md transition"
+            href={`/${app.id}/${t.slug}/`}
+            class="group block rounded-2xl border border-slate-200 p-6 hover:border-slate-300 hover:shadow-md transition"
           >
-            <div class="font-bold text-slate-900">{a.data.title}</div>
-            <p class="text-sm text-slate-600 mt-1">{a.data.description}</p>
+            <div class="font-bold text-lg text-slate-900 group-hover:text-slate-700">
+              {t.title}
+            </div>
+            <p class="text-slate-600 mt-1">{t.description}</p>
+            <span class="inline-block mt-4 text-sm font-bold" style={`color: ${accent};`}>
+              Öppna verktyget →
+            </span>
           </a>
         ))}
+      </div>
+    </section>
+  )}
+
+  {appArticles.length > 0 && (
+    <section class="bg-slate-50 border-t border-slate-200 py-16">
+      <div class="max-w-6xl mx-auto px-6">
+        <h2 class="text-2xl md:text-3xl font-black mb-8">Läs mer</h2>
+        <div class="grid md:grid-cols-2 gap-4">
+          {appArticles.map((a) => {
+            const slug = a.id.split('/').pop();
+            return (
+              <a
+                href={`/${app.id}/${slug}/`}
+                class="block bg-white rounded-xl border border-slate-200 p-5 hover:border-slate-300 hover:shadow-md transition"
+              >
+                <div class="font-bold text-slate-900">{a.data.title}</div>
+                <p class="text-sm text-slate-600 mt-1 line-clamp-2">
+                  {a.data.description}
+                </p>
+              </a>
+            );
+          })}
+        </div>
       </div>
     </section>
   )}

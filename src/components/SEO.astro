@@ -1,8 +1,15 @@
 ---
 /**
- * Centralized <head> meta — every page should use this through BaseLayout.
- * Includes OpenGraph, Twitter, canonical, and JSON-LD where relevant.
+ * Centralized <head> meta. Every page should use this through BaseLayout.
+ *
+ * Includes: OpenGraph, Twitter, canonical, hreflang, JSON-LD where
+ * relevant. Configurable per-page.
  */
+interface Author {
+  name: string;
+  url?: string;
+}
+
 interface Props {
   title: string;
   description: string;
@@ -12,6 +19,7 @@ interface Props {
   publishedAt?: Date;
   updatedAt?: Date;
   keywords?: string[];
+  author?: Author;
   noindex?: boolean;
 }
 
@@ -24,6 +32,7 @@ const {
   publishedAt,
   updatedAt,
   keywords = [],
+  author,
   noindex = false,
 } = Astro.props;
 
@@ -31,19 +40,59 @@ const siteName = 'Alexander Bergqvist';
 const fullTitle = title === siteName ? title : `${title} – ${siteName}`;
 const url = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
 const imageUrl = new URL(image, Astro.site).href;
+
+// Article JSON-LD when type=article. Surfaced to Google for richer
+// SERP previews (date, author, image).
+const articleLd = type === 'article' && publishedAt
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: title,
+      description,
+      image: imageUrl,
+      datePublished: publishedAt.toISOString(),
+      ...(updatedAt && { dateModified: updatedAt.toISOString() }),
+      author: {
+        '@type': 'Person',
+        name: author?.name ?? 'Alexander Bergqvist',
+        ...(author?.url && { url: author.url }),
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: siteName,
+        logo: {
+          '@type': 'ImageObject',
+          url: new URL('/favicon.svg', Astro.site).href,
+        },
+      },
+      mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+    }
+  : null;
 ---
 
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 {keywords.length > 0 && <meta name="keywords" content={keywords.join(', ')} />}
+<meta name="author" content={author?.name ?? 'Alexander Bergqvist'} />
 <link rel="canonical" href={url} />
-{noindex && <meta name="robots" content="noindex" />}
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+{!noindex && (
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+)}
+
+<!-- hreflang — Swedish-only for now, but signals to Google that this
+     is the canonical Swedish version. When English is added, add
+     en-GB and x-default tags here. -->
+<link rel="alternate" hreflang="sv-SE" href={url} />
+<link rel="alternate" hreflang="x-default" href={url} />
 
 <meta property="og:type" content={type} />
 <meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={url} />
 <meta property="og:image" content={imageUrl} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
 <meta property="og:site_name" content={siteName} />
 <meta property="og:locale" content="sv_SE" />
 {publishedAt && (
@@ -61,3 +110,34 @@ const imageUrl = new URL(image, Astro.site).href;
 <meta name="theme-color" content="#0f172a" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+{articleLd && (
+  <script type="application/ld+json" set:html={JSON.stringify(articleLd)} />
+)}
+
+<!-- Default WebSite + Person schema on every page — gives Google
+     entity context + sitelinks search box potential. -->
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        '@id': new URL('/', Astro.site).href + '#website',
+        url: new URL('/', Astro.site).href,
+        name: siteName,
+        inLanguage: 'sv-SE',
+        publisher: { '@id': new URL('/', Astro.site).href + '#person' },
+      },
+      {
+        '@type': 'Person',
+        '@id': new URL('/', Astro.site).href + '#person',
+        name: 'Alexander Bergqvist',
+        url: new URL('/', Astro.site).href,
+        jobTitle: 'Indie iOS-utvecklare',
+        sameAs: ['https://github.com/aleber123'],
+      },
+    ],
+  })}
+/>

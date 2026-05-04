@@ -1,0 +1,214 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FAQ from '../../components/FAQ.astro';
+import AppStoreBadge from '../../components/AppStoreBadge.astro';
+
+const faq = [
+  {
+    q: 'Vad är en bra timlön i Sverige 2026?',
+    a: 'Median för anställda i Sverige ligger på cirka 215 kr/timme för heltidsarbete (motsvarar ~37 000 kr/månad). Konsultarvoden är vanligtvis 600-1500 kr/timme exklusive moms beroende på bransch och seniorerfarenhet.',
+  },
+  {
+    q: 'Hur räknar man om månadslön till timlön?',
+    a: 'Standard: månadslön ÷ 165 (genomsnittliga arbetstimmar per månad vid 40h-vecka). En lön på 35 000 kr/månad motsvarar då cirka 212 kr/timme. Räknaren här gör konverteringen åt dig.',
+  },
+  {
+    q: 'Hur många timmar arbetar man per år?',
+    a: 'Vid 40h/vecka och 5 veckors semester: 47 arbetsveckor × 40h = 1 880 timmar/år. Med röda dagar och inarbetade förkortningar landar effektiv arbetstid ofta runt 1 720-1 800 timmar.',
+  },
+  {
+    q: 'Skiljer det mellan brutto- och nettotimlön?',
+    a: 'Ja. Räknaren visar bruttobelopp (före skatt). Nettolön beror på din kommunalskatt (vanligen 30-35%) och statlig skatt över brytpunkten. Använd Skatteverkets jämkningskalkyl för exakt nettobelopp.',
+  },
+];
+---
+
+<BaseLayout
+  title="Timlöne-räknare: Räkna om månadslön till timlön"
+  description="Räkna ut din effektiva timlön — månadslön ÷ arbetstimmar. Funkar för anställda och konsulter. Visar också årslön och dagslön."
+  keywords={[
+    'timlön räkna',
+    'månadslön till timlön',
+    'timlöne kalkylator',
+    'konsultarvode räkna',
+    'lön per timme',
+  ]}
+>
+  <section class="max-w-3xl mx-auto px-6 py-8">
+    <Breadcrumbs
+      trail={[
+        { name: 'Hem', url: '/' },
+        { name: 'Tidrapportera', url: '/tidrapport/' },
+        { name: 'Timlöne-räknare' },
+      ]}
+    />
+    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-slate-500">
+      Fri kalkylator
+    </span>
+    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+      Räkna ut din timlön
+    </h1>
+    <p class="mt-3 text-lg text-slate-600">
+      Skriv in månadslön och normal arbetstid så räknar vi om till timlön,
+      dagslön och årslön. Funkar för både anställda och konsulter.
+    </p>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-white p-6 md:p-8">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm font-bold mb-2" for="manadslon">
+            Månadslön (brutto, kr)
+          </label>
+          <input
+            id="manadslon"
+            type="number"
+            min="0"
+            step="100"
+            value="35000"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-blue-500 focus:outline-none"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-2" for="timmar">
+            Arbetstimmar per vecka
+          </label>
+          <input
+            id="timmar"
+            type="number"
+            min="1"
+            max="80"
+            step="0.5"
+            value="40"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-blue-500 focus:outline-none"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="rounded-2xl bg-blue-50 border border-blue-200 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-blue-700">
+          Per timme
+        </div>
+        <div class="mt-1 text-2xl font-black text-blue-900" data-out="hour">–</div>
+      </div>
+      <div class="rounded-2xl bg-blue-50 border border-blue-200 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-blue-700">
+          Per dag (8h)
+        </div>
+        <div class="mt-1 text-2xl font-black text-blue-900" data-out="day">–</div>
+      </div>
+      <div class="rounded-2xl bg-blue-100 border border-blue-300 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-blue-800">
+          Per vecka
+        </div>
+        <div class="mt-1 text-2xl font-black text-blue-900" data-out="week">–</div>
+      </div>
+      <div class="rounded-2xl bg-gradient-to-br from-blue-600 to-blue-800 p-5 text-white">
+        <div class="text-xs font-black uppercase tracking-widest opacity-80">
+          Per år
+        </div>
+        <div class="mt-1 text-2xl font-black" data-out="year">–</div>
+      </div>
+    </div>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-gradient-to-br from-blue-50 to-white p-6 md:p-8">
+      <h2 class="text-xl font-black">Snabb tidrapportering — utan Excel</h2>
+      <p class="mt-2 text-slate-700">
+        Tidrapportera-appen låter dig logga arbetstid per kund eller projekt
+        med ett tap. Veckosammanfattning. Export till PDF/CSV i slutet av
+        månaden. Funkar offline.
+      </p>
+      <div class="mt-6">
+        <AppStoreBadge
+          url="https://apps.apple.com/se/app/tidrapportera/id6762660992"
+          status="live"
+        />
+      </div>
+    </div>
+
+    <div class="prose mt-12">
+      <h2>Hur räknar jag ut min effektiva timlön?</h2>
+      <p>
+        Standardmetoden är: <code>månadslön / 165</code>, där 165 är genomsnittliga
+        arbetstimmar per månad vid 40h-vecka (ca 21,67 dagar × 7,6 timmar
+        utan rast). Den siffran skiljer sig något beroende på antal helger
+        och om du räknar med eller utan rast.
+      </p>
+      <p>
+        Räknaren här gör beräkningen baserat på din faktiska arbetstid per
+        vecka, så den blir mer precis om du jobbar deltid eller övertid.
+      </p>
+
+      <h2>Vad är skillnaden mellan brutto- och nettotimlön?</h2>
+      <p>
+        Bruttotimlön = före skatt. Nettotimlön = efter skatt. För en typisk
+        löntagare i Sverige drar staten 30-35% i kommunal- och landstingsskatt.
+        Över brytpunkten (cirka 51 600 kr/månad år 2026) tillkommer 20%
+        statlig skatt.
+      </p>
+
+      <h2>Varför ligger konsulter på 600-1500 kr/timme?</h2>
+      <p>
+        För att konsultarvoden måste täcka:
+      </p>
+      <ul>
+        <li>Eget arbetsgivaravgift (~31% av lönen)</li>
+        <li>Pension (anställd får tjänstepension automatiskt)</li>
+        <li>Försäkringar (sjukfrånvaro, ansvar, livförsäkring)</li>
+        <li>Mellanperioder utan uppdrag (utility-rate ~70-80%)</li>
+        <li>Utveckling, utrustning, kontor</li>
+        <li>Vinst</li>
+      </ul>
+      <p>
+        En konsult som tar 1 000 kr/timme har efter alla avgifter ungefär
+        samma effektiv lön som en anställd på 50 000 kr/månad. Det är inte
+        så lyxigt som det låter.
+      </p>
+
+      <h2>Hur många timmar arbetar man egentligen per år?</h2>
+      <p>
+        En anställd i Sverige med 40h-vecka och 5 veckors semester arbetar
+        i teorin 1 880 timmar per år. I praktiken landar effektiv tid runt
+        1 720-1 800 timmar efter röda dagar, inarbetade förkortningar och
+        sjukfrånvaro.
+      </p>
+    </div>
+
+    <FAQ items={faq} />
+  </section>
+</BaseLayout>
+
+<script>
+  const lonEl = document.getElementById('manadslon') as HTMLInputElement;
+  const timmarEl = document.getElementById('timmar') as HTMLInputElement;
+  const out = {
+    hour: document.querySelector('[data-out="hour"]')!,
+    day: document.querySelector('[data-out="day"]')!,
+    week: document.querySelector('[data-out="week"]')!,
+    year: document.querySelector('[data-out="year"]')!,
+  };
+  const fmt = (n: number) =>
+    new Intl.NumberFormat('sv-SE', {
+      style: 'currency',
+      currency: 'SEK',
+      maximumFractionDigits: 0,
+    }).format(Math.max(0, n));
+
+  function compute() {
+    const lon = Number(lonEl.value) || 0;
+    const tim = Number(timmarEl.value) || 1;
+    // Convert weekly hours -> monthly hours (4.345 weeks/month avg).
+    const hoursPerMonth = tim * 4.345;
+    const perHour = lon / hoursPerMonth;
+    out.hour.textContent = fmt(perHour);
+    out.day.textContent = fmt(perHour * 8);
+    out.week.textContent = fmt(perHour * tim);
+    out.year.textContent = fmt(lon * 12);
+  }
+
+  lonEl.addEventListener('input', compute);
+  timmarEl.addEventListener('input', compute);
+  compute();
+</script>

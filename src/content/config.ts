@@ -41,6 +41,10 @@ const articles = defineCollection({
     keywords: z.array(z.string()).default([]),
     cover: z.string().optional(),
     draft: z.boolean().default(false),
+    // Optional FAQ block — rendered + emitted as FAQPage JSON-LD.
+    faq: z
+      .array(z.object({ q: z.string(), a: z.string() }))
+      .optional(),
   }),
 });
 

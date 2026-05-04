@@ -1,0 +1,191 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FAQ from '../../components/FAQ.astro';
+import AppStoreBadge from '../../components/AppStoreBadge.astro';
+
+const faq = [
+  {
+    q: 'Hur många vab-dagar har man per barn?',
+    a: 'Du får ersättning från Försäkringskassan för upp till 120 dagar per barn och år, från det att barnet är 8 månader till och med dagen innan barnet fyller 12 år. För barn med funktionsnedsättning kan rätten gälla längre.',
+  },
+  {
+    q: 'Räknas både föräldrarnas vab-dagar separat?',
+    a: 'Nej. De 120 dagarna delas mellan föräldrarna. Ni kan dela upp dem hur ni vill, men summan får inte överskrida 120 per barn och år.',
+  },
+  {
+    q: 'Räknas helger?',
+    a: 'Du får tillfällig föräldrapenning bara för dagar då du skulle ha arbetat. Helger räknas inte om du normalt är ledig då. Däremot räknas dagar då du anmält att du vabbar oavsett om du tar ut ersättning.',
+  },
+  {
+    q: 'Vad händer om vi använt 120 dagar?',
+    a: 'Då slutar Försäkringskassan betala ut ersättning. Du kan fortfarande vara hemma, men då är det utan tillfällig föräldrapenning. Vissa arbetsgivare har egna regler kring obetald föräldraledighet.',
+  },
+  {
+    q: 'Återstartas räkningen vid årsskiftet?',
+    a: 'Ja. 120 dagar gäller per kalenderår och barn. Den 1 januari är räknaren noll igen.',
+  },
+];
+---
+
+<BaseLayout
+  title="Vab-dagar-räknare: Hur många dagar har du kvar?"
+  description="Räkna ut hur många vab-dagar du har kvar för året per barn. Gratis kalkylator baserad på Försäkringskassans 120-dagars-regel."
+  keywords={[
+    'vab dagar räkna',
+    'hur många vab dagar har man',
+    'vab kalkylator',
+    'vab kvar 2026',
+    'vab dagar per barn',
+  ]}
+>
+  <section class="max-w-3xl mx-auto px-6 py-8">
+    <Breadcrumbs
+      trail={[
+        { name: 'Hem', url: '/' },
+        { name: 'VAB-koll', url: '/vab-koll/' },
+        { name: 'Dagar-räknare' },
+      ]}
+    />
+    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-slate-500">
+      Fri kalkylator
+    </span>
+    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+      Hur många vab-dagar har du kvar?
+    </h1>
+    <p class="mt-3 text-lg text-slate-600">
+      Skriv in hur många dagar du redan tagit ut i år så ser du vad som
+      återstår av Försäkringskassans 120-dagars-tak per barn.
+    </p>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-white p-6 md:p-8">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm font-bold mb-2" for="barn">
+            Antal barn (under 12 år)
+          </label>
+          <input
+            id="barn"
+            type="number"
+            min="1"
+            max="10"
+            value="1"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-orange-500 focus:outline-none"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-2" for="anvanda">
+            Använda dagar (per barn) i år
+          </label>
+          <input
+            id="anvanda"
+            type="number"
+            min="0"
+            max="120"
+            value="0"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-orange-500 focus:outline-none"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div class="rounded-2xl bg-orange-50 border border-orange-200 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-orange-700">
+          Kvar per barn
+        </div>
+        <div class="mt-1 text-2xl font-black text-orange-900" data-out="kvarPerBarn">–</div>
+      </div>
+      <div class="rounded-2xl bg-orange-100 border border-orange-300 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-orange-800">
+          Kvar totalt
+        </div>
+        <div class="mt-1 text-2xl font-black text-orange-900" data-out="kvarTotalt">–</div>
+      </div>
+      <div class="rounded-2xl bg-gradient-to-br from-orange-500 to-orange-700 p-5 text-white">
+        <div class="text-xs font-black uppercase tracking-widest opacity-80">
+          Återstart
+        </div>
+        <div class="mt-1 text-xl font-black" data-out="aterstart">–</div>
+      </div>
+    </div>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-gradient-to-br from-orange-50 to-white p-6 md:p-8">
+      <h2 class="text-xl font-black">Slipp räkna manuellt</h2>
+      <p class="mt-2 text-slate-700">
+        VAB-koll-appen håller automatiskt ordning på dina vab-dagar per barn.
+        Logga snabbt en dag, se översikten och exportera till Försäkringskassans
+        anmälan. Inga inloggningar.
+      </p>
+      <div class="mt-6">
+        <AppStoreBadge
+          url="https://apps.apple.com/se/app/vab-koll/id6763138809"
+          status="live"
+        />
+      </div>
+    </div>
+
+    <div class="prose mt-12">
+      <h2>Hur fungerar 120-dagars-regeln?</h2>
+      <p>
+        Försäkringskassan betalar tillfällig föräldrapenning för
+        upp till <strong>120 dagar per barn och kalenderår</strong>. Det är
+        inte 120 dagar per förälder — det är 120 totalt som ni delar fritt
+        mellan er.
+      </p>
+      <p>
+        Reglerna gäller från det att barnet är 8 månader till och med dagen
+        innan barnet fyller 12 år. För barn med funktionsnedsättning eller
+        långvarig sjukdom finns utökade regler.
+      </p>
+
+      <h2>Vad händer om jag tar ut mer än 120?</h2>
+      <p>
+        Försäkringskassan upphör att betala ut ersättning. Du kan fortfarande
+        vara hemma med ditt barn — men det blir då obetald frånvaro
+        (om inte din arbetsgivare har egna regler eller du har semester
+        kvar).
+      </p>
+
+      <h2>Varför återstartas räkningen 1 januari?</h2>
+      <p>
+        Eftersom regeln gäller per kalenderår. Det betyder att en familj som
+        har använt mycket vab i december kan använda lika mycket igen från 1
+        januari — om barnet är fortsatt under 12 år.
+      </p>
+    </div>
+
+    <FAQ items={faq} />
+  </section>
+</BaseLayout>
+
+<script>
+  const barnEl = document.getElementById('barn') as HTMLInputElement;
+  const anvandaEl = document.getElementById('anvanda') as HTMLInputElement;
+  const out = {
+    kvarPerBarn: document.querySelector('[data-out="kvarPerBarn"]')!,
+    kvarTotalt: document.querySelector('[data-out="kvarTotalt"]')!,
+    aterstart: document.querySelector('[data-out="aterstart"]')!,
+  };
+  const MAX = 120;
+
+  function compute() {
+    const barn = Math.max(1, Number(barnEl.value) || 1);
+    const anvanda = Math.max(0, Math.min(MAX, Number(anvandaEl.value) || 0));
+    const kvarPer = MAX - anvanda;
+    const kvarTot = kvarPer * barn;
+    out.kvarPerBarn.textContent = `${kvarPer} dagar`;
+    out.kvarTotalt.textContent = `${kvarTot} dagar`;
+
+    const now = new Date();
+    const nextYear = new Date(now.getFullYear() + 1, 0, 1);
+    const days = Math.ceil(
+      (nextYear.getTime() - now.getTime()) / 86400000,
+    );
+    out.aterstart.textContent = `Om ${days} dagar`;
+  }
+
+  barnEl.addEventListener('input', compute);
+  anvandaEl.addEventListener('input', compute);
+  compute();
+</script>

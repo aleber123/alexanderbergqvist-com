@@ -1,0 +1,212 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FAQ from '../../components/FAQ.astro';
+import AppStoreBadge from '../../components/AppStoreBadge.astro';
+
+const faq = [
+  {
+    q: 'Hur räknar man ut sin exakta ålder?',
+    a: 'Subtrahera födelsedatum från idag. Om dagens månad/dag är efter födelsemånaden/dagen är åldern fulla år. Annars dra ifrån ett år. Räknaren här ovan gör det automatiskt och visar även dagar och timmar.',
+  },
+  {
+    q: 'När fyller jag X år?',
+    a: 'Räkna ut differensen mellan idag och födelsedatum. Om du fyller år "imorgon" eller senare i år visar räknaren "X år, Y dagar kvar".',
+  },
+  {
+    q: 'Hur många dagar lever en genomsnittlig svensk?',
+    a: 'En person född i Sverige idag har en förväntad medellivslängd på cirka 84 år (kvinnor) och 81 år (män), vilket motsvarar 30 660 respektive 29 565 dagar. Användbart att jämföra med "dagar levda hittills".',
+  },
+  {
+    q: 'Räknas skottår med?',
+    a: 'Ja. Räknaren använder JavaScripts inbyggda datum-mattematik som hanterar skottår automatiskt. En person född 29 februari fyller dock bara år vart fjärde år enligt strikt definition.',
+  },
+];
+---
+
+<BaseLayout
+  title="Hur gammal är jag? Räkna ut exakt ålder i år, månader och dagar"
+  description="Räkna ut din exakta ålder — år, månader, dagar, timmar och sekunder. Skriv in födelsedatum så ser du. Gratis åldersräknare."
+  keywords={[
+    'hur gammal är jag',
+    'åldersräknare',
+    'räkna ut ålder',
+    'när fyller jag år',
+    'min ålder i dagar',
+    'hur många dagar har jag levt',
+  ]}
+>
+  <section class="max-w-3xl mx-auto px-6 py-8">
+    <Breadcrumbs
+      trail={[
+        { name: 'Hem', url: '/' },
+        { name: 'Födelsedagar', url: '/fodelsedagar/' },
+        { name: 'Åldersräknare' },
+      ]}
+    />
+    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-slate-500">
+      Fri kalkylator
+    </span>
+    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+      Hur gammal är jag?
+    </h1>
+    <p class="mt-3 text-lg text-slate-600">
+      Skriv in ditt födelsedatum så räknar vi ut exakt ålder i år, månader,
+      dagar, timmar och sekunder. Du ser också hur många dagar tills nästa
+      födelsedag.
+    </p>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-white p-6 md:p-8">
+      <label class="block text-sm font-bold mb-2" for="bdate">
+        Ditt födelsedatum
+      </label>
+      <input
+        id="bdate"
+        type="date"
+        class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-pink-500 focus:outline-none"
+      />
+    </div>
+
+    <div class="mt-6 grid grid-cols-2 md:grid-cols-3 gap-3">
+      <div class="rounded-2xl bg-pink-50 border border-pink-200 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-pink-700">År</div>
+        <div class="mt-1 text-2xl font-black text-pink-900" data-out="years">–</div>
+      </div>
+      <div class="rounded-2xl bg-pink-50 border border-pink-200 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-pink-700">Månader</div>
+        <div class="mt-1 text-2xl font-black text-pink-900" data-out="months">–</div>
+      </div>
+      <div class="rounded-2xl bg-pink-50 border border-pink-200 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-pink-700">Dagar</div>
+        <div class="mt-1 text-2xl font-black text-pink-900" data-out="days">–</div>
+      </div>
+      <div class="rounded-2xl bg-pink-100 border border-pink-300 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-pink-800">Timmar levda</div>
+        <div class="mt-1 text-xl font-black text-pink-900" data-out="hours">–</div>
+      </div>
+      <div class="rounded-2xl bg-pink-100 border border-pink-300 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-pink-800">Dagar levda</div>
+        <div class="mt-1 text-xl font-black text-pink-900" data-out="totalDays">–</div>
+      </div>
+      <div class="rounded-2xl bg-gradient-to-br from-pink-500 to-pink-700 p-5 text-white">
+        <div class="text-xs font-black uppercase tracking-widest opacity-80">
+          Tills nästa födelsedag
+        </div>
+        <div class="mt-1 text-xl font-black" data-out="nextBirthday">–</div>
+      </div>
+    </div>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-gradient-to-br from-pink-50 to-white p-6 md:p-8">
+      <h2 class="text-xl font-black">Glöm aldrig en födelsedag igen</h2>
+      <p class="mt-2 text-slate-700">
+        Födelsedagar-appen samlar alla viktiga personers födelsedagar och
+        påminner dig i god tid. Importera direkt från Kontakter, lägg till
+        foton, få aviseringar.
+      </p>
+      <div class="mt-6">
+        <AppStoreBadge
+          url="https://apps.apple.com/se/app/f%C3%B6delsedagar/id6758899294"
+          status="live"
+        />
+      </div>
+    </div>
+
+    <div class="prose mt-12">
+      <h2>Varför räkna ut sin exakta ålder?</h2>
+      <p>
+        Det är inte lika trivialt som det låter. Många svenskar vet sin ålder i
+        år men har ingen aning om hur många dagar de har levt — eller hur många
+        som är kvar tills nästa födelsedag. Räknaren här ovan visar allt på
+        sekunden.
+      </p>
+
+      <h2>Hur räkna ut ålder vid en specifik tidpunkt?</h2>
+      <p>
+        Behöver du veta hur gammal du var en specifik dag (t.ex. på din
+        körkortsdag, vid bröllopet, eller när första barnet föddes)? Ändra
+        datumformatet i din webbläsare och kör räknaren med det datumet — den
+        räknar lika bra historiskt.
+      </p>
+
+      <h2>Räknat med skottår?</h2>
+      <p>
+        Ja, automatiskt. JavaScripts inbyggda datum-mattematik hanterar skottår
+        rätt. Specialfallet är personer födda 29 februari — de fyller år bara
+        de år som är skottår enligt strikt definition. I praktiken firar de
+        flesta antingen 28 februari eller 1 mars.
+      </p>
+
+      <h2>Andra tankar kring åldrar och födelsedagar</h2>
+      <p>
+        Vi i Sverige är ett av de länder som firar födelsedagar mest noggrant —
+        50-årskalas, 70-årskalas och 80-årskalas är fortfarande betydande
+        sociala händelser. Försäkringskassan, Pensionsmyndigheten och en del
+        försäkringsbolag har också åldersbaserade beslutspunkter (65, 67, 68
+        år).
+      </p>
+    </div>
+
+    <FAQ items={faq} />
+  </section>
+</BaseLayout>
+
+<script>
+  const inp = document.getElementById('bdate') as HTMLInputElement;
+  const out = {
+    years: document.querySelector('[data-out="years"]')!,
+    months: document.querySelector('[data-out="months"]')!,
+    days: document.querySelector('[data-out="days"]')!,
+    hours: document.querySelector('[data-out="hours"]')!,
+    totalDays: document.querySelector('[data-out="totalDays"]')!,
+    nextBirthday: document.querySelector('[data-out="nextBirthday"]')!,
+  };
+  const nf = new Intl.NumberFormat('sv-SE');
+
+  function compute() {
+    if (!inp.value) return;
+    const birth = new Date(inp.value);
+    const now = new Date();
+    if (isNaN(birth.getTime()) || birth > now) return;
+
+    let years = now.getFullYear() - birth.getFullYear();
+    let months = now.getMonth() - birth.getMonth();
+    let days = now.getDate() - birth.getDate();
+
+    if (days < 0) {
+      months -= 1;
+      const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+      days += prevMonth.getDate();
+    }
+    if (months < 0) {
+      years -= 1;
+      months += 12;
+    }
+
+    const diffMs = now.getTime() - birth.getTime();
+    const totalDays = Math.floor(diffMs / 86400000);
+    const totalHours = Math.floor(diffMs / 3600000);
+
+    let next = new Date(now.getFullYear(), birth.getMonth(), birth.getDate());
+    if (next < now) next.setFullYear(now.getFullYear() + 1);
+    const daysUntilNext = Math.ceil(
+      (next.getTime() - now.getTime()) / 86400000,
+    );
+
+    out.years.textContent = String(years);
+    out.months.textContent = String(months);
+    out.days.textContent = String(days);
+    out.hours.textContent = nf.format(totalHours);
+    out.totalDays.textContent = nf.format(totalDays);
+    out.nextBirthday.textContent =
+      daysUntilNext === 0
+        ? '🎉 Idag!'
+        : `${daysUntilNext} ${daysUntilNext === 1 ? 'dag' : 'dagar'}`;
+  }
+
+  inp.addEventListener('input', compute);
+  // Default: 25 years ago, gives users a starting point.
+  const def = new Date();
+  def.setFullYear(def.getFullYear() - 25);
+  inp.value = def.toISOString().slice(0, 10);
+  compute();
+</script>

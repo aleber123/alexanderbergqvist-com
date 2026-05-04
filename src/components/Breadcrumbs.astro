@@ -1,0 +1,44 @@
+---
+/**
+ * Breadcrumb navigation. Renders both visible UI and JSON-LD
+ * BreadcrumbList schema so Google can show breadcrumbs in SERPs.
+ *
+ * Pass the trail as an array of {name, url}. Last item is the current
+ * page (gets no link).
+ */
+interface Crumb {
+  name: string;
+  url?: string;
+}
+interface Props {
+  trail: Crumb[];
+}
+
+const { trail } = Astro.props;
+const ldJson = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: trail.map((c, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: c.name,
+    ...(c.url && { item: new URL(c.url, Astro.site).href }),
+  })),
+};
+---
+
+<nav aria-label="Brödsmulor" class="text-sm text-slate-500">
+  <ol class="flex flex-wrap gap-1.5 items-center">
+    {trail.map((c, i) => (
+      <li class="flex items-center gap-1.5">
+        {c.url ? (
+          <a href={c.url} class="hover:text-slate-700">{c.name}</a>
+        ) : (
+          <span class="text-slate-700 font-semibold">{c.name}</span>
+        )}
+        {i < trail.length - 1 && <span class="text-slate-300">/</span>}
+      </li>
+    ))}
+  </ol>
+</nav>
+<script type="application/ld+json" set:html={JSON.stringify(ldJson)} />
