@@ -1,0 +1,308 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FAQ from '../../components/FAQ.astro';
+import AppStoreBadge from '../../components/AppStoreBadge.astro';
+
+const faq = [
+  {
+    q: 'Hur ofta måste jag mata min surdeg?',
+    a: 'I rumstemperatur: var 12:e timme om aktiv, en gång per dygn om mogen. I kylskåp: en gång per vecka räcker. Slumrar du bara mellan baken är var 7-10:e dag OK i kyl.',
+  },
+  {
+    q: 'Vad händer om jag glömmer mata?',
+    a: 'En dag eller två i kyl är ofarligt. En vecka utan matning i rumstemp ger sur lukt och kanske mögel — då måste du återupplivar med 2-3 matningar var 12:e timme. Längre än 2 veckor utan matning ens i kyl och du kanske får börja om.',
+  },
+  {
+    q: 'Hur räknar jag förhållandet 1:1:1?',
+    a: '1 del surdeg : 1 del mjöl : 1 del vatten i vikt. Exempel: 50 g surdeg + 50 g mjöl + 50 g vatten = 150 g uppmatat surdeg. Vissa bagare använder 1:2:2 eller 1:5:5 för långsammare jäsning vid sängdags.',
+  },
+  {
+    q: 'Kan jag minska mängden surdeg jag matar?',
+    a: 'Ja. De flesta hobbysurdegar är onödigt stora — 30 g moder räcker. Vid bak ökar du till 100-150 g 12 timmar i förväg. Mindre surdeg = mindre mjöl-svinn varje vecka.',
+  },
+  {
+    q: 'Hur länge kan surdeg sova i frysen?',
+    a: 'Frysning är OK för långa pauser (semester, flytt). Lägg surdegen torr eller blandad med lite mjöl till en deg. Tinas sakta i kyl över 24h. Matas sen 3-4 ggr innan bak. Klarar 6-12 månader.',
+  },
+];
+---
+
+<BaseLayout
+  title="Matningsschema för surdeg: hur ofta och hur mycket?"
+  description="Räkna ut nästa matning av din surdeg. Oavsett om den står i kyl eller rumstemp — få exakt schema. Plus tabell över 1:1:1 vs 1:2:2 vs 1:5:5-förhållanden."
+  keywords={[
+    'mata surdeg',
+    'matningsschema surdeg',
+    'hur ofta mata surdeg',
+    'surdeg i kylen',
+    'surdeg refresh',
+    'levain matning',
+  ]}
+>
+  <section class="max-w-3xl mx-auto px-6 py-8">
+    <Breadcrumbs
+      trail={[
+        { name: 'Hem', url: '/' },
+        { name: 'Surdeg', url: '/surdeg/' },
+        { name: 'Matningsschema' },
+      ]}
+    />
+    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-slate-500">
+      Fri kalkylator
+    </span>
+    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+      Matningsschema för din surdeg
+    </h1>
+    <p class="mt-3 text-lg text-slate-600">
+      Räkna ut när nästa matning ska ske och hur mycket mjöl du
+      behöver. Stöd för rumstemperatur (aktiv) och kyl (sov-läge).
+    </p>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-white p-6 md:p-8">
+      <div class="grid gap-4">
+        <div>
+          <label class="block text-sm font-bold mb-2">Var står din surdeg?</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              data-storage="room"
+              class="storage-btn rounded-xl border-2 px-4 py-3 font-bold transition border-amber-500 bg-amber-50 text-amber-900"
+            >
+              🌡️ Rumstemperatur
+            </button>
+            <button
+              type="button"
+              data-storage="fridge"
+              class="storage-btn rounded-xl border-2 px-4 py-3 font-bold transition border-slate-200 bg-white text-slate-700"
+            >
+              ❄️ Kylskåp
+            </button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-2" for="lastFed">När matade du sist?</label>
+          <input
+            id="lastFed"
+            type="datetime-local"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-amber-500 focus:outline-none"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-2" for="surdegMass">
+            Mängd surdeg (moder, g)
+          </label>
+          <input
+            id="surdegMass"
+            type="number"
+            min="10"
+            step="10"
+            value="50"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-amber-500 focus:outline-none"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-2">Förhållande</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button
+              type="button"
+              data-ratio="1"
+              class="ratio-btn rounded-xl border-2 px-3 py-3 font-bold transition border-amber-500 bg-amber-50 text-amber-900"
+            >1:1:1</button>
+            <button
+              type="button"
+              data-ratio="2"
+              class="ratio-btn rounded-xl border-2 px-3 py-3 font-bold transition border-slate-200 bg-white text-slate-700"
+            >1:2:2</button>
+            <button
+              type="button"
+              data-ratio="5"
+              class="ratio-btn rounded-xl border-2 px-3 py-3 font-bold transition border-slate-200 bg-white text-slate-700"
+            >1:5:5</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div class="rounded-2xl bg-amber-50 border border-amber-200 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-amber-700">
+          Nästa matning
+        </div>
+        <div class="mt-1 text-xl font-black text-amber-900" data-out="next">–</div>
+      </div>
+      <div class="rounded-2xl bg-slate-50 border border-slate-200 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-slate-600">
+          Mjöl du behöver
+        </div>
+        <div class="mt-1 text-xl font-black text-slate-900" data-out="flour">–</div>
+      </div>
+      <div class="rounded-2xl bg-slate-50 border border-slate-200 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-slate-600">
+          Vatten du behöver
+        </div>
+        <div class="mt-1 text-xl font-black text-slate-900" data-out="water">–</div>
+      </div>
+    </div>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-gradient-to-br from-amber-50 to-white p-6 md:p-8">
+      <h2 class="text-xl font-black">Slipp komma ihåg själv</h2>
+      <p class="mt-2 text-slate-700">
+        Surdeg-appen pingar dig när det är dags att mata — du väljer
+        bara hur ofta. Plus 33 recept, bakdagbok och hydration-räknare
+        i samma app.
+      </p>
+      <div class="mt-6">
+        <AppStoreBadge status="soon" />
+      </div>
+    </div>
+
+    <div class="prose mt-12">
+      <h2>Hur ofta behöver surdegen matas — egentligen?</h2>
+      <p>Tre scenarier:</p>
+      <ul>
+        <li><strong>Aktiv i rumstemperatur:</strong> var 12:e timme om
+          den används dagligen, var 24:e timme om den bara ska hållas
+          vid liv.</li>
+        <li><strong>Sov-läge i kylskåp:</strong> en gång per vecka räcker
+          fint. Surdegen jobbar långsammare i kyl och konsumerar mjöl
+          sakta.</li>
+        <li><strong>Bak-prepp:</strong> 8-12 timmar innan du startar
+          baket — ta ut från kyl, mata 1:2:2 eller 1:5:5, vänta tills
+          dubbel volym (då är toppen redo).</li>
+      </ul>
+
+      <h2>Vad är 1:1:1 vs 1:2:2 vs 1:5:5?</h2>
+      <p>
+        Förhållandet beskriver hur mycket du <em>matar</em> jämfört
+        med befintlig surdeg.
+      </p>
+      <ul>
+        <li><strong>1:1:1</strong> — 1 del surdeg + 1 del mjöl + 1 del
+          vatten. Snabb topp (4-6 timmar i rumstemp). Bra för dagligen
+          aktiv surdeg.</li>
+        <li><strong>1:2:2</strong> — dubbla mängden mjöl och vatten.
+          Långsammare topp (8-10 timmar). Bra "kvälls-mata för morgon-bak".</li>
+        <li><strong>1:5:5</strong> — fem gånger mängden. Långsam topp
+          (12-16 timmar). Bra för "över natten" eller väldigt aktiva
+          surdegar som annars överjäser.</li>
+      </ul>
+
+      <h2>Skillnad rumstemp vs kyl</h2>
+      <p>
+        I rumstemp (~21 °C) jobbar jästsvamparna och bakterierna fort.
+        Du måste mata var 12:e timme för att hålla balansen. I kyl
+        (~5 °C) går allt 5-10x långsammare — en matning per vecka räcker.
+      </p>
+      <p>
+        För dig som bakar 1-2 ggr i veckan: kyl-strategin är optimal.
+        För dig som bakar dagligen: rumstemp och var-12:e-timme.
+      </p>
+
+      <h2>Är min surdeg dålig om jag glömt en matning?</h2>
+      <p>
+        Generellt nej. Surdeg är otroligt tålig:
+      </p>
+      <ul>
+        <li><strong>1-2 dagar utan matning i kyl:</strong> obetydligt</li>
+        <li><strong>1 vecka utan matning i kyl:</strong> sur lukt — mata
+          2-3 ggr för att återställa</li>
+        <li><strong>2-4 veckor i kyl:</strong> kanske halv chans —
+          återupplivning kräver 4-5 matningar</li>
+        <li><strong>Mer än 1 månad utan matning:</strong> börja om från
+          ny surdeg är ofta enklare än återupplivning</li>
+      </ul>
+
+      <h2>Tips: minska surdegens storlek</h2>
+      <p>
+        Många hobbybakare har 200-500 g surdeg när de bara behöver
+        100 g vid bak. Mindre moder = mindre mjölsvinn. Reducera till
+        25-50 g moder, mata 1:2:2 vid behov för att skala upp.
+      </p>
+      <p>
+        En liten moder är också lättare att hålla aktiv eftersom
+        liten volym = stort yta-mot-volym förhållande = snabbare jäsning.
+      </p>
+    </div>
+
+    <FAQ items={faq} />
+  </section>
+</BaseLayout>
+
+<script>
+  let storage: 'room' | 'fridge' = 'room';
+  let ratio = 1;
+
+  const lastFedEl = document.getElementById('lastFed') as HTMLInputElement;
+  const massEl = document.getElementById('surdegMass') as HTMLInputElement;
+  const out = {
+    next: document.querySelector('[data-out="next"]')!,
+    flour: document.querySelector('[data-out="flour"]')!,
+    water: document.querySelector('[data-out="water"]')!,
+  };
+
+  // Default: 6h ago at room temp, so we have a "next feed" coming up
+  const def = new Date();
+  def.setHours(def.getHours() - 6);
+  lastFedEl.value = def.toISOString().slice(0, 16);
+
+  document.querySelectorAll('.storage-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      storage = (btn as HTMLElement).dataset.storage as 'room' | 'fridge';
+      document.querySelectorAll('.storage-btn').forEach((b) => {
+        b.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-900');
+        b.classList.add('border-slate-200', 'bg-white', 'text-slate-700');
+      });
+      btn.classList.remove('border-slate-200', 'bg-white', 'text-slate-700');
+      btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-900');
+      compute();
+    });
+  });
+
+  document.querySelectorAll('.ratio-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      ratio = Number((btn as HTMLElement).dataset.ratio);
+      document.querySelectorAll('.ratio-btn').forEach((b) => {
+        b.classList.remove('border-amber-500', 'bg-amber-50', 'text-amber-900');
+        b.classList.add('border-slate-200', 'bg-white', 'text-slate-700');
+      });
+      btn.classList.remove('border-slate-200', 'bg-white', 'text-slate-700');
+      btn.classList.add('border-amber-500', 'bg-amber-50', 'text-amber-900');
+      compute();
+    });
+  });
+
+  function compute() {
+    if (!lastFedEl.value) return;
+    const last = new Date(lastFedEl.value);
+    if (isNaN(last.getTime())) return;
+
+    // Hours until next feed depends on storage strategy.
+    const hoursUntil = storage === 'room' ? 12 : 24 * 7;
+    const next = new Date(last.getTime() + hoursUntil * 3600_000);
+    const now = new Date();
+    const diffH = (next.getTime() - now.getTime()) / 3600_000;
+
+    let label = '';
+    if (diffH < -1) {
+      label = `⚠️ ${Math.round(-diffH)} h sen`;
+    } else if (diffH < 1) {
+      label = '🔔 Mata nu';
+    } else if (diffH < 24) {
+      label = `om ${Math.round(diffH)} h`;
+    } else {
+      label = `om ${Math.round(diffH / 24)} dgr`;
+    }
+    out.next.textContent = label;
+
+    const mass = Number(massEl.value) || 50;
+    const flour = mass * ratio;
+    const water = mass * ratio;
+    out.flour.textContent = `${Math.round(flour)} g`;
+    out.water.textContent = `${Math.round(water)} g`;
+  }
+
+  lastFedEl.addEventListener('input', compute);
+  massEl.addEventListener('input', compute);
+  compute();
+</script>

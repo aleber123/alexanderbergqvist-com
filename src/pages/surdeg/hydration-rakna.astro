@@ -1,0 +1,234 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FAQ from '../../components/FAQ.astro';
+import AppStoreBadge from '../../components/AppStoreBadge.astro';
+
+const faq = [
+  {
+    q: 'Vad är hydration i surdeg?',
+    a: 'Hydration är förhållandet mellan vatten och mjöl i degen, uttryckt som procent. 70% hydration betyder 700 g vatten per 1000 g mjöl. Högre hydration = lösare deg, större hål i smulan, mer öppen kärna.',
+  },
+  {
+    q: 'Vilken hydration ska jag börja med?',
+    a: '70% är klassisk nybörjarnivå för vit limpa. Ger formbar deg som inte är för klibbig. När du är trygg på 70%, höj till 75-78% för mer öppen kärna. 80%+ är ciabatta-territorium och kräver god teknik.',
+  },
+  {
+    q: 'Räknar man surdeg som mjöl eller vatten?',
+    a: 'Båda. Surdegen består av cirka 50% mjöl + 50% vatten — så 100 g surdeg = 50 g mjöl + 50 g vatten. Räknaren här gör det automatiskt om du anger surdegens vikt.',
+  },
+  {
+    q: 'Påverkar mjölsorten hydrationen?',
+    a: 'Ja mycket. Fullkornsmjöl absorberar 10-15% mer vatten än vitt vetemjöl. Spelt och rågmjöl har lägre glutenstyrka — håller mindre vatten. Vänj dig vid 70% i vitt vete först, sen anpassa per mjölsort.',
+  },
+  {
+    q: 'Vilken hydration har de mest klassiska bröden?',
+    a: 'Vit limpa: 70-72%. Lantbröd: 75-78%. Ciabatta: 78-82%. Focaccia: 75-80%. Brioche: 50% (mjölk räknas som vätska). Råglimpa: 70-75%. Naan: 70%.',
+  },
+];
+---
+
+<BaseLayout
+  title="Hydration-kalkylator för surdeg: räkna ut % på din deg"
+  description="Hur räknar du hydration i din surdeg? Skriv in mjöl, vatten och surdeg så får du exakt procent. Inkluderar tabell över vanliga hydrations-nivåer per brödsort."
+  keywords={[
+    'surdeg hydration',
+    'hydration räkna',
+    'hydration kalkylator surdeg',
+    'surdeg vatten mjöl',
+    'baker percentage',
+  ]}
+>
+  <section class="max-w-3xl mx-auto px-6 py-8">
+    <Breadcrumbs
+      trail={[
+        { name: 'Hem', url: '/' },
+        { name: 'Surdeg', url: '/surdeg/' },
+        { name: 'Hydration-räknare' },
+      ]}
+    />
+    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-slate-500">
+      Fri kalkylator
+    </span>
+    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+      Räkna ut hydration i din surdeg
+    </h1>
+    <p class="mt-3 text-lg text-slate-600">
+      Skriv in mjöl, vatten och eventuell surdeg så ser du exakt
+      hydration. Räknaren tar med surdegen som 50% mjöl + 50% vatten,
+      enligt baker's percentage-standard.
+    </p>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-white p-6 md:p-8">
+      <div class="grid md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm font-bold mb-2" for="mjol">Mjöl (g)</label>
+          <input
+            id="mjol"
+            type="number"
+            min="0"
+            step="10"
+            value="500"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-amber-500 focus:outline-none"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-2" for="vatten">Vatten (g)</label>
+          <input
+            id="vatten"
+            type="number"
+            min="0"
+            step="10"
+            value="350"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-amber-500 focus:outline-none"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-2" for="surdeg">Surdeg (g)</label>
+          <input
+            id="surdeg"
+            type="number"
+            min="0"
+            step="10"
+            value="100"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-amber-500 focus:outline-none"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="rounded-2xl bg-amber-50 border border-amber-200 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-amber-700">Hydration</div>
+        <div class="mt-1 text-3xl font-black text-amber-900" data-out="hydration">–</div>
+      </div>
+      <div class="rounded-2xl bg-slate-50 border border-slate-200 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-slate-600">Mjöl totalt</div>
+        <div class="mt-1 text-2xl font-black text-slate-900" data-out="totalFlour">–</div>
+      </div>
+      <div class="rounded-2xl bg-slate-50 border border-slate-200 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-slate-600">Vatten totalt</div>
+        <div class="mt-1 text-2xl font-black text-slate-900" data-out="totalWater">–</div>
+      </div>
+      <div class="rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 p-5 text-white">
+        <div class="text-xs font-black uppercase tracking-widest opacity-80">Bedömning</div>
+        <div class="mt-1 text-lg font-black" data-out="verdict">–</div>
+      </div>
+    </div>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-white overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-amber-50 text-left">
+          <tr>
+            <th class="p-3 font-bold">Brödsort</th>
+            <th class="p-3 font-bold">Typisk hydration</th>
+            <th class="p-3 font-bold hidden md:table-cell">Karaktär</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <tr><td class="p-3 font-bold">Vit limpa</td><td class="p-3">70-72%</td><td class="p-3 hidden md:table-cell text-slate-600">Klassisk, lätt fast smula</td></tr>
+          <tr><td class="p-3 font-bold">Råglimpa</td><td class="p-3">70-75%</td><td class="p-3 hidden md:table-cell text-slate-600">Tät, syrlig</td></tr>
+          <tr><td class="p-3 font-bold">Lantbröd</td><td class="p-3">75-78%</td><td class="p-3 hidden md:table-cell text-slate-600">Öppen kärna, klassisk yta</td></tr>
+          <tr><td class="p-3 font-bold">Ciabatta</td><td class="p-3">78-82%</td><td class="p-3 hidden md:table-cell text-slate-600">Stora hål, knaprig skorpa</td></tr>
+          <tr><td class="p-3 font-bold">Focaccia</td><td class="p-3">75-80%</td><td class="p-3 hidden md:table-cell text-slate-600">Saftig, hög</td></tr>
+          <tr><td class="p-3 font-bold">Surdegspizza</td><td class="p-3">70-75%</td><td class="p-3 hidden md:table-cell text-slate-600">Tunn botten, kant med hål</td></tr>
+          <tr><td class="p-3 font-bold">Brioche</td><td class="p-3">50-55%</td><td class="p-3 hidden md:table-cell text-slate-600">Smörig, fluffig</td></tr>
+          <tr><td class="p-3 font-bold">Bagels</td><td class="p-3">55-60%</td><td class="p-3 hidden md:table-cell text-slate-600">Tät, tugga</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-gradient-to-br from-amber-50 to-white p-6 md:p-8">
+      <h2 class="text-xl font-black">Räkna automatiskt i Surdeg-appen</h2>
+      <p class="mt-2 text-slate-700">
+        Surdeg-appen har 33 färdiga recept med exakt hydration uträknad,
+        plus en hydration-räknare för dina egna recept. Plus mat-
+        påminnelser, bakdagbok och affiliate-tips för verktyg.
+      </p>
+      <div class="mt-6">
+        <AppStoreBadge status="soon" />
+      </div>
+    </div>
+
+    <div class="prose mt-12">
+      <h2>Vad är hydration egentligen?</h2>
+      <p>
+        Hydration uttrycks som baker's percentage — vatten ÷ mjöl × 100.
+        En 70% deg har 700 g vatten per 1000 g mjöl. Brödbagare räknar
+        nästan alltid mjölet som "100%" och allt annat (vatten,
+        salt, surdeg) som procent av mjölet.
+      </p>
+
+      <h2>Varför spelar hydration roll?</h2>
+      <ul>
+        <li><strong>Smulans struktur:</strong> Högre hydration = större luftbubblor, mer öppen kärna</li>
+        <li><strong>Skorpans karaktär:</strong> Hög hydration ger tunnare, knaprigare skorpa</li>
+        <li><strong>Hållbarhet:</strong> Saftigare deg → längre färskhet</li>
+        <li><strong>Smak:</strong> Mer vatten = längre jäsning kan ge djupare smak</li>
+        <li><strong>Hanterbarhet:</strong> Lägre hydration är lättare att forma — bra för nybörjare</li>
+      </ul>
+
+      <h2>Ska surdegen räknas?</h2>
+      <p>
+        Ja. En levain på 100 g innehåller cirka 50 g mjöl och 50 g vatten
+        (vid 100% hydration som är vanligaste). Räknaren här lägger till
+        det automatiskt när du anger surdegens vikt.
+      </p>
+
+      <h2>Stegvis höjning av hydration</h2>
+      <p>
+        Lär dig grunderna på 70% innan du försöker 80%. En typisk
+        progression:
+      </p>
+      <ol>
+        <li><strong>Bak 1-5:</strong> 70% vit limpa — fokusera på formning</li>
+        <li><strong>Bak 6-15:</strong> 75% lantbröd — lär dig stretch & fold</li>
+        <li><strong>Bak 16-25:</strong> 78% — börja jaga öppen kärna</li>
+        <li><strong>Bak 25+:</strong> 80%+ ciabatta-style — nu har du tekniken</li>
+      </ol>
+    </div>
+
+    <FAQ items={faq} />
+  </section>
+</BaseLayout>
+
+<script>
+  const mjolEl = document.getElementById('mjol') as HTMLInputElement;
+  const vattenEl = document.getElementById('vatten') as HTMLInputElement;
+  const surdegEl = document.getElementById('surdeg') as HTMLInputElement;
+  const out = {
+    hydration: document.querySelector('[data-out="hydration"]')!,
+    totalFlour: document.querySelector('[data-out="totalFlour"]')!,
+    totalWater: document.querySelector('[data-out="totalWater"]')!,
+    verdict: document.querySelector('[data-out="verdict"]')!,
+  };
+
+  function compute() {
+    const mjol = Number(mjolEl.value) || 0;
+    const vatten = Number(vattenEl.value) || 0;
+    const surdeg = Number(surdegEl.value) || 0;
+
+    // Surdeg = ~50% mjöl + ~50% vatten (klassisk 100% hydration-surdeg).
+    const totalFlour = mjol + surdeg / 2;
+    const totalWater = vatten + surdeg / 2;
+    const hydration = totalFlour > 0 ? (totalWater / totalFlour) * 100 : 0;
+
+    out.totalFlour.textContent = `${Math.round(totalFlour)} g`;
+    out.totalWater.textContent = `${Math.round(totalWater)} g`;
+    out.hydration.textContent = `${hydration.toFixed(1)}%`;
+
+    let verdict = '';
+    if (hydration < 60) verdict = 'Tät, fast deg';
+    else if (hydration < 68) verdict = 'Klassisk vit, formbar';
+    else if (hydration < 73) verdict = 'Vit limpa-klassisk';
+    else if (hydration < 78) verdict = 'Öppen kärna möjlig';
+    else if (hydration < 83) verdict = 'Ciabatta-territorium';
+    else verdict = 'Hög hydration — kräver teknik';
+    out.verdict.textContent = verdict;
+  }
+
+  [mjolEl, vattenEl, surdegEl].forEach((el) =>
+    el.addEventListener('input', compute),
+  );
+  compute();
+</script>

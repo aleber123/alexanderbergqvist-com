@@ -1,0 +1,1750 @@
+[
+  {
+    "id": "vit_limpa",
+    "title": "Klassisk vit limpa",
+    "subtitle": "Mjuk inkrusta, lätt syrlig smula — den perfekta starten.",
+    "description": "En vit surdegslimpa med 70 % hydrering. Perfekt för dig som börjar baka surdeg. Svalkar i ett dygn för bästa smak.",
+    "difficulty": "beginner",
+    "yields_loaves": 1,
+    "prep_minutes": 30,
+    "total_minutes": 1320,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 500,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 350,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 100
+      },
+      {
+        "name": "Salt",
+        "grams": 10
+      }
+    ],
+    "steps": [
+      "Blanda mjöl, vatten och surdeg. Låt vila 30 min (autolys).",
+      "Tillsätt salt. Knåda eller använd stretch & fold var 30:e minut, 4 gånger.",
+      "Bulkjäs i rumstemperatur i 4–6 timmar tills degen ökat ~50 %.",
+      "Forma till en boule eller batard. Lägg i mjölad jäskorg.",
+      "Kyljäs i kylskåp 8–14 timmar.",
+      "Värm ugnen till 250 °C med gjutjärnsgryta.",
+      "Skåra brödet, baka i sluten gryta 20 min.",
+      "Ta av locket, sänk till 220 °C och baka 20 min till tills mörk skorpa.",
+      "Låt svalna helt på galler innan du skär."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "raglimpa",
+    "title": "Råglimpa",
+    "subtitle": "Mörk, kompakt, full av smak. Klassiskt svenskt.",
+    "description": "100 % råg är klassiskt svenskt — kompakt smula, intensiv smak, håller sig i en vecka. Glöm inte: rågdeg jäser snabbt.",
+    "difficulty": "intermediate",
+    "yields_loaves": 1,
+    "prep_minutes": 25,
+    "total_minutes": 540,
+    "ingredients": [
+      {
+        "name": "Rågmjöl",
+        "grams": 500,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 400,
+        "is_water": true
+      },
+      {
+        "name": "Rågsurdeg",
+        "grams": 150
+      },
+      {
+        "name": "Salt",
+        "grams": 12
+      },
+      {
+        "name": "Sirap",
+        "grams": 30
+      }
+    ],
+    "steps": [
+      "Blanda alla ingredienser till en klibbig deg. Räkna inte med att kunna knåda — rågdeg är som lera.",
+      "Täck med duk och låt jäsa i rumstemperatur 4 timmar.",
+      "Forma till en limpa direkt i en oljad form, släta ytan med blött finger.",
+      "Eftergässning i formen 1–2 timmar tills degen ökat synligt.",
+      "Värm ugnen till 230 °C.",
+      "Pensla med vatten, baka 15 min på 230 °C.",
+      "Sänk till 175 °C och baka 45 min till.",
+      "Låt vila i formen 10 min, stjälp upp och låt svalna helt.",
+      "Linda in i kökshandduk och låt vila ett dygn innan du skär — smaken växer."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "lantbrod",
+    "title": "Lantbröd",
+    "subtitle": "Stort, rustikt bröd med blandning av vete + råg.",
+    "description": "Pain de campagne på svenska. 80 % vete + 20 % råg ger rustikt bröd med karaktär. Fungerar både till frukost och som matbröd.",
+    "difficulty": "intermediate",
+    "yields_loaves": 1,
+    "prep_minutes": 35,
+    "total_minutes": 1440,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 400,
+        "is_flour": true
+      },
+      {
+        "name": "Rågmjöl",
+        "grams": 100,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 380,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 120
+      },
+      {
+        "name": "Salt",
+        "grams": 11
+      }
+    ],
+    "steps": [
+      "Blanda mjölet och vattnet, låt autolysa 45 min.",
+      "Tillsätt surdeg och salt. Knåda lätt eller stretch & fold.",
+      "Bulkjäsning 5 timmar i rumstemperatur, fold var 30:e min de första 2 timmarna.",
+      "Förform till boule, vila 20 min på bänken.",
+      "Slutform till boule eller batard, lägg i mjölad jäskorg.",
+      "Kyljäs över natten (10–14 timmar).",
+      "Värm ugnen till 250 °C med gjutjärnsgryta.",
+      "Skåra brödet med tre snitt. Baka i sluten gryta 22 min.",
+      "Ta av locket, sänk till 220 °C, baka 18 min till.",
+      "Svalna helt på galler innan du skär."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "focaccia",
+    "title": "Focaccia",
+    "subtitle": "Saftig italiensk platta med olivolja och flingsalt.",
+    "description": "Hög hydrering ger luftiga bubblor. Toppa med rosmarin och flingsalt — eller cherry-tomater + oliver. Bäst direkt ur ugnen.",
+    "difficulty": "beginner",
+    "yields_loaves": 1,
+    "prep_minutes": 25,
+    "total_minutes": 720,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 500,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 400,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 100
+      },
+      {
+        "name": "Salt",
+        "grams": 10
+      },
+      {
+        "name": "Olivolja (i deg)",
+        "grams": 30
+      },
+      {
+        "name": "Olivolja (i form)",
+        "grams": 30
+      },
+      {
+        "name": "Flingsalt + rosmarin",
+        "grams": 5
+      }
+    ],
+    "steps": [
+      "Blanda alla ingredienser utom forma-oljan. Stretch & fold var 30:e min, 4 gånger.",
+      "Bulkjäs 4–6 timmar i rumstemperatur.",
+      "Olja en plåt rikligt (30 g olja). Häll degen mitt i.",
+      "Med oljade fingrar — sträck försiktigt degen mot kanterna och tryck ner fingrarna för att skapa gropar.",
+      "Eftergässning 1–2 timmar.",
+      "Värm ugnen till 230 °C.",
+      "Strö över flingsalt och rosmarin (eller dina toppings).",
+      "Baka 20–25 min tills gyllene och frasig."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "pizza_deg",
+    "title": "Surdegspizza",
+    "subtitle": "Tunn knaprig botten med boblig, nappig smak.",
+    "description": "Nappolitansk-inspirerad surdegspizza. Lång kallrast i kylen ger djupare smak än någon snabbpizza.",
+    "difficulty": "intermediate",
+    "yields_loaves": 4,
+    "prep_minutes": 30,
+    "total_minutes": 1500,
+    "ingredients": [
+      {
+        "name": "Vetemjöl 00",
+        "grams": 500,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 325,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 80
+      },
+      {
+        "name": "Salt",
+        "grams": 12
+      },
+      {
+        "name": "Olivolja",
+        "grams": 15
+      }
+    ],
+    "steps": [
+      "Blanda mjöl och vatten, autolysa 30 min.",
+      "Tillsätt surdeg, salt och olja. Knåda 5 min till slät deg.",
+      "Bulkjäs 3 timmar i rumstemperatur.",
+      "Dela degen i 4 bollar à 230 g. Lägg i smörad form med lock.",
+      "Kyljäs i 24 timmar (helst 48 — smaken växer).",
+      "Ta ut degen 1 timme innan användning.",
+      "Värm ugnen så hett som möjligt (250–280 °C) med pizzasten eller plåt.",
+      "Forma med fingrarna — spara kanterna luftiga, undvik kavel.",
+      "Toppa snabbt och baka 6–10 min tills kanten boblar och blåsbränns lite."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "baguette",
+    "title": "Surdegsbaguette",
+    "subtitle": "Frasig skorpa, lätt syrlig smula. Kräver formteknik.",
+    "description": "En klassisk fransk baguette med surdeg. Kräver lite teknik vid formningen men ger ett fantastiskt resultat.",
+    "difficulty": "advanced",
+    "yields_loaves": 3,
+    "prep_minutes": 45,
+    "total_minutes": 1380,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 500,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 350,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 100
+      },
+      {
+        "name": "Salt",
+        "grams": 10
+      }
+    ],
+    "steps": [
+      "Blanda mjöl och vatten, autolysa 1 timme.",
+      "Tillsätt surdeg och salt, knåda eller stretch & fold.",
+      "Bulkjäs 4 timmar med fold var 30:e min de första 2 timmarna.",
+      "Dela i 3 bitar à 320 g, förforma som korta cylindrar. Vila 20 min.",
+      "Slutformning till baguette: tryck ut till rektangel, vik på mitten, rulla under handflatorna till 35 cm.",
+      "Lägg på mjölad linne-couche, vik linnet mellan bröden.",
+      "Kyljäs över natten (8–14 timmar).",
+      "Värm ugnen till 250 °C med pizzasten + plåt på underst hyllan.",
+      "Skåra baguetterna med 3–4 långsmala snitt.",
+      "Lägg på sten, kasta isbitar i underplåten för ånga, baka 18–22 min."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "tigerbrod",
+    "title": "Tigerbröd",
+    "subtitle": "Krackelerat sprödt yttre, mjukt inre.",
+    "description": "Det krackelerade mönstret kommer från en rispulver-pasta som penslas på före gräddning. Ser dramatiskt ut, smakar fantastiskt.",
+    "difficulty": "intermediate",
+    "yields_loaves": 1,
+    "prep_minutes": 40,
+    "total_minutes": 1320,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 500,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 350,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 100
+      },
+      {
+        "name": "Salt",
+        "grams": 10
+      },
+      {
+        "name": "Rispulver (för pasta)",
+        "grams": 40
+      },
+      {
+        "name": "Vatten (till pasta)",
+        "grams": 60
+      },
+      {
+        "name": "Olja (till pasta)",
+        "grams": 10
+      }
+    ],
+    "steps": [
+      "Blanda huvuddegen som vit limpa. Bulkjäs 5 timmar.",
+      "Forma till boule eller batard. Lägg i mjölad jäskorg.",
+      "Kyljäs över natten.",
+      "På morgonen — gör tigerpastan: blanda rispulver, vatten, olja och en nypa salt till en tjock smet.",
+      "Pensla pastan rikligt över hela ovansidan av brödet.",
+      "Eftergässning 30 min medan ugnen värms till 240 °C.",
+      "Baka direkt på sten eller plåt, ~30 min med ånga första 10 min.",
+      "Pastan torkar och spricker upp under bakningen — det är önskat resultat."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "olivbrod",
+    "title": "Olivbröd",
+    "subtitle": "Salt, oljigt, perfekt till tapas.",
+    "description": "Saftig limpa späckad med svarta kalamata-oliver och färska örter. Servera till oljiga rätter eller som tilltugg med vin.",
+    "difficulty": "beginner",
+    "yields_loaves": 1,
+    "prep_minutes": 30,
+    "total_minutes": 720,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 500,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 360,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 100
+      },
+      {
+        "name": "Salt",
+        "grams": 8
+      },
+      {
+        "name": "Kalamata-oliver (urkärnade, halverade)",
+        "grams": 150
+      },
+      {
+        "name": "Färsk timjan",
+        "grams": 5
+      },
+      {
+        "name": "Olivolja",
+        "grams": 20
+      }
+    ],
+    "steps": [
+      "Blanda mjöl, vatten, surdeg och salt. Knåda 5 min.",
+      "Bulkjäs 3 timmar med fold var 45:e min.",
+      "Vid sista folden — vik in oliver, timjan och olivolja jämnt.",
+      "Bulkjäs ytterligare 2 timmar.",
+      "Forma till boule, lägg i mjölad jäskorg.",
+      "Eftergässning i rumstemperatur 1 timme (eller kyljäs över natten).",
+      "Värm ugnen till 240 °C med gryta.",
+      "Skåra och baka i sluten gryta 25 min, lock av och ytterligare 15 min."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "frukostfrallor",
+    "title": "Frukostfrallor",
+    "subtitle": "Småfrallor med vete + lite råg. Frasig skorpa.",
+    "description": "Perfekta att frysa in. Tina och värm i ugnen 5 min — smakar nybakat. Uppskattas både med ost och sylt.",
+    "difficulty": "beginner",
+    "yields_loaves": 8,
+    "prep_minutes": 30,
+    "total_minutes": 720,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 400,
+        "is_flour": true
+      },
+      {
+        "name": "Rågmjöl",
+        "grams": 100,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 320,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 80
+      },
+      {
+        "name": "Salt",
+        "grams": 10
+      },
+      {
+        "name": "Honung",
+        "grams": 15
+      }
+    ],
+    "steps": [
+      "Blanda alla ingredienser, knåda 5 min.",
+      "Bulkjäs 4 timmar med fold var 45:e min.",
+      "Dela degen i 8 bitar à 110 g.",
+      "Forma till runda bullar. Lägg på plåt med bakplåtspapper.",
+      "Eftergässning 1 timme.",
+      "Värm ugnen till 230 °C.",
+      "Skåra frallorna med ett snitt. Baka 18 min med ånga första 5.",
+      "Bryt isär och låt svalna på galler."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "kanelbullar",
+    "title": "Surdegs-kanelbullar",
+    "subtitle": "Saftiga, smöriga, lätt syrliga. Med discard.",
+    "description": "Bra sätt att använda surdegs-discard från matningen. Bullarna blir saftigare och smakrikare än med jäst.",
+    "difficulty": "intermediate",
+    "yields_loaves": 16,
+    "prep_minutes": 60,
+    "total_minutes": 540,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 500,
+        "is_flour": true
+      },
+      {
+        "name": "Mjölk",
+        "grams": 250,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg discard",
+        "grams": 150
+      },
+      {
+        "name": "Strösocker",
+        "grams": 80
+      },
+      {
+        "name": "Smör (i deg)",
+        "grams": 80
+      },
+      {
+        "name": "Ägg",
+        "grams": 50
+      },
+      {
+        "name": "Salt",
+        "grams": 6
+      },
+      {
+        "name": "Kardemumma",
+        "grams": 8
+      },
+      {
+        "name": "Smör (fyllning)",
+        "grams": 100
+      },
+      {
+        "name": "Strösocker (fyllning)",
+        "grams": 80
+      },
+      {
+        "name": "Kanel",
+        "grams": 15
+      }
+    ],
+    "steps": [
+      "Blanda alla degingredienser, knåda 8 min till slät smidig deg.",
+      "Bulkjäs 3 timmar i rumstemperatur.",
+      "Kavla ut degen till en rektangel ~50×30 cm.",
+      "Bred ut mjukt smör, strö över socker + kanel.",
+      "Vik degen på tre, kavla ut igen.",
+      "Skär i 16 remsor, snurra till bullar och lägg i bakformar.",
+      "Eftergässning 2–3 timmar (eller kyljäs över natten).",
+      "Pensla med ägg + lite mjölk. Strö pärlsocker.",
+      "Baka 220 °C i 12 minuter tills gyllene."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "surdegspannkakor",
+    "title": "Surdegspannkakor",
+    "subtitle": "Använder discard. Snabbaste frukosten.",
+    "description": "Perfekt sätt att använda surdegs-discard utan att slänga något. Pannkakorna blir luftiga med en liten syrlig ton som funkar både med sirap och bär.",
+    "difficulty": "beginner",
+    "yields_loaves": 4,
+    "prep_minutes": 5,
+    "total_minutes": 20,
+    "ingredients": [
+      {
+        "name": "Surdeg discard",
+        "grams": 250
+      },
+      {
+        "name": "Mjölk",
+        "grams": 250,
+        "is_water": true
+      },
+      {
+        "name": "Vetemjöl",
+        "grams": 200,
+        "is_flour": true
+      },
+      {
+        "name": "Ägg",
+        "grams": 100
+      },
+      {
+        "name": "Smör (smält)",
+        "grams": 30
+      },
+      {
+        "name": "Socker",
+        "grams": 15
+      },
+      {
+        "name": "Salt",
+        "grams": 3
+      },
+      {
+        "name": "Bakpulver",
+        "grams": 5
+      }
+    ],
+    "steps": [
+      "Blanda alla ingredienser till en slät smet. Låt vila 5 min.",
+      "Värm en non-stick-panna på medelvärme. Smörj lätt.",
+      "Häll i 1 dl smet per pannkaka.",
+      "Stek 1–2 min tills bubblor bildas på ytan.",
+      "Vänd och stek ytterligare 1 min.",
+      "Servera med smör, sylt eller lönnsirap."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "levain",
+    "title": "Klassiskt levain",
+    "subtitle": "Stor fransk boule — bröd för middagsbordet.",
+    "description": "Ett klassiskt franskt levain på 1.2 kg deg. Stor boule som gör avtryck på bordet. Kräver stor jäskorg och gjutjärnsgryta.",
+    "difficulty": "advanced",
+    "yields_loaves": 1,
+    "prep_minutes": 50,
+    "total_minutes": 1500,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 600,
+        "is_flour": true
+      },
+      {
+        "name": "Fullkornsvete",
+        "grams": 100,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 525,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 150
+      },
+      {
+        "name": "Salt",
+        "grams": 14
+      }
+    ],
+    "steps": [
+      "Blanda mjölen + vattnet, autolysa 1 timme.",
+      "Tillsätt surdeg och salt. Bulkjäs 5 timmar i rumstemperatur.",
+      "Stretch & fold var 30:e min de första 2 timmarna.",
+      "Förforma till boule, vila 30 min.",
+      "Slutformning till stor boule. Lägg i mjölad jäskorg.",
+      "Kyljäs över natten (12–14 timmar).",
+      "Värm ugnen till 260 °C med gjutjärnsgryta.",
+      "Skåra brödet med ett spektakulärt snitt (klassiskt: en stor båge).",
+      "Baka i sluten gryta 25 min på 250 °C.",
+      "Sänk till 220 °C, lock av, baka 25 min till tills djupt mörkbrun.",
+      "Svalna minst 1 timme innan du skär — viktigt för stor boule."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "surdegsskal",
+    "title": "Surdegsskål",
+    "subtitle": "Liten boule — perfekt portionsbröd.",
+    "description": "Halv recept av lantbröd. Praktiskt om du bor ensam eller bara vill testa en deg på en mindre skala.",
+    "difficulty": "beginner",
+    "yields_loaves": 1,
+    "prep_minutes": 25,
+    "total_minutes": 1200,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 250,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 175,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 60
+      },
+      {
+        "name": "Salt",
+        "grams": 5
+      }
+    ],
+    "steps": [
+      "Blanda alla ingredienser. Stretch & fold var 30:e min, 3 gånger.",
+      "Bulkjäs 4 timmar.",
+      "Forma till liten boule. Lägg i mjölad jäskorg.",
+      "Kyljäs 8–12 timmar.",
+      "Värm ugnen till 240 °C med gryta.",
+      "Skåra. Baka i sluten gryta 18 min, lock av 12 min till.",
+      "Svalna helt innan du skär."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "knackebrod",
+    "title": "Surdegs-knäckebröd",
+    "subtitle": "Tunt, knaprigt, klassiskt svenskt.",
+    "description": "Knäckebröd med surdeg ger en djupare smak än det köpta. Kavlas tunt och bakas hett för max knäpp.",
+    "difficulty": "intermediate",
+    "yields_loaves": 8,
+    "prep_minutes": 45,
+    "total_minutes": 540,
+    "ingredients": [
+      {
+        "name": "Rågmjöl",
+        "grams": 300,
+        "is_flour": true
+      },
+      {
+        "name": "Vetemjöl special",
+        "grams": 100,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 250,
+        "is_water": true
+      },
+      {
+        "name": "Rågsurdeg",
+        "grams": 100
+      },
+      {
+        "name": "Salt",
+        "grams": 8
+      },
+      {
+        "name": "Kummin",
+        "grams": 10
+      }
+    ],
+    "steps": [
+      "Blanda alla ingredienser. Knåda till samlad deg.",
+      "Bulkjäs 4 timmar i rumstemperatur.",
+      "Dela degen i 8 bitar.",
+      "Kavla varje bit till en cirka 2 mm tunn rund.",
+      "Pricka rikligt med knäckebrödskavle eller gaffel — annars puffar de upp.",
+      "Värm ugnen till 250 °C.",
+      "Baka 6–8 min tills gyllenbrun och torr.",
+      "Lägg på galler, så fortsätter de hårdna när de svalnar."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "raghkakor",
+    "title": "Mjuka rågkakor",
+    "subtitle": "Tjocka kavlade rågkakor — frukostklassiker.",
+    "description": "Mjukt kavlade rågkakor som man delar och bredder smör och ost på. Klassiskt fika.",
+    "difficulty": "intermediate",
+    "yields_loaves": 6,
+    "prep_minutes": 35,
+    "total_minutes": 540,
+    "ingredients": [
+      {
+        "name": "Rågmjöl",
+        "grams": 200,
+        "is_flour": true
+      },
+      {
+        "name": "Vetemjöl special",
+        "grams": 200,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 280,
+        "is_water": true
+      },
+      {
+        "name": "Rågsurdeg",
+        "grams": 120
+      },
+      {
+        "name": "Sirap",
+        "grams": 30
+      },
+      {
+        "name": "Salt",
+        "grams": 8
+      },
+      {
+        "name": "Kardemumma",
+        "grams": 5
+      }
+    ],
+    "steps": [
+      "Blanda alla ingredienser till en mjuk deg. Knåda 5 min.",
+      "Bulkjäs 3 timmar i rumstemperatur.",
+      "Dela i 6 bitar, kavla till tjocka cirklar (1 cm).",
+      "Pricka med gaffel.",
+      "Eftergässning 45 min på plåt.",
+      "Värm ugnen till 220 °C.",
+      "Baka 12–15 min tills lätt gyllene.",
+      "Svalna under handduk för att hålla kakorna mjuka."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "ciabatta",
+    "title": "Ciabatta",
+    "subtitle": "Italiensk klassiker — luftig kärna, knaprig skorpa.",
+    "description": "Hög hydrering (78%) ger ciabattans karakteristiska stora hål. Slappt arbetsmoment, men man måste vara försiktig vid formning för att inte trycka ut luften.",
+    "difficulty": "intermediate",
+    "yields_loaves": 2,
+    "prep_minutes": 25,
+    "total_minutes": 1080,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 500,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten (kallt)",
+        "grams": 390,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 100
+      },
+      {
+        "name": "Salt",
+        "grams": 10
+      },
+      {
+        "name": "Olivolja",
+        "grams": 20
+      }
+    ],
+    "steps": [
+      "Blanda mjöl och vatten, autolys 45 min.",
+      "Tillsätt surdeg, salt och olivolja. Coil-fold var 30 min × 4.",
+      "Bulkjäs 4–6 timmar tills degen ökat 70–80%.",
+      "Vält ut på rikligt mjölad bänk. Dela i två och skapa rektanglar utan att trycka.",
+      "Lägg på mjölad bakduk, jäs 45 min.",
+      "Värm ugn till 250 °C med pizzasten eller plåt.",
+      "Baka 20–25 min med ånga första 10 min, tills djupt gyllene."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "brioche",
+    "title": "Surdegsbrioche",
+    "subtitle": "Söt och smörig — perfekt till frukost eller dessert.",
+    "description": "Smörig brioche med surdeg istället för jäst. Dubbel jäsning ger mjuk, fluffig kärna. Behöver kalljäsa över natten för bäst resultat.",
+    "difficulty": "advanced",
+    "yields_loaves": 1,
+    "prep_minutes": 45,
+    "total_minutes": 1500,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 400,
+        "is_flour": true
+      },
+      {
+        "name": "Mjölk",
+        "grams": 150,
+        "is_water": true
+      },
+      {
+        "name": "Ägg",
+        "grams": 100
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 80
+      },
+      {
+        "name": "Smör (rumstemp.)",
+        "grams": 150
+      },
+      {
+        "name": "Socker",
+        "grams": 50
+      },
+      {
+        "name": "Salt",
+        "grams": 8
+      }
+    ],
+    "steps": [
+      "Blanda mjöl, mjölk, ägg, surdeg och socker. Knåda 10 min till elastisk deg.",
+      "Tillsätt salt och smör i klickar, knåda till smöret är inarbetat (10–15 min).",
+      "Bulkjäs i 4–5 timmar i rumstemperatur.",
+      "Kyljäs över natten (10–14 timmar).",
+      "Forma till limpa eller bullar, lägg i smord form.",
+      "Jäs 3–4 timmar tills nästan dubbel storlek.",
+      "Pensla med ägg, baka i 180 °C 30–35 min till gyllene."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "kuminlimpa",
+    "title": "Limpa med kummin",
+    "subtitle": "Svensk klassiker med söt-kryddig touch.",
+    "description": "Mörkt rågbröd kryddat med kummin, fänkål och anis — den klassiska smaken av svenskt sirapsbröd, fast med surdeg.",
+    "difficulty": "intermediate",
+    "yields_loaves": 1,
+    "prep_minutes": 30,
+    "total_minutes": 960,
+    "ingredients": [
+      {
+        "name": "Rågmjöl",
+        "grams": 300,
+        "is_flour": true
+      },
+      {
+        "name": "Vetemjöl special",
+        "grams": 200,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten (ljummet)",
+        "grams": 350,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 100
+      },
+      {
+        "name": "Mörk sirap",
+        "grams": 60
+      },
+      {
+        "name": "Salt",
+        "grams": 10
+      },
+      {
+        "name": "Krossad kummin",
+        "grams": 8
+      },
+      {
+        "name": "Krossad fänkål",
+        "grams": 4
+      },
+      {
+        "name": "Krossad anis",
+        "grams": 2
+      },
+      {
+        "name": "Pomeransskal (valfritt)",
+        "grams": 5
+      }
+    ],
+    "steps": [
+      "Blanda alla ingredienser. Knåda 10 min till slätt.",
+      "Bulkjäs 5–6 timmar i rumstemperatur.",
+      "Forma till limpa, lägg i smord limpform.",
+      "Jäs 2 timmar.",
+      "Värm ugn till 200 °C.",
+      "Baka 50–60 min, pensla med vatten + sirap sista 5 min för glans.",
+      "Låt svalna helt insvept i bakduk för mjuk skorpa."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "vortbrod",
+    "title": "Vörtbröd",
+    "subtitle": "Doftande julbröd med vört och kryddor.",
+    "description": "Klassiskt svenskt julbröd med julmustsvört, sirap och kryddor. Kalljäs gärna över natten — smaken djupnar.",
+    "difficulty": "intermediate",
+    "yields_loaves": 2,
+    "prep_minutes": 35,
+    "total_minutes": 1200,
+    "ingredients": [
+      {
+        "name": "Rågmjöl",
+        "grams": 250,
+        "is_flour": true
+      },
+      {
+        "name": "Vetemjöl special",
+        "grams": 350,
+        "is_flour": true
+      },
+      {
+        "name": "Vört (eller julmust)",
+        "grams": 200,
+        "is_water": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 150,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 120
+      },
+      {
+        "name": "Mörk sirap",
+        "grams": 80
+      },
+      {
+        "name": "Smör (smält)",
+        "grams": 50
+      },
+      {
+        "name": "Salt",
+        "grams": 12
+      },
+      {
+        "name": "Krossad kryddnejlika",
+        "grams": 2
+      },
+      {
+        "name": "Krossad pomeransskal",
+        "grams": 4
+      },
+      {
+        "name": "Russin (valfritt)",
+        "grams": 100
+      }
+    ],
+    "steps": [
+      "Värm vört och vatten ljumt. Lös upp sirap och smör.",
+      "Blanda mjöl, surdeg, kryddor, vätskan och salt. Knåda 10 min.",
+      "Tillsätt russin om du vill. Bulkjäs 4 timmar.",
+      "Kyljäs över natten.",
+      "Forma till två limpor, lägg i smorda formar.",
+      "Jäs 2–3 timmar.",
+      "Baka i 175 °C i 50–55 min. Pensla med sirapsblandning för glans."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "saffransbullar",
+    "title": "Surdegs-saffransbullar",
+    "subtitle": "Klassiska Lucia-bullar med surdeg.",
+    "description": "Saftiga saffransbullar med långsam jäsning — surdegen ger djupare smak än vanlig jäst.",
+    "difficulty": "intermediate",
+    "yields_loaves": 20,
+    "prep_minutes": 45,
+    "total_minutes": 1080,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 600,
+        "is_flour": true
+      },
+      {
+        "name": "Mjölk (ljummen)",
+        "grams": 250,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 120
+      },
+      {
+        "name": "Smör (rumstemp.)",
+        "grams": 150
+      },
+      {
+        "name": "Socker",
+        "grams": 100
+      },
+      {
+        "name": "Saffran",
+        "grams": 1
+      },
+      {
+        "name": "Salt",
+        "grams": 6
+      },
+      {
+        "name": "Ägg",
+        "grams": 50
+      },
+      {
+        "name": "Russin",
+        "grams": 80
+      }
+    ],
+    "steps": [
+      "Stöt saffran med 1 tsk socker. Blanda i mjölken.",
+      "Blanda mjöl, surdeg, mjölken, socker och ägg. Knåda 10 min.",
+      "Tillsätt smör i klickar och knåda 10 min till.",
+      "Bulkjäs 3–4 timmar.",
+      "Forma till lussekatter eller bullar. Tryck i 2 russin per bulle.",
+      "Jäs 2 timmar tills dubbla storleken.",
+      "Pensla med ägg. Baka i 220 °C i 8–10 min."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "semlor",
+    "title": "Surdegssemlor",
+    "subtitle": "Fastlagsklassiker med kardemumma och mandelmassa.",
+    "description": "Saftiga kardemummabullar fyllda med mandelmassa och vispgrädde. Surdeg ger en aning syrlig kontrast som balanserar sötman.",
+    "difficulty": "advanced",
+    "yields_loaves": 12,
+    "prep_minutes": 60,
+    "total_minutes": 900,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 500,
+        "is_flour": true
+      },
+      {
+        "name": "Mjölk (ljummen)",
+        "grams": 220,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 100
+      },
+      {
+        "name": "Smör (rumstemp.)",
+        "grams": 100
+      },
+      {
+        "name": "Socker",
+        "grams": 70
+      },
+      {
+        "name": "Stött kardemumma",
+        "grams": 6
+      },
+      {
+        "name": "Salt",
+        "grams": 6
+      },
+      {
+        "name": "Ägg",
+        "grams": 50
+      },
+      {
+        "name": "Mandelmassa (till fyllning)",
+        "grams": 250
+      },
+      {
+        "name": "Vispgrädde",
+        "grams": 300
+      },
+      {
+        "name": "Florsocker (till garnering)",
+        "grams": 20
+      }
+    ],
+    "steps": [
+      "Blanda mjöl, surdeg, mjölk, socker, kardemumma och ägg. Knåda 10 min.",
+      "Arbeta in smöret i klickar (10 min till).",
+      "Bulkjäs 4 timmar.",
+      "Forma till 12 bullar, jäs 2 timmar.",
+      "Pensla med ägg, baka i 220 °C i 8–10 min.",
+      "Låt svalna. Skär av topp, gröp ur lite inkråm.",
+      "Blanda inkråm med mandelmassa, lite mjölk till smet.",
+      "Fyll, toppa med vispgrädde och florsocker."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "skansk_kavring",
+    "title": "Skånsk kavring",
+    "subtitle": "Mörk, söt och fast — perfekt till sill och ost.",
+    "description": "Klassisk söt rågbröd från Skåne med mörk sirap och kryddor. Bakas i form, ångas långsamt och blir extremt saftig.",
+    "difficulty": "intermediate",
+    "yields_loaves": 1,
+    "prep_minutes": 30,
+    "total_minutes": 960,
+    "ingredients": [
+      {
+        "name": "Rågmjöl",
+        "grams": 400,
+        "is_flour": true
+      },
+      {
+        "name": "Vetemjöl special",
+        "grams": 100,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten (ljummet)",
+        "grams": 350,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 100
+      },
+      {
+        "name": "Mörk sirap",
+        "grams": 100
+      },
+      {
+        "name": "Salt",
+        "grams": 12
+      },
+      {
+        "name": "Krossad kummin",
+        "grams": 6
+      }
+    ],
+    "steps": [
+      "Blanda alla ingredienser till en klibbig deg. Knåda 8 min.",
+      "Bulkjäs 5 timmar.",
+      "Forma och lägg i smord limpform med lock (eller foliesvept).",
+      "Jäs 2 timmar.",
+      "Baka i 175 °C i 75–90 min med locket på (ångbakning).",
+      "Ta av locket sista 10 min för svag skorpa.",
+      "Låt vila insvept i bakduk över natten."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "tunnbrod",
+    "title": "Mjukt tunnbröd",
+    "subtitle": "Norrländsk klassiker att rulla med fyllning.",
+    "description": "Tunt, mjukt rågbröd som bakas på torr platta eller stekjärn. Perfekt till renstek, kavring eller bara med smör och ost.",
+    "difficulty": "intermediate",
+    "yields_loaves": 8,
+    "prep_minutes": 60,
+    "total_minutes": 720,
+    "ingredients": [
+      {
+        "name": "Rågmjöl",
+        "grams": 250,
+        "is_flour": true
+      },
+      {
+        "name": "Vetemjöl special",
+        "grams": 250,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 280,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 80
+      },
+      {
+        "name": "Smör (smält)",
+        "grams": 30
+      },
+      {
+        "name": "Sirap",
+        "grams": 30
+      },
+      {
+        "name": "Salt",
+        "grams": 8
+      },
+      {
+        "name": "Stött anis",
+        "grams": 2
+      },
+      {
+        "name": "Stött fänkål",
+        "grams": 2
+      }
+    ],
+    "steps": [
+      "Blanda alla ingredienser till en smidig deg.",
+      "Bulkjäs 3–4 timmar.",
+      "Dela i 8 bitar. Kavla ut tunt på mjölad bänk (~20 cm runda).",
+      "Pricka brödet med en gaffel.",
+      "Stek på torr het platta eller stekjärn 1–2 min per sida.",
+      "Lägg under bakduk medan resten gräddas så de förblir mjuka."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "bagels",
+    "title": "Surdegs-bagels",
+    "subtitle": "Tugga och knaprig skorpa — perfekt frukost.",
+    "description": "Bagels får sin signaturkonsistens av att kokas innan ugnen. Surdegen ger en djupare smak än traditionella bagels.",
+    "difficulty": "intermediate",
+    "yields_loaves": 8,
+    "prep_minutes": 40,
+    "total_minutes": 1080,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 500,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 280,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 100
+      },
+      {
+        "name": "Salt",
+        "grams": 10
+      },
+      {
+        "name": "Honung (till deg)",
+        "grams": 20
+      },
+      {
+        "name": "Bakpulver (i kokvatten)",
+        "grams": 15
+      },
+      {
+        "name": "Honung (i kokvatten)",
+        "grams": 15
+      },
+      {
+        "name": "Sesam- eller vallmofrön",
+        "grams": 30
+      }
+    ],
+    "steps": [
+      "Blanda deg-ingredienserna. Knåda 10 min till stark deg.",
+      "Bulkjäs 4 timmar.",
+      "Kyljäs över natten.",
+      "Dela i 8 bitar. Forma till runda, gör hål i mitten med fingret.",
+      "Jäs 30 min.",
+      "Koka upp vatten med bakpulver och honung. Koka bagels 30 sek per sida.",
+      "Doppa i frön. Baka i 230 °C i 20–22 min till djupt gyllene."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "naan",
+    "title": "Surdegs-naan",
+    "subtitle": "Mjuka indiska tunnbröd direkt på panna.",
+    "description": "Saftig, böljande naan med surdeg istället för jäst. Stek i het stekpanna eller direkt på pizzasten.",
+    "difficulty": "beginner",
+    "yields_loaves": 6,
+    "prep_minutes": 25,
+    "total_minutes": 540,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 400,
+        "is_flour": true
+      },
+      {
+        "name": "Yoghurt (turkisk)",
+        "grams": 150,
+        "is_water": true
+      },
+      {
+        "name": "Vatten (ljummet)",
+        "grams": 100,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 80
+      },
+      {
+        "name": "Salt",
+        "grams": 8
+      },
+      {
+        "name": "Olivolja eller smör (smält)",
+        "grams": 30
+      },
+      {
+        "name": "Smör + krossad vitlök (till penseling)",
+        "grams": 50
+      }
+    ],
+    "steps": [
+      "Blanda alla ingredienser. Knåda 8 min till slät deg.",
+      "Bulkjäs 4–5 timmar.",
+      "Dela i 6 bitar. Kavla ut till ovala plattor.",
+      "Värm en gjutjärnspanna mycket het.",
+      "Stek 1–2 min per sida tills bubblor och bruna fläckar.",
+      "Pensla genast med vitlökssmör."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "fullkornsbrod",
+    "title": "Surdegs-fullkornsbröd",
+    "subtitle": "100% fullkornsvete — fiber och smak.",
+    "description": "Robust limpa med 100% fullkornsmjöl. Lägre hydrering än vit för att kompensera kliets vattenupptag. Smakrik och hållbar.",
+    "difficulty": "intermediate",
+    "yields_loaves": 1,
+    "prep_minutes": 30,
+    "total_minutes": 1320,
+    "ingredients": [
+      {
+        "name": "Fullkornsvete",
+        "grams": 500,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 400,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 120
+      },
+      {
+        "name": "Salt",
+        "grams": 10
+      },
+      {
+        "name": "Honung",
+        "grams": 20
+      }
+    ],
+    "steps": [
+      "Blanda mjöl och vatten. Autolys 45 min.",
+      "Tillsätt surdeg, salt och honung. Stretch & fold var 30 min × 4.",
+      "Bulkjäs 5–6 timmar tills 60% ökning.",
+      "Forma och lägg i mjölad jäskorg.",
+      "Kyljäs 8–12 timmar.",
+      "Baka i förvärmd gjutjärnsgryta 250 °C i 25 min med locket.",
+      "Sänk till 220 °C, baka 22 min utan lock."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "speltlimpa",
+    "title": "Speltlimpa",
+    "subtitle": "Mild, nötig variant av vetelimpan.",
+    "description": "Spelt har lägre glutenstyrka än vanligt vete — håller hydreringen lägre och var försiktig med knådning. Resultatet är en mjuk, något söt limpa med karaktäristisk doft.",
+    "difficulty": "intermediate",
+    "yields_loaves": 1,
+    "prep_minutes": 25,
+    "total_minutes": 1140,
+    "ingredients": [
+      {
+        "name": "Speltmjöl",
+        "grams": 500,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 350,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 100
+      },
+      {
+        "name": "Salt",
+        "grams": 10
+      }
+    ],
+    "steps": [
+      "Blanda mjöl och vatten. Autolys 30 min.",
+      "Tillsätt surdeg och salt. Coil-fold var 45 min × 3 (mindre än med vete).",
+      "Bulkjäs 4–5 timmar.",
+      "Forma försiktigt — spelt går lätt sönder. Lägg i jäskorg.",
+      "Kyljäs 8–10 timmar.",
+      "Baka i gjutjärnsgryta 250 °C 20 min med lock, 18 min utan vid 220 °C."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "rosmarin_focaccia",
+    "title": "Rosmarinfocaccia",
+    "subtitle": "Saftig italiensk platta med olja och färska örter.",
+    "description": "Variant av focaccia med rosmarin och flingsalt. Den olja-doppade ytan gör underverk under bakningen.",
+    "difficulty": "beginner",
+    "yields_loaves": 1,
+    "prep_minutes": 20,
+    "total_minutes": 720,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 500,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 400,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 100
+      },
+      {
+        "name": "Olivolja (i degen)",
+        "grams": 30
+      },
+      {
+        "name": "Olivolja (på ytan)",
+        "grams": 50
+      },
+      {
+        "name": "Salt",
+        "grams": 10
+      },
+      {
+        "name": "Färsk rosmarin",
+        "grams": 15
+      },
+      {
+        "name": "Flingsalt",
+        "grams": 5
+      }
+    ],
+    "steps": [
+      "Blanda mjöl, vatten, surdeg och olja. Salt efter 30 min.",
+      "Stretch & fold var 30 min × 4.",
+      "Bulkjäs 4 timmar.",
+      "Häll ut i välsmord plåt. Tryck ut till hela plåten.",
+      "Jäs 1 timme.",
+      "Tryck ner fingrar i degen för \"groparna\". Häll på olja, strö rosmarin och flingsalt.",
+      "Baka i 230 °C i 22–25 min till gyllene."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "cheddarbrod",
+    "title": "Cheddarbröd",
+    "subtitle": "Limpa fylld med smält cheddar — gott till soppa.",
+    "description": "Fluffig limpa med stora cheddarsmaker. Ostbitarna smälter delvis under bakningen och skapar saltiga oas i smulan.",
+    "difficulty": "intermediate",
+    "yields_loaves": 1,
+    "prep_minutes": 25,
+    "total_minutes": 1080,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 500,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 350,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 100
+      },
+      {
+        "name": "Salt",
+        "grams": 10
+      },
+      {
+        "name": "Cheddar (tärnad, åldrad)",
+        "grams": 150
+      },
+      {
+        "name": "Svartpeppar (krossad)",
+        "grams": 2
+      }
+    ],
+    "steps": [
+      "Blanda mjöl, vatten, surdeg och salt. Stretch & fold ×3.",
+      "Vid sista folden — viker du in cheddartärningarna och peppar.",
+      "Bulkjäs 4 timmar.",
+      "Forma försiktigt så osten håller sig i degen.",
+      "Kyljäs 8 timmar.",
+      "Baka i förvärmd gjutjärnsgryta 250 °C i 22 min med lock.",
+      "Sänk till 220 °C, baka 18 min utan lock."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "pita",
+    "title": "Surdegs-pita",
+    "subtitle": "Tunna fickbröd som puffar upp i ugnen.",
+    "description": "Klassisk pita med surdeg. Tricket är mycket het ugn — då puffar de upp och får sin ficka.",
+    "difficulty": "beginner",
+    "yields_loaves": 8,
+    "prep_minutes": 25,
+    "total_minutes": 540,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 500,
+        "is_flour": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 320,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 80
+      },
+      {
+        "name": "Salt",
+        "grams": 8
+      },
+      {
+        "name": "Olivolja",
+        "grams": 20
+      }
+    ],
+    "steps": [
+      "Blanda alla ingredienser. Knåda 8 min.",
+      "Bulkjäs 4 timmar.",
+      "Dela i 8 bitar. Forma till bollar, vila 15 min.",
+      "Kavla ut till plattor (~5 mm).",
+      "Värm ugn maxhett (helst 280 °C) med pizzasten eller plåt.",
+      "Baka 3–4 min — de puffar upp till bollar.",
+      "Lägg under bakduk medan resten gräddas."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "hamburgerbullar",
+    "title": "Surdegs-hamburgerbullar",
+    "subtitle": "Mjuka briochelika bullar med långsam jäsning.",
+    "description": "Veckokvällsfavorit. Briocheliknande textur med surdeg som syrgivare. Sista 5 min med mjölkglans gör dem skiniga.",
+    "difficulty": "intermediate",
+    "yields_loaves": 8,
+    "prep_minutes": 30,
+    "total_minutes": 1080,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 500,
+        "is_flour": true
+      },
+      {
+        "name": "Mjölk",
+        "grams": 200,
+        "is_water": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 80,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 100
+      },
+      {
+        "name": "Smör (rumstemp.)",
+        "grams": 60
+      },
+      {
+        "name": "Socker",
+        "grams": 30
+      },
+      {
+        "name": "Salt",
+        "grams": 8
+      },
+      {
+        "name": "Ägg",
+        "grams": 50
+      },
+      {
+        "name": "Sesamfrön",
+        "grams": 20
+      }
+    ],
+    "steps": [
+      "Blanda allt utom smör och sesam. Knåda 8 min.",
+      "Tillsätt smör i klickar, knåda 8 min till.",
+      "Bulkjäs 4 timmar.",
+      "Kyljäs 6–10 timmar.",
+      "Dela i 8 bullar. Jäs 2 timmar.",
+      "Pensla med ägg, strö sesamfrön. Baka i 200 °C i 18–20 min."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "kanelbullar_kanslabrist",
+    "title": "Quick-cinnamon (utan kalljäsning)",
+    "subtitle": "Snabba kanelbullar när suget kommer på direkt.",
+    "description": "Surdegens långa jäsningar i ära — men ibland vill man bara ha kanelbullar idag. Den här tar 5 timmar totalt.",
+    "difficulty": "beginner",
+    "yields_loaves": 12,
+    "prep_minutes": 30,
+    "total_minutes": 300,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 500,
+        "is_flour": true
+      },
+      {
+        "name": "Mjölk (ljummen)",
+        "grams": 220,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv) + 1 tsk vanlig jäst",
+        "grams": 100
+      },
+      {
+        "name": "Smör (rumstemp.)",
+        "grams": 80
+      },
+      {
+        "name": "Socker (i deg)",
+        "grams": 40
+      },
+      {
+        "name": "Stött kardemumma",
+        "grams": 8
+      },
+      {
+        "name": "Salt",
+        "grams": 6
+      },
+      {
+        "name": "Smör (fyllning, mjukt)",
+        "grams": 70
+      },
+      {
+        "name": "Strösocker (fyllning)",
+        "grams": 80
+      },
+      {
+        "name": "Kanel (fyllning)",
+        "grams": 15
+      },
+      {
+        "name": "Pärlsocker",
+        "grams": 30
+      }
+    ],
+    "steps": [
+      "Blanda deg-ingredienserna. Knåda 10 min med smöret inarbetat.",
+      "Jäs 2,5 timmar (surdegen + jäst ger tempo).",
+      "Kavla ut till rektangel ~30×50 cm.",
+      "Bred fyllningen, rulla tätt, skär 12 bitar.",
+      "Lägg i form, jäs 1,5 timme.",
+      "Pensla med ägg, strö pärlsocker. Baka i 220 °C i 8–10 min."
+    ],
+    "is_built_in": true
+  },
+  {
+    "id": "english_muffins",
+    "title": "Surdegs-english muffins",
+    "subtitle": "Bakas på panna — perfekt med ägg och smör.",
+    "description": "Klassiker till frukost — rostas och toppas med smör eller eggs benedict. Bakas på torr panna istället för i ugn.",
+    "difficulty": "beginner",
+    "yields_loaves": 10,
+    "prep_minutes": 25,
+    "total_minutes": 720,
+    "ingredients": [
+      {
+        "name": "Vetemjöl special",
+        "grams": 500,
+        "is_flour": true
+      },
+      {
+        "name": "Mjölk",
+        "grams": 200,
+        "is_water": true
+      },
+      {
+        "name": "Vatten",
+        "grams": 80,
+        "is_water": true
+      },
+      {
+        "name": "Surdeg (aktiv)",
+        "grams": 100
+      },
+      {
+        "name": "Smör (smält)",
+        "grams": 30
+      },
+      {
+        "name": "Salt",
+        "grams": 8
+      },
+      {
+        "name": "Honung",
+        "grams": 15
+      },
+      {
+        "name": "Majsmjöl (till plåten)",
+        "grams": 30
+      }
+    ],
+    "steps": [
+      "Blanda allt. Knåda 10 min.",
+      "Bulkjäs 4 timmar.",
+      "Kavla ut 1,5 cm tjock platta.",
+      "Stansa ut runda muffins (~8 cm). Lägg på majsmjölad plåt.",
+      "Jäs 1 timme.",
+      "Stek på torr stekpanna i medelhög värme — 6 min per sida tills genomvarma.",
+      "Dela med gaffel (inte kniv) för att bevara ojämn yta."
+    ],
+    "is_built_in": true
+  }
+]

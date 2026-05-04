@@ -1,0 +1,223 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../components/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import AppStoreBadge from '../../../components/AppStoreBadge.astro';
+import recipes from '../../../data/recipes.json';
+
+interface Ingredient {
+  name: string;
+  grams: number;
+  is_flour?: boolean;
+  is_water?: boolean;
+}
+interface Recipe {
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  yields_loaves: number;
+  prep_minutes: number;
+  total_minutes: number;
+  ingredients: Ingredient[];
+  steps: string[];
+}
+
+export const getStaticPaths = (() => {
+  const list = recipes as unknown as Recipe[];
+  return list.map((r) => ({
+    params: { slug: r.id },
+    props: { recipe: r, all: list },
+  }));
+}) satisfies GetStaticPaths;
+
+const { recipe, all } = Astro.props;
+
+const totalFlour = recipe.ingredients
+  .filter((i) => i.is_flour)
+  .reduce((s, i) => s + i.grams, 0);
+const totalWater = recipe.ingredients
+  .filter((i) => i.is_water)
+  .reduce((s, i) => s + i.grams, 0);
+const hydration =
+  totalFlour > 0 ? Math.round((totalWater / totalFlour) * 100) : null;
+
+const difficultyLabel = {
+  beginner: 'Nybörjare',
+  intermediate: 'Mellan',
+  advanced: 'Avancerad',
+}[recipe.difficulty];
+
+const totalHours = Math.floor(recipe.total_minutes / 60);
+const totalMins = recipe.total_minutes % 60;
+const totalLabel =
+  totalHours > 0
+    ? totalMins > 0
+      ? `${totalHours}h ${totalMins}m`
+      : `${totalHours}h`
+    : `${totalMins}m`;
+
+// Recipe JSON-LD — gives rich snippets in Google with stars, time,
+// ingredients. Major CTR boost vs plain blue links.
+const recipeJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Recipe',
+  name: recipe.title,
+  description: recipe.description,
+  recipeCuisine: 'Swedish',
+  recipeCategory: 'Bröd',
+  keywords: `surdeg, ${recipe.title}, ${recipe.id.replace(/_/g, ' ')}`,
+  prepTime: `PT${recipe.prep_minutes}M`,
+  totalTime: `PT${recipe.total_minutes}M`,
+  recipeYield: `${recipe.yields_loaves} bröd`,
+  author: {
+    '@type': 'Person',
+    name: 'Alexander Bergqvist',
+    url: 'https://alexanderbergqvist-com.vercel.app',
+  },
+  recipeIngredient: recipe.ingredients.map(
+    (i) => `${i.grams} g ${i.name}`,
+  ),
+  recipeInstructions: recipe.steps.map((s, i) => ({
+    '@type': 'HowToStep',
+    position: i + 1,
+    text: s,
+  })),
+};
+
+// Related recipes — same difficulty, max 3.
+const related = (all as Recipe[])
+  .filter((r) => r.id !== recipe.id && r.difficulty === recipe.difficulty)
+  .slice(0, 3);
+---
+
+<BaseLayout
+  title={`${recipe.title} — surdegsrecept`}
+  description={recipe.subtitle.length > 30
+    ? recipe.subtitle
+    : `${recipe.title}: ${recipe.description.slice(0, 130)}`}
+  type="article"
+  keywords={[
+    recipe.title.toLowerCase(),
+    `${recipe.title.toLowerCase()} recept`,
+    `${recipe.title.toLowerCase()} surdeg`,
+    'surdegsrecept',
+    'surdeg från grunden',
+  ]}
+  image={`/og/surdeg-recept-${recipe.id}.png`}
+>
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify(recipeJsonLd)}
+  />
+
+  <article class="max-w-3xl mx-auto px-6 py-8">
+    <Breadcrumbs
+      trail={[
+        { name: 'Hem', url: '/' },
+        { name: 'Surdeg', url: '/surdeg/' },
+        { name: 'Recept', url: '/surdeg/recept/' },
+        { name: recipe.title },
+      ]}
+    />
+
+    <h1 class="mt-6 text-3xl md:text-5xl font-black tracking-tight">
+      {recipe.title}
+    </h1>
+    <p class="mt-3 text-lg text-slate-600">{recipe.subtitle}</p>
+
+    <div class="mt-6 flex flex-wrap gap-3 text-sm">
+      <span
+        class="px-3 py-1 rounded-full bg-amber-100 text-amber-900 font-bold"
+      >
+        🥖 {difficultyLabel}
+      </span>
+      <span
+        class="px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-bold"
+      >
+        ⏱️ {totalLabel}
+      </span>
+      <span
+        class="px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-bold"
+      >
+        🍞 {recipe.yields_loaves} bröd
+      </span>
+      {hydration && (
+        <span
+          class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 font-bold"
+        >
+          💧 {hydration}% hydration
+        </span>
+      )}
+    </div>
+
+    <p class="mt-6 text-slate-700 leading-relaxed">{recipe.description}</p>
+
+    <h2 class="mt-10 text-2xl font-black">Ingredienser</h2>
+    <p class="text-sm text-slate-500 mt-1">
+      För {recipe.yields_loaves} {recipe.yields_loaves === 1 ? 'bröd' : 'bröd'}
+    </p>
+    <ul class="mt-4 space-y-2 bg-slate-50 rounded-2xl p-5 border border-slate-200">
+      {recipe.ingredients.map((i) => (
+        <li class="flex items-start gap-3">
+          <span class="font-mono text-sm font-bold text-slate-700 min-w-[60px]">
+            {i.grams}g
+          </span>
+          <span class="text-slate-700">{i.name}</span>
+        </li>
+      ))}
+    </ul>
+
+    <h2 class="mt-10 text-2xl font-black">Tillvägagångssätt</h2>
+    <ol class="mt-4 space-y-4">
+      {recipe.steps.map((step, idx) => (
+        <li class="flex gap-4">
+          <div
+            class="flex-shrink-0 w-9 h-9 rounded-full bg-amber-500 text-white font-black flex items-center justify-center"
+          >
+            {idx + 1}
+          </div>
+          <p class="pt-1 text-slate-700 leading-relaxed">{step}</p>
+        </li>
+      ))}
+    </ol>
+
+    <aside
+      class="mt-12 rounded-2xl border border-slate-200 p-6 md:p-8 bg-gradient-to-br from-amber-50 to-white"
+    >
+      <h3 class="font-black text-lg">Tips för bättre resultat</h3>
+      <p class="mt-2 text-slate-700 text-sm leading-relaxed">
+        Använd Surdeg-appen för att hålla koll på matningar, jäsning och
+        bakdagboken — den pingar dig när det är dags för nästa steg och
+        sparar dina anteckningar för varje bak.
+      </p>
+      <div class="mt-4">
+        <AppStoreBadge status="soon" />
+      </div>
+    </aside>
+
+    {related.length > 0 && (
+      <section class="mt-12">
+        <h2 class="text-xl font-black mb-4">Liknande recept</h2>
+        <div class="grid md:grid-cols-3 gap-3">
+          {related.map((r) => (
+            <a
+              href={`/surdeg/recept/${r.id}/`}
+              class="block rounded-xl border border-slate-200 p-4 hover:border-slate-300 hover:shadow-md transition"
+            >
+              <div class="font-bold text-slate-900 line-clamp-2">{r.title}</div>
+              <div class="text-xs text-slate-500 mt-1">
+                {r.total_minutes >= 60
+                  ? `${Math.floor(r.total_minutes / 60)}h`
+                  : `${r.total_minutes}m`}
+                {' · '}
+                {r.yields_loaves} bröd
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+  </article>
+</BaseLayout>
