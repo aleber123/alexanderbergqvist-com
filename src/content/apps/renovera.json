@@ -1,0 +1,25 @@
+{
+  "name": "Renovera",
+  "tagline": "Håll koll på renoveringsprojektet — budget, tid och leverantörer.",
+  "description": "Renovera är iOS-appen för dig som renoverar hemma. Logga utgifter, samla offerter, planera tidslinje och spara kvitton för ROT-avdrag.",
+  "icon": "/apps/renovera.png",
+  "accent": "#795548",
+  "accentDark": "#3E2723",
+  "appStoreUrl": "https://apps.apple.com/se/app/renovera/id6800000003",
+  "bundleId": "com.alexanderbergqvist.renoveraapp",
+  "category": "Livsstil",
+  "keywords": [
+    "renovera app",
+    "renoveringsbudget",
+    "rot-avdrag",
+    "hus renovering"
+  ],
+  "features": [
+    "Logga utgifter per rum eller projekt",
+    "Spara kvitton med foto",
+    "Budget vs. faktiskt",
+    "Stöd för ROT-avdragsexport"
+  ],
+  "status": "live",
+  "order": 9
+}

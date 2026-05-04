@@ -1,0 +1,28 @@
+{
+  "name": "Surdeg",
+  "tagline": "Mata, baka, njut — surdeg gjort enkelt.",
+  "description": "Surdeg är iOS-appen för dig som bakar med surdeg. Schemalägg matningar per surdeg, bläddra bland 33 svenska och internationella recept, och logga dina bakar i bakdagboken.",
+  "icon": "/apps/surdeg.png",
+  "accent": "#8B5A3C",
+  "accentDark": "#5C3A24",
+  "appStoreUrl": "https://apps.apple.com/se/app/surdeg/id6766103729",
+  "bundleId": "com.alexanderbergqvist.surdeg",
+  "category": "Mat och dryck",
+  "keywords": [
+    "surdeg",
+    "surdeg recept",
+    "surdegslimpa",
+    "matningsschema surdeg",
+    "surdeg från grunden",
+    "hydration surdeg"
+  ],
+  "features": [
+    "Återkommande matningspåminnelser per surdeg",
+    "33 svenska och internationella surdegsrecept",
+    "Bakdagbok med foto, betyg och anteckningar",
+    "Hydration-räknare per recept",
+    "Stöd för flera surdegar parallellt"
+  ],
+  "status": "soon",
+  "order": 2
+}

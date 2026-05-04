@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+/* Brand-tokens shared across the whole site. Each app section overrides
+   its accent via inline style on the section root. */
+@theme {
+  --color-bg: #ffffff;
+  --color-ink: #0f172a;
+  --color-muted: #64748b;
+  --color-border: #e2e8f0;
+  --color-accent: #2563eb;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-sans);
+}
+
+html {
+  font-family: var(--font-sans);
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+}
+
+/* Prose styling for MDX article bodies. Astro doesn't ship typography by
+   default — we keep it simple and readable. */
+.prose {
+  max-width: 68ch;
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--color-ink);
+}
+.prose h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+.prose h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.prose p {
+  margin-bottom: 1rem;
+}
+.prose ul,
+.prose ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+.prose li {
+  margin-bottom: 0.25rem;
+}
+.prose a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.prose a:hover {
+  text-decoration-thickness: 2px;
+}
+.prose blockquote {
+  border-left: 3px solid var(--color-border);
+  padding-left: 1rem;
+  font-style: italic;
+  color: var(--color-muted);
+  margin: 1.25rem 0;
+}
+.prose code {
+  background: #f1f5f9;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.92em;
+}

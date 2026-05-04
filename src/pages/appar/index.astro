@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../components/BaseLayout.astro';
+import AppCard from '../../components/AppCard.astro';
+
+const apps = (await getCollection('apps')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+---
+
+<BaseLayout
+  title="Alla appar"
+  description="Alla mina iOS-appar — Snusfri Resa, Surdeg, VAB-koll, Tidrapport, Plantera, Rita, Renovera, Födelsedagar och Sömnkoll. Indie-utvecklat i Sverige."
+>
+  <section class="max-w-6xl mx-auto px-6 py-16">
+    <h1 class="text-4xl md:text-5xl font-black tracking-tight">Alla appar</h1>
+    <p class="mt-4 text-lg text-slate-600 max-w-2xl">
+      {apps.length} iOS-appar byggda för att lösa konkreta vardagsproblem.
+      Kostnadsfria att ladda ner — vissa har valfri Premium-prenumeration.
+    </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-10">
+      {apps.map((app) => <AppCard app={app} />)}
+    </div>
+  </section>
+</BaseLayout>

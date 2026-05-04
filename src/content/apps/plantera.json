@@ -1,0 +1,26 @@
+{
+  "name": "Plantera",
+  "tagline": "Sverige-anpassad trädgårdsapp med frostvarningar.",
+  "description": "Plantera är iOS-appen för dig som odlar i Sverige. Få SMHI-baserade frostvarningar, kalender för sådd och skörd per zon, och affilieringstips för verktyg.",
+  "icon": "/apps/plantera.png",
+  "accent": "#43A047",
+  "accentDark": "#1B5E20",
+  "appStoreUrl": "https://apps.apple.com/se/app/plantera/id6800000001",
+  "bundleId": "com.alexanderbergqvist.planteraapp",
+  "category": "Livsstil",
+  "keywords": [
+    "trädgård app",
+    "odling",
+    "frost SMHI",
+    "sådd kalender",
+    "växtvård"
+  ],
+  "features": [
+    "SMHI-baserade frostvarningar",
+    "Sådd- och skördekalender per zon",
+    "Spåra dina växter med foto",
+    "Påminnelser om vattning"
+  ],
+  "status": "live",
+  "order": 7
+}

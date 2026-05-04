@@ -1,0 +1,25 @@
+{
+  "name": "VAB-koll",
+  "tagline": "Håll koll på dina VAB-dagar.",
+  "description": "VAB-koll är iOS-appen för föräldrar som vabbar. Logga vab-dagar per barn, se hur många du har använt och hur många du har kvar.",
+  "icon": "/apps/vab-koll.png",
+  "accent": "#FF9800",
+  "accentDark": "#E65100",
+  "appStoreUrl": "https://apps.apple.com/se/app/vab-koll/id6800000000",
+  "bundleId": "com.alexanderbergqvist.vabapp",
+  "category": "Livsstil",
+  "keywords": [
+    "vab",
+    "vab dagar",
+    "vab regler",
+    "vård av sjukt barn"
+  ],
+  "features": [
+    "Logga vab-dagar per barn",
+    "Översikt över använda och kvarvarande dagar",
+    "Stöd för flera barn",
+    "Export till Försäkringskassan"
+  ],
+  "status": "live",
+  "order": 6
+}

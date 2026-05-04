@@ -1,0 +1,43 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  app: CollectionEntry<'apps'>;
+}
+
+const { app } = Astro.props;
+const { name, tagline, icon, accent, status } = app.data;
+---
+
+<a
+  href={`/${app.id}/`}
+  class="group block rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-slate-300 hover:shadow-lg"
+>
+  <div class="flex items-start gap-4">
+    <div
+      class="w-16 h-16 rounded-2xl flex items-center justify-center text-white font-black text-2xl flex-shrink-0 overflow-hidden"
+      style={`background: ${accent};`}
+    >
+      <img
+        src={icon}
+        alt={`${name} ikon`}
+        class="w-full h-full object-cover"
+        loading="lazy"
+        onerror="this.style.display='none'; this.parentElement.textContent=this.alt[0];"
+      />
+    </div>
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center gap-2">
+        <h3 class="font-bold text-lg text-slate-900 group-hover:text-slate-700">
+          {name}
+        </h3>
+        {status === 'soon' && (
+          <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 uppercase tracking-wider">
+            Snart
+          </span>
+        )}
+      </div>
+      <p class="text-sm text-slate-600 mt-1 line-clamp-2">{tagline}</p>
+    </div>
+  </div>
+</a>

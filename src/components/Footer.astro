@@ -1,0 +1,42 @@
+---
+import { getCollection } from 'astro:content';
+const apps = (await getCollection('apps')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-slate-200 bg-slate-50 mt-20">
+  <div class="max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-8 text-sm">
+    <div class="md:col-span-2">
+      <div class="font-black text-lg">Alexander Bergqvist</div>
+      <p class="text-slate-600 mt-2 max-w-md">
+        Indie iOS-utvecklare från Sverige. Bygger appar som löser konkreta
+        vardagsproblem — från VAB-koll till snusfri-räkning.
+      </p>
+    </div>
+    <div>
+      <div class="font-bold mb-3">Appar</div>
+      <ul class="space-y-2 text-slate-600">
+        {apps.map((a) => (
+          <li>
+            <a href={`/${a.id}/`} class="hover:text-slate-900">{a.data.name}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div>
+      <div class="font-bold mb-3">Mer</div>
+      <ul class="space-y-2 text-slate-600">
+        <li><a href="/blog/" class="hover:text-slate-900">Blog</a></li>
+        <li><a href="/om/" class="hover:text-slate-900">Om mig</a></li>
+        <li>
+          <a href="mailto:alexander.bergqvist@gmail.com" class="hover:text-slate-900">Kontakt</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+    © {year} Alexander Bergqvist
+  </div>
+</footer>

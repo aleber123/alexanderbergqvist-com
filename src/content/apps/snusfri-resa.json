@@ -1,0 +1,28 @@
+{
+  "name": "Snusfri Resa",
+  "tagline": "Räkna timmar och kronor sparade — på vägen till ett snusfritt liv.",
+  "description": "Snusfri Resa är iOS-appen för dig som vill bli snusfri på riktigt. Live-räknare för snusfri tid och sparade kronor. Smarta motivations-pushar. Hälsotimeline med 10 milstolpar specifikt för snus — inte rökning.",
+  "icon": "/apps/snusfri-resa.png",
+  "accent": "#2ECC71",
+  "accentDark": "#27AE60",
+  "appStoreUrl": "https://apps.apple.com/se/app/snusfri-resa/id6766103729",
+  "bundleId": "com.alexanderbergqvist.slutasnusa",
+  "category": "Hälsa",
+  "keywords": [
+    "sluta snusa",
+    "snusfri",
+    "snus abstinens",
+    "snusstopp",
+    "snus och tandkött",
+    "spara pengar sluta snusa"
+  ],
+  "features": [
+    "Live-räknare för snusfri tid och sparade kronor",
+    "Smarta motivations-pushar när du behöver dem mest",
+    "Hälsotimeline med 10 milstolpar för just snusare",
+    "Statistik över sparade kronor och undvikna dosor",
+    "Ärlig relapse-knapp utan skam"
+  ],
+  "status": "soon",
+  "order": 1
+}

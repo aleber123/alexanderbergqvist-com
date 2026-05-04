@@ -1,0 +1,25 @@
+{
+  "name": "Födelsedagar",
+  "tagline": "Glöm aldrig en födelsedag igen.",
+  "description": "Födelsedagar är iOS-appen som påminner dig om viktiga personers födelsedagar och årsdagar. Lägg till foton, importera från kontakter och få aviseringar i god tid.",
+  "icon": "/apps/fodelsedagar.png",
+  "accent": "#E91E63",
+  "accentDark": "#AD1457",
+  "appStoreUrl": "https://apps.apple.com/se/app/fodelsedagar/id6747000000",
+  "bundleId": "com.alexanderbergqvist.birthday",
+  "category": "Livsstil",
+  "keywords": [
+    "födelsedagar",
+    "årsdagar",
+    "påminnelse födelsedag",
+    "kalender födelsedagar"
+  ],
+  "features": [
+    "Lägg till födelsedagar med foto",
+    "Importera från Kontakter",
+    "Påminnelser i god tid",
+    "Översikt månad för månad"
+  ],
+  "status": "live",
+  "order": 3
+}

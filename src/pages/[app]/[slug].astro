@@ -1,0 +1,59 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../components/BaseLayout.astro';
+
+export const getStaticPaths = (async () => {
+  const articles = await getCollection('articles', (a) => !a.data.draft);
+  return articles.map((article) => {
+    const slug = article.id.split('/').pop()!;
+    return {
+      params: { app: article.data.app, slug },
+      props: { article },
+    };
+  });
+}) satisfies GetStaticPaths;
+
+const { article } = Astro.props;
+const { Content } = await render(article);
+
+// Surface the parent app for back-link.
+const apps = await getCollection('apps');
+const app = apps.find((a) => a.id === article.data.app);
+---
+
+<BaseLayout
+  title={article.data.title}
+  description={article.data.description}
+  type="article"
+  publishedAt={article.data.publishedAt}
+  updatedAt={article.data.updatedAt}
+  keywords={article.data.keywords}
+>
+  <article class="max-w-3xl mx-auto px-6 py-12 md:py-16">
+    {app && (
+      <a
+        href={`/${app.id}/`}
+        class="text-sm font-bold text-slate-500 hover:text-slate-700"
+        >← {app.data.name}</a
+      >
+    )}
+    <h1 class="mt-3 text-3xl md:text-5xl font-black tracking-tight leading-tight">
+      {article.data.title}
+    </h1>
+    <p class="mt-3 text-lg text-slate-600">{article.data.description}</p>
+    <time
+      class="mt-4 block text-sm text-slate-500"
+      datetime={article.data.publishedAt.toISOString()}
+    >
+      {article.data.publishedAt.toLocaleDateString('sv-SE', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })}
+    </time>
+    <div class="prose mt-8">
+      <Content />
+    </div>
+  </article>
+</BaseLayout>

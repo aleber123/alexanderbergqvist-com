@@ -1,0 +1,192 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+import AppStoreBadge from '../../components/AppStoreBadge.astro';
+---
+
+<BaseLayout
+  title="Snusfri-kalkylator: Räkna ut hur mycket du sparar"
+  description="Hur mycket sparar du på att sluta snusa? Räkna ut exakt belopp per dag, månad, år och 10 år. Gratis räknare baserad på dina vanor."
+  keywords={[
+    'sluta snusa kalkylator',
+    'snusfri kalkylator',
+    'spara pengar sluta snusa',
+    'snus pris kalkylator',
+    'hur mycket kostar snus per år',
+  ]}
+>
+  <section class="max-w-3xl mx-auto px-6 py-12 md:py-16">
+    <span class="inline-block text-xs font-black uppercase tracking-widest text-slate-500">
+      Fri kalkylator
+    </span>
+    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+      Hur mycket sparar du på att sluta snusa?
+    </h1>
+    <p class="mt-4 text-lg text-slate-600">
+      Skriv in dina nuvarande vanor så ser du exakt hur mycket pengar du sparar
+      per dag, månad, år och 10 år. Det är pengar du inte längre brinner upp.
+    </p>
+
+    <div
+      class="mt-10 rounded-2xl border border-slate-200 bg-white p-6 md:p-8"
+    >
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm font-bold mb-2" for="dosor">
+            Dosor per dag
+          </label>
+          <input
+            id="dosor"
+            type="number"
+            min="0.1"
+            step="0.1"
+            value="1"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-emerald-500 focus:outline-none"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-2" for="kostnad">
+            Kostnad per dosa (kr)
+          </label>
+          <input
+            id="kostnad"
+            type="number"
+            min="1"
+            step="1"
+            value="50"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-emerald-500 focus:outline-none"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="rounded-2xl bg-emerald-50 border border-emerald-200 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-emerald-700">
+          Per dag
+        </div>
+        <div class="mt-1 text-2xl font-black text-emerald-900" data-out="day">–</div>
+      </div>
+      <div class="rounded-2xl bg-emerald-50 border border-emerald-200 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-emerald-700">
+          Per månad
+        </div>
+        <div class="mt-1 text-2xl font-black text-emerald-900" data-out="month">–</div>
+      </div>
+      <div class="rounded-2xl bg-emerald-100 border border-emerald-300 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-emerald-800">
+          Per år
+        </div>
+        <div class="mt-1 text-2xl font-black text-emerald-900" data-out="year">–</div>
+      </div>
+      <div class="rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 p-5 text-white">
+        <div class="text-xs font-black uppercase tracking-widest opacity-80">
+          På 10 år
+        </div>
+        <div class="mt-1 text-2xl font-black" data-out="decade">–</div>
+      </div>
+    </div>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-gradient-to-br from-emerald-50 to-white p-6 md:p-8">
+      <h2 class="text-xl font-black">Räkna mer än bara pengarna</h2>
+      <p class="mt-2 text-slate-700">
+        Snusfri Resa-appen räknar live varje sekund — sparade kronor, undvikna
+        dosor, och de 10 hälsomilstolparna som faktiskt gäller för snus (inte
+        rökning). Få motivations-pushar när du behöver dem som mest, en
+        panik-knapp för cravings, och stöd genom hela resan.
+      </p>
+      <div class="mt-6">
+        <AppStoreBadge
+          url="https://apps.apple.com/se/app/snusfri-resa/id6766103729"
+          status="soon"
+        />
+      </div>
+    </div>
+
+    <div class="prose mt-12">
+      <h2>Hur räknas det ut?</h2>
+      <p>
+        Beräkningen är rakt på sak: <code>dosor per dag × kostnad per dosa</code>
+        ger dagskostnaden. Den multipliceras med 30,4 för månad, 365,25 för år,
+        och 3 652,5 för 10 år. Vi tar inte hänsyn till prisstegringar (i
+        verkligheten har snuspriset stigit ca 5–8% per år senaste decenniet, så
+        din verkliga besparing över tid är troligen högre).
+      </p>
+
+      <h2>Hur mycket kostar snus i Sverige 2026?</h2>
+      <p>
+        En genomsnittlig dosa lössnus eller portionssnus kostar mellan 40 och
+        65 kr i butik. Premiumvarianter (t.ex. tobacco-free white-portion) ligger
+        ofta på 60–80 kr. Den som snusar 1 dosa per dag betalar alltså cirka
+        15 000–22 000 kr per år bara på själva snusen. Lägg till skatt: en
+        bekräftad snuspriskälla är att tobaksskatten på snus 2026 ligger på
+        omkring 525 kr per kilo, vilket utgör en betydande del av priset.
+      </p>
+
+      <h2>Är det realistiskt att jag faktiskt sparar pengarna?</h2>
+      <p>
+        Studier på beteende kring sparande visar att människor som inte aktivt
+        styr sitt sparande tenderar att konsumera tillbaka 50–80% av en
+        oväntad besparing inom 6 månader. Det är därför Snusfri Resa visar
+        sparbeloppet löpande och peppar dig att <em>flytta</em> det till ett
+        sparkonto eller mål — inte bara registrera siffran.
+      </p>
+
+      <h2>Vanliga frågor om att sluta snusa</h2>
+      <h3>Hur länge varar abstinensen?</h3>
+      <p>
+        Värsta abstinensen toppar mellan dag 1 och dag 4, och börjar klinga av
+        omkring dag 7. Efter 2–3 veckor är de fysiska abstinenssymptomen i stort
+        sett över — det är då vanan och beteendet som återstår.
+      </p>
+
+      <h3>Är det farligare att sluta snusa "kallt" eller trappa ner?</h3>
+      <p>
+        Inget av sätten är farligt. Forskning antyder dock att kall-stop ger
+        högre långsiktig framgångsfrekvens hos de som lyckas — eftersom du
+        bara behöver "slå hål på" abstinensen en gång. Trappa ner-strategin har
+        högre kortsiktig komfort men förlängd kontaktperiod med nikotinet.
+      </p>
+
+      <h3>Vad händer med tandköttet när jag slutar?</h3>
+      <p>
+        Ungefär 1 vecka efter snusstopp börjar tandköttet läka. Vita lesioner
+        på munslemhinnan (om du haft sådana) försvinner ofta inom 4–6 veckor.
+        Tandköttsretraktionen som redan skett kommer dock inte tillbaka —
+        skälet är att slå larm tidigt.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // Live calculator — runs entirely client-side, no JS framework needed.
+  const fmt = (n: number) =>
+    new Intl.NumberFormat('sv-SE', {
+      style: 'currency',
+      currency: 'SEK',
+      maximumFractionDigits: 0,
+    }).format(Math.max(0, n));
+
+  const dosorEl = document.getElementById('dosor') as HTMLInputElement;
+  const kostnadEl = document.getElementById('kostnad') as HTMLInputElement;
+  const out = {
+    day: document.querySelector('[data-out="day"]')!,
+    month: document.querySelector('[data-out="month"]')!,
+    year: document.querySelector('[data-out="year"]')!,
+    decade: document.querySelector('[data-out="decade"]')!,
+  };
+
+  function compute() {
+    const dosor = Number(dosorEl.value) || 0;
+    const kr = Number(kostnadEl.value) || 0;
+    const day = dosor * kr;
+    out.day.textContent = fmt(day);
+    out.month.textContent = fmt(day * 30.4375);
+    out.year.textContent = fmt(day * 365.25);
+    out.decade.textContent = fmt(day * 3652.5);
+  }
+
+  dosorEl.addEventListener('input', compute);
+  kostnadEl.addEventListener('input', compute);
+  compute();
+</script>
