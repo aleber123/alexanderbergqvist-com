@@ -1,0 +1,180 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FAQ from '../../components/FAQ.astro';
+import AppStoreBadge from '../../components/AppStoreBadge.astro';
+
+const faq = [
+  {
+    q: 'När är det säkert att plantera ut frostkänsliga växter i Sverige?',
+    a: 'Generellt efter "isheligonen" (sista helgen i maj) i södra Sverige, runt 1-10 juni i Mellansverige, och 10-20 juni i norr. Men det varierar mellan olika år och du bör alltid kolla 10-dagarsprognosen innan utplantering.',
+  },
+  {
+    q: 'Vilka växter är frostkänsliga?',
+    a: 'Tomater, paprika, gurka, zucchini, basilika, pelargoner, dahlier och de flesta annueller. Härdiga är spenat, ärtor, sallat, lök, vitlök och de flesta perenner.',
+  },
+  {
+    q: 'Vad är skillnaden mellan markfrost och luftfrost?',
+    a: 'Luftfrost är när lufttemperaturen i 2 meters höjd går under 0 °C. Markfrost är när själva markytan är frusen — kan ske även när luften är +2 °C på morgonen. Markfrost är farligare för småplantor.',
+  },
+  {
+    q: 'Varför är vårfrostnätterna farligast?',
+    a: 'För att växterna då är i sin mest känsliga fas — nyutslagna blad och knoppar har inte hunnit härda. Höstfrost är mindre farlig eftersom växterna naturligt förbereder sig.',
+  },
+];
+
+// SLU's published "average last spring frost" dates by zone, ~10-year average.
+// Zones 1-3 = south Sweden (Skåne, Halland, Småland coast)
+// Zones 4-5 = central
+// Zones 6-8 = north
+const zones = [
+  { zone: 1, region: 'Skåne, kusten Halland, Öland', date: '5 maj', range: '25 apr – 15 maj' },
+  { zone: 2, region: 'Skåne inland, Småland kust, Gotland', date: '15 maj', range: '5 – 25 maj' },
+  { zone: 3, region: 'Halland, Bohuslän, västra Götaland', date: '20 maj', range: '10 – 30 maj' },
+  { zone: 4, region: 'Mälardalen, Västergötland, östra Småland', date: '25 maj', range: '15 maj – 5 jun' },
+  { zone: 5, region: 'Värmland, Dalarna, Gästrikland kust', date: '5 jun', range: '25 maj – 15 jun' },
+  { zone: 6, region: 'Hälsingland, Medelpad, Jämtland kust', date: '10 jun', range: '1 – 20 jun' },
+  { zone: 7, region: 'Ångermanland, Västerbotten kust', date: '15 jun', range: '5 – 25 jun' },
+  { zone: 8, region: 'Norrbotten, fjälltrakter', date: '25 jun', range: '15 jun – 5 jul' },
+];
+---
+
+<BaseLayout
+  title="Frostrisk-räknare: När är det säkert att plantera ut?"
+  description="Hitta första frostfria datum för din svenska odlingszon (1-8). Inkluderar tabell över när frostkänsliga växter kan ut, baserat på SLU-data."
+  keywords={[
+    'sista frost vår',
+    'när plantera ut',
+    'frostrisk Sverige',
+    'odlingszon frost',
+    'tomat ut maj',
+    'pelargon ut',
+  ]}
+>
+  <section class="max-w-3xl mx-auto px-6 py-8">
+    <Breadcrumbs
+      trail={[
+        { name: 'Hem', url: '/' },
+        { name: 'Plantera', url: '/plantera/' },
+        { name: 'Frostrisk-räknare' },
+      ]}
+    />
+    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-slate-500">
+      Fri kalkylator
+    </span>
+    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+      När är det säkert att plantera ut?
+    </h1>
+    <p class="mt-3 text-lg text-slate-600">
+      Hitta din odlingszon nedan. Datumen är genomsnitt för sista
+      vårfrostnatten — kolla alltid 10-dagarsprognosen för säkerhets
+      skull.
+    </p>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-white overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-50 text-left">
+          <tr>
+            <th class="p-3 font-bold">Zon</th>
+            <th class="p-3 font-bold">Region</th>
+            <th class="p-3 font-bold">Säkert efter</th>
+            <th class="p-3 font-bold hidden md:table-cell">Spann</th>
+          </tr>
+        </thead>
+        <tbody>
+          {zones.map((z) => (
+            <tr class="border-t border-slate-100">
+              <td class="p-3 font-black text-emerald-700">{z.zone}</td>
+              <td class="p-3 text-slate-700">{z.region}</td>
+              <td class="p-3 font-bold text-slate-900">{z.date}</td>
+              <td class="p-3 text-slate-500 hidden md:table-cell">{z.range}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-gradient-to-br from-emerald-50 to-white p-6 md:p-8">
+      <h2 class="text-xl font-black">Få frostvarningar i mobilen</h2>
+      <p class="mt-2 text-slate-700">
+        Plantera-appen läser SMHI's prognos och pingar dig om fros­t­
+        risk på natten — så du hinner täcka dina pelargoner eller
+        plantera in dina tomater. Helt gratis.
+      </p>
+      <div class="mt-6">
+        <AppStoreBadge
+          url="https://apps.apple.com/se/app/plantera/id6763648199"
+          status="live"
+        />
+      </div>
+    </div>
+
+    <div class="prose mt-12">
+      <h2>Vilka växter ska absolut inte ut före sista frost?</h2>
+      <p>
+        Frostkänsliga (skadas vid 0 °C eller strax under):
+      </p>
+      <ul>
+        <li>Tomat, paprika, chili, aubergine</li>
+        <li>Gurka, zucchini, pumpa, melon</li>
+        <li>Basilika, mynta (vissa sorter), citronmeliss (känslig)</li>
+        <li>Pelargoner, dahlier, petunior, lobelia</li>
+        <li>De flesta sommarblommor (annueller)</li>
+      </ul>
+      <p>Härdiga (klarar lätt frost ner till -3 °C):</p>
+      <ul>
+        <li>Sallat, spenat, ruccola, mangold</li>
+        <li>Ärtor, bondbönor, dill, persilja</li>
+        <li>Lök, vitlök, purjolök</li>
+        <li>De flesta kålväxter (broccoli, kålrot, brysselkål)</li>
+        <li>Perenner (när de är etablerade)</li>
+      </ul>
+
+      <h2>Strategier vid risk för vårfrost</h2>
+      <h3>1. Täck över</h3>
+      <p>
+        Tidningar, fiberduk eller plastfolie ovanpå — fäst med stenar
+        eller tegelpinnar. Ta bort på morgonen så plantorna får sol.
+      </p>
+      <h3>2. Vattna kvällen innan</h3>
+      <p>
+        Fuktig jord avger värme längre under natten än torr jord.
+        Vattna runt rötterna sent på eftermiddagen.
+      </p>
+      <h3>3. Plantera i krukor som kan flyttas</h3>
+      <p>
+        Kruksortiment som tomatplantor i 5L-krukor är mycket flexibla
+        — vid varning, dra in på altanen eller i garaget för natten.
+      </p>
+      <h3>4. Vänta hellre en vecka</h3>
+      <p>
+        En tomat planterad 1 juni i kallt väder växer LÅNGSAMMARE än
+        en tomat planterad 8 juni i varmt väder. Tålamod vinner.
+      </p>
+
+      <h2>Hur räknas zonerna?</h2>
+      <p>
+        Sveriges Lantbruksuniversitet (SLU) har delat in landet i 8
+        odlingszoner baserat på medeltemperatur, frostnatter och
+        växtperiodens längd. Zon 1 är varmast (Skåne kusten), zon 8
+        kallast (fjällen). Vill du veta din exakta zon —
+        använd <a href="/plantera/odlingszon/">odlingszon-räknaren</a>.
+      </p>
+
+      <h2>Klimatförändringen och frostperioderna</h2>
+      <p>
+        Senaste 30 åren har sista frostnatten i södra Sverige flyttats
+        7-14 dagar tidigare. Skåne har gått från ~15 maj på 1980-talet
+        till ~5 maj idag i genomsnitt. Norra Sverige har sett mindre
+        förändring.
+      </p>
+      <p>
+        Plantera-appen använder SMHI:s 10-dagarsprognos för
+        din specifika ort, inte historiska genomsnitt — så du får
+        verkligheten, inte tabellen.
+      </p>
+    </div>
+
+    <FAQ items={faq} />
+  </section>
+</BaseLayout>

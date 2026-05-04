@@ -5,7 +5,8 @@
   "icon": "/apps/plantera.png",
   "accent": "#43A047",
   "accentDark": "#1B5E20",
-  "bundleId": "com.alexanderbergqvist.planteraapp",
+  "appStoreUrl": "https://apps.apple.com/se/app/plantera/id6763648199",
+  "bundleId": "com.alexanderbergqvist.plantera",
   "category": "Livsstil",
   "keywords": [
     "trädgård app",
@@ -20,6 +21,6 @@
     "Spåra dina växter med foto",
     "Påminnelser om vattning"
   ],
-  "status": "soon",
-  "order": 8
+  "status": "live",
+  "order": 5
 }

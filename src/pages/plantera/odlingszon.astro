@@ -1,0 +1,225 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FAQ from '../../components/FAQ.astro';
+import AppStoreBadge from '../../components/AppStoreBadge.astro';
+
+const faq = [
+  {
+    q: 'Vad är odlingszoner?',
+    a: 'Sveriges Lantbruksuniversitet (SLU) har delat in Sverige i 8 odlingszoner (1-8) baserat på växtperiodens längd, frostnatter och medeltemperatur. Zon 1 är varmast (södra Skåne kusten), zon 8 kallast (fjällen).',
+  },
+  {
+    q: 'Hur skiljer sig odlingszonerna i praktiken?',
+    a: 'Zon 1-3: tomater, druvor, fikon på friland. Zon 4-5: tomater i växthus, fruktträd, klassiska perenner. Zon 6-7: kortsäsongs-grönsaker, härdiga perenner. Zon 8: bara mycket härdiga växter och korta säsonger.',
+  },
+  {
+    q: 'Kan jag odla "fel" zon-växter om jag har rätt mikroklimat?',
+    a: 'Ja, en söderväggsplats kan vara 1-2 zoner varmare än omgivningen. Stenpartier och söderlägen kan ge "mikroklimat" där växter från varmare zoner överlever. Var beredd på extra skydd vid tuffa vintrar.',
+  },
+  {
+    q: 'Påverkar klimatförändringen zonerna?',
+    a: 'Ja. SLU har observerat att zongränserna har flyttats norrut med 100-200 km senaste 30 åren. En del växter som tidigare var "zon 4-grejer" odlas idag bekvämt i zon 5-6.',
+  },
+];
+
+const zoneInfo = [
+  {
+    zone: 1,
+    color: '#dc2626',
+    region: 'Sydligaste Skåne, Hallands kust, Öland och Gotlands kust',
+    growSeason: '210-230 dagar',
+    minTemp: '-15 °C',
+    canGrow: 'Tomater och druvor på friland, fikonträd, härdiga azaleor, magnolior',
+    cantGrow: '(allt går oftast om mikroklimat finns)',
+  },
+  {
+    zone: 2,
+    color: '#ea580c',
+    region: 'Skåne inland, Småland kust, Gotland',
+    growSeason: '200-220 dagar',
+    minTemp: '-18 °C',
+    canGrow: 'Tomater och paprika friland, valnötsträd, persika i söderläge',
+    cantGrow: 'Vissa medelhavsväxter behöver vinterskydd',
+  },
+  {
+    zone: 3,
+    color: '#f59e0b',
+    region: 'Halland, Bohuslän, västra Götaland',
+    growSeason: '190-210 dagar',
+    minTemp: '-21 °C',
+    canGrow: 'Klassiska fruktträd (äpple, päron, plommon), de flesta perenner',
+    cantGrow: 'Drufor utomhus, fikon (utan skydd)',
+  },
+  {
+    zone: 4,
+    color: '#84cc16',
+    region: 'Mälardalen, Västergötland, östra Småland',
+    growSeason: '180-200 dagar',
+    minTemp: '-25 °C',
+    canGrow: 'Robusta fruktträd, härdiga rosor, klassiska köksträdgården',
+    cantGrow: 'Tomater bara i växthus, fikon nej',
+  },
+  {
+    zone: 5,
+    color: '#22c55e',
+    region: 'Värmland, Dalarna, Gästrikland kust',
+    growSeason: '170-190 dagar',
+    minTemp: '-30 °C',
+    canGrow: 'Härdiga äppelsorter, hjortron, lingon, blåbär',
+    cantGrow: 'Persika, valnöt, känsliga rosor',
+  },
+  {
+    zone: 6,
+    color: '#10b981',
+    region: 'Hälsingland, Medelpad, Jämtland kust',
+    growSeason: '150-170 dagar',
+    minTemp: '-35 °C',
+    canGrow: 'Bara härdiga sorter — Antonovka-äpple, lingon, tjälpalt',
+    cantGrow: 'De flesta klassiska fruktträd, många perenner',
+  },
+  {
+    zone: 7,
+    color: '#0d9488',
+    region: 'Ångermanland, Västerbotten kust',
+    growSeason: '140-160 dagar',
+    minTemp: '-40 °C',
+    canGrow: 'Endast mycket härdiga sorter, stort fokus på lökar',
+    cantGrow: 'De flesta fruktträd',
+  },
+  {
+    zone: 8,
+    color: '#0891b2',
+    region: 'Norrbotten, fjälltrakter',
+    growSeason: '110-140 dagar',
+    minTemp: '-45 °C',
+    canGrow: 'Härdiga grönsaker, hallon, vinbär, fjällsippa',
+    cantGrow: 'Fruktträd är extrem mödosamma',
+  },
+];
+---
+
+<BaseLayout
+  title="Odlingszon Sverige: Hitta din zon (1–8)"
+  description="Vilken odlingszon bor du i? Översikt över Sveriges 8 odlingszoner från SLU — vad du kan odla, växtperiodens längd, lägsta vintertemperatur per zon."
+  keywords={[
+    'odlingszon Sverige',
+    'zonkarta',
+    'odlingszon karta',
+    'växtzon SLU',
+    'vad kan jag odla i zon 4',
+    'sverige zon 1',
+  ]}
+>
+  <section class="max-w-3xl mx-auto px-6 py-8">
+    <Breadcrumbs
+      trail={[
+        { name: 'Hem', url: '/' },
+        { name: 'Plantera', url: '/plantera/' },
+        { name: 'Odlingszon-räknare' },
+      ]}
+    />
+    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-slate-500">
+      Fri zonöversikt
+    </span>
+    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+      Hitta din odlingszon i Sverige
+    </h1>
+    <p class="mt-3 text-lg text-slate-600">
+      Sveriges 8 odlingszoner från SLU — vad du kan odla, växt­period
+      och lägsta vintertemperatur. Hitta din region i tabellen.
+    </p>
+
+    <div class="mt-10 space-y-3">
+      {zoneInfo.map((z) => (
+        <div
+          class="rounded-2xl border bg-white p-5"
+          style={`border-color: ${z.color}40;`}
+        >
+          <div class="flex items-start gap-4">
+            <div
+              class="w-12 h-12 rounded-xl flex items-center justify-center text-white font-black text-2xl flex-shrink-0"
+              style={`background: ${z.color};`}
+            >
+              {z.zone}
+            </div>
+            <div class="flex-1">
+              <h2 class="font-black text-lg text-slate-900">Zon {z.zone}</h2>
+              <p class="text-sm text-slate-600 mt-1">{z.region}</p>
+              <div class="mt-3 grid grid-cols-2 gap-2 text-xs">
+                <div class="bg-slate-50 rounded p-2">
+                  <div class="text-slate-500 font-bold uppercase">Växtsäsong</div>
+                  <div class="font-bold text-slate-900">{z.growSeason}</div>
+                </div>
+                <div class="bg-slate-50 rounded p-2">
+                  <div class="text-slate-500 font-bold uppercase">Lägsta normalt</div>
+                  <div class="font-bold text-slate-900">{z.minTemp}</div>
+                </div>
+              </div>
+              <p class="mt-3 text-sm">
+                <strong class="text-emerald-700">Funkar:</strong> {z.canGrow}
+              </p>
+              <p class="mt-1 text-sm">
+                <strong class="text-amber-700">Svårt:</strong> {z.cantGrow}
+              </p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-gradient-to-br from-emerald-50 to-white p-6 md:p-8">
+      <h2 class="text-xl font-black">Få zonen automatiskt</h2>
+      <p class="mt-2 text-slate-700">
+        Plantera-appen läser din position och vet din exakta zon
+        automatiskt. Du får sådd-kalender, frostvarningar och tips
+        anpassade till din specifika zon.
+      </p>
+      <div class="mt-6">
+        <AppStoreBadge
+          url="https://apps.apple.com/se/app/plantera/id6763648199"
+          status="live"
+        />
+      </div>
+    </div>
+
+    <div class="prose mt-12">
+      <h2>Hur används odlingszonerna i praktiken?</h2>
+      <p>
+        När du köper plantor i butik eller online står ofta
+        härdighetszonen — t.ex. "härdig till zon 4". Det betyder att
+        växten klarar normala vintrar i zon 1-4, men kan dö i zon 5+.
+      </p>
+      <p>
+        Tre tumregler:
+      </p>
+      <ul>
+        <li>Köp växter som är härdiga till <em>din zon eller högre</em></li>
+        <li>"Zon 5"-växt är mer sårbar i zon 4 om mikroklimat är ofördelaktigt</li>
+        <li>Vid extrem-vintrar (typ -30 °C) tappar du även härdiga sorter</li>
+      </ul>
+
+      <h2>Mikroklimat — kan jag fuska zonen?</h2>
+      <p>
+        Ja, i viss mån. Plats med söderläge och stenmur kan vara 1-2
+        zoner varmare än omgivningen. Klassiska "varma platser":
+      </p>
+      <ul>
+        <li>Söderväggar mot betong eller sten (lagrar dagsvärme)</li>
+        <li>Stenpartier och bergsskravlor</li>
+        <li>Skyddade gårdsplaner</li>
+        <li>Söderläge intill öppet vatten (sjö, hav)</li>
+      </ul>
+
+      <h2>När frosten kommer</h2>
+      <p>
+        Vill du veta exakt när det är säkert att plantera ut frostkänsliga
+        växter? Använd vår <a href="/plantera/frostrisk-rakna/">
+        frostrisk-räknare</a> eller läs artikeln om
+        <a href="/plantera/sa-kalender-sverige/">sådd-kalender för Sverige</a>.
+      </p>
+    </div>
+
+    <FAQ items={faq} />
+  </section>
+</BaseLayout>
