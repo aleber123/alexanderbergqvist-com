@@ -1,0 +1,149 @@
+---
+title: "Tidrapport mall: gratis Excel + PDF (svenska)"
+description: "Ladda ner svensk tidrapport-mall i Excel eller PDF. Här är vad en bra mall ska innehålla, plus tre olika varianter för konsulter, anställda och småföretagare."
+app: tidrapport
+publishedAt: 2026-05-04
+keywords:
+  - tidrapport mall
+  - tidrapport excel
+  - tidrapport pdf
+  - mall tidrapportering
+  - tidrapport gratis
+faq:
+  - q: "Vilka kolumner ska en tidrapport ha?"
+    a: "Datum, kund/projekt, beskrivning av aktivitet, antal timmar och eventuell faktureringsbar/icke-faktureringsbar-flag. För konsulter ofta också hourly rate och totalbelopp."
+  - q: "Är Excel eller PDF bättre?"
+    a: "Excel för dig som rapporterar — du kan summera och redigera. PDF för dig som levererar till kund — låsta värden ger trovärdighet."
+  - q: "Måste man rapportera vecko- eller månadsvis?"
+    a: "Det beror på din kundkontrakt eller arbetsgivare. Vanligast är veckovis registrering med månadsvis fakturering."
+  - q: "Hur många timmar är en normal arbetsdag?"
+    a: "Heltid i Sverige är 40 h/vecka, dvs 8 h/dag. Konsulter fakturerar typiskt 6-7 h/dag eftersom raster, möten och administration tillkommer."
+---
+
+Du behöver en mall för tidrapport. Här är tre varianter — Excel,
+PDF och digital app — plus vad varje bra tidrapport ska innehålla.
+
+## Vad ska en tidrapport innehålla?
+
+Minst:
+
+- **Datum** — dagen arbetet utfördes
+- **Kund eller projekt** — vem fakturerar du eller intern kategori
+- **Aktivitet** — kort beskrivning ("Möte", "Frontend-utveckling",
+  "Rapportering")
+- **Antal timmar** — decimaltal eller hh:mm
+- **Period-summering** — totalt för vecka/månad
+
+För konsulter, lägg till:
+
+- **Faktureringsbar/icke-faktureringsbar** — så du ser utility-rate
+- **Timpris** — och beräknat belopp
+- **Resor och utlägg** — separat kolumn
+- **Fakturanummer eller projektkod**
+
+För anställda med flexibla tider:
+
+- **Övertid** — separerat från ordinarie
+- **OB** — kvällsersättning, helgersättning
+- **Frånvaro** — sjukdom, vab, semester (för månadsöversikt)
+
+## Tidrapport mall — Excel-version
+
+Här är en grundstruktur du kan kopiera till Excel/Google Sheets:
+
+```
+| Datum      | Kund/Projekt    | Aktivitet              | Timmar | Bookable | Belopp  |
+|------------|-----------------|------------------------|--------|----------|---------|
+| 2026-05-01 | ACME AB         | Frontend-utveckling    | 6.0    | Yes      | 6 600   |
+| 2026-05-01 | ACME AB         | Möte med produktägare  | 1.0    | Yes      | 1 100   |
+| 2026-05-02 | Internt         | Försäljningsmöten      | 2.0    | No       | -       |
+| 2026-05-02 | ACME AB         | Code review            | 4.0    | Yes      | 4 400   |
+| 2026-05-03 | TechCorp        | Onboarding-möte        | 3.0    | Yes      | 3 300   |
+```
+
+Med en `=SUMIF()`-formel summerar du fakturerbara timmar per kund i
+slutet av veckan/månaden.
+
+### Standard-formel för Excel
+
+```
+=SUMIFS(D:D, B:B, "ACME AB", E:E, "Yes")
+```
+
+Den här ger totala fakturerbara timmar för ACME AB.
+
+## Tidrapport-mall — PDF-version
+
+För leverans till kund. Skapa i Word, exportera som PDF. Innehåller:
+
+- **Header:** Företagsinformation, fakturareferens, period
+- **Tabell:** Som ovan men med totalrad
+- **Footer:** Kontaktuppgifter, eventuell signatur
+
+### PDF-fördelar
+
+- Låsta värden = mer professionellt
+- Kunden kan inte ändra timmar
+- Bra som verifikationsunderlag i bokföring
+
+### PDF-nackdelar
+
+- Du måste göra en ny PDF varje månad
+- Inga formler, manuell beräkning krävs
+
+## Tre färdiga varianter
+
+### Variant 1: Veckorapport för konsult (Excel)
+
+Ger dig vecko-vy med kolumner per dag. Bra om du har enstaka kunder
+och samma timpris.
+
+### Variant 2: Månadsrapport för småföretagare
+
+Aggregerad vy per kund med månadssummering. Bra som
+faktureringsunderlag.
+
+### Variant 3: Detaljrapport för rapportkrav
+
+För kunder som kräver detaljerade tidsregistreringar (juridik,
+revision, IT-konsulting). En rad per aktivitet, inte per dag.
+
+## Excel + manuell rapportering = långsiktigt fel
+
+Excel funkar i början men friktionen leder till:
+
+1. **Glömt att fylla i** — minne sviktar efter 2-3 dagar
+2. **Inkonsekvent format** — datum skrivs annorlunda olika gånger
+3. **Missade timmar** — du förlorar 5-15% av faktureringsbar tid
+4. **Excel-fel** — formler bryter, värden överskriver
+
+För konsulter motsvarar det förmodligen 10-30 timmar/år i förlorad
+fakturering. Vid 1 000 kr/h = 10-30 000 kr/år borta.
+
+## Bättre alternativ: dedikerad app
+
+[Tidrapportera](/tidrapport/) är vår iOS-app som löser dessa
+problem:
+
+- **Snabb logging** — 3 sekunder per loggning
+- **Per-kund/projekt** — du ställer in en gång
+- **Auto-summering** — vecka/månad/år
+- **PDF + CSV-export** — direkt redo att maila
+
+Plus rim av detaljer som dagliga påminnelser, geo-fencing
+("automatiskt på klockan när du går in på kontoret"), och iCloud-
+sync mellan dina iOS-enheter.
+
+## Fri kalkylator: räkna om månadslön till timlön
+
+Om du behöver räkna ut din effektiva timlön (t.ex. inför att skapa
+en tidrapport) — använd vår [timlöne-räknare](/tidrapport/timlone-rakna/).
+
+## Sammanfattning
+
+- **Excel-mall:** flexibel men friktion
+- **PDF-mall:** professionell för leverans
+- **Mobil-app:** lägst friktion = mest data och pengar
+
+Välj baserat på var du är. Många börjar med Excel och byter när de
+inser att de tappar pengar.

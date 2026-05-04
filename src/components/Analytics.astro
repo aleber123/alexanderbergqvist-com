@@ -1,0 +1,57 @@
+---
+/**
+ * Google Analytics 4 + outbound link tracking.
+ *
+ * Reads measurement ID from PUBLIC_GA_ID environment variable.
+ * Set it in Vercel: Settings → Environment Variables → PUBLIC_GA_ID = G-XXXXXXX
+ *
+ * Locally: create .env with PUBLIC_GA_ID=G-XXXXXXX (or skip — analytics
+ * only enables in production builds anyway).
+ */
+const GA_ID = import.meta.env.PUBLIC_GA_ID;
+const isProd = import.meta.env.PROD;
+
+// Don't load GA on dev or if no ID is set — keeps local DX clean and
+// avoids polluting analytics with developer pageviews.
+const enabled = GA_ID && isProd;
+---
+
+{enabled && (
+  <>
+    <script
+      is:inline
+      async
+      src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+    ></script>
+    <script is:inline define:vars={{ GA_ID }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      // anonymize_ip + restricted_data_processing for GDPR-friendliness.
+      // Plus consent-mode default to denied — flips to granted only if
+      // user opts in (we don't show a banner here, but you can add one).
+      gtag('config', GA_ID, {
+        anonymize_ip: true,
+        cookie_flags: 'SameSite=None;Secure',
+      });
+
+      // Auto-track outbound clicks (App Store, etc.) so we can measure
+      // conversion from web -> App Store install.
+      document.addEventListener('click', (e) => {
+        const target = e.target instanceof Element ? e.target.closest('a') : null;
+        if (!target || !target.href) return;
+        try {
+          const url = new URL(target.href);
+          if (url.hostname && url.hostname !== window.location.hostname) {
+            gtag('event', 'outbound_click', {
+              link_url: target.href,
+              link_domain: url.hostname,
+              link_text: (target.textContent || '').trim().slice(0, 80),
+              is_app_store: url.hostname.includes('apps.apple.com'),
+            });
+          }
+        } catch {}
+      }, { capture: true });
+    </script>
+  </>
+)}

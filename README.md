@@ -105,6 +105,49 @@ Prioritera per app i denna ordning för max SEO-payback:
 ### Resten
 Mall: 1 free tool + 3-5 artiklar per app.
 
+## Google Analytics 4
+
+Sajten har inbyggd GA4-integration som auto-trackar pageviews + outbound clicks (App Store-länkar).
+
+### Sätt upp GA4 (engångsjobb)
+
+1. Gå till [Google Analytics](https://analytics.google.com/) → "Skapa egendom"
+2. Egenskapsnamn: `alexanderbergqvist.com`
+3. Tidszon: Sverige · Valuta: SEK
+4. Branschkategori: "Technology"
+5. Skapa "Web data stream" → URL: `https://alexanderbergqvist.com`
+6. Kopiera **Measurement ID** (`G-XXXXXXXXXX`)
+
+### Aktivera på Vercel
+
+1. Vercel-projekt → Settings → Environment Variables
+2. Lägg till: `PUBLIC_GA_ID` = `G-XXXXXXXXXX`
+3. Apply på alla environments
+4. Trigger en omdistribuering (push valfri commit eller "Redeploy")
+
+GA aktiveras bara i prod-builds — under utveckling lokalt loggas inget.
+
+### Vad som tracker auto:
+
+- Pageviews (varje sida)
+- `outbound_click`-event för alla externa länkar med `link_url`,
+  `link_domain`, `link_text`, och `is_app_store: true/false`
+
+Det betyder att du i GA4 kan se exakt hur många klick varje
+App Store-knapp får per sida — perfekt för att mäta SEO → install-funnel.
+
+## OG-bilder (för länkdelningar)
+
+Bilder visas när någon delar en länk till sajten i iMessage / Facebook /
+LinkedIn / Slack. Genereras automatiskt från en mall:
+
+```bash
+python3 scripts/gen-og.py
+```
+
+Skapar 1200×630 PNG per sida i `public/og/`. Kör efter att du lagt till
+nya artiklar/appar och innan du pushar.
+
 ## SEO-checklist innan launch
 
 - [x] Sitemap genereras automatiskt via @astrojs/sitemap

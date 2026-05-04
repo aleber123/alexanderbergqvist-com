@@ -38,6 +38,7 @@ const related = allArticles
   publishedAt={article.data.publishedAt}
   updatedAt={article.data.updatedAt}
   keywords={article.data.keywords}
+  image={`/og/${article.data.app}-${article.id.split('/').pop()}.png`}
 >
   <article class="max-w-3xl mx-auto px-6 py-8 md:py-10">
     {app && (

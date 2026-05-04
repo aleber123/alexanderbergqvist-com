@@ -1,0 +1,87 @@
+---
+title: "Hur många dagar tills min födelsedag? Räkna ut snabbt"
+description: "Räkna ut exakt antal dagar tills nästa födelsedag — din egen eller någon annans. Inkluderar tre vanliga räknemetoder och en fri kalkylator."
+app: fodelsedagar
+publishedAt: 2026-05-04
+keywords:
+  - dagar tills födelsedag
+  - räkna dagar till födelsedag
+  - när är min födelsedag
+  - hur många dagar kvar
+faq:
+  - q: "Hur räknar jag manuellt ut dagar till nästa födelsedag?"
+    a: "Hitta nästa förekomst av födelsedatumet i kalendern. Räkna antalet dagar från idag till den dagen — inkludera 365 dagar (eller 366 vid skottår) om födelsedagen redan passerat i år."
+  - q: "Vad gör jag om födelsedagen är 29 februari?"
+    a: "Vid icke-skottår firas födelsedagen vanligtvis 28 februari eller 1 mars. Räkna till den dag personen brukar fira."
+  - q: "Räknas idag som dag 1 eller dag 0?"
+    a: "Det beror på syfte. För vardagligt språk räknar vi typiskt 'imorgon' som '1 dag kvar'. Vår kalkylator använder den modellen."
+---
+
+Frågar du dig själv eller en familjemedlem ofta "hur lång tid är
+det kvar till min födelsedag?" — så är du inte ensam. Här är hur du
+räknar ut det snabbt.
+
+## Använd vår kalkylator
+
+[Åldersräknaren](/fodelsedagar/aldersrakna/) visar inte bara
+exakt ålder utan också **dagar tills nästa födelsedag** baserat på
+ditt födelsedatum. Skriv in datumet, läs av siffran. Klart.
+
+## Manuell räkning — tre metoder
+
+### Metod 1: Kalender-räkning
+Ta fram kalendern. Hitta din födelsedag i år eller nästa år
+(beroende på om den passerat). Räkna dagar från idag till den dagen.
+
+**Exempel:** Idag är 4 maj. Min födelsedag är 17 augusti.
+Räkna dagar i maj (31-4=27), juni (30), juli (31), augusti (17)
+= 105 dagar.
+
+### Metod 2: Total-dagar-i-året-formeln
+Lite snabbare för folk som tänker matematiskt:
+- Hitta vilken dag i året din födelsedag faller på (1-365)
+- Hitta dagens dag i året (1-365)
+- Subtrahera. Om resultat negativt, lägg till 365 (eller 366 vid
+  skottår)
+
+### Metod 3: JavaScript-konsol
+Om du sitter framför datorn och inte vill öppna en kalkylator:
+```js
+const next = new Date(2026, 7, 17); // månader är 0-indexerade
+const today = new Date();
+Math.ceil((next - today) / 86400000);
+```
+
+## Specialfall
+
+### Skottår
+Om din nästa födelsedag passerar 29 februari ett skottår behöver du
+lägga till en dag i räkningen. Vår kalkylator hanterar det
+automatiskt.
+
+### Födelsedag idag
+Om dagens datum exakt matchar födelsedatum visar kalkylatorn "0
+dagar" (eller "🎉 Idag!"). Beroende på om du är "natt" eller
+"morgonperson" kan du tycka att det räknas annorlunda.
+
+### Födelsedag passerad i år
+Räknaren räknar då till nästa år. T.ex. om din födelsedag var igår
+visar den "364 dagar" till nästa.
+
+## Vad du kan göra med svaret
+
+- **Planera firandet** — bra att veta 60+ dagar i förväg om du vill
+  boka restaurang eller resa
+- **Påminna nära och kära** — i god tid så de inte glömmer
+- **Räkna ner med barn** — visualisering på en kalender är populärt
+  hos barn som väntar på sin födelsedag
+- **Sätt sparmål** — "till min nästa födelsedag ska jag ha sparat X"
+
+## Räkna ner i appen istället
+
+[Födelsedagar-appen](/fodelsedagar/) räknar automatiskt ner dagar
+för alla viktiga personer. Du ser direkt på hemskärmen vem som har
+födelsedag inom 7 / 14 / 30 dagar.
+
+Eller använd [åldersräknaren](/fodelsedagar/aldersrakna/) för
+engångsberäkningar utan att behöva ladda ner en app.
