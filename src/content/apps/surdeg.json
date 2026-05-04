@@ -5,7 +5,6 @@
   "icon": "/apps/surdeg.png",
   "accent": "#8B5A3C",
   "accentDark": "#5C3A24",
-  "appStoreUrl": "https://apps.apple.com/se/app/surdeg/id6766103729",
   "bundleId": "com.alexanderbergqvist.surdeg",
   "category": "Mat och dryck",
   "keywords": [
@@ -24,5 +23,5 @@
     "Stöd för flera surdegar parallellt"
   ],
   "status": "soon",
-  "order": 2
+  "order": 6
 }

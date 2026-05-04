@@ -5,7 +5,7 @@
   "icon": "/apps/fodelsedagar.png",
   "accent": "#E91E63",
   "accentDark": "#AD1457",
-  "appStoreUrl": "https://apps.apple.com/se/app/fodelsedagar/id6747000000",
+  "appStoreUrl": "https://apps.apple.com/se/app/f%C3%B6delsedagar/id6758899294",
   "bundleId": "com.alexanderbergqvist.birthday",
   "category": "Livsstil",
   "keywords": [
@@ -21,5 +21,5 @@
     "Översikt månad för månad"
   ],
   "status": "live",
-  "order": 3
+  "order": 1
 }

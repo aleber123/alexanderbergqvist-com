@@ -5,7 +5,6 @@
   "icon": "/apps/somnkoll.png",
   "accent": "#5E35B1",
   "accentDark": "#311B92",
-  "appStoreUrl": "https://apps.apple.com/se/app/somnkoll/id6700000000",
   "bundleId": "com.alexanderbergqvist.somnkoll",
   "category": "Hälsa",
   "keywords": [
@@ -20,6 +19,6 @@
     "Påminnelser inför sänggåendet",
     "Inget extra hårdvara krävs"
   ],
-  "status": "live",
-  "order": 4
+  "status": "soon",
+  "order": 7
 }

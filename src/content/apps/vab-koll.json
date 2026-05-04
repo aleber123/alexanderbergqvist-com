@@ -5,7 +5,7 @@
   "icon": "/apps/vab-koll.png",
   "accent": "#FF9800",
   "accentDark": "#E65100",
-  "appStoreUrl": "https://apps.apple.com/se/app/vab-koll/id6800000000",
+  "appStoreUrl": "https://apps.apple.com/se/app/vab-koll/id6763138809",
   "bundleId": "com.alexanderbergqvist.vabapp",
   "category": "Livsstil",
   "keywords": [
@@ -21,5 +21,5 @@
     "Export till Försäkringskassan"
   ],
   "status": "live",
-  "order": 6
+  "order": 2
 }

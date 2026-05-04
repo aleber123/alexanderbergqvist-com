@@ -1,12 +1,12 @@
 {
-  "name": "Tidrapport",
+  "name": "Tidrapportera",
   "tagline": "Snabb tidrapportering för konsulter och timanställda.",
-  "description": "Tidrapport är iOS-appen som låter dig snabbt logga arbetstid per kund eller projekt. Exportera som PDF eller CSV i slutet av månaden.",
+  "description": "Tidrapportera är iOS-appen som låter dig snabbt logga arbetstid per kund eller projekt. Exportera som PDF eller CSV i slutet av månaden.",
   "icon": "/apps/tidrapport.png",
   "accent": "#1976D2",
   "accentDark": "#0D47A1",
-  "appStoreUrl": "https://apps.apple.com/se/app/tidrapport/id6700000001",
-  "bundleId": "com.alexanderbergqvist.tidrapport",
+  "appStoreUrl": "https://apps.apple.com/se/app/tidrapportera/id6762660992",
+  "bundleId": "com.alexanderbergqvist.tidrapportera",
   "category": "Affär",
   "keywords": [
     "tidrapport app",
@@ -21,5 +21,5 @@
     "Påminnelser vid arbetstid slut"
   ],
   "status": "live",
-  "order": 5
+  "order": 3
 }

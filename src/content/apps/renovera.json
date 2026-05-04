@@ -5,7 +5,6 @@
   "icon": "/apps/renovera.png",
   "accent": "#795548",
   "accentDark": "#3E2723",
-  "appStoreUrl": "https://apps.apple.com/se/app/renovera/id6800000003",
   "bundleId": "com.alexanderbergqvist.renoveraapp",
   "category": "Livsstil",
   "keywords": [
@@ -20,6 +19,6 @@
     "Budget vs. faktiskt",
     "Stöd för ROT-avdragsexport"
   ],
-  "status": "live",
+  "status": "soon",
   "order": 9
 }

@@ -1,11 +1,11 @@
 {
-  "name": "Rita",
+  "name": "Rita & Färglägg",
   "tagline": "Färgläggningsapp för barn 3–8 år.",
   "description": "Rita är iOS-appen där barn kan färglägga digitala målarbilder. Trygg utan inloggning, utan reklam för barn, och med ständigt nya bilder.",
   "icon": "/apps/rita.png",
   "accent": "#F06292",
   "accentDark": "#C2185B",
-  "appStoreUrl": "https://apps.apple.com/se/app/rita/id6800000002",
+  "appStoreUrl": "https://apps.apple.com/se/app/rita-f%C3%A4rgl%C3%A4gg/id6763882162",
   "bundleId": "com.alexanderbergqvist.ritaapp",
   "category": "Barn",
   "keywords": [
@@ -22,5 +22,5 @@
     "Spara dina mästerverk i appen"
   ],
   "status": "live",
-  "order": 8
+  "order": 4
 }
