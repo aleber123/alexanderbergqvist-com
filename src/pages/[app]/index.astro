@@ -115,6 +115,12 @@ const ldJson = {
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
   ...(appStoreUrl && { downloadUrl: appStoreUrl }),
 };
+
+// Extract numeric App Store ID for the Apple Smart App Banner.
+// URL format: .../app/<name>/id<digits>
+const appStoreId = appStoreUrl
+  ? appStoreUrl.match(/\/id(\d+)/)?.[1]
+  : undefined;
 ---
 
 <BaseLayout
@@ -122,6 +128,7 @@ const ldJson = {
   description={tagline}
   keywords={keywords}
   image={`/og/${app.id}.png`}
+  appStoreId={appStoreId}
 >
   <script
     type="application/ld+json"

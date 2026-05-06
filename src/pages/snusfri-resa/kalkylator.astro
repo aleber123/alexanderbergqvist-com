@@ -1,6 +1,10 @@
 ---
+import { getEntry } from 'astro:content';
 import BaseLayout from '../../components/BaseLayout.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
+
+const app = await getEntry('apps', 'snusfri-resa');
+const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
 ---
 
 <BaseLayout
@@ -13,6 +17,7 @@ import AppStoreBadge from '../../components/AppStoreBadge.astro';
     'snus pris kalkylator',
     'hur mycket kostar snus per år',
   ]}
+  appStoreId={appStoreId}
 >
   <section class="max-w-3xl mx-auto px-6 py-12 md:py-16">
     <span class="inline-block text-xs font-black uppercase tracking-widest text-slate-500">

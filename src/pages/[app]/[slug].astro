@@ -29,6 +29,13 @@ const allArticles = await getCollection('articles', (a) => !a.data.draft);
 const related = allArticles
   .filter((a) => a.data.app === article.data.app && a.id !== article.id)
   .slice(0, 3);
+
+// Smart App Banner — let iOS Safari show install banner above the
+// article when the parent app is live in App Store. Big install
+// driver since SEO articles bring iOS-curious organic traffic.
+const appStoreId = app?.data.appStoreUrl
+  ? app.data.appStoreUrl.match(/\/id(\d+)/)?.[1]
+  : undefined;
 ---
 
 <BaseLayout
@@ -39,6 +46,7 @@ const related = allArticles
   updatedAt={article.data.updatedAt}
   keywords={article.data.keywords}
   image={`/og/${article.data.app}-${article.id.split('/').pop()}.png`}
+  appStoreId={appStoreId}
 >
   <article class="max-w-3xl mx-auto px-6 py-8 md:py-10">
     {app && (

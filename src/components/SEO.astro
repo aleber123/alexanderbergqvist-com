@@ -21,6 +21,12 @@ interface Props {
   keywords?: string[];
   author?: Author;
   noindex?: boolean;
+  /**
+   * App Store numeric ID. When set, iOS Safari renders an
+   * "Open in App Store" banner above the page — high-conversion
+   * install driver. Extract from appStoreUrl: the digits after `/id`.
+   */
+  appStoreId?: string;
 }
 
 const {
@@ -34,6 +40,7 @@ const {
   keywords = [],
   author,
   noindex = false,
+  appStoreId,
 } = Astro.props;
 
 const siteName = 'Alexander Bergqvist';
@@ -110,6 +117,13 @@ const articleLd = type === 'article' && publishedAt
 <meta name="theme-color" content="#0f172a" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+{/* Apple Smart App Banner — iOS Safari renders an install banner
+    above the page. High-conversion install driver. Only emit on
+    pages tied to a specific live app. */}
+{appStoreId && (
+  <meta name="apple-itunes-app" content={`app-id=${appStoreId}`} />
+)}
 
 {articleLd && (
   <script type="application/ld+json" set:html={JSON.stringify(articleLd)} />

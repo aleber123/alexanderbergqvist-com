@@ -1,8 +1,12 @@
 ---
+import { getEntry } from 'astro:content';
 import BaseLayout from '../../components/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
+
+const app = await getEntry('apps', 'fodelsedagar');
+const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
 
 const faq = [
   {
@@ -35,6 +39,7 @@ const faq = [
     'min ålder i dagar',
     'hur många dagar har jag levt',
   ]}
+  appStoreId={appStoreId}
 >
   <section class="max-w-3xl mx-auto px-6 py-8">
     <Breadcrumbs
