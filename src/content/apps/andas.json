@@ -1,0 +1,29 @@
+{
+  "name": "Andas",
+  "tagline": "Andas. Lugna. Lev.",
+  "description": "Andas är iOS-appen för guidad andning. Wim Hof, box-andning 4-4-4-4 och 4-7-8 finns gratis. Bygg egna övningar, spåra retention över tid och utveckla din practice.",
+  "icon": "/apps/andas.png",
+  "accent": "#3E6D96",
+  "accentDark": "#2A4D6B",
+  "bundleId": "com.alexanderbergqvist.andas",
+  "category": "Hälsa och träning",
+  "keywords": [
+    "andning",
+    "wim hof",
+    "andningsövningar",
+    "box-andning",
+    "4-7-8",
+    "meditation",
+    "andas djupt",
+    "stress hantera"
+  ],
+  "features": [
+    "Wim Hof Basic, box-andning och 4-7-8 (gratis)",
+    "Animerad andnings-cirkel med haptik",
+    "Retention-tracking och streak",
+    "Skapa egna övningar med sliders (Premium)",
+    "Tummo, Buteyko + custom protokoll (Premium)"
+  ],
+  "status": "soon",
+  "order": 11
+}
