@@ -19,6 +19,7 @@
     "Påminnelser inför sänggåendet",
     "Inget extra hårdvara krävs"
   ],
-  "status": "soon",
-  "order": 7
+  "status": "live",
+  "order": 7,
+  "appStoreUrl": "https://apps.apple.com/se/app/s%C3%B6mnkoll/id6763792588"
 }

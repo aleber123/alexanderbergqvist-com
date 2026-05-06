@@ -1,94 +1,317 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../components/BaseLayout.astro';
-import AppCard from '../components/AppCard.astro';
+import Stat from '../components/Stat.astro';
 
 const apps = (await getCollection('apps')).sort(
   (a, b) => a.data.order - b.data.order
 );
+
+const allArticles = await getCollection('articles', (a) => !a.data.draft);
+const recentArticles = allArticles
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
+  .slice(0, 4);
+
+// Currently-building list. Andas is the WIP — bumped in front of the
+// rest because it's what I'm shipping this week.
+const wip = ['andas'];
+
+const tools = [
+  {
+    href: '/snusfri-resa/kalkylator/',
+    title: 'Snusfri-kalkylator',
+    description: 'Räkna ut exakt vad du sparar per dag, månad, år.',
+  },
+  {
+    href: '/fodelsedagar/aldersrakna/',
+    title: 'Åldersräknare',
+    description: 'Hur många dagar har du levt? På sekunden räknat.',
+  },
+  {
+    href: '/surdeg/hydration-rakna/',
+    title: 'Hydration-räknare',
+    description: 'Mjöl + vatten → exakt hydrering för ditt bröd.',
+  },
+  {
+    href: '/surdeg/matningsschema/',
+    title: 'Matningsschema',
+    description: 'Generera ett personligt schema för din surdeg.',
+  },
+];
 ---
 
 <BaseLayout
-  title="Alexander Bergqvist"
-  description="Indie iOS-utvecklare från Sverige. Bygger appar som löser konkreta vardagsproblem — från VAB-koll till snusfri-räkning. Här hittar du alla mina appar och fria verktyg."
+  title="Alexander Bergqvist — indie iOS-utvecklare"
+  description="Bygger appar för Sverige. Surdeg, Andas, Födelsedagar, VAB-koll, Tidrapportera, Snusfri Resa, Plantera, Rita, Renovera, Sömnkoll. Inga konton, inga prenumerationer som inte går att avsluta, ingen onödig data."
   keywords={[
     'iOS appar',
     'svenska appar',
     'indie utvecklare',
-    'snusfri kalkylator',
-    'surdeg recept',
-    'tidrapport app',
-    'vab koll',
+    'Alexander Bergqvist',
+    'Flutter Sverige',
   ]}
 >
-  <section class="max-w-6xl mx-auto px-6 py-16 md:py-24">
-    <div class="max-w-3xl">
-      <span
-        class="inline-block text-xs font-black uppercase tracking-widest text-slate-500 mb-4"
-        >Indie iOS-utvecklare · Sverige</span
-      >
-      <h1 class="text-4xl md:text-6xl font-black tracking-tight leading-[1.05]">
-        Jag bygger appar som löser
-        <span class="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
-          riktiga vardagsproblem.
-        </span>
+  <!-- ─────────── HERO ─────────── -->
+  <section class="border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-6 pt-20 md:pt-32 pb-16 md:pb-24">
+      <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-8">
+        Indie iOS · Sverige · Sedan 2024
+      </div>
+      <h1 class="text-[44px] md:text-[88px] font-black tracking-[-0.04em] leading-[0.95]">
+        Bygger appar.<br />
+        <span class="text-slate-400">Inga prenumerationer som lurar dig.</span>
       </h1>
-      <p class="mt-6 text-lg md:text-xl text-slate-600 leading-relaxed">
-        Från VAB-dagar och tidrapport till surdeg och snusfri-räkning — här är
-        appar och fria verktyg som faktiskt används av människor i Sverige varje
-        dag.
+      <p class="mt-10 text-lg md:text-xl text-slate-600 max-w-2xl leading-relaxed">
+        Tio iOS-appar för konkreta vardagsproblem — surdeg, andning, födelsedagar,
+        VAB, snusfri-räkning. Allt sparas lokalt. Inga konton. Premium kostar
+        mindre än en kaffe i månaden eller är helt gratis.
       </p>
-      <div class="mt-8 flex flex-wrap gap-3">
+      <div class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3">
         <a
           href="/appar/"
-          class="rounded-xl bg-slate-900 text-white px-5 py-3 font-bold text-sm hover:bg-slate-700"
-          >Se alla appar</a
+          class="inline-flex items-center gap-2 bg-slate-900 text-white px-5 py-3 text-sm font-bold tracking-tight hover:bg-slate-700 transition"
         >
-        <a
-          href="/snusfri-resa/kalkylator/"
-          class="rounded-xl border border-slate-300 px-5 py-3 font-bold text-sm hover:border-slate-500"
-          >Räkna sparade snus-kr →</a
-        >
-      </div>
-    </div>
-  </section>
-
-  <section class="bg-slate-50 border-y border-slate-200 py-16">
-    <div class="max-w-6xl mx-auto px-6">
-      <div class="flex items-end justify-between mb-8">
-        <h2 class="text-2xl md:text-3xl font-black">Apparna</h2>
-        <a
-          href="/appar/"
-          class="text-sm font-bold text-slate-700 hover:text-slate-900"
-          >Alla {apps.length} →</a
-        >
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {apps.slice(0, 6).map((app) => <AppCard app={app} />)}
-      </div>
-    </div>
-  </section>
-
-  <section class="max-w-6xl mx-auto px-6 py-20">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-      <div>
-        <h2 class="text-2xl md:text-3xl font-black mb-4">Fria verktyg</h2>
-        <p class="text-slate-600 text-lg leading-relaxed">
-          Räknare och kalkylatorer som fungerar direkt i webbläsaren — utan
-          inloggning eller appinstall. Bra för dig som vill ha snabba svar.
-        </p>
-      </div>
-      <div class="space-y-3">
-        <a
-          href="/snusfri-resa/kalkylator/"
-          class="block rounded-2xl border border-slate-200 p-5 hover:border-slate-300 hover:shadow-lg transition"
-        >
-          <div class="font-bold">Snusfri-kalkylator</div>
-          <div class="text-sm text-slate-600 mt-1">
-            Hur mycket sparar du på att sluta snusa? Räkna ut exakt belopp per
-            dag, månad och år.
-          </div>
+          Se alla appar
+          <span aria-hidden>→</span>
         </a>
+        <a
+          href="/om/"
+          class="text-sm font-bold text-slate-600 hover:text-slate-900 transition underline-offset-4 hover:underline"
+        >
+          Om mig
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── STATS STRIP ─────────── -->
+  <section class="border-b border-slate-200 bg-slate-50">
+    <div class="max-w-6xl mx-auto px-6 py-10">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12 font-mono">
+        <Stat n={apps.length.toString()} label="appar publicerade" />
+        <Stat n="0" label="kontotvång" />
+        <Stat n="2026" label="aktivt år" />
+        <Stat n="∞" label="kaffe per dag" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── WORK ─────────── -->
+  <section class="border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-6 py-20 md:py-28">
+      <div class="flex items-end justify-between mb-10">
+        <div>
+          <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-2">
+            01 / Work
+          </div>
+          <h2 class="text-3xl md:text-5xl font-black tracking-tight">
+            Apparna.
+          </h2>
+        </div>
+        <a
+          href="/appar/"
+          class="hidden md:inline text-sm font-bold text-slate-600 hover:text-slate-900 transition"
+        >
+          Alla {apps.length} →
+        </a>
+      </div>
+      <div class="border-t border-slate-200">
+        {apps.slice(0, 8).map((app) => (
+          <a
+            href={`/${app.id}/`}
+            class="group flex items-center gap-5 border-b border-slate-200 py-5 hover:bg-slate-50 transition px-2 -mx-2"
+          >
+            <div
+              class="w-12 h-12 rounded-xl flex-shrink-0 overflow-hidden flex items-center justify-center text-white font-black text-xl"
+              style={`background: ${app.data.accent};`}
+            >
+              <img
+                src={app.data.icon}
+                alt={`${app.data.name} ikon`}
+                class="w-full h-full object-cover"
+                loading="lazy"
+                onerror="this.style.display='none'; this.parentElement.textContent=this.alt[0];"
+              />
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-3">
+                <h3 class="text-lg md:text-xl font-bold tracking-tight text-slate-900 group-hover:text-slate-600 transition">
+                  {app.data.name}
+                </h3>
+                {wip.includes(app.id) && (
+                  <span class="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 border border-slate-900 text-slate-900">
+                    Pågår nu
+                  </span>
+                )}
+                {app.data.status === 'soon' && (
+                  <span class="text-[10px] font-mono uppercase tracking-wider text-slate-500">
+                    Snart
+                  </span>
+                )}
+              </div>
+              <p class="text-sm text-slate-600 mt-1 truncate">
+                {app.data.tagline}
+              </p>
+            </div>
+            <span class="text-slate-300 group-hover:text-slate-900 transition text-xl pr-2">
+              →
+            </span>
+          </a>
+        ))}
+      </div>
+      <div class="mt-8 md:hidden">
+        <a
+          href="/appar/"
+          class="text-sm font-bold text-slate-600 hover:text-slate-900 transition"
+        >
+          Alla {apps.length} appar →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── NOW ─────────── -->
+  <section class="border-b border-slate-200 bg-slate-900 text-white">
+    <div class="max-w-6xl mx-auto px-6 py-20 md:py-28">
+      <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-slate-400 mb-2">
+        02 / Now
+      </div>
+      <h2 class="text-3xl md:text-5xl font-black tracking-tight mb-4">
+        Just nu: Andas.
+      </h2>
+      <p class="text-lg md:text-xl text-slate-300 max-w-2xl leading-relaxed">
+        Guidad andning — Wim Hof, box-andning, 4-7-8. Bygg egna övningar
+        med exakt antal andetag, in/ut-tider, och retention. Allt loggas
+        lokalt och skickas som Mindful Minutes till Hälsa.
+      </p>
+      <a
+        href="/andas/"
+        class="mt-8 inline-flex items-center gap-2 bg-white text-slate-900 px-5 py-3 text-sm font-bold tracking-tight hover:bg-slate-200 transition"
+      >
+        Läs mer
+        <span aria-hidden>→</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ─────────── TOOLS ─────────── -->
+  <section class="border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-6 py-20 md:py-28">
+      <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-2">
+        03 / Tools
+      </div>
+      <h2 class="text-3xl md:text-5xl font-black tracking-tight">
+        Räknare i webbläsaren.
+      </h2>
+      <p class="mt-4 text-lg text-slate-600 max-w-2xl">
+        Inget login, ingen install — bara skriv in siffrorna och få svaret.
+      </p>
+      <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-px bg-slate-200 border border-slate-200">
+        {tools.map((t) => (
+          <a
+            href={t.href}
+            class="group bg-white hover:bg-slate-50 transition p-6 md:p-8"
+          >
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg md:text-xl font-bold tracking-tight text-slate-900">
+                {t.title}
+              </h3>
+              <span class="text-slate-300 group-hover:text-slate-900 transition text-xl">
+                →
+              </span>
+            </div>
+            <p class="text-sm text-slate-600 mt-2">
+              {t.description}
+            </p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── WRITING ─────────── -->
+  {recentArticles.length > 0 && (
+    <section class="border-b border-slate-200">
+      <div class="max-w-6xl mx-auto px-6 py-20 md:py-28">
+        <div class="flex items-end justify-between mb-10">
+          <div>
+            <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-2">
+              04 / Writing
+            </div>
+            <h2 class="text-3xl md:text-5xl font-black tracking-tight">
+              Senaste artiklarna.
+            </h2>
+          </div>
+          <a
+            href="/blog/"
+            class="hidden md:inline text-sm font-bold text-slate-600 hover:text-slate-900 transition"
+          >
+            Alla artiklar →
+          </a>
+        </div>
+        <ul class="divide-y divide-slate-200 border-y border-slate-200">
+          {recentArticles.map((a) => (
+            <li>
+              <a
+                href={`/blog/${a.id}/`}
+                class="group flex items-baseline justify-between gap-4 py-5 hover:bg-slate-50 transition px-2 -mx-2"
+              >
+                <div class="flex-1 min-w-0">
+                  <div class="text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-1">
+                    {a.data.app} · {a.data.publishedAt.toISOString().slice(0, 10)}
+                  </div>
+                  <h3 class="text-lg md:text-xl font-bold tracking-tight text-slate-900 group-hover:text-slate-600 transition">
+                    {a.data.title}
+                  </h3>
+                </div>
+                <span class="text-slate-300 group-hover:text-slate-900 transition text-xl">
+                  →
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <!-- ─────────── ABOUT ─────────── -->
+  <section class="border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-6 py-20 md:py-28">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div class="md:col-span-1">
+          <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-2">
+            05 / About
+          </div>
+          <h2 class="text-3xl md:text-5xl font-black tracking-tight">
+            Hej.
+          </h2>
+        </div>
+        <div class="md:col-span-2 max-w-xl">
+          <p class="text-lg md:text-xl text-slate-700 leading-relaxed">
+            Jag heter Alexander. Bygger iOS-appar i Flutter från Sverige.
+            Princip: lokala data, inga konton, ingen onödig spårning.
+            Premium ska kännas som ett bra köp, inte en lurad prenumeration.
+          </p>
+          <p class="mt-4 text-base md:text-lg text-slate-600 leading-relaxed">
+            Hör av dig om något i en app inte fungerar, eller om du har en
+            idé du vill bygga.
+          </p>
+          <div class="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm font-bold">
+            <a
+              href="mailto:alexander.bergqvist@gmail.com"
+              class="text-slate-900 hover:text-slate-600 transition underline-offset-4 hover:underline"
+            >
+              alexander.bergqvist@gmail.com
+            </a>
+            <a
+              href="/om/"
+              class="text-slate-600 hover:text-slate-900 transition underline-offset-4 hover:underline"
+            >
+              Mer om mig →
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </section>

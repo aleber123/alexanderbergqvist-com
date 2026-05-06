@@ -1,0 +1,17 @@
+---
+interface Props {
+  n: string;
+  label: string;
+}
+
+const { n, label } = Astro.props;
+---
+
+<div class="border-l-2 border-slate-900 pl-4">
+  <div class="text-3xl md:text-4xl font-black tracking-tight tabular-nums">
+    {n}
+  </div>
+  <div class="text-[11px] uppercase tracking-[0.15em] text-slate-500 mt-1">
+    {label}
+  </div>
+</div>

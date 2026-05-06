@@ -22,6 +22,7 @@
     "Hydration-räknare per recept",
     "Stöd för flera surdegar parallellt"
   ],
-  "status": "soon",
-  "order": 6
+  "status": "live",
+  "order": 6,
+  "appStoreUrl": "https://apps.apple.com/se/app/surdeg/id6766092580"
 }

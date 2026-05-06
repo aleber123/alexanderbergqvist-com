@@ -4,17 +4,22 @@ const isActive = (prefix: string) =>
   prefix === '/' ? path === '/' : path.startsWith(prefix);
 ---
 
-<header class="border-b border-slate-200 bg-white/80 backdrop-blur sticky top-0 z-40">
-  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-    <a href="/" class="font-black text-lg tracking-tight">
+<header class="border-b border-slate-200 bg-white/90 backdrop-blur-md sticky top-0 z-40">
+  <div
+    class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between"
+  >
+    <a
+      href="/"
+      class="font-black text-base tracking-tight text-slate-900 hover:text-slate-600 transition"
+    >
       Alexander Bergqvist
     </a>
-    <nav class="flex items-center gap-6 text-sm font-semibold">
+    <nav class="flex items-center gap-8 text-sm font-bold tracking-tight">
       <a
         href="/appar/"
         class={isActive('/appar')
           ? 'text-slate-900'
-          : 'text-slate-600 hover:text-slate-900'}
+          : 'text-slate-500 hover:text-slate-900 transition'}
       >
         Appar
       </a>
@@ -22,15 +27,15 @@ const isActive = (prefix: string) =>
         href="/blog/"
         class={isActive('/blog')
           ? 'text-slate-900'
-          : 'text-slate-600 hover:text-slate-900'}
+          : 'text-slate-500 hover:text-slate-900 transition'}
       >
-        Blog
+        Skriver
       </a>
       <a
         href="/om/"
         class={isActive('/om')
           ? 'text-slate-900'
-          : 'text-slate-600 hover:text-slate-900'}
+          : 'text-slate-500 hover:text-slate-900 transition'}
       >
         Om
       </a>
