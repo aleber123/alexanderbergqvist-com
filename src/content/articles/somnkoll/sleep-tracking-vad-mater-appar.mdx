@@ -1,0 +1,199 @@
+---
+title: "Sleep tracking — vad mäter appar egentligen?"
+description: "Telefonens accelerometer, klockans HRV, Oura-ringens hudtemp — så funkar olika sleep tracking-tekniker, vad de faktiskt kan mäta och vad sleep score baseras på."
+app: somnkoll
+publishedAt: 2026-05-06
+keywords:
+  - sleep tracking app
+  - sömnregistrering
+  - hur mäter sömnappar
+  - sleep score
+  - apple watch sömn
+  - oura ring sömn
+faq:
+  - q: "Är sleep tracking-appar exakta?"
+    a: "Telefonbaserade appar har begränsad exakthet — de kan rimligt bra mäta total sömntid och vakentid, men sömnstadier (REM, djupsömn) är gissningar baserade på rörelse och ljud. Apple Watch och Oura är bättre eftersom de mäter puls och HRV, men ingen konsumentprodukt matchar polysomnografi (PSG) som är guldstandarden i sleep labs."
+  - q: "Kan en app mäta REM-sömn?"
+    a: "Med vissa förbehåll. REM kräver mätning av snabba ögonrörelser eller hjärnaktivitet (EEG), vilket inga konsumentprodukter har. Det de gör är att gissa REM från sekundära signaler: HRV-mönster (Apple Watch, Oura), rörelse och andning. Det är bra approximationer för trender över tid men inte exakt minutering."
+  - q: "Måste jag ha telefonen i sängen för att mäta?"
+    a: "För telefonbaserade appar — ja. Telefonen behöver vara nära nog att registrera rörelse via accelerometern och oljud via mikrofonen. Bärbara enheter (klocka, ring) mäter direkt på kroppen och är inte beroende av sängplacering."
+  - q: "Vad är ett bra sleep score?"
+    a: "Det varierar mellan appar och saknar standardiserad definition. Generellt: över 80 är bra, 70-80 är OK, under 70 indikerar förbättringspotential. Men jämför aldrig din score mellan olika appar — algoritmerna är helt olika."
+  - q: "Påverkar tracking-appen min sömn?"
+    a: "Vissa människor utvecklar 'orthosomnia' — ångest över sleep score som faktiskt försämrar sömnen. Om du börjar lägga energi på att 'optimera' siffrorna istället för hur du mår: minska tracking-frekvensen eller pausa appen ett tag."
+  - q: "Behöver jag en dyr smartwatch eller räcker telefon?"
+    a: "För grundläggande tracking (tid i säng, regelbundenhet) räcker telefon. Vill du ha rimlig sömnstadie-uppskattning krävs en bärbar enhet med pulsmätare. Vad som är värt pengarna beror på hur djupt du vill gå."
+---
+
+Sleep tracking har blivit en miljardindustri. Apple Watch, Oura,
+WHOOP, Fitbit och dussintals appar — alla lovar dig insikter om hur
+du sov igår natt. Men hur funkar det egentligen, och hur exakta är
+siffrorna?
+
+Här är vad du faktiskt får för pengarna.
+
+## De tre teknikkategorierna
+
+### 1. Telefonbaserade appar (kräver inget extra)
+
+Hur de mäter:
+
+- **Accelerometer** — registrerar rörelse. Mer rörelse = lättare
+  sömn eller vakenhet. Stilla = djupare sömn.
+- **Mikrofon** — fångar snarkningar, sömnpratande, andning. Vissa
+  appar analyserar andningsmönster för att gissa sömnstadier.
+- **Tid i säng** — när du startar appen och stoppar den.
+
+Exempel: Sleep Cycle, Pillow, Sleep++, många mer.
+
+**Begränsningar:**
+- Telefonen måste ligga på madrassen eller nära kroppen
+- Om partner/husdjur rör sig på samma säng → kan misstolkas
+- REM och djupsömn är *gissningar* baserade på rörelse, inte direkta
+  mätningar
+
+### 2. Bärbara enheter med pulsmätare
+
+Apple Watch, Garmin, Fitbit, Whoop, Polar.
+
+Hur de mäter:
+
+- **Hjärtfrekvens (HR)** kontinuerligt via optisk sensor (PPG)
+- **Hjärtfrekvensvariabilitet (HRV)** — variationen mellan hjärtslag
+- **Rörelse** via accelerometer
+- **Andningsfrekvens** härlett från HRV-mönster
+- **Hudtemperatur** (Apple Watch Series 8+, vissa andra)
+
+**Bättre på:** sömnstadier (REM/djup/lätt), bedömning av
+återhämtning, fysiologisk stress.
+
+**Begränsningar:** kostar 2 000-8 000 kr, måste laddas, vissa hatar
+att ha klocka på sig på natten.
+
+### 3. Specialiserade sleep trackers
+
+Oura Ring, Whoop Strap (utan klocka), Eight Sleep-madrassen.
+
+Oura och Whoop använder samma typ av sensorer som Apple Watch men
+är optimerade för sleep — färre distraktioner, ofta bättre
+batteritid, ofta dyrare prenumerationsmodell.
+
+Eight Sleep är ett intressant alternativ: mätaren sitter i madrassen
+och kan justera temperaturen baserat på vad sensorerna mäter.
+
+## Vad guldstandarden faktiskt är
+
+Polysomnografi (PSG) är vad sjukvården använder vid misstänkt
+sömnstörning. Du sover en natt på sömnlab med:
+
+- EEG (hjärnaktivitet) — mäter sömnstadier direkt
+- EOG (ögonrörelser) — bekräftar REM
+- EMG (muskelaktivitet)
+- EKG, andning, blodgaser
+
+Det är guldstandarden. Och det är vad ingen konsumentenhet kommer
+nära. Apple Watch och Oura har validerats mot PSG i studier — de
+träffar rätt sömnstadie 70-80% av tiden, vilket är imponerande för
+en kommersiell produkt men inte 100%.
+
+## Vad är "sleep score"?
+
+Sleep score finns inte som vetenskaplig term. Varje app har sin
+egen formel. Typiska komponenter:
+
+| Komponent | Vad det mäter | Vikt i score |
+|---|---|---|
+| Total sömntid | Timmar sovande | Hög |
+| Sömn-effektivitet | % i säng som faktiskt sov | Hög |
+| Vaknat-perioder | Antal/längd vakentider | Medium |
+| Sömnstadie-balans | Mängd REM/djup | Medium |
+| Regelbundenhet | Konsekvens läggtid | Låg-medium |
+| Vilopuls | Ofta som hälsosignal | Låg |
+
+Eftersom formeln är hemlig och olika mellan appar är **score
+oanvändbar för att jämföra mellan appar**. Den är användbar för
+att jämföra dig mot dig själv över tid.
+
+## Vad sömntracking är bra på
+
+- **Total sömntid** — alla mäter detta hyggligt bra
+- **Regelbundenhet** — när du går till sängs, när du vaknar
+- **Trender över veckor/månader** — sov du sämre i januari? Bättre
+  efter att du slutade kaffe efter 14:00?
+- **Identifiera dåliga mönster** — sena fredagar, alkohol,
+  träningsdagar
+
+## Vad sömntracking är *mindre* bra på
+
+- **Exakta sömnstadier** — alla är approximationer
+- **En enskild natt** — brus är högt; trender är signal
+- **Diagnostisera störningar** — appen kan flagga snarkning, men
+  bara en läkare kan diagnostisera sömnapné
+
+## Den vanligaste fällan: orthosomnia
+
+Begreppet myntades 2017. Människor som blir så fokuserade på sleep
+score att ångesten över att "sova rätt" faktiskt försämrar sömnen.
+
+Tecken:
+- Du blir frustrerad/upprörd när du ser dålig score
+- Du försöker "manipulera" siffran (lägga dig tidigare bara för app)
+- Du sover sämre efter du börjat tracking
+
+Om det här händer dig — pausa appen ett par veckor.
+
+## Generellt: vad de flesta sömnappar mäter
+
+Eftersom det finns dussintals appar varierar exakta features. Men
+generellt levererar moderna sömnappar:
+
+- Tid i säng / sömntid
+- Sömn-effektivitet
+- Regelbundenhet i läggtid
+- Vakentider
+- Trender över veckor/månader
+- Smart väckning (väcker dig under lättsömn)
+
+Vissa går djupare med:
+- Snarknings-detektering via mikrofon
+- Sömnstadie-uppskattning
+- Integration med smartwatch för HRV
+
+[Sömnkoll](/somnkoll/) är ett av flera alternativ — fokuserar på
+enkel tracking och regelbundenhet utan komplicerade scores. Vill
+du jämföra med andra alternativ se [bästa sömnappen
+2026](/somnkoll/basta-somnappen/).
+
+## Praktiskt: hur ska du tolka din data?
+
+Tre regler:
+
+1. **Trender > enskilda nätter.** En dålig natt betyder lite. Ett
+   mönster över 2 veckor betyder mycket.
+2. **Subjektiv känsla > score.** Om du känner dig utvilad men
+   appen sa 65/100 — lita på kroppen.
+3. **Använd som spegel, inte som facit.** Tracking är bra för att
+   *upptäcka* mönster du inte sett. Inte för att betygsätta dig.
+
+## När ska du sluta tracka?
+
+- När siffran styr ditt humör mer än hur du faktiskt mår
+- När du har etablerat de ändringar du behövde se
+- När det blir vana att kolla score istället för verktyg
+
+Du behöver inte tracka för alltid. Använd det 2-3 månader för att
+hitta ditt mönster, justera vanor, och pausa sen.
+
+## Sammanfattning
+
+- Sleep tracking är bra för **trender och regelbundenhet**
+- Sömnstadier är **approximationer**, även hos premium-enheter
+- Sleep score finns inte som vetenskaplig term — bara intern formel
+- Polysomnografi är guldstandard, ingen app kommer nära
+- Tracking är ett verktyg, inte ett betyg
+
+Vidare läsning:
+
+- [Sleep Cycle, sömnscore eller HRV — vad ska du faktiskt titta på?](/somnkoll/sleep-cycle-vs-somnscore/)
+- [Bästa sömnappen 2026](/somnkoll/basta-somnappen/)
+- [Hur mycket sömn behöver vuxna](/somnkoll/hur-mycket-somn-vuxna/)

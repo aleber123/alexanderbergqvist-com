@@ -1,15 +1,164 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../../components/BaseLayout.astro';
+
+const apps = await getCollection('apps');
+const appNameById = new Map(apps.map((a) => [a.id, a.data.name]));
+
+const articles = (await getCollection('articles', (a) => !a.data.draft))
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+
+// Group articles by their parent app for the topic-cluster sidebar.
+const byApp = new Map<string, typeof articles>();
+for (const article of articles) {
+  const app = article.data.app;
+  if (!byApp.has(app)) byApp.set(app, []);
+  byApp.get(app)!.push(article);
+}
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('sv-SE', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
 ---
 
 <BaseLayout
-  title="Blog"
-  description="Tankar om indie-utveckling, app-launches och svenska SaaS — av Alexander Bergqvist."
+  title="Skriver — guider, verktyg och artiklar"
+  description="Långa svar på riktiga frågor — surdeg från grunden, sluta snusa-kalkyl, åldersräknare, VAB-regler, Wim Hof och mer. Skrivet av Alexander Bergqvist."
+  keywords={[
+    'svenska guider',
+    'iOS app artiklar',
+    'svenska SEO-artiklar',
+    'Alexander Bergqvist blogg',
+  ]}
 >
-  <section class="max-w-3xl mx-auto px-6 py-16">
-    <h1 class="text-4xl font-black tracking-tight">Blog</h1>
-    <p class="mt-4 text-lg text-slate-600">
-      Tomt här just nu. Första inläggen kommer snart.
-    </p>
+  <section class="border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-6 py-20 md:py-28">
+      <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-4">
+        {articles.length} artiklar · {byApp.size} ämnen
+      </div>
+      <h1 class="text-4xl md:text-6xl font-black tracking-tight">
+        Skriver.
+      </h1>
+      <p class="mt-6 text-lg text-slate-600 max-w-2xl leading-relaxed">
+        Långa svar på riktiga frågor. Skrivna när jag bygger appar och
+        upptäcker att informationen som finns ute på nätet är spridd, otydlig
+        eller fel. Allt på svenska.
+      </p>
+    </div>
+  </section>
+
+  <!-- All articles, newest first -->
+  <section class="border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-6 py-16 md:py-20">
+      <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-10">
+        <aside class="md:sticky md:top-20 md:self-start">
+          <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-3">
+            Ämne
+          </div>
+          <ul class="space-y-1 text-sm">
+            <li>
+              <a href="#all" class="font-bold hover:text-slate-600">
+                Alla {articles.length}
+              </a>
+            </li>
+            {[...byApp.entries()]
+              .sort((a, b) => b[1].length - a[1].length)
+              .map(([app, list]) => (
+                <li>
+                  <a
+                    href={`#${app}`}
+                    class="text-slate-600 hover:text-slate-900"
+                  >
+                    {appNameById.get(app) ?? app}{' '}
+                    <span class="text-slate-400">({list.length})</span>
+                  </a>
+                </li>
+              ))}
+          </ul>
+        </aside>
+
+        <div>
+          <div id="all">
+            <ul class="divide-y divide-slate-200 border-y border-slate-200">
+              {articles.map((a) => (
+                <li>
+                  <a
+                    href={`/${a.data.app}/${a.id.split('/').pop()}/`}
+                    class="group flex items-baseline justify-between gap-4 py-5 hover:bg-slate-50 transition px-2 -mx-2"
+                  >
+                    <div class="flex-1 min-w-0">
+                      <div class="text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-1">
+                        {appNameById.get(a.data.app) ?? a.data.app} ·{' '}
+                        {fmt(a.data.publishedAt)}
+                      </div>
+                      <h2 class="text-lg md:text-xl font-bold tracking-tight text-slate-900 group-hover:text-slate-600 transition">
+                        {a.data.title}
+                      </h2>
+                      <p class="text-sm text-slate-600 mt-1 line-clamp-2">
+                        {a.data.description}
+                      </p>
+                    </div>
+                    <span
+                      class="text-slate-300 group-hover:text-slate-900 transition text-xl pt-1"
+                      aria-hidden
+                    >
+                      →
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Per-app sections — anchor targets matching sidebar */}
+          {[...byApp.entries()]
+            .sort((a, b) => b[1].length - a[1].length)
+            .map(([app, list]) => (
+              <section id={app} class="mt-16">
+                <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-2">
+                  Topic cluster
+                </div>
+                <h2 class="text-2xl md:text-3xl font-black tracking-tight mb-2">
+                  {appNameById.get(app) ?? app}
+                </h2>
+                <a
+                  href={`/${app}/`}
+                  class="text-sm font-bold text-slate-600 hover:text-slate-900 transition underline-offset-4 hover:underline"
+                >
+                  Till app-sidan →
+                </a>
+                <ul class="mt-6 divide-y divide-slate-200 border-y border-slate-200">
+                  {list.map((a) => (
+                    <li>
+                      <a
+                        href={`/${a.data.app}/${a.id.split('/').pop()}/`}
+                        class="group flex items-baseline justify-between gap-4 py-4 hover:bg-slate-50 transition px-2 -mx-2"
+                      >
+                        <div class="flex-1 min-w-0">
+                          <h3 class="text-base md:text-lg font-bold tracking-tight text-slate-900 group-hover:text-slate-600 transition">
+                            {a.data.title}
+                          </h3>
+                          <div class="text-xs text-slate-500 mt-0.5">
+                            {fmt(a.data.publishedAt)}
+                          </div>
+                        </div>
+                        <span
+                          class="text-slate-300 group-hover:text-slate-900 transition"
+                          aria-hidden
+                        >
+                          →
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+        </div>
+      </div>
+    </div>
   </section>
 </BaseLayout>

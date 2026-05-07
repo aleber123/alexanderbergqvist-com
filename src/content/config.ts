@@ -10,6 +10,10 @@ const apps = defineCollection({
   loader: glob({ pattern: '*.json', base: './src/content/apps' }),
   schema: z.object({
     name: z.string(),
+    /** Search-intent title override. When set, used as the page title
+     *  instead of just `name`. Use for keyword-rich SERP click-bait,
+     *  e.g. "Födelsedagsapp för iPhone – glöm aldrig födelsedagar". */
+    seoTitle: z.string().optional(),
     tagline: z.string(),
     description: z.string(),
     icon: z.string(), // path under /public, e.g. "/apps/snusfri-resa.png"

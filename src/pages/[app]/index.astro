@@ -16,6 +16,7 @@ export const getStaticPaths = (async () => {
 const { app } = Astro.props;
 const {
   name,
+  seoTitle,
   tagline,
   description,
   icon,
@@ -124,7 +125,7 @@ const appStoreId = appStoreUrl
 ---
 
 <BaseLayout
-  title={name}
+  title={seoTitle ?? name}
   description={tagline}
   keywords={keywords}
   image={`/og/${app.id}.png`}
