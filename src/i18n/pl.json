@@ -1,0 +1,27 @@
+{
+  "ui": {
+    "homeHero": "Szwedzkie aplikacje iOS na codzienne problemy",
+    "homeSubhero": "Zbudowane dla iPhone'a. Bez kont, bez śledzenia, bez reklam kierowanych do dzieci. Aplikacje, które robią jedną rzecz dobrze.",
+    "appsTitle": "Aplikacje",
+    "appsSubtitle": "Małe narzędzia. Pamięć lokalna. Dostępne w App Store.",
+    "featuresTitle": "Co potrafi {name}?",
+    "downloadCta": "Pobierz w App Store",
+    "backToHome": "Wróć do strony głównej",
+    "aboutAuthor": "Stworzone samodzielnie przez Alexandra Bergqvista w Göteborgu, Szwecja.",
+    "seeAllLanguages": "Czytaj w innym języku"
+  },
+  "apps": {
+    "andas": {
+      "name": "Andas",
+      "tagline": "Oddychaj. Spokój. Żyj.",
+      "description": "Andas to aplikacja iOS do prowadzonego oddychania. Wim Hof, box breathing 4-4-4-4 i 4-7-8 są darmowe. Twórz własne protokoły, śledź retention w czasie i rozwijaj swoją praktykę.",
+      "features": [
+        "Wim Hof Basic, box breathing i 4-7-8 (darmowe)",
+        "Animowany krąg oddechu z haptyką",
+        "Śledzenie retention i seria",
+        "Twórz własne protokoły z suwakami (Premium)",
+        "Tummo, Buteyko + własne protokoły (Premium)"
+      ]
+    }
+  }
+}

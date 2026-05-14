@@ -12,7 +12,10 @@ export default defineConfig({
   // /no/, /da/, /es/ and are limited to the universal apps + home.
   i18n: {
     defaultLocale: 'sv',
-    locales: ['sv', 'en', 'de', 'no', 'da', 'es', 'fr', 'fi', 'is'],
+    locales: [
+      'sv', 'en', 'de', 'no', 'da', 'es', 'fr', 'fi', 'is',
+      'it', 'el', 'nl', 'pl', 'pt',
+    ],
     routing: { prefixDefaultLocale: false },
   },
   integrations: [
@@ -32,6 +35,11 @@ export default defineConfig({
           fr: 'fr-FR',
           fi: 'fi-FI',
           is: 'is-IS',
+          it: 'it-IT',
+          el: 'el-GR',
+          nl: 'nl-NL',
+          pl: 'pl-PL',
+          pt: 'pt-PT',
         },
       },
       changefreq: 'weekly',

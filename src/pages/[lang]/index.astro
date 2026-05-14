@@ -8,6 +8,7 @@ import {
   LOCALES,
   LOCALE_BCP47,
   UNIVERSAL_APPS,
+  appsForLocale,
   t,
   type Locale,
 } from '../../i18n/locales';
@@ -20,9 +21,11 @@ const lang = Astro.params.lang as Locale;
 const strings = t(lang);
 
 const allApps = await getCollection('apps');
-const universalApps = UNIVERSAL_APPS.map((slug) =>
-  allApps.find((a) => a.id === slug),
-)
+// Only list apps whose App Store listing is available in this locale —
+// avoids dead "Download" CTAs (e.g. Polish home page shouldn't promote
+// Födelsedagar since its ASC listing has no Polish translation).
+const universalApps = appsForLocale(lang)
+  .map((slug) => allApps.find((a) => a.id === slug))
   .filter((a): a is NonNullable<typeof a> => !!a);
 
 // hreflang alternates — every locale links to its own home; sv goes to root.

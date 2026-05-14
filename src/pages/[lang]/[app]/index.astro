@@ -8,6 +8,8 @@ import {
   LOCALES,
   LOCALE_BCP47,
   UNIVERSAL_APPS,
+  appSupportsLocale,
+  localizeAppStoreUrl,
   t,
   type Locale,
 } from '../../../i18n/locales';
@@ -17,6 +19,10 @@ export const getStaticPaths = (async () => {
   const paths: { params: { lang: string; app: string } }[] = [];
   for (const lang of LOCALES) {
     for (const appId of UNIVERSAL_APPS) {
+      // Skip combinations the App Store can't deliver — `/it/fodelsedagar/`
+      // would link to a Swedish-only listing in the Italian App Store
+      // which breaks user trust on the very first conversion step.
+      if (!appSupportsLocale(appId, lang)) continue;
       const app = apps.find((a) => a.id === appId);
       if (!app) continue;
       paths.push({ params: { lang, app: appId } });
@@ -28,28 +34,37 @@ export const getStaticPaths = (async () => {
 const lang = Astro.params.lang as Locale;
 const appId = Astro.params.app as string;
 const strings = t(lang);
-const tr = strings.apps[appId];
+const tr = strings.apps[appId]!;
 
 const apps = await getCollection('apps');
 const app = apps.find((a) => a.id === appId)!;
-const { icon, accent, accentDark, status, appStoreUrl, category } = app.data;
+const { icon, accent, accentDark, status, appStoreUrl: baseAppStoreUrl, category } = app.data;
+// Swap the storefront country in the Apple URL so the listing renders
+// in the same language as the page (e.g. /de/ -> German App Store).
+const appStoreUrl = localizeAppStoreUrl(baseAppStoreUrl, lang);
 
-// hreflang alternates for this same app across all locales.
-const alternates: Record<string, string> = {
-  'sv-SE': new URL(`/${appId}/`, Astro.site).href,
-};
+// hreflang alternates — only emit a tag for a locale if the app is
+// actually published there. Otherwise we'd be claiming a non-existent
+// translation, which Google deprecates.
+const alternates: Record<string, string> = {};
+if (appSupportsLocale(appId, 'sv')) {
+  alternates['sv-SE'] = new URL(`/${appId}/`, Astro.site).href;
+}
 for (const otherLang of LOCALES) {
+  if (!appSupportsLocale(appId, otherLang)) continue;
   alternates[LOCALE_BCP47[otherLang]] = new URL(
     `/${otherLang}/${appId}/`,
     Astro.site,
   ).href;
 }
-const switcherAlternates = {
-  sv: new URL(`/${appId}/`, Astro.site).href,
-  ...Object.fromEntries(
-    LOCALES.map((l) => [l, new URL(`/${l}/${appId}/`, Astro.site).href]),
-  ),
-};
+const switcherAlternates: Partial<Record<Locale | 'sv', string>> = {};
+if (appSupportsLocale(appId, 'sv')) {
+  switcherAlternates.sv = new URL(`/${appId}/`, Astro.site).href;
+}
+for (const l of LOCALES) {
+  if (!appSupportsLocale(appId, l)) continue;
+  switcherAlternates[l] = new URL(`/${l}/${appId}/`, Astro.site).href;
+}
 
 // Schema.org category mapping (kept in sync with [app]/index.astro).
 const categoryMap: Record<string, string> = {

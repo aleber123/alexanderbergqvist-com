@@ -1,0 +1,27 @@
+{
+  "ui": {
+    "homeHero": "Zweedse iOS-apps voor alledaagse problemen",
+    "homeSubhero": "Gebouwd voor iPhone. Geen accounts, geen tracking, geen advertenties gericht op kinderen. Apps die één ding goed doen.",
+    "appsTitle": "Apps",
+    "appsSubtitle": "Kleine tools. Lokale opslag. Beschikbaar in de App Store.",
+    "featuresTitle": "Wat kan {name}?",
+    "downloadCta": "Download in de App Store",
+    "backToHome": "Terug naar home",
+    "aboutAuthor": "Solo gebouwd door Alexander Bergqvist in Göteborg, Zweden.",
+    "seeAllLanguages": "Lees in een andere taal"
+  },
+  "apps": {
+    "andas": {
+      "name": "Andas",
+      "tagline": "Adem. Kalm. Leef.",
+      "description": "Andas is de iOS-app voor begeleide ademhaling. Wim Hof, box breathing 4-4-4-4 en 4-7-8 zijn gratis. Bouw eigen protocollen, volg retention door de tijd heen en ontwikkel je beoefening.",
+      "features": [
+        "Wim Hof Basic, box breathing en 4-7-8 (gratis)",
+        "Geanimeerde ademcirkel met haptiek",
+        "Retention-tracking en streaks",
+        "Bouw eigen protocollen met sliders (Premium)",
+        "Tummo, Buteyko + aangepaste protocollen (Premium)"
+      ]
+    }
+  }
+}

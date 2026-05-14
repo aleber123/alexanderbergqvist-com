@@ -1,0 +1,38 @@
+{
+  "ui": {
+    "homeHero": "App iOS svedesi per i problemi di tutti i giorni",
+    "homeSubhero": "Pensate per iPhone. Nessun account, nessun tracciamento, nessuna pubblicità rivolta ai bambini. App che fanno bene una cosa sola.",
+    "appsTitle": "App",
+    "appsSubtitle": "Piccoli strumenti. Archiviazione locale. Disponibili sull'App Store.",
+    "featuresTitle": "Cosa fa {name}?",
+    "downloadCta": "Scarica sull'App Store",
+    "backToHome": "Torna alla home",
+    "aboutAuthor": "Realizzato da solo da Alexander Bergqvist a Göteborg, Svezia.",
+    "seeAllLanguages": "Leggi in un'altra lingua"
+  },
+  "apps": {
+    "andas": {
+      "name": "Andas",
+      "tagline": "Respira. Calma. Vivi.",
+      "description": "Andas è l'app iOS per la respirazione guidata. Wim Hof, box breathing 4-4-4-4 e 4-7-8 sono gratuiti. Crea i tuoi protocolli, monitora la retention nel tempo e sviluppa la tua pratica.",
+      "features": [
+        "Wim Hof Basic, box breathing e 4-7-8 (gratis)",
+        "Cerchio di respirazione animato con haptic feedback",
+        "Tracking retention e streak",
+        "Crea protocolli personalizzati con slider (Premium)",
+        "Tummo, Buteyko + protocolli personalizzati (Premium)"
+      ]
+    },
+    "plantera": {
+      "name": "Plantera",
+      "tagline": "App per giardinaggio nordico con allerte gelo.",
+      "description": "Plantera è l'app iOS per chi coltiva nei climi nordici. Ricevi allerte gelo, un calendario di semina e raccolta per zona e consigli curati sugli attrezzi.",
+      "features": [
+        "Allerte gelo basate sulle previsioni locali",
+        "Calendario di semina e raccolta per zona",
+        "Segui le tue piante con foto",
+        "Promemoria per l'irrigazione"
+      ]
+    }
+  }
+}
