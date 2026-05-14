@@ -1,0 +1,198 @@
+---
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../components/BaseLayout.astro';
+import AppStoreBadge from '../../../components/AppStoreBadge.astro';
+import LangSwitcher from '../../../components/LangSwitcher.astro';
+import {
+  LOCALES,
+  LOCALE_BCP47,
+  UNIVERSAL_APPS,
+  t,
+  type Locale,
+} from '../../../i18n/locales';
+
+export const getStaticPaths = (async () => {
+  const apps = await getCollection('apps');
+  const paths: { params: { lang: string; app: string } }[] = [];
+  for (const lang of LOCALES) {
+    for (const appId of UNIVERSAL_APPS) {
+      const app = apps.find((a) => a.id === appId);
+      if (!app) continue;
+      paths.push({ params: { lang, app: appId } });
+    }
+  }
+  return paths;
+}) satisfies GetStaticPaths;
+
+const lang = Astro.params.lang as Locale;
+const appId = Astro.params.app as string;
+const strings = t(lang);
+const tr = strings.apps[appId];
+
+const apps = await getCollection('apps');
+const app = apps.find((a) => a.id === appId)!;
+const { icon, accent, accentDark, status, appStoreUrl, category } = app.data;
+
+// hreflang alternates for this same app across all locales.
+const alternates: Record<string, string> = {
+  'sv-SE': new URL(`/${appId}/`, Astro.site).href,
+};
+for (const otherLang of LOCALES) {
+  alternates[LOCALE_BCP47[otherLang]] = new URL(
+    `/${otherLang}/${appId}/`,
+    Astro.site,
+  ).href;
+}
+const switcherAlternates = {
+  sv: new URL(`/${appId}/`, Astro.site).href,
+  ...Object.fromEntries(
+    LOCALES.map((l) => [l, new URL(`/${l}/${appId}/`, Astro.site).href]),
+  ),
+};
+
+// Schema.org category mapping (kept in sync with [app]/index.astro).
+const categoryMap: Record<string, string> = {
+  'Hälsa och träning': 'HealthApplication',
+  'Hälsa & form': 'HealthApplication',
+  'Livsstil': 'LifestyleApplication',
+  'Lifestyle': 'LifestyleApplication',
+  'Verktyg': 'UtilitiesApplication',
+  'Utilities': 'UtilitiesApplication',
+  'Produktivitet': 'BusinessApplication',
+  'Productivity': 'BusinessApplication',
+  'Mat och dryck': 'LifestyleApplication',
+  'Familj': 'LifestyleApplication',
+  'Trädgård': 'LifestyleApplication',
+  'Barn': 'KidsApplication',
+};
+const schemaCategory = categoryMap[category] ?? 'LifestyleApplication';
+
+const pageUrl = new URL(`/${lang}/${appId}/`, Astro.site).href;
+const iconAbsolute = new URL(icon, Astro.site).href;
+
+const ldJson = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: tr.name,
+  description: tr.description,
+  applicationCategory: schemaCategory,
+  operatingSystem: 'iOS',
+  inLanguage: LOCALE_BCP47[lang],
+  url: pageUrl,
+  image: iconAbsolute,
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'EUR',
+    availability:
+      status === 'live'
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/PreOrder',
+  },
+  author: {
+    '@type': 'Person',
+    name: 'Alexander Bergqvist',
+    url: 'https://alexanderbergqvist.com/',
+  },
+  publisher: {
+    '@type': 'Person',
+    name: 'Alexander Bergqvist',
+    url: 'https://alexanderbergqvist.com/',
+  },
+  ...(appStoreUrl && { downloadUrl: appStoreUrl }),
+  ...(appStoreUrl && { installUrl: appStoreUrl }),
+};
+
+const appStoreId = appStoreUrl
+  ? appStoreUrl.match(/\/id(\d+)/)?.[1]
+  : undefined;
+---
+
+<BaseLayout
+  title={`${tr.name} — ${tr.tagline}`}
+  description={tr.description}
+  htmlLang={LOCALE_BCP47[lang]}
+  hreflangAlternates={alternates}
+  appStoreId={appStoreId}
+  image={`/og/${appId}.png`}
+>
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify(ldJson)}
+  />
+
+  <section
+    class="relative overflow-hidden"
+    style={`background: linear-gradient(135deg, ${accent}, ${accentDark ?? accent});`}
+  >
+    <div class="max-w-6xl mx-auto px-6 py-20 md:py-28 text-white relative">
+      <div class="flex justify-end mb-6">
+        <LangSwitcher current={lang} alternates={switcherAlternates} />
+      </div>
+      <div class="grid md:grid-cols-[200px_1fr] gap-8 md:gap-12 items-center">
+        <div
+          class="w-32 h-32 md:w-40 md:h-40 rounded-3xl shadow-2xl overflow-hidden bg-white/10 mx-auto md:mx-0"
+        >
+          <img
+            src={icon}
+            alt={`${tr.name} app icon`}
+            class="w-full h-full object-cover"
+          />
+        </div>
+        <div class="text-center md:text-left">
+          <h1 class="text-4xl md:text-6xl font-black tracking-tight">
+            {tr.name}
+          </h1>
+          <p class="mt-4 text-lg md:text-xl opacity-95 max-w-2xl">
+            {tr.tagline}
+          </p>
+          <div class="mt-8 flex flex-wrap gap-3 justify-center md:justify-start">
+            <AppStoreBadge url={appStoreUrl} status={status} variant="light" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-3xl mx-auto px-6 py-12">
+    <p class="text-lg text-slate-700 leading-relaxed">{tr.description}</p>
+  </section>
+
+  {tr.features.length > 0 && (
+    <section class="bg-slate-50 border-y border-slate-200 py-16">
+      <div class="max-w-6xl mx-auto px-6">
+        <h2 class="text-2xl md:text-3xl font-black mb-8">
+          {strings.ui.featuresTitle.replaceAll('{name}', tr.name)}
+        </h2>
+        <ul class="grid md:grid-cols-2 gap-4">
+          {tr.features.map((f) => (
+            <li class="flex items-start gap-3 bg-white rounded-xl p-5 border border-slate-200">
+              <span
+                class="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-white font-black text-sm"
+                style={`background: ${accent};`}
+              >
+                ✓
+              </span>
+              <span class="text-slate-700 font-medium">{f}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <section class="max-w-3xl mx-auto px-6 py-16 text-center">
+    <h2 class="text-2xl md:text-3xl font-black mb-6">
+      {strings.ui.downloadCta}
+    </h2>
+    <div class="flex justify-center">
+      <AppStoreBadge url={appStoreUrl} status={status} />
+    </div>
+    <p class="mt-8 text-sm text-slate-500">
+      <a href={`/${lang}/`} class="underline hover:text-slate-700">
+        ← {strings.ui.backToHome}
+      </a>
+    </p>
+  </section>
+</BaseLayout>

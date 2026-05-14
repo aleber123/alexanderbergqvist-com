@@ -1,0 +1,260 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FAQ from '../../components/FAQ.astro';
+import AppStoreBadge from '../../components/AppStoreBadge.astro';
+
+const app = await getEntry('apps', 'fodelsedagar');
+const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
+
+const faq = [
+  {
+    q: 'Hur räknar man ut sitt stjärntecken?',
+    a: 'Stjärntecken bestäms av födelsedatum, inte år. Varje tecken sträcker sig ungefär en månad. Räknaren här ovan tar din födelsedag och returnerar exakt tecken — du kan också se gränsdatum för varje tecken nedan.',
+  },
+  {
+    q: 'Vad innebär det att vara född på gränsen mellan två tecken?',
+    a: 'Personer födda runt 19–23:e i månaden ligger ofta nära ett gränsdatum (cusp). Många astrologer säger att man får drag från båda tecknen då. Räknaren använder strikt västerländsk astrologi och placerar dig i det tecken vars period innefattar datumet.',
+  },
+  {
+    q: 'Skiljer sig svenska och amerikanska stjärntecken?',
+    a: 'Datumintervallen är desamma globalt inom västerländsk astrologi. Skillnaden är språk: "Aries" på engelska = "Väduren" på svenska. Räknaren visar både svenska och latinska namn.',
+  },
+  {
+    q: 'Vad är aszendent och varför syns inte den här?',
+    a: 'Aszendenten (stigande tecknet) kräver exakt klockslag och födelseort — något räknaren inte frågar efter. Aszendent beräknas separat via en specialiserad astrologitjänst. Det vi visar här är ditt sol-tecken, det som folk i allmänhet menar med "stjärntecken".',
+  },
+];
+
+const signs = [
+  { name: 'Stenbocken', latin: 'Capricornus', emoji: '♑', element: 'Jord', range: '22 dec – 19 jan' },
+  { name: 'Vattumannen', latin: 'Aquarius', emoji: '♒', element: 'Luft', range: '20 jan – 18 feb' },
+  { name: 'Fiskarna', latin: 'Pisces', emoji: '♓', element: 'Vatten', range: '19 feb – 20 mar' },
+  { name: 'Väduren', latin: 'Aries', emoji: '♈', element: 'Eld', range: '21 mar – 19 apr' },
+  { name: 'Oxen', latin: 'Taurus', emoji: '♉', element: 'Jord', range: '20 apr – 20 maj' },
+  { name: 'Tvillingarna', latin: 'Gemini', emoji: '♊', element: 'Luft', range: '21 maj – 20 jun' },
+  { name: 'Kräftan', latin: 'Cancer', emoji: '♋', element: 'Vatten', range: '21 jun – 22 jul' },
+  { name: 'Lejonet', latin: 'Leo', emoji: '♌', element: 'Eld', range: '23 jul – 22 aug' },
+  { name: 'Jungfrun', latin: 'Virgo', emoji: '♍', element: 'Jord', range: '23 aug – 22 sep' },
+  { name: 'Vågen', latin: 'Libra', emoji: '♎', element: 'Luft', range: '23 sep – 22 okt' },
+  { name: 'Skorpionen', latin: 'Scorpius', emoji: '♏', element: 'Vatten', range: '23 okt – 21 nov' },
+  { name: 'Skytten', latin: 'Sagittarius', emoji: '♐', element: 'Eld', range: '22 nov – 21 dec' },
+];
+---
+
+<BaseLayout
+  title="Vilket stjärntecken är jag? Räkna ut ditt stjärntecken"
+  description="Skriv in ditt födelsedatum så ser du ditt stjärntecken direkt. Gratis räknare med datumintervall, element och egenskaper för alla 12 stjärntecken."
+  keywords={[
+    'vilket stjärntecken är jag',
+    'stjärntecken räknare',
+    'stjärntecken datum',
+    'mitt stjärntecken',
+    'horoskop räknare',
+    'stjärntecken kalkylator',
+  ]}
+  appStoreId={appStoreId}
+>
+  <section class="max-w-3xl mx-auto px-6 py-8">
+    <Breadcrumbs
+      trail={[
+        { name: 'Hem', url: '/' },
+        { name: 'Födelsedagar', url: '/fodelsedagar/' },
+        { name: 'Stjärntecken-räknare' },
+      ]}
+    />
+    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-slate-500">
+      Fri kalkylator
+    </span>
+    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+      Vilket stjärntecken är jag?
+    </h1>
+    <p class="mt-3 text-lg text-slate-600">
+      Skriv in ditt födelsedatum så får du veta direkt. Räknaren visar
+      svenskt och latinskt namn, element och vilket datumintervall ditt
+      tecken täcker.
+    </p>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-white p-6 md:p-8">
+      <label class="block text-sm font-bold mb-2" for="bdate">
+        Ditt födelsedatum
+      </label>
+      <input
+        id="bdate"
+        type="date"
+        class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-pink-500 focus:outline-none"
+      />
+
+      <div
+        id="result"
+        class="mt-6 rounded-2xl bg-gradient-to-br from-pink-500 to-pink-700 p-6 text-white"
+      >
+        <div class="flex items-center gap-4">
+          <span class="text-5xl" data-out="emoji">♈</span>
+          <div>
+            <div class="text-xs font-black uppercase tracking-widest opacity-80">
+              Du är
+            </div>
+            <div class="text-3xl font-black" data-out="name">Väduren</div>
+            <div class="text-sm opacity-90" data-out="latin">Aries</div>
+          </div>
+        </div>
+        <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
+          <div class="rounded-lg bg-white/15 p-3">
+            <div class="font-bold opacity-80 text-xs uppercase tracking-wide">Element</div>
+            <div class="font-black text-base" data-out="element">Eld</div>
+          </div>
+          <div class="rounded-lg bg-white/15 p-3">
+            <div class="font-bold opacity-80 text-xs uppercase tracking-wide">Period</div>
+            <div class="font-black text-base" data-out="range">21 mar – 19 apr</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-gradient-to-br from-pink-50 to-white p-6 md:p-8">
+      <h2 class="text-xl font-black">Glöm aldrig en födelsedag igen</h2>
+      <p class="mt-2 text-slate-700">
+        Födelsedagar-appen visar både stjärntecken och åldermilstolpar för
+        alla personer i ditt liv. Importera från Kontakter, få påminnelser
+        i god tid och se vem som fyller år härnäst.
+      </p>
+      <div class="mt-6">
+        <AppStoreBadge
+          url="https://apps.apple.com/se/app/f%C3%B6delsedagar/id6758899294"
+          status="live"
+        />
+      </div>
+    </div>
+
+    <div class="prose mt-12">
+      <h2>Alla 12 stjärntecken — datumintervall</h2>
+      <p>
+        Stjärntecknen i västerländsk astrologi följer solens årliga
+        rörelse genom djurkretsen. Varje tecken täcker cirka 30 dagar.
+        Här är hela tabellen.
+      </p>
+
+      <table class="w-full border-collapse mt-4">
+        <thead>
+          <tr class="border-b-2 border-slate-300">
+            <th class="text-left py-2">Tecken</th>
+            <th class="text-left py-2">Latin</th>
+            <th class="text-left py-2">Element</th>
+            <th class="text-left py-2">Datum</th>
+          </tr>
+        </thead>
+        <tbody>
+          {signs.map((s) => (
+            <tr class="border-b border-slate-200">
+              <td class="py-2 font-bold">
+                <span class="mr-2">{s.emoji}</span>{s.name}
+              </td>
+              <td class="py-2 text-slate-600">{s.latin}</td>
+              <td class="py-2 text-slate-600">{s.element}</td>
+              <td class="py-2 text-slate-600">{s.range}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <h2>Eld-, Jord-, Luft- och Vatten-tecken</h2>
+      <p>
+        De 12 tecknen grupperas i fyra element. Eld-tecken (Vädur, Lejon,
+        Skytt) sägs vara passionerade och energiska. Jord-tecken (Oxen,
+        Jungfrun, Stenbocken) praktiska och stadiga. Luft-tecken
+        (Tvillingarna, Vågen, Vattumannen) sociala och intellektuella.
+        Vatten-tecken (Kräftan, Skorpionen, Fiskarna) känslosamma och
+        intuitiva.
+      </p>
+
+      <h2>Är stjärntecken vetenskap?</h2>
+      <p>
+        Nej. Astrologi har inget vetenskapligt stöd — flera stora studier
+        har visat att stjärntecken inte korrelerar med personlighet eller
+        livsutfall. Det är dock ett intressant kulturellt och historiskt
+        fenomen som många njuter av att lära sig om, ungefär som
+        myter eller folksagor.
+      </p>
+
+      <h2>Vad är skillnaden mot kinesiskt stjärntecken?</h2>
+      <p>
+        Västerländska stjärntecken bygger på födelsedag (månad och dag).
+        Kinesiska stjärntecken bygger istället på födelseår och har 12
+        djur som upprepas i en 12-årscykel: Råtta, Oxe, Tiger, Kanin,
+        Drake, Orm, Häst, Get, Apa, Tupp, Hund, Gris. Vi har en
+        <a href="/fodelsedagar/kinesiskt-stjarntecken/"> separat
+        kalkylator för det också</a>.
+      </p>
+    </div>
+
+    <FAQ items={faq} />
+  </section>
+</BaseLayout>
+
+<script>
+  const inp = document.getElementById('bdate') as HTMLInputElement;
+  const out = {
+    emoji: document.querySelector('[data-out="emoji"]')!,
+    name: document.querySelector('[data-out="name"]')!,
+    latin: document.querySelector('[data-out="latin"]')!,
+    element: document.querySelector('[data-out="element"]')!,
+    range: document.querySelector('[data-out="range"]')!,
+  };
+
+  type Sign = {
+    name: string;
+    latin: string;
+    emoji: string;
+    element: string;
+    range: string;
+  };
+
+  // Boundary table: [start_month, start_day, sign]. Each sign starts at
+  // its boundary and runs until the next entry's day.
+  function signFor(month: number, day: number): Sign {
+    const m = month + 1;
+    if ((m === 3 && day >= 21) || (m === 4 && day <= 19))
+      return { name: 'Väduren', latin: 'Aries', emoji: '♈', element: 'Eld', range: '21 mar – 19 apr' };
+    if ((m === 4 && day >= 20) || (m === 5 && day <= 20))
+      return { name: 'Oxen', latin: 'Taurus', emoji: '♉', element: 'Jord', range: '20 apr – 20 maj' };
+    if ((m === 5 && day >= 21) || (m === 6 && day <= 20))
+      return { name: 'Tvillingarna', latin: 'Gemini', emoji: '♊', element: 'Luft', range: '21 maj – 20 jun' };
+    if ((m === 6 && day >= 21) || (m === 7 && day <= 22))
+      return { name: 'Kräftan', latin: 'Cancer', emoji: '♋', element: 'Vatten', range: '21 jun – 22 jul' };
+    if ((m === 7 && day >= 23) || (m === 8 && day <= 22))
+      return { name: 'Lejonet', latin: 'Leo', emoji: '♌', element: 'Eld', range: '23 jul – 22 aug' };
+    if ((m === 8 && day >= 23) || (m === 9 && day <= 22))
+      return { name: 'Jungfrun', latin: 'Virgo', emoji: '♍', element: 'Jord', range: '23 aug – 22 sep' };
+    if ((m === 9 && day >= 23) || (m === 10 && day <= 22))
+      return { name: 'Vågen', latin: 'Libra', emoji: '♎', element: 'Luft', range: '23 sep – 22 okt' };
+    if ((m === 10 && day >= 23) || (m === 11 && day <= 21))
+      return { name: 'Skorpionen', latin: 'Scorpius', emoji: '♏', element: 'Vatten', range: '23 okt – 21 nov' };
+    if ((m === 11 && day >= 22) || (m === 12 && day <= 21))
+      return { name: 'Skytten', latin: 'Sagittarius', emoji: '♐', element: 'Eld', range: '22 nov – 21 dec' };
+    if ((m === 12 && day >= 22) || (m === 1 && day <= 19))
+      return { name: 'Stenbocken', latin: 'Capricornus', emoji: '♑', element: 'Jord', range: '22 dec – 19 jan' };
+    if ((m === 1 && day >= 20) || (m === 2 && day <= 18))
+      return { name: 'Vattumannen', latin: 'Aquarius', emoji: '♒', element: 'Luft', range: '20 jan – 18 feb' };
+    return { name: 'Fiskarna', latin: 'Pisces', emoji: '♓', element: 'Vatten', range: '19 feb – 20 mar' };
+  }
+
+  function compute() {
+    if (!inp.value) return;
+    const birth = new Date(inp.value);
+    if (isNaN(birth.getTime())) return;
+    const sign = signFor(birth.getMonth(), birth.getDate());
+    out.emoji.textContent = sign.emoji;
+    out.name.textContent = sign.name;
+    out.latin.textContent = sign.latin;
+    out.element.textContent = sign.element;
+    out.range.textContent = sign.range;
+  }
+
+  inp.addEventListener('input', compute);
+  const def = new Date();
+  def.setFullYear(def.getFullYear() - 30);
+  inp.value = def.toISOString().slice(0, 10);
+  compute();
+</script>

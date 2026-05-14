@@ -1,0 +1,45 @@
+---
+/**
+ * Compact language picker. Each entry links to the same page in the
+ * target locale; pass the precomputed map in via `alternates`.
+ *
+ * Visual: pill with flag + label, rendered in a row. Designed for
+ * the top-right of localized landing pages so users can switch
+ * without hunting in the footer.
+ */
+import { LOCALE_LABELS, LOCALE_FLAGS } from '../i18n/locales';
+import type { Locale } from '../i18n/locales';
+
+interface Props {
+  current: Locale | 'sv';
+  /** Map of locale code → absolute URL for the same content. */
+  alternates: Partial<Record<Locale | 'sv', string>>;
+  /** Render full labels (Swedish, Deutsch) or just flags. */
+  compact?: boolean;
+}
+
+const { current, alternates, compact = false } = Astro.props;
+const order: (Locale | 'sv')[] = ['sv', 'en', 'de', 'no', 'da', 'es'];
+---
+
+<div class="flex flex-wrap gap-1.5">
+  {order.map((code) => {
+    const href = alternates[code];
+    if (!href) return null;
+    const isCurrent = code === current;
+    return (
+      <a
+        href={href}
+        aria-current={isCurrent ? 'page' : undefined}
+        class={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-bold transition ${
+          isCurrent
+            ? 'border-slate-900 bg-slate-900 text-white'
+            : 'border-slate-200 bg-white text-slate-600 hover:border-slate-400 hover:text-slate-900'
+        }`}
+      >
+        <span aria-hidden="true">{LOCALE_FLAGS[code]}</span>
+        {!compact && <span>{LOCALE_LABELS[code]}</span>}
+      </a>
+    );
+  })}
+</div>

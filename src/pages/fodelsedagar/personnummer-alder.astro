@@ -1,0 +1,313 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FAQ from '../../components/FAQ.astro';
+import AppStoreBadge from '../../components/AppStoreBadge.astro';
+
+const app = await getEntry('apps', 'fodelsedagar');
+const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
+
+const faq = [
+  {
+    q: 'Räknar du ut ålder ur personnumret automatiskt?',
+    a: 'Ja. Skriv in 10 eller 12 siffror (med eller utan bindestreck) så plockar räknaren ut födelsedatum och beräknar din ålder i år, månader och dagar.',
+  },
+  {
+    q: 'Vad betyder andra siffran från slutet i personnumret?',
+    a: 'Det är könssiffran. Udda = man, jämn = kvinna. Räknaren visar det också. Detta är ett administrativt arv från Sveriges personnummersystem och Skatteverket; det säger inget om personens identitet.',
+  },
+  {
+    q: 'Sparar ni mitt personnummer?',
+    a: 'Nej. Allt körs i din webbläsare med JavaScript — inget skickas till våra servrar eller någon tredje part. Du kan stänga sidan och numret är borta.',
+  },
+  {
+    q: 'Vad är skillnaden på + och - i personnumret?',
+    a: 'Bindestreck (-) används normalt. Plustecken (+) används när personen fyllt 100 år och kortformatet (10 siffror) skulle blivit tvetydigt. Räknaren hanterar båda.',
+  },
+  {
+    q: 'Vad är samordningsnummer?',
+    a: 'Det är ett 12-siffrigt nummer Skatteverket ger personer som inte är folkbokförda i Sverige. Datumdelen har +60 på dagsdelen (61–91 istället för 01–31). Räknaren detekterar det och plockar fram rätt födelsedatum.',
+  },
+];
+---
+
+<BaseLayout
+  title="Räkna ut ålder från personnummer — svensk personnummerräknare"
+  description="Skriv in svenskt personnummer (10 eller 12 siffror) så får du ut exakt ålder, födelsedatum och kön. Inget sparas — allt körs i din webbläsare."
+  keywords={[
+    'räkna ut ålder personnummer',
+    'personnummer ålder',
+    'ålder från personnummer',
+    'svensk personnummer kalkylator',
+    'personnummer födelsedatum',
+    'samordningsnummer ålder',
+  ]}
+  appStoreId={appStoreId}
+>
+  <section class="max-w-3xl mx-auto px-6 py-8">
+    <Breadcrumbs
+      trail={[
+        { name: 'Hem', url: '/' },
+        { name: 'Födelsedagar', url: '/fodelsedagar/' },
+        { name: 'Personnummer-ålder' },
+      ]}
+    />
+    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-slate-500">
+      Fri kalkylator
+    </span>
+    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+      Räkna ut ålder från personnummer
+    </h1>
+    <p class="mt-3 text-lg text-slate-600">
+      Skriv in ett svenskt personnummer (10 eller 12 siffror, med eller
+      utan bindestreck) så plockar räknaren ut födelsedatum, ålder och
+      könssiffra direkt i din webbläsare. Inget skickas någonstans.
+    </p>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-white p-6 md:p-8">
+      <label class="block text-sm font-bold mb-2" for="pnr">
+        Personnummer
+      </label>
+      <input
+        id="pnr"
+        type="text"
+        inputmode="numeric"
+        autocomplete="off"
+        placeholder="19800520-1234"
+        class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-pink-500 focus:outline-none"
+      />
+      <p
+        id="err"
+        class="mt-2 text-sm text-red-600 hidden"
+      ></p>
+
+      <div
+        id="result"
+        class="mt-6 hidden rounded-2xl bg-gradient-to-br from-pink-500 to-pink-700 p-6 text-white"
+      >
+        <div class="text-xs font-black uppercase tracking-widest opacity-80">
+          Resultat
+        </div>
+        <div class="mt-1 text-3xl font-black" data-out="age">–</div>
+        <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
+          <div class="rounded-lg bg-white/15 p-3">
+            <div class="font-bold opacity-80 text-xs uppercase tracking-wide">Födelsedatum</div>
+            <div class="font-black text-base" data-out="date">–</div>
+          </div>
+          <div class="rounded-lg bg-white/15 p-3">
+            <div class="font-bold opacity-80 text-xs uppercase tracking-wide">Veckodag</div>
+            <div class="font-black text-base" data-out="weekday">–</div>
+          </div>
+          <div class="rounded-lg bg-white/15 p-3">
+            <div class="font-bold opacity-80 text-xs uppercase tracking-wide">Kön (från siffra)</div>
+            <div class="font-black text-base" data-out="sex">–</div>
+          </div>
+          <div class="rounded-lg bg-white/15 p-3">
+            <div class="font-bold opacity-80 text-xs uppercase tracking-wide">Stjärntecken</div>
+            <div class="font-black text-base" data-out="sign">–</div>
+          </div>
+        </div>
+        <p class="mt-3 text-xs opacity-75">
+          Räknat lokalt i webbläsaren. Inget personnummer skickas eller sparas.
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-gradient-to-br from-pink-50 to-white p-6 md:p-8">
+      <h2 class="text-xl font-black">Vill du komma ihåg födelsedagar i appen?</h2>
+      <p class="mt-2 text-slate-700">
+        Födelsedagar-appen kopplar personer + foton + relationer och
+        påminner dig långt i förväg. Importera kontakter eller skriv in
+        manuellt — inget personnummer krävs.
+      </p>
+      <div class="mt-6">
+        <AppStoreBadge
+          url="https://apps.apple.com/se/app/f%C3%B6delsedagar/id6758899294"
+          status="live"
+        />
+      </div>
+    </div>
+
+    <div class="prose mt-12">
+      <h2>Hur tolkas ett svenskt personnummer?</h2>
+      <p>
+        Ett personnummer har formatet <code>YYYYMMDD-NNNK</code> i 12-siffrig
+        form, eller <code>YYMMDD-NNNK</code> i 10-siffrig. De första 8 (eller
+        6) siffrorna är födelsedatum. De tre N-siffrorna kallas
+        "födelsenummer" och tilldelas av Skatteverket geografiskt
+        (historiskt). Sista siffran K är en kontrollsiffra som beräknas via
+        Luhn-algoritmen.
+      </p>
+
+      <h2>Vad är samordningsnummer?</h2>
+      <p>
+        Personer som inte folkbokförts i Sverige får ett samordningsnummer
+        istället. Skillnaden: dagsdelen är +60. En person född 15 maj 1985
+        som inte är folkbokförd får alltså <code>19850575-NNNK</code>.
+        Räknaren här upptäcker det och visar rätt födelsedatum (15 maj).
+      </p>
+
+      <h2>Varför + istället för - i bindestrecket?</h2>
+      <p>
+        I 10-siffrigt format används plustecken (<code>+</code>) när
+        personen fyllt 100 år, så det inte blir tvetydigt vilket sekel
+        personen är född i. Räknaren plockar upp båda tecknen.
+      </p>
+
+      <h2>Kan jag lita på könssiffran?</h2>
+      <p>
+        Tekniskt: ja, näst sista siffran är udda för män och jämn för
+        kvinnor enligt Skatteverkets system. Men kön är ett mer komplext
+        begrepp än vad ett siffersystem visar — räknaren visar bara den
+        administrativa klassningen, inget annat.
+      </p>
+
+      <h2>Är det lagligt att räkna ut ålder från personnummer?</h2>
+      <p>
+        Ja. Personnummer i sig är inte hemligt — det är offentligt enligt
+        offentlighetsprincipen. Vad som är reglerat är vem som får lagra
+        det (GDPR) och i vilka syften. Räknaren här lagrar inget alls;
+        den parsar bara strängen lokalt.
+      </p>
+    </div>
+
+    <FAQ items={faq} />
+  </section>
+</BaseLayout>
+
+<script>
+  const inp = document.getElementById('pnr') as HTMLInputElement;
+  const err = document.getElementById('err')!;
+  const result = document.getElementById('result')!;
+  const out = {
+    age: document.querySelector('[data-out="age"]')!,
+    date: document.querySelector('[data-out="date"]')!,
+    weekday: document.querySelector('[data-out="weekday"]')!,
+    sex: document.querySelector('[data-out="sex"]')!,
+    sign: document.querySelector('[data-out="sign"]')!,
+  };
+
+  const weekdays = ['Söndag', 'Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag'];
+
+  function zodiac(month: number, day: number): string {
+    const m = month + 1;
+    if ((m === 3 && day >= 21) || (m === 4 && day <= 19)) return '♈ Väduren';
+    if ((m === 4 && day >= 20) || (m === 5 && day <= 20)) return '♉ Oxen';
+    if ((m === 5 && day >= 21) || (m === 6 && day <= 20)) return '♊ Tvillingarna';
+    if ((m === 6 && day >= 21) || (m === 7 && day <= 22)) return '♋ Kräftan';
+    if ((m === 7 && day >= 23) || (m === 8 && day <= 22)) return '♌ Lejonet';
+    if ((m === 8 && day >= 23) || (m === 9 && day <= 22)) return '♍ Jungfrun';
+    if ((m === 9 && day >= 23) || (m === 10 && day <= 22)) return '♎ Vågen';
+    if ((m === 10 && day >= 23) || (m === 11 && day <= 21)) return '♏ Skorpionen';
+    if ((m === 11 && day >= 22) || (m === 12 && day <= 21)) return '♐ Skytten';
+    if ((m === 12 && day >= 22) || (m === 1 && day <= 19)) return '♑ Stenbocken';
+    if ((m === 1 && day >= 20) || (m === 2 && day <= 18)) return '♒ Vattumannen';
+    return '♓ Fiskarna';
+  }
+
+  function show(msg: string) {
+    err.textContent = msg;
+    err.classList.remove('hidden');
+    result.classList.add('hidden');
+  }
+  function clearErr() {
+    err.classList.add('hidden');
+  }
+
+  function parse(pnr: string): {
+    year: number; month: number; day: number; sex: 'Man' | 'Kvinna';
+  } | string {
+    const clean = pnr.replace(/[\s]/g, '');
+    // Match: 10 or 12 digits with optional separator + or -
+    const m = clean.match(/^(\d{4}|\d{2})(\d{2})(\d{2})([+-])?(\d{3})(\d)?$/);
+    if (!m) return 'Ogiltigt format — använd 10 eller 12 siffror, t.ex. 19800520-1234.';
+
+    let [, yearPart, monthPart, dayPart, sep, threeDigits, lastDigit] = m;
+
+    let year: number;
+    if (yearPart.length === 4) {
+      year = parseInt(yearPart, 10);
+    } else {
+      // 2-digit year — use sep (+) to indicate 100+ years old
+      const yy = parseInt(yearPart, 10);
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const currentCentury = Math.floor(currentYear / 100) * 100;
+      // Default: assume century that gives age 0–99. Apply + adjustment.
+      year = currentCentury + yy;
+      if (year > currentYear) year -= 100;
+      if (sep === '+') year -= 100;
+    }
+
+    let day = parseInt(dayPart, 10);
+    // Samordningsnummer: day >= 61 means real day - 60
+    if (day >= 61 && day <= 91) day -= 60;
+    if (day < 1 || day > 31) return 'Ogiltig dag i personnumret.';
+
+    const month = parseInt(monthPart, 10);
+    if (month < 1 || month > 12) return 'Ogiltig månad i personnumret.';
+
+    const date = new Date(year, month - 1, day);
+    if (
+      date.getFullYear() !== year ||
+      date.getMonth() !== month - 1 ||
+      date.getDate() !== day
+    ) {
+      return 'Ogiltigt datum i personnumret.';
+    }
+
+    const sexDigit = parseInt(threeDigits[2], 10);
+    const sex = sexDigit % 2 === 0 ? 'Kvinna' : 'Man';
+
+    return { year, month: month - 1, day, sex };
+  }
+
+  function compute() {
+    if (!inp.value.trim()) {
+      clearErr();
+      result.classList.add('hidden');
+      return;
+    }
+    const parsed = parse(inp.value);
+    if (typeof parsed === 'string') {
+      show(parsed);
+      return;
+    }
+    clearErr();
+    result.classList.remove('hidden');
+
+    const { year, month, day, sex } = parsed;
+    const birth = new Date(year, month, day);
+    const now = new Date();
+
+    if (birth > now) {
+      show('Personnumret pekar på ett datum i framtiden.');
+      return;
+    }
+
+    let years = now.getFullYear() - birth.getFullYear();
+    let months = now.getMonth() - birth.getMonth();
+    let days = now.getDate() - birth.getDate();
+    if (days < 0) {
+      months -= 1;
+      const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+      days += prevMonth.getDate();
+    }
+    if (months < 0) {
+      years -= 1;
+      months += 12;
+    }
+
+    out.age.textContent = `${years} år, ${months} mån, ${days} dagar`;
+    out.date.textContent = birth.toLocaleDateString('sv-SE', {
+      day: 'numeric', month: 'long', year: 'numeric',
+    });
+    out.weekday.textContent = weekdays[birth.getDay()];
+    out.sex.textContent = sex;
+    out.sign.textContent = zodiac(month, day);
+  }
+
+  inp.addEventListener('input', compute);
+  compute();
+</script>

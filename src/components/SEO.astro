@@ -27,6 +27,14 @@ interface Props {
    * install driver. Extract from appStoreUrl: the digits after `/id`.
    */
   appStoreId?: string;
+  /**
+   * Map of BCP-47 locale → absolute URL for this page in each language.
+   * Renders as <link rel="alternate" hreflang> tags so Google links
+   * the localized variants together. Always includes the current page
+   * as its own locale entry + an x-default pointing at the canonical
+   * Swedish page.
+   */
+  hreflangAlternates?: Record<string, string>;
 }
 
 const {
@@ -41,6 +49,7 @@ const {
   author,
   noindex = false,
   appStoreId,
+  hreflangAlternates,
 } = Astro.props;
 
 const siteName = 'Alexander Bergqvist';
@@ -87,11 +96,26 @@ const articleLd = type === 'article' && publishedAt
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
 )}
 
-<!-- hreflang — Swedish-only for now, but signals to Google that this
-     is the canonical Swedish version. When English is added, add
-     en-GB and x-default tags here. -->
-<link rel="alternate" hreflang="sv-SE" href={url} />
-<link rel="alternate" hreflang="x-default" href={url} />
+<!-- hreflang — when a localized variant map is provided, emit one
+     <link rel="alternate"> per locale + an x-default. Without a map
+     we fall back to Swedish-only (existing behaviour). -->
+{hreflangAlternates ? (
+  <>
+    {Object.entries(hreflangAlternates).map(([lang, href]) => (
+      <link rel="alternate" hreflang={lang} href={href} />
+    ))}
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href={hreflangAlternates['sv-SE'] ?? url}
+    />
+  </>
+) : (
+  <>
+    <link rel="alternate" hreflang="sv-SE" href={url} />
+    <link rel="alternate" hreflang="x-default" href={url} />
+  </>
+)}
 
 <meta property="og:type" content={type} />
 <meta property="og:title" content={fullTitle} />

@@ -1,0 +1,206 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FAQ from '../../components/FAQ.astro';
+import AppStoreBadge from '../../components/AppStoreBadge.astro';
+
+const app = await getEntry('apps', 'fodelsedagar');
+const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
+
+const faq = [
+  {
+    q: 'Vilken veckodag fyller jag år 2027?',
+    a: 'Det beror helt på ditt födelsedatum. Skriv in det i räknaren ovan så ser du veckodagen för varje år 2026–2035. Tipset: fredagar och lördagar är guld om man vill kalasa — söndagar och måndagar lite trist.',
+  },
+  {
+    q: 'Vilken veckodag är jag född på?',
+    a: 'Räknaren visar det också. Många vet inte sin egen födelsedags-veckodag. Det sägs ge ledtrådar om personlighet i vissa kulturer — t.ex. "Söndagsbarn är glada".',
+  },
+  {
+    q: 'Hur räknar man ut en framtida veckodag?',
+    a: 'Algoritmen heter Zeller\'s Congruence och bygger på modulo-aritmetik mot år, månad och dag. Räknaren här använder JavaScripts inbyggda Date som hanterar det automatiskt — och tar hänsyn till skottår + den gregorianska kalendern.',
+  },
+  {
+    q: 'Funkar räknaren för 100 år framåt?',
+    a: 'Ja, men vi visar bara närmaste 10 år för läsbarhet. Om du vill se längre fram — ändra startåret i räknaren eller scrolla tabellen.',
+  },
+];
+---
+
+<BaseLayout
+  title="Vilken veckodag fyller jag år? Räkna ut nästa 10 år"
+  description="Skriv in ditt födelsedatum så ser du vilken veckodag du fyller år 2026, 2027, 2028 och framåt. Gratis veckodagsräknare för födelsedagar."
+  keywords={[
+    'vilken veckodag fyller jag år',
+    'födelsedag veckodag',
+    'födelsedag 2027 veckodag',
+    'fyller år vilken dag',
+    'veckodag räknare',
+    'kalender födelsedag',
+  ]}
+  appStoreId={appStoreId}
+>
+  <section class="max-w-3xl mx-auto px-6 py-8">
+    <Breadcrumbs
+      trail={[
+        { name: 'Hem', url: '/' },
+        { name: 'Födelsedagar', url: '/fodelsedagar/' },
+        { name: 'Veckodag-räknare' },
+      ]}
+    />
+    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-slate-500">
+      Fri kalkylator
+    </span>
+    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+      Vilken veckodag fyller jag år?
+    </h1>
+    <p class="mt-3 text-lg text-slate-600">
+      Skriv in ditt födelsedatum så ser du veckodagen för dina kommande
+      10 födelsedagar — plus vilken veckodag du själv är född på. Bra
+      för att planera firande långt i förväg.
+    </p>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-white p-6 md:p-8">
+      <label class="block text-sm font-bold mb-2" for="bdate">
+        Ditt födelsedatum
+      </label>
+      <input
+        id="bdate"
+        type="date"
+        class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-pink-500 focus:outline-none"
+      />
+
+      <div class="mt-6 rounded-2xl bg-pink-50 border border-pink-200 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-pink-700">
+          Du är född på en
+        </div>
+        <div class="mt-1 text-2xl font-black text-pink-900" data-out="birthWeekday">–</div>
+      </div>
+
+      <table class="w-full mt-6 border-collapse">
+        <thead>
+          <tr class="border-b-2 border-slate-300">
+            <th class="text-left py-3">År</th>
+            <th class="text-left py-3">Du fyller</th>
+            <th class="text-left py-3">Veckodag</th>
+            <th class="text-left py-3"></th>
+          </tr>
+        </thead>
+        <tbody id="yearTable"></tbody>
+      </table>
+    </div>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-gradient-to-br from-pink-50 to-white p-6 md:p-8">
+      <h2 class="text-xl font-black">Få påminnelse i god tid</h2>
+      <p class="mt-2 text-slate-700">
+        Med Födelsedagar-appen kan du planera firandet 1 månad, 1 vecka
+        eller 1 dag i förväg — perfekt om födelsedagen råkar falla på
+        en helg och du behöver boka restaurang eller present.
+      </p>
+      <div class="mt-6">
+        <AppStoreBadge
+          url="https://apps.apple.com/se/app/f%C3%B6delsedagar/id6758899294"
+          status="live"
+        />
+      </div>
+    </div>
+
+    <div class="prose mt-12">
+      <h2>Vilken är bästa veckodagen att fylla år?</h2>
+      <p>
+        Helt subjektivt — men fredag och lördag rankar högst i de flesta
+        svenskars huvuden. Du hinner förbereda och kan kalasa fram till
+        sent på kvällen utan att tänka på jobbet dagen efter. Söndagar
+        är näst bäst, eftersom barn och äldre släktingar är lediga.
+      </p>
+
+      <h2>Sämsta veckodagen?</h2>
+      <p>
+        Tisdag eller onsdag i mitten av en arbetsvecka. Många flyttar
+        firandet till helgen, vilket gör själva födelsedagen lite mer
+        anonym. Lösning: gör helt enkelt två firanden — en på själva
+        dagen för familjen, en på helgen för vänner.
+      </p>
+
+      <h2>Skottår och 29 februari</h2>
+      <p>
+        Personer födda 29 februari fyller år bara vart fjärde år enligt
+        strikt definition. De flesta firar 28 februari eller 1 mars de
+        andra åren. Räknaren visar det datum som räknas som födelsedag
+        i icke-skottår — du kan välja vilket själv.
+      </p>
+
+      <h2>När faller flest svenska födelsedagar?</h2>
+      <p>
+        SCB-statistik visar att juli–september är populäraste
+        födelsemånaderna i Sverige, vilket räknas tillbaka 9 månader
+        till oktober–december (mörka, mysiga månader). Februari är
+        minst populär — kortast månad + svenska vintern.
+      </p>
+    </div>
+
+    <FAQ items={faq} />
+  </section>
+</BaseLayout>
+
+<script>
+  const inp = document.getElementById('bdate') as HTMLInputElement;
+  const birthOut = document.querySelector('[data-out="birthWeekday"]')!;
+  const tableBody = document.getElementById('yearTable')!;
+
+  const weekdays = [
+    'söndag', 'måndag', 'tisdag', 'onsdag',
+    'torsdag', 'fredag', 'lördag',
+  ];
+  const wkdCap = (i: number) =>
+    weekdays[i].charAt(0).toUpperCase() + weekdays[i].slice(1);
+
+  // Highlight fredag/lördag as "guld" — söndag/måndag as "trist".
+  function vibe(weekday: number): { label: string; cls: string } {
+    if (weekday === 5 || weekday === 6) {
+      return { label: '🎉 Guld', cls: 'text-green-700 font-bold' };
+    }
+    if (weekday === 0 || weekday === 1) {
+      return { label: '😐 Trist', cls: 'text-slate-500' };
+    }
+    return { label: '👍 OK', cls: 'text-slate-600' };
+  }
+
+  function compute() {
+    if (!inp.value) return;
+    const birth = new Date(inp.value);
+    if (isNaN(birth.getTime())) return;
+
+    birthOut.textContent = wkdCap(birth.getDay());
+
+    const now = new Date();
+    const startYear = now.getFullYear();
+    const rows: string[] = [];
+    for (let year = startYear; year < startYear + 10; year++) {
+      const date = new Date(year, birth.getMonth(), birth.getDate());
+      const age = year - birth.getFullYear();
+      const wkd = date.getDay();
+      const v = vibe(wkd);
+      const dateStr = date.toLocaleDateString('sv-SE', {
+        day: 'numeric',
+        month: 'long',
+      });
+      rows.push(`
+        <tr class="border-b border-slate-200">
+          <td class="py-3 font-bold">${year}</td>
+          <td class="py-3 text-slate-600">${age} år (${dateStr})</td>
+          <td class="py-3 font-bold">${wkdCap(wkd)}</td>
+          <td class="py-3 text-right text-sm ${v.cls}">${v.label}</td>
+        </tr>
+      `);
+    }
+    tableBody.innerHTML = rows.join('');
+  }
+
+  inp.addEventListener('input', compute);
+  const def = new Date();
+  def.setFullYear(def.getFullYear() - 30);
+  inp.value = def.toISOString().slice(0, 10);
+  compute();
+</script>

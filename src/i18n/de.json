@@ -1,0 +1,72 @@
+{
+  "ui": {
+    "homeHero": "Schwedische iOS-Apps für Alltagsprobleme",
+    "homeSubhero": "Gebaut fürs iPhone. Kein Konto, kein Tracking, keine Werbung an Kinder. Fünf Apps, die jeweils eine Sache richtig gut machen.",
+    "appsTitle": "Apps",
+    "appsSubtitle": "Kleine Utilities. Lokale Speicherung. Im App Store erhältlich.",
+    "featuresTitle": "Was kann {name}?",
+    "downloadCta": "Im App Store laden",
+    "backToHome": "Zurück zur Startseite",
+    "aboutAuthor": "Solo gebaut von Alexander Bergqvist in Göteborg, Schweden.",
+    "seeAllLanguages": "In einer anderen Sprache lesen"
+  },
+  "apps": {
+    "fodelsedagar": {
+      "name": "Geburtstage",
+      "tagline": "Nie wieder einen Geburtstag vergessen.",
+      "description": "Geburtstage ist die iOS-App, die dich an die Geburtstage und Jahrestage der wichtigen Menschen erinnert. Füge Fotos hinzu, importiere aus den Kontakten und erhalte Benachrichtigungen rechtzeitig.",
+      "features": [
+        "Geburtstage mit Foto hinzufügen",
+        "Aus den Kontakten importieren",
+        "Erinnerungen 1 Monat, 1 Woche, 1 Tag und am Tag",
+        "Monatsübersicht"
+      ]
+    },
+    "andas": {
+      "name": "Andas",
+      "tagline": "Atmen. Ruhe. Leben.",
+      "description": "Andas ist die iOS-App für geführtes Atmen. Wim Hof, Box Breathing 4-4-4-4 und 4-7-8 sind kostenlos. Erstelle eigene Protokolle, verfolge deine Retention über die Zeit und entwickle deine Praxis.",
+      "features": [
+        "Wim Hof Basic, Box Breathing und 4-7-8 (kostenlos)",
+        "Animierter Atemkreis mit Haptik",
+        "Retention-Tracking und Streaks",
+        "Eigene Protokolle mit Reglern bauen (Premium)",
+        "Tummo, Buteyko + eigene Protokolle (Premium)"
+      ]
+    },
+    "rita": {
+      "name": "Rita & Malen",
+      "tagline": "Mal-App für Kinder von 3 bis 8 Jahren.",
+      "description": "Rita ist die iOS-App, in der Kinder digitale Malbilder ausmalen können. Sicher — kein Login, keine Werbung für Kinder und ständig neue Bilder.",
+      "features": [
+        "Dutzende Malbilder für verschiedene Altersstufen",
+        "Keine Werbung für Kinder",
+        "Kein Login erforderlich",
+        "Speichere deine Meisterwerke in der App"
+      ]
+    },
+    "surdeg": {
+      "name": "Sauerteig",
+      "tagline": "Füttern, backen, genießen — Sauerteig leicht gemacht.",
+      "description": "Sauerteig ist die iOS-App für alle, die mit Sauerteig backen. Plane Fütterungen pro Anstellgut, blättere durch 33 schwedische und internationale Rezepte und führe dein Backtagebuch.",
+      "features": [
+        "Wiederkehrende Fütterungserinnerungen pro Anstellgut",
+        "33 schwedische und internationale Sauerteigrezepte",
+        "Backtagebuch mit Foto, Bewertung und Notizen",
+        "Hydrationsrechner pro Rezept",
+        "Mehrere Anstellgute parallel verwalten"
+      ]
+    },
+    "plantera": {
+      "name": "Garten-Tracker",
+      "tagline": "Garten-App für nordisches Klima mit Frostwarnungen.",
+      "description": "Garten-Tracker ist die iOS-App für alle, die in Nordeuropa gärtnern. Erhalte Frostwarnungen, einen Aussaat- und Erntekalender für deine Zone und kuratierte Werkzeugtipps.",
+      "features": [
+        "Frostwarnungen basierend auf lokaler Wettervorhersage",
+        "Aussaat- und Erntekalender pro Zone",
+        "Verfolge deine Pflanzen mit Fotos",
+        "Erinnerungen ans Gießen"
+      ]
+    }
+  }
+}

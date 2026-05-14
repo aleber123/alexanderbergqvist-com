@@ -1,0 +1,72 @@
+{
+  "ui": {
+    "homeHero": "Apps iOS suecas para problemas cotidianos",
+    "homeSubhero": "Hechas para iPhone. Sin cuentas, sin seguimiento, sin anuncios dirigidos a niños. Cinco apps que hacen una cosa bien.",
+    "appsTitle": "Apps",
+    "appsSubtitle": "Pequeñas utilidades. Almacenamiento local. Disponibles en la App Store.",
+    "featuresTitle": "¿Qué puede hacer {name}?",
+    "downloadCta": "Descargar en la App Store",
+    "backToHome": "Volver al inicio",
+    "aboutAuthor": "Hecha en solitario por Alexander Bergqvist en Gotemburgo, Suecia.",
+    "seeAllLanguages": "Leer en otro idioma"
+  },
+  "apps": {
+    "fodelsedagar": {
+      "name": "Cumpleaños",
+      "tagline": "Nunca olvides un cumpleaños.",
+      "description": "Cumpleaños es la app iOS que te recuerda los cumpleaños y aniversarios de las personas importantes. Añade fotos, importa desde Contactos y recibe avisos con tiempo.",
+      "features": [
+        "Añade cumpleaños con foto",
+        "Importa desde Contactos",
+        "Recordatorios 1 mes, 1 semana, 1 día y el mismo día",
+        "Vista mes a mes"
+      ]
+    },
+    "andas": {
+      "name": "Andas",
+      "tagline": "Respira. Calma. Vive.",
+      "description": "Andas es la app iOS para respiración guiada. Wim Hof, respiración en caja 4-4-4-4 y 4-7-8 son gratis. Crea tus propios protocolos, sigue la retención en el tiempo y desarrolla tu práctica.",
+      "features": [
+        "Wim Hof Basic, respiración en caja y 4-7-8 (gratis)",
+        "Círculo de respiración animado con háptica",
+        "Seguimiento de retención y rachas",
+        "Crea protocolos propios con sliders (Premium)",
+        "Tummo, Buteyko + protocolos personalizados (Premium)"
+      ]
+    },
+    "rita": {
+      "name": "Rita & Colorear",
+      "tagline": "App de colorear para niños de 3 a 8 años.",
+      "description": "Rita es la app iOS donde los niños pueden colorear dibujos digitales. Segura — sin login, sin anuncios dirigidos a niños y nuevas láminas constantemente.",
+      "features": [
+        "Decenas de láminas para diferentes edades",
+        "Sin anuncios dirigidos a niños",
+        "No requiere login",
+        "Guarda tus obras maestras en la app"
+      ]
+    },
+    "surdeg": {
+      "name": "Masa Madre",
+      "tagline": "Alimenta, hornea, disfruta — masa madre sin complicaciones.",
+      "description": "Masa Madre es la app iOS para quienes hornean con masa madre. Programa alimentaciones por cada masa, explora 33 recetas suecas e internacionales y registra tus horneadas en el diario.",
+      "features": [
+        "Recordatorios recurrentes de alimentación por cada masa",
+        "33 recetas suecas e internacionales de masa madre",
+        "Diario de horneado con foto, nota y comentarios",
+        "Calculadora de hidratación por receta",
+        "Soporte para varias masas en paralelo"
+      ]
+    },
+    "plantera": {
+      "name": "Plantera",
+      "tagline": "App de jardinería para clima nórdico con avisos de helada.",
+      "description": "Plantera es la app iOS para quienes cultivan en climas nórdicos. Recibe avisos de helada, un calendario de siembra y cosecha por zona, y consejos curados sobre herramientas.",
+      "features": [
+        "Avisos de helada basados en pronóstico local",
+        "Calendario de siembra y cosecha por zona",
+        "Sigue tus plantas con fotos",
+        "Recordatorios de riego"
+      ]
+    }
+  }
+}

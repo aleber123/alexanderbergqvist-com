@@ -1,0 +1,72 @@
+{
+  "ui": {
+    "homeHero": "Svenske iOS-apper for hverdagsproblemer",
+    "homeSubhero": "Bygget for iPhone. Ingen kontoer, ingen sporing, ingen reklame til barn. Fem apper som gjør én ting godt.",
+    "appsTitle": "Apper",
+    "appsSubtitle": "Små verktøy. Lokal lagring. Tilgjengelig i App Store.",
+    "featuresTitle": "Hva kan {name}?",
+    "downloadCta": "Last ned i App Store",
+    "backToHome": "Tilbake til hjem",
+    "aboutAuthor": "Bygget alene av Alexander Bergqvist i Göteborg, Sverige.",
+    "seeAllLanguages": "Les på et annet språk"
+  },
+  "apps": {
+    "fodelsedagar": {
+      "name": "Bursdager",
+      "tagline": "Glem aldri en bursdag igjen.",
+      "description": "Bursdager er iOS-appen som minner deg på bursdagene og merkedagene til de som betyr noe. Legg til bilder, importer fra Kontakter og få varsler i god tid.",
+      "features": [
+        "Legg til bursdager med bilde",
+        "Importer fra Kontakter",
+        "Påminnelser 1 måned, 1 uke, 1 dag og samme dag",
+        "Måned-for-måned-oversikt"
+      ]
+    },
+    "andas": {
+      "name": "Andas",
+      "tagline": "Pust. Ro. Lev.",
+      "description": "Andas er iOS-appen for guidet pusting. Wim Hof, boks-pust 4-4-4-4 og 4-7-8 er gratis. Bygg egne protokoller, spor retention over tid og utvikle din praksis.",
+      "features": [
+        "Wim Hof Basic, boks-pust og 4-7-8 (gratis)",
+        "Animert pustesirkel med haptikk",
+        "Retention-sporing og streak",
+        "Bygg egne protokoller med glidere (Premium)",
+        "Tummo, Buteyko + egendefinerte protokoller (Premium)"
+      ]
+    },
+    "rita": {
+      "name": "Tegn & Fargelegg",
+      "tagline": "Fargeleggings-app for barn 3–8 år.",
+      "description": "Tegn & Fargelegg er iOS-appen der barn kan fargelegge digitale fargeleggingsbilder. Trygg uten innlogging, ingen reklame til barn, og stadig nye bilder.",
+      "features": [
+        "Mange fargeleggingsbilder for ulike aldre",
+        "Ingen reklame til barn",
+        "Ingen innlogging kreves",
+        "Lagre mesterverkene dine i appen"
+      ]
+    },
+    "surdeg": {
+      "name": "Surdeig",
+      "tagline": "Mate, bake, nyte — surdeig gjort enkelt.",
+      "description": "Surdeig er iOS-appen for deg som baker med surdeig. Planlegg matinger per surdeig, bla i 33 svenske og internasjonale oppskrifter, og logg bakingene dine i bakedagboken.",
+      "features": [
+        "Tilbakevendende matingspåminnelser per surdeig",
+        "33 svenske og internasjonale surdeigoppskrifter",
+        "Bakedagbok med bilde, vurdering og notater",
+        "Hydration-kalkulator per oppskrift",
+        "Støtte for flere surdeig parallelt"
+      ]
+    },
+    "plantera": {
+      "name": "Plantera",
+      "tagline": "Hage-app for nordisk klima med frostvarsler.",
+      "description": "Plantera er iOS-appen for deg som dyrker i Norden. Få frostvarsler, kalender for såing og høsting per sone, og kuraterte verktøytips.",
+      "features": [
+        "Frostvarsler basert på lokal værmelding",
+        "Så- og høstekalender per sone",
+        "Spor plantene dine med bilder",
+        "Påminnelser om vanning"
+      ]
+    }
+  }
+}

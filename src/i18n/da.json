@@ -1,0 +1,72 @@
+{
+  "ui": {
+    "homeHero": "Svenske iOS-apps til hverdagsproblemer",
+    "homeSubhero": "Bygget til iPhone. Ingen konti, ingen sporing, ingen reklamer til børn. Fem apps der gør én ting godt.",
+    "appsTitle": "Apps",
+    "appsSubtitle": "Små værktøjer. Lokal opbevaring. Tilgængelige i App Store.",
+    "featuresTitle": "Hvad kan {name}?",
+    "downloadCta": "Download i App Store",
+    "backToHome": "Tilbage til forsiden",
+    "aboutAuthor": "Bygget alene af Alexander Bergqvist i Göteborg, Sverige.",
+    "seeAllLanguages": "Læs på et andet sprog"
+  },
+  "apps": {
+    "fodelsedagar": {
+      "name": "Fødselsdage",
+      "tagline": "Glem aldrig en fødselsdag igen.",
+      "description": "Fødselsdage er iOS-appen, der minder dig om fødselsdage og mærkedage for de mennesker, der betyder noget. Tilføj billeder, importer fra Kontakter og få notifikationer i god tid.",
+      "features": [
+        "Tilføj fødselsdage med billede",
+        "Importer fra Kontakter",
+        "Påmindelser 1 måned, 1 uge, 1 dag og samme dag",
+        "Måned-for-måned-overblik"
+      ]
+    },
+    "andas": {
+      "name": "Andas",
+      "tagline": "Træk vejret. Ro. Lev.",
+      "description": "Andas er iOS-appen til guidet vejrtrækning. Wim Hof, boks-vejrtrækning 4-4-4-4 og 4-7-8 er gratis. Byg egne protokoller, spor retention over tid og udvikl din praksis.",
+      "features": [
+        "Wim Hof Basic, boks-vejrtrækning og 4-7-8 (gratis)",
+        "Animeret vejrtrækningscirkel med haptik",
+        "Retention-sporing og streak",
+        "Byg egne protokoller med slider (Premium)",
+        "Tummo, Buteyko + brugerdefinerede protokoller (Premium)"
+      ]
+    },
+    "rita": {
+      "name": "Tegn & Farvelæg",
+      "tagline": "Farvelægnings-app til børn 3–8 år.",
+      "description": "Tegn & Farvelæg er iOS-appen, hvor børn kan farvelægge digitale farvelægningsbilleder. Trygt uden login, ingen reklamer til børn og løbende nye billeder.",
+      "features": [
+        "Snesevis af farvelægningsbilleder til forskellige aldre",
+        "Ingen reklamer til børn",
+        "Intet login kræves",
+        "Gem dine mesterværker i appen"
+      ]
+    },
+    "surdeg": {
+      "name": "Surdej",
+      "tagline": "Mad, bag, nyd — surdej gjort enkelt.",
+      "description": "Surdej er iOS-appen til dig, der bager med surdej. Planlæg fodringer per surdej, bladr gennem 33 svenske og internationale opskrifter, og log dine bagværker i bagedagbogen.",
+      "features": [
+        "Tilbagevendende fodringspåmindelser per surdej",
+        "33 svenske og internationale surdejsopskrifter",
+        "Bagedagbog med billede, bedømmelse og noter",
+        "Hydration-beregner per opskrift",
+        "Understøtter flere surdeje parallelt"
+      ]
+    },
+    "plantera": {
+      "name": "Plantera",
+      "tagline": "Have-app til nordisk klima med frostvarsler.",
+      "description": "Plantera er iOS-appen til dig, der dyrker i Norden. Få frostvarsler, kalender for såning og høst per zone, og kuraterede værktøjstip.",
+      "features": [
+        "Frostvarsler baseret på lokal vejrudsigt",
+        "Så- og høstkalender per zone",
+        "Spor dine planter med billeder",
+        "Vandingspåmindelser"
+      ]
+    }
+  }
+}

@@ -16,17 +16,25 @@ interface Props {
   keywords?: string[];
   noindex?: boolean;
   appStoreId?: string;
+  /** BCP-47 language code for the `<html lang>` attribute. Defaults to
+   *  Swedish since most pages are sv. Localized pages pass 'en-US',
+   *  'de-DE', etc. to keep screen readers + search engines aligned. */
+  htmlLang?: string;
+  /** Whether to render hreflang alternates pointing at the same page
+   *  in other locales. The localized [lang]/* pages turn this on with
+   *  their alternates map. */
+  hreflangAlternates?: Record<string, string>;
 }
 
-const props = Astro.props;
+const { htmlLang = 'sv', hreflangAlternates, ...props } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="sv">
+<html lang={htmlLang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <SEO {...props} />
+    <SEO {...props} hreflangAlternates={hreflangAlternates} />
     <Analytics />
   </head>
   <body class="min-h-screen flex flex-col">

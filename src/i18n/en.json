@@ -1,0 +1,72 @@
+{
+  "ui": {
+    "homeHero": "Swedish iOS apps that solve everyday problems",
+    "homeSubhero": "Built for iPhone. No accounts, no tracking, no ad spam aimed at kids. Five apps that do one thing well.",
+    "appsTitle": "Apps",
+    "appsSubtitle": "Small utilities. Local storage. Available on the App Store.",
+    "featuresTitle": "What can {name} do?",
+    "downloadCta": "Download on the App Store",
+    "backToHome": "Back to home",
+    "aboutAuthor": "Built solo by Alexander Bergqvist in Gothenburg, Sweden.",
+    "seeAllLanguages": "Read in another language"
+  },
+  "apps": {
+    "fodelsedagar": {
+      "name": "Birthdays",
+      "tagline": "Never forget a birthday again.",
+      "description": "Birthdays is the iOS app that reminds you of the birthdays and anniversaries of the people who matter. Add photos, import from Contacts, and get notifications well in advance.",
+      "features": [
+        "Add birthdays with a photo",
+        "Import from Contacts",
+        "Reminders 1 month, 1 week, 1 day and same day",
+        "Month-by-month overview"
+      ]
+    },
+    "andas": {
+      "name": "Andas",
+      "tagline": "Breathe. Calm. Live.",
+      "description": "Andas is the iOS app for guided breathing. Wim Hof, box breathing 4-4-4-4 and 4-7-8 are free. Build your own protocols, track retention over time, and grow your practice.",
+      "features": [
+        "Wim Hof Basic, box breathing and 4-7-8 (free)",
+        "Animated breath circle with haptics",
+        "Retention tracking and streaks",
+        "Build your own protocols with sliders (Premium)",
+        "Tummo, Buteyko + custom protocols (Premium)"
+      ]
+    },
+    "rita": {
+      "name": "Rita & Color",
+      "tagline": "A coloring app for kids ages 3 to 8.",
+      "description": "Rita is the iOS app where kids can color digital coloring pages. Safe — no login, no ads aimed at children, and a steady stream of new pages.",
+      "features": [
+        "Dozens of coloring pages for different ages",
+        "No ads aimed at children",
+        "No login required",
+        "Save your masterpieces inside the app"
+      ]
+    },
+    "surdeg": {
+      "name": "Sourdough",
+      "tagline": "Feed, bake, enjoy — sourdough made simple.",
+      "description": "Sourdough is the iOS app for people who bake with a starter. Schedule feedings per starter, browse 33 Swedish and international recipes, and log your bakes in the bake journal.",
+      "features": [
+        "Recurring feeding reminders per starter",
+        "33 Swedish and international sourdough recipes",
+        "Bake journal with photo, rating and notes",
+        "Hydration calculator per recipe",
+        "Track multiple starters in parallel"
+      ]
+    },
+    "plantera": {
+      "name": "Plant Tracker",
+      "tagline": "A garden tracker for Nordic climates.",
+      "description": "Plant Tracker is the iOS app for people who garden in a Nordic climate. Get frost warnings, a sow + harvest calendar tuned to your zone, and curated tool tips.",
+      "features": [
+        "Frost warnings based on local forecast",
+        "Sowing + harvest calendar per zone",
+        "Track your plants with photos",
+        "Watering reminders"
+      ]
+    }
+  }
+}

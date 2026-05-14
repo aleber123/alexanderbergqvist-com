@@ -7,11 +7,30 @@ const SITE = 'https://alexanderbergqvist.com';
 
 export default defineConfig({
   site: SITE,
+  // Path-based i18n: Swedish keeps the root (/, /fodelsedagar/, …) so
+  // existing rankings don't break. New locales live under /en/, /de/,
+  // /no/, /da/, /es/ and are limited to the universal apps + home.
+  i18n: {
+    defaultLocale: 'sv',
+    locales: ['sv', 'en', 'de', 'no', 'da', 'es'],
+    routing: { prefixDefaultLocale: false },
+  },
   integrations: [
     mdx(),
     sitemap({
-      // Tell Google + Bing about the Swedish locale + freshness.
-      i18n: { defaultLocale: 'sv', locales: { sv: 'sv-SE' } },
+      // Tell Google + Bing about all locales so localized pages get
+      // crawled and linked together via hreflang.
+      i18n: {
+        defaultLocale: 'sv',
+        locales: {
+          sv: 'sv-SE',
+          en: 'en-US',
+          de: 'de-DE',
+          no: 'nb-NO',
+          da: 'da-DK',
+          es: 'es-ES',
+        },
+      },
       changefreq: 'weekly',
       priority: 0.7,
       // Boost priority for landing + tools (most important pages to crawl).
