@@ -37,17 +37,56 @@ const enabled = GA_ID && isProd;
 
       // Auto-track outbound clicks (App Store, etc.) so we can measure
       // conversion from web -> App Store install.
+      //
+      // App Store links get an extra `app_store_click` event with the
+      // numeric app_id + decoded slug parsed out of the URL. That lets
+      // us split downloads-per-app in GA4 without touching every
+      // <AppStoreBadge> call site. The Apple URL shape we rely on is
+      //   https://apps.apple.com/se/app/{slug}/id{numeric_id}
+      function parseAppStoreUrl(href) {
+        try {
+          const u = new URL(href);
+          if (!u.hostname.includes('apps.apple.com')) return null;
+          const match = u.pathname.match(/\/app\/([^/]+)\/id(\d+)/);
+          if (!match) return null;
+          return {
+            app_slug: decodeURIComponent(match[1]),
+            app_id: match[2],
+            country: u.pathname.match(/^\/([a-z]{2})\//)?.[1] || 'us',
+          };
+        } catch {
+          return null;
+        }
+      }
+
       document.addEventListener('click', (e) => {
         const target = e.target instanceof Element ? e.target.closest('a') : null;
         if (!target || !target.href) return;
         try {
           const url = new URL(target.href);
-          if (url.hostname && url.hostname !== window.location.hostname) {
-            gtag('event', 'outbound_click', {
-              link_url: target.href,
-              link_domain: url.hostname,
-              link_text: (target.textContent || '').trim().slice(0, 80),
-              is_app_store: url.hostname.includes('apps.apple.com'),
+          if (!url.hostname || url.hostname === window.location.hostname) return;
+
+          const appInfo = parseAppStoreUrl(target.href);
+          const linkText = (target.textContent || '').trim().slice(0, 80);
+
+          // Generic outbound event (legacy, unchanged shape).
+          gtag('event', 'outbound_click', {
+            link_url: target.href,
+            link_domain: url.hostname,
+            link_text: linkText,
+            is_app_store: !!appInfo,
+            ...(appInfo || {}),
+          });
+
+          // Dedicated App Store event — easier to set up as a GA4
+          // Conversion in the dashboard, and easier to slice per-app.
+          if (appInfo) {
+            gtag('event', 'app_store_click', {
+              app_slug: appInfo.app_slug,
+              app_id: appInfo.app_id,
+              country: appInfo.country,
+              source_path: window.location.pathname,
+              link_text: linkText,
             });
           }
         } catch {}
