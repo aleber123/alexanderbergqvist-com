@@ -106,15 +106,59 @@ const toolsByApp: Record<
 };
 const tools = toolsByApp[app.id] ?? [];
 
+// Map Swedish category labels to schema.org's canonical
+// `applicationCategory` enum so Google can classify the app correctly
+// in mobile-app rich results. Falls back to the raw value when no
+// mapping matches.
+const categoryMap: Record<string, string> = {
+  'Hälsa och träning': 'HealthApplication',
+  'Hälsa & form': 'HealthApplication',
+  'Livsstil': 'LifestyleApplication',
+  'Lifestyle': 'LifestyleApplication',
+  'Verktyg': 'UtilitiesApplication',
+  'Utilities': 'UtilitiesApplication',
+  'Produktivitet': 'BusinessApplication',
+  'Productivity': 'BusinessApplication',
+  'Mat och dryck': 'LifestyleApplication',
+  'Familj': 'LifestyleApplication',
+  'Trädgård': 'LifestyleApplication',
+};
+const schemaCategory = categoryMap[category] ?? 'LifestyleApplication';
+
+const pageUrl = new URL(`/${app.id}/`, Astro.site).href;
+const iconAbsolute = new URL(icon, Astro.site).href;
+
 const ldJson = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
   name,
   description,
-  applicationCategory: category,
+  applicationCategory: schemaCategory,
   operatingSystem: 'iOS',
-  offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
+  inLanguage: 'sv-SE',
+  url: pageUrl,
+  image: iconAbsolute,
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'SEK',
+    availability:
+      status === 'live'
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/PreOrder',
+  },
+  author: {
+    '@type': 'Person',
+    name: 'Alexander Bergqvist',
+    url: 'https://alexanderbergqvist.com/',
+  },
+  publisher: {
+    '@type': 'Person',
+    name: 'Alexander Bergqvist',
+    url: 'https://alexanderbergqvist.com/',
+  },
   ...(appStoreUrl && { downloadUrl: appStoreUrl }),
+  ...(appStoreUrl && { installUrl: appStoreUrl }),
 };
 
 // Extract numeric App Store ID for the Apple Smart App Banner.
