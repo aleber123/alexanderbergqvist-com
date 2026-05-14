@@ -1,0 +1,31 @@
+{
+  "name": "Stark",
+  "tagline": "Kroppen är ditt gym",
+  "description": "Stark är iOS-appen för bodyweight-träning utan utrustning. 30 övningar, 5 färdiga pass och 4 multi-veckors program. Skapa egna pass med dragvänlig timer-skärm och synka allt till Apple Hälsa.",
+  "icon": "/apps/stark.png",
+  "accent": "#E85D34",
+  "accentDark": "#B13A1D",
+  "bundleId": "com.alexanderbergqvist.stark",
+  "category": "Hälsa och träning",
+  "keywords": [
+    "bodyweight",
+    "kroppen gym",
+    "calisthenics",
+    "träning hemma",
+    "push-ups",
+    "knäböj",
+    "plankan",
+    "hiit",
+    "rörlighet"
+  ],
+  "features": [
+    "30 bodyweight-övningar (push, pull, squat, core, cardio, rörlighet)",
+    "5 färdiga pass — 4 till 20 min",
+    "Aktiv session-skärm med color-shift work/rest",
+    "Skapa egna pass med dragvänliga sets",
+    "4 multi-veckors program (Premium)",
+    "Apple Hälsa-synk + vilopuls före/efter pass"
+  ],
+  "status": "soon",
+  "order": 12
+}
