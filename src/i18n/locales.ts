@@ -14,10 +14,30 @@ import de from './de.json';
 import no from './no.json';
 import da from './da.json';
 import es from './es.json';
+import fr from './fr.json';
+import fi from './fi.json';
+import is from './is.json';
 
-export type Locale = 'en' | 'de' | 'no' | 'da' | 'es';
+export type Locale =
+  | 'en'
+  | 'de'
+  | 'no'
+  | 'da'
+  | 'es'
+  | 'fr'
+  | 'fi'
+  | 'is';
 
-export const LOCALES: readonly Locale[] = ['en', 'de', 'no', 'da', 'es'];
+export const LOCALES: readonly Locale[] = [
+  'en',
+  'de',
+  'no',
+  'da',
+  'es',
+  'fr',
+  'fi',
+  'is',
+];
 
 export const ALL_LOCALES_INCLUDING_SV: readonly (Locale | 'sv')[] = [
   'sv',
@@ -31,6 +51,9 @@ export const LOCALE_LABELS: Record<Locale | 'sv', string> = {
   no: 'Norsk',
   da: 'Dansk',
   es: 'Español',
+  fr: 'Français',
+  fi: 'Suomi',
+  is: 'Íslenska',
 };
 
 export const LOCALE_FLAGS: Record<Locale | 'sv', string> = {
@@ -40,6 +63,9 @@ export const LOCALE_FLAGS: Record<Locale | 'sv', string> = {
   no: '🇳🇴',
   da: '🇩🇰',
   es: '🇪🇸',
+  fr: '🇫🇷',
+  fi: '🇫🇮',
+  is: '🇮🇸',
 };
 
 /** OG / Schema.org BCP-47 codes per locale. */
@@ -50,6 +76,9 @@ export const LOCALE_BCP47: Record<Locale | 'sv', string> = {
   no: 'nb-NO',
   da: 'da-DK',
   es: 'es-ES',
+  fr: 'fr-FR',
+  fi: 'fi-FI',
+  is: 'is-IS',
 };
 
 /** Universal apps — the ones with i18n pages. Order = display order. */
@@ -83,7 +112,7 @@ export interface LocaleStrings {
   apps: Record<string, AppTranslation>;
 }
 
-const data: Record<Locale, LocaleStrings> = { en, de, no, da, es };
+const data: Record<Locale, LocaleStrings> = { en, de, no, da, es, fr, fi, is };
 
 export function t(locale: Locale): LocaleStrings {
   return data[locale];

@@ -1,0 +1,72 @@
+{
+  "ui": {
+    "homeHero": "Ruotsalaisia iOS-sovelluksia arjen ongelmiin",
+    "homeSubhero": "Rakennettu iPhonelle. Ei tilejä, ei seurantaa, ei lapsille kohdistettua mainontaa. Viisi sovellusta, jotka tekevät yhden asian hyvin.",
+    "appsTitle": "Sovellukset",
+    "appsSubtitle": "Pieniä työkaluja. Paikallinen tallennus. Saatavilla App Storesta.",
+    "featuresTitle": "Mitä {name} osaa?",
+    "downloadCta": "Lataa App Storesta",
+    "backToHome": "Takaisin etusivulle",
+    "aboutAuthor": "Yksin rakennettu — Alexander Bergqvist, Göteborg, Ruotsi.",
+    "seeAllLanguages": "Lue toisella kielellä"
+  },
+  "apps": {
+    "fodelsedagar": {
+      "name": "Syntymäpäivät",
+      "tagline": "Älä koskaan unohda syntymäpäivää.",
+      "description": "Syntymäpäivät on iOS-sovellus, joka muistuttaa sinua tärkeiden ihmisten syntymäpäivistä ja vuosipäivistä. Lisää valokuvia, tuo Yhteystiedoista ja saa ilmoituksia hyvissä ajoin.",
+      "features": [
+        "Lisää syntymäpäivät kuvalla",
+        "Tuo Yhteystiedoista",
+        "Muistutukset 1 kk, 1 viikko, 1 päivä ja samana päivänä",
+        "Kuukausi kerrallaan -näkymä"
+      ]
+    },
+    "andas": {
+      "name": "Andas",
+      "tagline": "Hengitä. Rauhoitu. Elä.",
+      "description": "Andas on iOS-sovellus ohjattuun hengitykseen. Wim Hof, laatikkohengitys 4-4-4-4 ja 4-7-8 ovat ilmaisia. Rakenna omia protokollia, seuraa retentiota ajan myötä ja kehitä harjoitustasi.",
+      "features": [
+        "Wim Hof Basic, laatikkohengitys ja 4-7-8 (ilmainen)",
+        "Animoitu hengityskehä haptiikalla",
+        "Retention-seuranta ja streak",
+        "Rakenna omia protokollia liukusäätimillä (Premium)",
+        "Tummo, Buteyko + omat protokollat (Premium)"
+      ]
+    },
+    "rita": {
+      "name": "Piirrä & Värittele",
+      "tagline": "Värityssovellus 3–8-vuotiaille lapsille.",
+      "description": "Piirrä & Värittele on iOS-sovellus, jossa lapset voivat värittää digitaalisia värityskuvia. Turvallinen — ei kirjautumista, ei lapsille kohdistettua mainontaa ja jatkuvasti uusia kuvia.",
+      "features": [
+        "Kymmeniä värityskuvia eri ikäryhmille",
+        "Ei lapsille kohdistettua mainontaa",
+        "Ei kirjautumista",
+        "Tallenna mestariteoksesi sovellukseen"
+      ]
+    },
+    "surdeg": {
+      "name": "Hapanjuuri",
+      "tagline": "Ruoki, leivo, nauti — hapanjuuri tehty helpoksi.",
+      "description": "Hapanjuuri on iOS-sovellus hapanjuurileipojille. Aikatauluta ruokinnat juurikohtaisesti, selaa 33 ruotsalaista ja kansainvälistä reseptiä ja kirjaa leipomuksesi leivontapäiväkirjaan.",
+      "features": [
+        "Toistuvat ruokintamuistutukset juurikohtaisesti",
+        "33 ruotsalaista ja kansainvälistä hapanjuurireseptiä",
+        "Leivontapäiväkirja kuvalla, arvosanalla ja muistiinpanoilla",
+        "Hydraatiolaskuri reseptikohtaisesti",
+        "Tuki useille juurille rinnakkain"
+      ]
+    },
+    "plantera": {
+      "name": "Plantera",
+      "tagline": "Puutarhasovellus pohjoismaiseen ilmastoon hallavaroituksilla.",
+      "description": "Plantera on iOS-sovellus pohjoismaalaisille puutarhureille. Saa hallavaroitukset, kylvö- ja sadonkorjuukalenteri vyöhykkeittäin sekä huolellisesti valitut työkaluvinkit.",
+      "features": [
+        "Hallavaroitukset paikallisen sääennusteen perusteella",
+        "Kylvö- ja sadonkorjuukalenteri vyöhykkeittäin",
+        "Seuraa kasvejasi kuvilla",
+        "Kasteluvaramuistutukset"
+      ]
+    }
+  }
+}

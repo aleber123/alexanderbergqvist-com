@@ -159,6 +159,23 @@ const appStoreId = appStoreUrl
     <p class="text-lg text-slate-700 leading-relaxed">{tr.description}</p>
   </section>
 
+  {appId === 'fodelsedagar' && (
+    <section class="max-w-3xl mx-auto px-6 pb-12">
+      <figure
+        class="rounded-3xl overflow-hidden border border-slate-200 shadow-xl"
+      >
+        <img
+          src="/apps/fodelsedagar-mascot.png"
+          alt={`${tr.name} — mascot`}
+          width="853"
+          height="1101"
+          loading="lazy"
+          class="w-full h-auto block"
+        />
+      </figure>
+    </section>
+  )}
+
   {tr.features.length > 0 && (
     <section class="bg-slate-50 border-y border-slate-200 py-16">
       <div class="max-w-6xl mx-auto px-6">

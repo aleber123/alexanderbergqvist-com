@@ -1,0 +1,72 @@
+{
+  "ui": {
+    "homeHero": "Applications iOS suédoises pour les problèmes du quotidien",
+    "homeSubhero": "Conçues pour iPhone. Sans compte, sans suivi, sans publicité destinée aux enfants. Cinq applications qui font bien une seule chose.",
+    "appsTitle": "Applications",
+    "appsSubtitle": "Petits utilitaires. Stockage local. Disponibles sur l'App Store.",
+    "featuresTitle": "Que peut faire {name} ?",
+    "downloadCta": "Télécharger sur l'App Store",
+    "backToHome": "Retour à l'accueil",
+    "aboutAuthor": "Conçue en solo par Alexander Bergqvist à Göteborg, Suède.",
+    "seeAllLanguages": "Lire dans une autre langue"
+  },
+  "apps": {
+    "fodelsedagar": {
+      "name": "Anniversaires",
+      "tagline": "Ne ratez plus jamais un anniversaire.",
+      "description": "Anniversaires est l'application iOS qui vous rappelle les anniversaires et dates importantes des personnes qui comptent. Ajoutez des photos, importez depuis Contacts et recevez des notifications en avance.",
+      "features": [
+        "Ajoutez des anniversaires avec photo",
+        "Importez depuis Contacts",
+        "Rappels 1 mois, 1 semaine, 1 jour et le jour même",
+        "Vue mois par mois"
+      ]
+    },
+    "andas": {
+      "name": "Andas",
+      "tagline": "Respirez. Apaisez-vous. Vivez.",
+      "description": "Andas est l'application iOS pour la respiration guidée. Wim Hof, respiration carrée 4-4-4-4 et 4-7-8 sont gratuites. Créez vos propres protocoles, suivez la rétention au fil du temps et développez votre pratique.",
+      "features": [
+        "Wim Hof Basic, respiration carrée et 4-7-8 (gratuit)",
+        "Cercle de respiration animé avec retour haptique",
+        "Suivi de rétention et séries",
+        "Créez vos propres protocoles avec curseurs (Premium)",
+        "Tummo, Buteyko + protocoles personnalisés (Premium)"
+      ]
+    },
+    "rita": {
+      "name": "Rita & Coloriage",
+      "tagline": "Application de coloriage pour enfants de 3 à 8 ans.",
+      "description": "Rita est l'application iOS où les enfants peuvent colorier des images numériques. Sûre — sans connexion, sans publicité destinée aux enfants, et de nouvelles images régulièrement.",
+      "features": [
+        "Des dizaines de coloriages pour différents âges",
+        "Aucune publicité destinée aux enfants",
+        "Aucune connexion requise",
+        "Enregistrez vos chefs-d'œuvre dans l'app"
+      ]
+    },
+    "surdeg": {
+      "name": "Levain",
+      "tagline": "Nourrissez, cuisez, savourez — le levain en toute simplicité.",
+      "description": "Levain est l'application iOS pour ceux qui boulangent au levain. Programmez les nourrissages par levain, parcourez 33 recettes suédoises et internationales, et tenez votre journal de cuisson.",
+      "features": [
+        "Rappels de nourrissage récurrents par levain",
+        "33 recettes de levain suédoises et internationales",
+        "Journal de cuisson avec photo, note et commentaires",
+        "Calculateur d'hydratation par recette",
+        "Gérez plusieurs levains en parallèle"
+      ]
+    },
+    "plantera": {
+      "name": "Plantera",
+      "tagline": "App de jardinage adaptée au climat nordique avec alertes de gel.",
+      "description": "Plantera est l'application iOS pour ceux qui jardinent dans les climats nordiques. Recevez des alertes de gel, un calendrier de semis et récolte par zone, et des conseils d'outils sélectionnés.",
+      "features": [
+        "Alertes de gel basées sur les prévisions locales",
+        "Calendrier de semis et récolte par zone",
+        "Suivez vos plantes en photos",
+        "Rappels d'arrosage"
+      ]
+    }
+  }
+}

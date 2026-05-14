@@ -19,7 +19,17 @@ interface Props {
 }
 
 const { current, alternates, compact = false } = Astro.props;
-const order: (Locale | 'sv')[] = ['sv', 'en', 'de', 'no', 'da', 'es'];
+const order: (Locale | 'sv')[] = [
+  'sv',
+  'en',
+  'de',
+  'fr',
+  'es',
+  'no',
+  'da',
+  'fi',
+  'is',
+];
 ---
 
 <div class="flex flex-wrap gap-1.5">

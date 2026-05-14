@@ -1,0 +1,72 @@
+{
+  "ui": {
+    "homeHero": "Sænsk iOS-forrit fyrir dagleg vandamál",
+    "homeSubhero": "Smíðað fyrir iPhone. Engir reikningar, engin rekjun, engar auglýsingar beint að börnum. Fimm forrit sem gera einn hlut vel.",
+    "appsTitle": "Forrit",
+    "appsSubtitle": "Litlar gagnsemi. Staðbundin geymsla. Fáanlegt í App Store.",
+    "featuresTitle": "Hvað getur {name}?",
+    "downloadCta": "Sækja í App Store",
+    "backToHome": "Til baka á forsíðu",
+    "aboutAuthor": "Smíðað eitt og sér af Alexander Bergqvist í Gautaborg, Svíþjóð.",
+    "seeAllLanguages": "Lesa á öðru tungumáli"
+  },
+  "apps": {
+    "fodelsedagar": {
+      "name": "Afmæli",
+      "tagline": "Missir aldrei af afmæli aftur.",
+      "description": "Afmæli er iOS-forritið sem minnir þig á afmæli og dagsetningar þess fólks sem skiptir máli. Bættu við myndum, fluttu inn úr Tengiliðum og fáðu áminningar tímanlega.",
+      "features": [
+        "Bæta við afmælum með mynd",
+        "Flytja inn úr Tengiliðum",
+        "Áminningar mánuð, viku, dag og sama dag",
+        "Yfirlit mánuð fyrir mánuð"
+      ]
+    },
+    "andas": {
+      "name": "Andas",
+      "tagline": "Andaðu. Róastu. Lifðu.",
+      "description": "Andas er iOS-forritið fyrir leiðsögn um öndun. Wim Hof, kassi-öndun 4-4-4-4 og 4-7-8 eru ókeypis. Búðu til þínar eigin samskiptareglur, fylgstu með retention yfir tíma og þroskaðu æfingu þína.",
+      "features": [
+        "Wim Hof Basic, kassi-öndun og 4-7-8 (ókeypis)",
+        "Hreyfanlegur öndunarhringur með haptik",
+        "Retention-rakning og streak",
+        "Búðu til eigin samskiptareglur með sleðum (Premium)",
+        "Tummo, Buteyko + sérsniðnar samskiptareglur (Premium)"
+      ]
+    },
+    "rita": {
+      "name": "Teikna & Lita",
+      "tagline": "Litunarapp fyrir börn 3–8 ára.",
+      "description": "Teikna & Lita er iOS-forrit þar sem börn geta litað stafrænar litamyndir. Öruggt — án innskráningar, engar auglýsingar beint að börnum og stöðugt nýjar myndir.",
+      "features": [
+        "Tugir litamynda fyrir mismunandi aldur",
+        "Engar auglýsingar beint að börnum",
+        "Engin innskráning þarf",
+        "Vistaðu meistaraverkin þín í forritinu"
+      ]
+    },
+    "surdeg": {
+      "name": "Súrdeig",
+      "tagline": "Fæða, baka, njóta — súrdeig gert einfalt.",
+      "description": "Súrdeig er iOS-forritið fyrir þá sem baka með súrdeigi. Skipuleggðu fæðingar fyrir hvert súrdeig, flettu í 33 sænskum og alþjóðlegum uppskriftum og skráðu bakstur þinn í bakstursdagbókina.",
+      "features": [
+        "Endurteknar fæðingaráminningar fyrir hvert súrdeig",
+        "33 sænskar og alþjóðlegar súrdeigsuppskriftir",
+        "Bakstursdagbók með mynd, einkunn og athugasemdum",
+        "Hydration-reiknir fyrir hverja uppskrift",
+        "Stuðningur við mörg súrdeig samhliða"
+      ]
+    },
+    "plantera": {
+      "name": "Plantera",
+      "tagline": "Garðyrkjuapp fyrir norrænt loftslag með frostviðvörunum.",
+      "description": "Plantera er iOS-forritið fyrir þá sem rækta í norrænu loftslagi. Fáðu frostviðvaranir, dagatal fyrir sáningu og uppskeru eftir svæði og vandaðar verkfæratillögur.",
+      "features": [
+        "Frostviðvaranir byggðar á staðbundinni veðurspá",
+        "Sáningar- og uppskerudagatal eftir svæði",
+        "Fylgstu með plöntunum þínum með myndum",
+        "Vökvunaráminningar"
+      ]
+    }
+  }
+}
