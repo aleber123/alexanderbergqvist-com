@@ -103,36 +103,45 @@ const today = new Date();
         <ul id="events" class="space-y-2 mb-8"></ul>
 
         <div class="rounded-2xl border-2 border-pink-300 bg-pink-50 p-6">
-          <h3 class="font-black text-lg mb-2">Dela bilden</h3>
+          <h3 class="font-black text-lg mb-2">Skapa inlägg om en person</h3>
           <p class="text-sm text-slate-700 mb-4">
-            Välj format efter var du ska posta — Instagram Stories, Facebook
-            eller WhatsApp Status — och om du vill ha en hjälte eller fem-i-rad.
+            Välj vem av personerna du vill skapa ett inlägg om, och vilket
+            språk texten ska vara på. Bilden blir 1080×1080 — passar både
+            Facebook och Instagram.
           </p>
 
           <div class="grid sm:grid-cols-2 gap-3 mb-3">
             <div>
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1" for="fmt">
-                Format
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1" for="personSel">
+                Välj person
               </label>
               <select
-                id="fmt"
+                id="personSel"
                 class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold bg-white"
-              >
-                <option value="story">📸 Instagram Stories (9:16)</option>
-                <option value="square" selected>🟦 Facebook / Instagram-post (1:1)</option>
-                <option value="landscape">📺 Facebook landskap (1.91:1)</option>
-              </select>
+              ></select>
             </div>
             <div>
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1" for="layout">
-                Layout
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1" for="langSel">
+                Språk
               </label>
               <select
-                id="layout"
+                id="langSel"
                 class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold bg-white"
               >
-                <option value="hero">⭐ Hjälte (1 person, stor bild)</option>
-                <option value="grid" selected>👥 Topp 5 (rutnät, bra för FB)</option>
+                <option value="sv" selected>🇸🇪 Svenska</option>
+                <option value="en">🇬🇧 English</option>
+                <option value="de">🇩🇪 Deutsch</option>
+                <option value="no">🇳🇴 Norsk</option>
+                <option value="da">🇩🇰 Dansk</option>
+                <option value="es">🇪🇸 Español</option>
+                <option value="fr">🇫🇷 Français</option>
+                <option value="fi">🇫🇮 Suomi</option>
+                <option value="is">🇮🇸 Íslenska</option>
+                <option value="it">🇮🇹 Italiano</option>
+                <option value="el">🇬🇷 Ελληνικά</option>
+                <option value="nl">🇳🇱 Nederlands</option>
+                <option value="pl">🇵🇱 Polski</option>
+                <option value="pt">🇵🇹 Português</option>
               </select>
             </div>
           </div>
@@ -141,7 +150,7 @@ const today = new Date();
             id="generateImage"
             class="w-full rounded-xl bg-pink-600 px-6 py-3 font-bold text-white hover:bg-pink-700 transition"
           >
-            🎨 Skapa bild
+            🎨 Skapa bild + text
           </button>
           <canvas
             id="shareCanvas"
@@ -257,11 +266,73 @@ const today = new Date();
   const shareActions = document.getElementById('shareActions')!;
   const downloadLink = document.getElementById('downloadImage')! as HTMLAnchorElement;
   const shareBtn = document.getElementById('shareImage')! as HTMLButtonElement;
-  const fmtSel = document.getElementById('fmt')! as HTMLSelectElement;
-  const layoutSel = document.getElementById('layout')! as HTMLSelectElement;
+  const personSel = document.getElementById('personSel')! as HTMLSelectElement;
+  const langSel = document.getElementById('langSel')! as HTMLSelectElement;
   const postCopy = document.getElementById('postCopy')! as HTMLDetailsElement;
   const postCopyText = document.getElementById('postCopyText')! as HTMLTextAreaElement;
   const copyTextBtn = document.getElementById('copyText')! as HTMLButtonElement;
+
+  // Per-language post strings. Variables: {name}, {age}.
+  // The first line is also used as the image hero caption.
+  const i18n: Record<string, {
+    titleTop: string;
+    line1: string;
+    cta: string;
+    storeUrl: string;
+    locale: string;
+  }> = {
+    sv: { titleTop: 'FÖDELSEDAG IDAG', line1: 'Idag fyller {name} {age} år! 🎂',
+          cta: 'Glöm aldrig en födelsedag igen — Födelsedagar-appen påminner dig 1 månad, 1 vecka och 1 dag innan.',
+          storeUrl: 'https://apps.apple.com/se/app/födelsedagar/id6758899294', locale: 'sv-SE' },
+    en: { titleTop: 'BIRTHDAY TODAY', line1: 'Today {name} turns {age}! 🎂',
+          cta: 'Never miss a birthday again — the Birthdays app reminds you 1 month, 1 week and 1 day before.',
+          storeUrl: 'https://apps.apple.com/us/app/birthday-remind-me/id6758899294', locale: 'en-US' },
+    de: { titleTop: 'GEBURTSTAG HEUTE', line1: 'Heute wird {name} {age} Jahre alt! 🎂',
+          cta: 'Verpasse keinen Geburtstag mehr — die Geburtstage-App erinnert dich 1 Monat, 1 Woche und 1 Tag vorher.',
+          storeUrl: 'https://apps.apple.com/de/app/geburtstage-familie/id6758899294', locale: 'de-DE' },
+    no: { titleTop: 'BURSDAG I DAG', line1: 'I dag fyller {name} {age} år! 🎂',
+          cta: 'Glem aldri en bursdag igjen — Bursdager-appen minner deg på 1 måned, 1 uke og 1 dag i forveien.',
+          storeUrl: 'https://apps.apple.com/no/app/bursdager/id6758899294', locale: 'nb-NO' },
+    da: { titleTop: 'FØDSELSDAG I DAG', line1: 'I dag fylder {name} {age} år! 🎂',
+          cta: 'Glem aldrig en fødselsdag igen — Fødselsdage-appen minder dig om det 1 måned, 1 uge og 1 dag før.',
+          storeUrl: 'https://apps.apple.com/dk/app/fødselsdage/id6758899294', locale: 'da-DK' },
+    es: { titleTop: 'CUMPLEAÑOS HOY', line1: '¡Hoy {name} cumple {age} años! 🎂',
+          cta: 'Nunca olvides un cumpleaños — la app Cumpleaños te avisa 1 mes, 1 semana y 1 día antes.',
+          storeUrl: 'https://apps.apple.com/es/app/cumpleaños/id6758899294', locale: 'es-ES' },
+    fr: { titleTop: 'ANNIVERSAIRE AUJOURD\'HUI', line1: 'Aujourd\'hui {name} a {age} ans ! 🎂',
+          cta: 'Ne ratez plus un anniversaire — l\'app Anniversaires vous prévient 1 mois, 1 semaine et 1 jour avant.',
+          storeUrl: 'https://apps.apple.com/fr/app/anniversaires/id6758899294', locale: 'fr-FR' },
+    fi: { titleTop: 'SYNTYMÄPÄIVÄ TÄNÄÄN', line1: 'Tänään {name} täyttää {age} vuotta! 🎂',
+          cta: 'Älä koskaan unohda syntymäpäivää — Syntymäpäivät-sovellus muistuttaa 1 kk, 1 viikko ja 1 päivä etukäteen.',
+          storeUrl: 'https://apps.apple.com/fi/app/syntymäpäivät/id6758899294', locale: 'fi-FI' },
+    is: { titleTop: 'AFMÆLI Í DAG', line1: 'Í dag verður {name} {age} ára! 🎂',
+          cta: 'Missir aldrei af afmæli — Afmæli-forritið minnir þig 1 mánuði, 1 viku og 1 degi fyrirfram.',
+          storeUrl: 'https://apps.apple.com/is/app/afmæli/id6758899294', locale: 'is-IS' },
+    it: { titleTop: 'COMPLEANNO OGGI', line1: 'Oggi {name} compie {age} anni! 🎂',
+          cta: 'Non perdere mai un compleanno — l\'app Compleanni ti ricorda 1 mese, 1 settimana e 1 giorno prima.',
+          storeUrl: 'https://apps.apple.com/it/app/compleanni/id6758899294', locale: 'it-IT' },
+    el: { titleTop: 'ΓΕΝΕΘΛΙΑ ΣΗΜΕΡΑ', line1: 'Σήμερα {name} γίνεται {age} ετών! 🎂',
+          cta: 'Μην ξεχάσετε ξανά γενέθλια — η εφαρμογή Γενέθλια σας υπενθυμίζει 1 μήνα, 1 εβδομάδα και 1 ημέρα νωρίτερα.',
+          storeUrl: 'https://apps.apple.com/gr/app/birthday/id6758899294', locale: 'el-GR' },
+    nl: { titleTop: 'VERJAARDAG VANDAAG', line1: 'Vandaag wordt {name} {age} jaar! 🎂',
+          cta: 'Vergeet nooit meer een verjaardag — de Verjaardagen-app herinnert je 1 maand, 1 week en 1 dag van tevoren.',
+          storeUrl: 'https://apps.apple.com/nl/app/verjaardagen/id6758899294', locale: 'nl-NL' },
+    pl: { titleTop: 'URODZINY DZISIAJ', line1: 'Dzisiaj {name} kończy {age} lat! 🎂',
+          cta: 'Nie zapomnij już o urodzinach — aplikacja Urodziny przypomni Ci 1 miesiąc, 1 tydzień i 1 dzień wcześniej.',
+          storeUrl: 'https://apps.apple.com/pl/app/urodziny/id6758899294', locale: 'pl-PL' },
+    pt: { titleTop: 'ANIVERSÁRIO HOJE', line1: 'Hoje {name} faz {age} anos! 🎂',
+          cta: 'Nunca mais te esqueças de um aniversário — a app Aniversários avisa-te 1 mês, 1 semana e 1 dia antes.',
+          storeUrl: 'https://apps.apple.com/pt/app/aniversários/id6758899294', locale: 'pt-PT' },
+  };
+
+  function format(template: string, name: string, age: number | string): string {
+    return template.replaceAll('{name}', name).replaceAll('{age}', String(age));
+  }
+
+  function currentAge(birthYear: number | undefined): number | null {
+    if (!birthYear || !currentDate) return null;
+    return currentDate.getFullYear() - birthYear;
+  }
 
   type WikiPage = {
     normalizedtitle?: string;
@@ -349,8 +420,9 @@ const today = new Date();
       desc: describe(top.text),
       thumb: top.pages?.[0]?.thumbnail?.source,
     };
-    // Top-5 for grid layout (FB-friendly content).
-    currentTop = scoredBirths.slice(0, 5).map((b) => ({
+    // Keep top 10 in `currentTop` so the person-selector has plenty to
+    // choose from while keeping the dropdown manageable.
+    currentTop = scoredBirths.slice(0, 10).map((b) => ({
       name: clean(b.text),
       year: b.year,
       desc: describe(b.text),
@@ -359,6 +431,16 @@ const today = new Date();
     heroName.textContent =
       currentHero.name + (top.year ? ` (${top.year})` : '');
     heroDesc.textContent = currentHero.desc || '';
+
+    // Populate person dropdown so the user can pick which celebrity
+    // to feature in the social-media post.
+    personSel.innerHTML = currentTop
+      .map((p, i) => {
+        const yr = p.year ? ` (${p.year})` : '';
+        return `<option value="${i}">${p.name}${yr}</option>`;
+      })
+      .join('');
+    personSel.value = '0';
 
     births.innerHTML = scoredBirths
       .map((b) => {
@@ -453,12 +535,9 @@ const today = new Date();
     return lines * lineHeight;
   }
 
-  // ── Canvas size + layout dispatch ──────────────────────────────
-  function canvasSize(fmt: string): { w: number; h: number } {
-    if (fmt === 'story') return { w: 1080, h: 1920 };
-    if (fmt === 'landscape') return { w: 1200, h: 628 };
-    return { w: 1080, h: 1080 }; // square (default, FB-friendly)
-  }
+  // Always 1080×1080 — universal FB + IG feed format.
+  const CANVAS_W = 1080;
+  const CANVAS_H = 1080;
 
   function paintBackground(ctx: CanvasRenderingContext2D, W: number, H: number) {
     const grad = ctx.createLinearGradient(0, 0, 0, H);
@@ -520,200 +599,110 @@ const today = new Date();
     ctx.stroke();
   }
 
-  // ── Layout: HERO (single person, big) ──────────────────────────
-  async function paintHero(ctx: CanvasRenderingContext2D, W: number, H: number, isLandscape: boolean) {
-    if (!currentHero) return;
+  // ── Layout: HERO (single selected person) ───────────────────────
+  async function paintHero(ctx: CanvasRenderingContext2D, person: Hero, lang: string) {
+    const W = CANVAS_W;
+    const H = CANVAS_H;
+    const t = i18n[lang] ?? i18n.sv;
+    const age = currentAge(person.year);
+
     paintBackground(ctx, W, H);
 
-    if (isLandscape) {
-      // Side-by-side: photo left, text right
-      const photoR = H * 0.4;
-      await drawCircleImage(ctx, photoR + 60, H / 2, photoR, currentHero.thumb, '🎂');
-
-      ctx.textAlign = 'left';
-      ctx.fillStyle = 'rgba(255,255,255,0.85)';
-      ctx.font = 'bold 28px system-ui, sans-serif';
-      ctx.fillText('DU DELAR FÖDELSEDAG MED', photoR * 2 + 120, H / 2 - 80);
-
-      ctx.fillStyle = 'white';
-      ctx.font = 'bold 56px system-ui, sans-serif';
-      wrap(ctx, currentHero.name, photoR * 2 + 120, H / 2, W - photoR * 2 - 180, 64);
-
-      if (currentHero.year) {
-        ctx.fillStyle = 'rgba(255,255,255,0.8)';
-        ctx.font = 'bold 32px system-ui, sans-serif';
-        ctx.fillText(`Född ${currentHero.year}`, photoR * 2 + 120, H / 2 + 100);
-      }
-    } else {
-      // Centered: confetti, label, big photo, big name
-      const isStory = H > W;
-      const topY = isStory ? 240 : 120;
-      const photoY = isStory ? 580 : 220;
-      const photoR = isStory ? 280 : 180;
-      const nameY = photoY + photoR * 2 + (isStory ? 160 : 100);
-
-      ctx.fillStyle = 'rgba(255,255,255,0.9)';
-      ctx.font = `bold ${isStory ? 56 : 38}px system-ui, sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.fillText('DU DELAR FÖDELSEDAG MED', W / 2, topY);
-
-      ctx.font = `${isStory ? 80 : 56}px system-ui, sans-serif`;
-      ctx.fillText('🎉 🎂 🎈', W / 2, topY + (isStory ? 140 : 90));
-
-      await drawCircleImage(ctx, W / 2, photoY + photoR, photoR, currentHero.thumb, '🎂');
-
-      ctx.fillStyle = 'white';
-      ctx.font = `bold ${isStory ? 110 : 72}px system-ui, sans-serif`;
-      ctx.textAlign = 'center';
-      wrap(ctx, currentHero.name, W / 2, nameY, W - 160, isStory ? 130 : 84);
-
-      if (currentHero.year) {
-        ctx.fillStyle = 'rgba(255,255,255,0.85)';
-        ctx.font = `bold ${isStory ? 64 : 44}px system-ui, sans-serif`;
-        ctx.fillText(`Född ${currentHero.year}`, W / 2, nameY + (isStory ? 160 : 110));
-      }
-    }
-
-    paintFooter(ctx, W, H, isLandscape);
-  }
-
-  // ── Layout: GRID (5 people in row/column) ──────────────────────
-  async function paintGrid(ctx: CanvasRenderingContext2D, W: number, H: number, isLandscape: boolean) {
-    if (currentTop.length === 0) return;
-    paintBackground(ctx, W, H);
-
-    const isStory = H > W;
-    const dateStr = currentDate
-      ? currentDate.toLocaleDateString('sv-SE', { day: 'numeric', month: 'long' })
-      : '';
-
-    // Title row
-    ctx.fillStyle = 'white';
-    ctx.font = `bold ${isStory ? 64 : isLandscape ? 38 : 56}px system-ui, sans-serif`;
+    // Top label — "FÖDELSEDAG IDAG" / "BIRTHDAY TODAY" / …
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.font = 'bold 42px system-ui, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('FÖDELSEDAG IDAG', W / 2, isLandscape ? 70 : 110);
+    ctx.fillText(t.titleTop, W / 2, 90);
 
-    ctx.fillStyle = 'rgba(255,255,255,0.85)';
-    ctx.font = `bold ${isStory ? 44 : isLandscape ? 24 : 36}px system-ui, sans-serif`;
-    ctx.fillText(dateStr, W / 2, isLandscape ? 110 : 170);
-
-    // Grid: 5 people. Story = vertical column. Square = 2x2 + 1 hero. Landscape = horizontal row.
-    const top5 = currentTop.slice(0, 5);
-
-    if (isLandscape) {
-      // 5 photos in a row across the bottom 3/4 of canvas
-      const r = 90;
-      const startX = (W - (r * 2 + 30) * 5 + 30) / 2;
-      const photoY = H - r - 110;
-      for (let i = 0; i < top5.length; i++) {
-        const cx = startX + r + i * (r * 2 + 30);
-        await drawCircleImage(ctx, cx, photoY, r, top5[i].thumb, '🎂');
-        ctx.fillStyle = 'white';
-        ctx.font = 'bold 22px system-ui, sans-serif';
-        ctx.textAlign = 'center';
-        const name = top5[i].name.length > 18 ? top5[i].name.slice(0, 16) + '…' : top5[i].name;
-        ctx.fillText(name, cx, photoY + r + 35);
-        if (top5[i].year) {
-          ctx.fillStyle = 'rgba(255,255,255,0.7)';
-          ctx.font = '20px system-ui, sans-serif';
-          ctx.fillText(`(${top5[i].year})`, cx, photoY + r + 65);
-        }
-      }
-    } else {
-      // Story or square: 1 large hero + 4 below in 2x2 (square) or vertical column (story)
-      const heroR = isStory ? 200 : 160;
-      const heroY = isStory ? 360 : 290;
-      await drawCircleImage(ctx, W / 2, heroY + heroR, heroR, top5[0].thumb, '🎂');
-
-      ctx.fillStyle = 'white';
-      ctx.font = `bold ${isStory ? 68 : 52}px system-ui, sans-serif`;
-      ctx.textAlign = 'center';
-      const heroName = top5[0].name.length > 22 ? top5[0].name.slice(0, 20) + '…' : top5[0].name;
-      ctx.fillText(heroName, W / 2, heroY + heroR * 2 + 80);
-
-      if (top5[0].year) {
-        ctx.fillStyle = 'rgba(255,255,255,0.8)';
-        ctx.font = `bold ${isStory ? 40 : 32}px system-ui, sans-serif`;
-        ctx.fillText(`Född ${top5[0].year}`, W / 2, heroY + heroR * 2 + 130);
-      }
-
-      // 2x2 grid for the remaining 4
-      const others = top5.slice(1, 5);
-      const smallR = isStory ? 110 : 90;
-      const gridTop = heroY + heroR * 2 + 230;
-      const gridGap = isStory ? 320 : 240;
-      const cellW = gridGap;
-      const cellH = isStory ? 220 : 200;
-      const cols = 2;
-      for (let i = 0; i < others.length; i++) {
-        const col = i % cols;
-        const row = Math.floor(i / cols);
-        const cx = W / 2 + (col === 0 ? -cellW / 2 : cellW / 2);
-        const cy = gridTop + row * cellH + smallR;
-        await drawCircleImage(ctx, cx, cy, smallR, others[i].thumb, '🎂');
-        ctx.fillStyle = 'white';
-        ctx.font = `bold ${isStory ? 30 : 26}px system-ui, sans-serif`;
-        ctx.textAlign = 'center';
-        const name = others[i].name.length > 18 ? others[i].name.slice(0, 16) + '…' : others[i].name;
-        ctx.fillText(name, cx, cy + smallR + 36);
-        if (others[i].year) {
-          ctx.fillStyle = 'rgba(255,255,255,0.7)';
-          ctx.font = `${isStory ? 26 : 22}px system-ui, sans-serif`;
-          ctx.fillText(`(${others[i].year})`, cx, cy + smallR + 66);
-        }
-      }
+    // Date subtitle
+    if (currentDate) {
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.font = 'bold 28px system-ui, sans-serif';
+      const dateStr = currentDate.toLocaleDateString(t.locale, {
+        day: 'numeric',
+        month: 'long',
+      });
+      ctx.fillText(dateStr, W / 2, 140);
     }
 
-    paintFooter(ctx, W, H, isLandscape);
+    // Hero photo
+    const photoR = 220;
+    const photoCY = 380;
+    await drawCircleImage(ctx, W / 2, photoCY, photoR, person.thumb, '🎂');
+
+    // Hero caption — "Idag fyller Björn Borg 70 år! 🎂" or per-locale equivalent.
+    const captionY = photoCY + photoR + 90;
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 56px system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    const caption = age !== null
+      ? format(t.line1, person.name, age)
+      : person.name;
+    wrap(ctx, caption, W / 2, captionY, W - 120, 68);
+
+    // Subtitle if there's a description
+    if (person.desc) {
+      ctx.fillStyle = 'rgba(255,255,255,0.8)';
+      ctx.font = '32px system-ui, sans-serif';
+      const subY = captionY + (caption.length > 35 ? 180 : 100);
+      wrap(ctx, person.desc, W / 2, subY, W - 200, 40);
+    }
+
+    // Footer (always sv-style branding, kept short)
+    ctx.fillStyle = 'rgba(255,255,255,0.65)';
+    ctx.font = '26px system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('alexanderbergqvist.com — Födelsedagar', W / 2, H - 50);
   }
 
-  function buildPostCopy(): string {
-    const dateStr = currentDate
-      ? currentDate.toLocaleDateString('sv-SE', { day: 'numeric', month: 'long' })
-      : 'idag';
+  function buildPostCopy(person: Hero, lang: string): string {
+    const t = i18n[lang] ?? i18n.sv;
+    const age = currentAge(person.year);
     const lines: string[] = [];
-    lines.push(`🎂 Födda ${dateStr}:`);
-    lines.push('');
-    for (const p of currentTop.slice(0, 5)) {
-      const y = p.year ? ` (${p.year})` : '';
-      lines.push(`• ${p.name}${y}`);
+    lines.push(
+      age !== null ? format(t.line1, person.name, age) : person.name,
+    );
+    if (person.desc) {
+      lines.push('');
+      lines.push(person.desc);
     }
     lines.push('');
-    lines.push('Glöm aldrig en födelsedag igen — Födelsedagar-appen påminner dig 1 månad, 1 vecka och 1 dag innan.');
+    lines.push(t.cta);
     lines.push('');
-    lines.push('📲 https://apps.apple.com/se/app/födelsedagar/id6758899294');
+    lines.push(`📲 ${t.storeUrl}`);
     return lines.join('\n');
   }
 
   async function generateShareImage() {
-    if (!currentHero) return;
-    const fmt = fmtSel.value;
-    const layout = layoutSel.value;
-    const size = canvasSize(fmt);
-    canvas.width = size.w;
-    canvas.height = size.h;
+    if (currentTop.length === 0) return;
+    const idx = parseInt(personSel.value, 10) || 0;
+    const person = currentTop[idx];
+    const lang = langSel.value;
+
+    canvas.width = CANVAS_W;
+    canvas.height = CANVAS_H;
     canvas.classList.remove('hidden');
     shareActions.classList.add('hidden');
 
     const ctx = canvas.getContext('2d')!;
-    ctx.clearRect(0, 0, size.w, size.h);
+    ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
 
-    if (layout === 'grid') {
-      await paintGrid(ctx, size.w, size.h, fmt === 'landscape');
-    } else {
-      await paintHero(ctx, size.w, size.h, fmt === 'landscape');
-    }
+    await paintHero(ctx, person, lang);
 
     // Build post copy + show
-    postCopyText.value = buildPostCopy();
+    postCopyText.value = buildPostCopy(person, lang);
     postCopy.classList.remove('hidden');
 
-    // Show download/share buttons + set up Web Share
+    // Wire up download + Web Share
     canvas.toBlob((blob) => {
       if (!blob) return;
       const objUrl = URL.createObjectURL(blob);
       downloadLink.href = objUrl;
-      const filename = `fodelsedag-${fmt}-${layout}.png`;
+      const safeName = person.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      const filename = `fodelsedag-${safeName}-${lang}.png`;
       downloadLink.download = filename;
       shareActions.classList.remove('hidden');
 
@@ -724,7 +713,7 @@ const today = new Date();
             await navigator.share({
               files: [file],
               title: 'Födelsedagar',
-              text: buildPostCopy(),
+              text: buildPostCopy(person, lang),
             });
           } catch {/* cancelled */}
         } else {
