@@ -174,26 +174,39 @@ const today = new Date();
             </button>
           </div>
 
-          <details
-            id="postCopy"
-            class="hidden mt-4 rounded-xl border border-slate-200 bg-white p-4"
+          <div
+            id="captions"
+            class="hidden mt-6 rounded-2xl border border-amber-200 bg-amber-50/40 p-5"
           >
-            <summary class="cursor-pointer text-sm font-bold text-slate-800">
-              📋 Färdig text att kopiera till FB / IG
-            </summary>
-            <textarea
-              id="postCopyText"
-              readonly
-              rows="6"
-              class="mt-3 w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm font-mono"
-            ></textarea>
-            <button
-              id="copyText"
-              class="mt-2 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-200"
-            >
-              Kopiera text
-            </button>
-          </details>
+            <div class="flex items-start justify-between gap-3 mb-1">
+              <h3 class="font-black text-base text-slate-900">
+                📝 Bildtext-förslag
+              </h3>
+              <label class="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
+                <input
+                  type="checkbox"
+                  id="hashtagsOn"
+                  checked
+                  class="rounded border-slate-400"
+                />
+                Med hashtags
+              </label>
+            </div>
+            <p class="text-xs text-slate-600 mb-4">
+              Tre varianter, var och en optimerad för en annan
+              algoritm-spak. Välj efter din målgrupp.
+            </p>
+
+            <div id="captionList" class="space-y-3"></div>
+          </div>
+
+          <!-- Backwards-compat: original postCopy stays hidden but in
+               DOM so the Web-Share API can pull the text it needs. -->
+          <textarea
+            id="postCopyText"
+            readonly
+            class="hidden"
+          ></textarea>
         </div>
       </section>
     </div>
@@ -268,152 +281,176 @@ const today = new Date();
   const shareBtn = document.getElementById('shareImage')! as HTMLButtonElement;
   const personSel = document.getElementById('personSel')! as HTMLSelectElement;
   const langSel = document.getElementById('langSel')! as HTMLSelectElement;
-  const postCopy = document.getElementById('postCopy')! as HTMLDetailsElement;
+  const captionsBox = document.getElementById('captions')!;
+  const captionList = document.getElementById('captionList')!;
+  const hashtagsOn = document.getElementById('hashtagsOn')! as HTMLInputElement;
+  // Hidden textarea retained so the Web Share API has a single canonical
+  // caption to attach to the shared image.
   const postCopyText = document.getElementById('postCopyText')! as HTMLTextAreaElement;
-  const copyTextBtn = document.getElementById('copyText')! as HTMLButtonElement;
 
-  // Per-language post strings. `line1` is the hero caption on the
-  // image; `prompt` is the engagement question that drives comments
-  // (algorithm boost); `pitch` is the short sales line on the card;
-  // `cta` is the longer text used in the post copy under the image.
+  // Per-language post strings. Each field powers a specific spot:
+  //  - line1 / ageSuffix → image hero + caption first line
+  //  - prompt → image bottom + question-variant caption
+  //  - tagPrompt → tag-variant caption (drives shares)
+  //  - askPrompt → comment-variant caption (drives comments)
+  //  - pitch → 1-line sales pitch on the card
+  //  - cta → longer pitch for the post body
+  //  - hashtags → 2-3 algorithm-friendly tags for the locale
   const i18n: Record<string, {
-    eyebrow: string;     // small label above name (e.g. "Födelsedag idag")
-    dateFmt: string;     // BCP-47 locale for date formatting
-    line1: string;       // hero caption, uses {name} {age}
-    ageSuffix: string;   // e.g. "fyller 39 år"; uses {age}
-    prompt: string;      // engagement question — drives comments
-    pitch: string;       // selling line on the card itself
-    cta: string;         // longer pitch for the post text
+    eyebrow: string;
+    dateFmt: string;
+    line1: string;
+    ageSuffix: string;
+    prompt: string;
+    tagPrompt: string;
+    askPrompt: string;
+    pitch: string;
+    cta: string;
     storeUrl: string;
     appName: string;
     locale: string;
+    hashtags: string[];
   }> = {
-    sv: { eyebrow: 'Födelsedag idag',
-          dateFmt: 'sv-SE',
-          line1: 'Idag fyller {name} {age} år',
-          ageSuffix: 'fyller {age} år',
+    sv: { eyebrow: 'Födelsedag idag', dateFmt: 'sv-SE',
+          line1: 'Idag fyller {name} {age} år', ageSuffix: 'fyller {age} år',
           prompt: 'Vem firar du nästa? 👇',
+          tagPrompt: 'Tagga någon som är ett fan av {name} 👇',
+          askPrompt: 'Vad är ditt favoritminne av {name}? 👇',
           pitch: 'Glöm aldrig en födelsedag — gratis i App Store',
           cta: 'Glöm aldrig en födelsedag igen — Födelsedagar-appen påminner dig 1 månad, 1 vecka och 1 dag innan.',
           storeUrl: 'https://apps.apple.com/se/app/födelsedagar/id6758899294',
-          appName: 'Födelsedagar', locale: 'sv-SE' },
-    en: { eyebrow: 'Birthday today',
-          dateFmt: 'en-US',
-          line1: 'Today {name} turns {age}',
-          ageSuffix: 'turns {age} today',
+          appName: 'Födelsedagar', locale: 'sv-SE',
+          hashtags: ['#födelsedag', '#FödelsedagIdag', '#svenskakändisar'] },
+    en: { eyebrow: 'Birthday today', dateFmt: 'en-US',
+          line1: 'Today {name} turns {age}', ageSuffix: 'turns {age} today',
           prompt: 'Who\'s next in your life? 👇',
+          tagPrompt: 'Tag someone who\'s a fan of {name} 👇',
+          askPrompt: 'What\'s your favourite memory of {name}? 👇',
           pitch: 'Never miss a birthday — free on the App Store',
           cta: 'Never miss a birthday again — the Birthdays app reminds you 1 month, 1 week and 1 day before.',
           storeUrl: 'https://apps.apple.com/us/app/birthday-remind-me/id6758899294',
-          appName: 'Birthdays', locale: 'en-US' },
-    de: { eyebrow: 'Geburtstag heute',
-          dateFmt: 'de-DE',
-          line1: 'Heute wird {name} {age} Jahre alt',
-          ageSuffix: 'wird {age} Jahre alt',
+          appName: 'Birthdays', locale: 'en-US',
+          hashtags: ['#birthday', '#BirthdayToday', '#OnThisDay'] },
+    de: { eyebrow: 'Geburtstag heute', dateFmt: 'de-DE',
+          line1: 'Heute wird {name} {age} Jahre alt', ageSuffix: 'wird {age} Jahre alt',
           prompt: 'Wer ist als Nächster dran? 👇',
+          tagPrompt: 'Markiere jemanden, der {name} liebt 👇',
+          askPrompt: 'Was ist deine schönste Erinnerung an {name}? 👇',
           pitch: 'Vergiss keinen Geburtstag — kostenlos im App Store',
           cta: 'Verpasse keinen Geburtstag mehr — die Geburtstage-App erinnert dich 1 Monat, 1 Woche und 1 Tag vorher.',
           storeUrl: 'https://apps.apple.com/de/app/geburtstage-familie/id6758899294',
-          appName: 'Geburtstage', locale: 'de-DE' },
-    no: { eyebrow: 'Bursdag i dag',
-          dateFmt: 'nb-NO',
-          line1: 'I dag fyller {name} {age} år',
-          ageSuffix: 'fyller {age} år',
+          appName: 'Geburtstage', locale: 'de-DE',
+          hashtags: ['#Geburtstag', '#HeuteIstGeburtstag', '#HappyBirthday'] },
+    no: { eyebrow: 'Bursdag i dag', dateFmt: 'nb-NO',
+          line1: 'I dag fyller {name} {age} år', ageSuffix: 'fyller {age} år',
           prompt: 'Hvem feirer du neste gang? 👇',
+          tagPrompt: 'Tagg noen som er fan av {name} 👇',
+          askPrompt: 'Hva er ditt favorittminne av {name}? 👇',
           pitch: 'Glem aldri en bursdag — gratis i App Store',
           cta: 'Glem aldri en bursdag igjen — Bursdager-appen minner deg på 1 måned, 1 uke og 1 dag i forveien.',
           storeUrl: 'https://apps.apple.com/no/app/bursdager/id6758899294',
-          appName: 'Bursdager', locale: 'nb-NO' },
-    da: { eyebrow: 'Fødselsdag i dag',
-          dateFmt: 'da-DK',
-          line1: 'I dag fylder {name} {age} år',
-          ageSuffix: 'fylder {age} år',
+          appName: 'Bursdager', locale: 'nb-NO',
+          hashtags: ['#bursdag', '#BursdagIDag', '#norskestjerner'] },
+    da: { eyebrow: 'Fødselsdag i dag', dateFmt: 'da-DK',
+          line1: 'I dag fylder {name} {age} år', ageSuffix: 'fylder {age} år',
           prompt: 'Hvem fejrer du næste gang? 👇',
+          tagPrompt: 'Tag en, der er fan af {name} 👇',
+          askPrompt: 'Hvad er dit yndlingsminde om {name}? 👇',
           pitch: 'Glem aldrig en fødselsdag — gratis i App Store',
           cta: 'Glem aldrig en fødselsdag igen — Fødselsdage-appen minder dig om det 1 måned, 1 uge og 1 dag før.',
           storeUrl: 'https://apps.apple.com/dk/app/fødselsdage/id6758899294',
-          appName: 'Fødselsdage', locale: 'da-DK' },
-    es: { eyebrow: 'Cumpleaños hoy',
-          dateFmt: 'es-ES',
-          line1: 'Hoy {name} cumple {age} años',
-          ageSuffix: 'cumple {age} años',
+          appName: 'Fødselsdage', locale: 'da-DK',
+          hashtags: ['#fødselsdag', '#FødselsdagIDag', '#danskeberømtheder'] },
+    es: { eyebrow: 'Cumpleaños hoy', dateFmt: 'es-ES',
+          line1: 'Hoy {name} cumple {age} años', ageSuffix: 'cumple {age} años',
           prompt: '¿A quién celebras a continuación? 👇',
+          tagPrompt: 'Etiqueta a alguien fan de {name} 👇',
+          askPrompt: '¿Cuál es tu recuerdo favorito de {name}? 👇',
           pitch: 'No olvides ningún cumpleaños — gratis en App Store',
           cta: 'Nunca olvides un cumpleaños — la app Cumpleaños te avisa 1 mes, 1 semana y 1 día antes.',
           storeUrl: 'https://apps.apple.com/es/app/cumpleaños/id6758899294',
-          appName: 'Cumpleaños', locale: 'es-ES' },
-    fr: { eyebrow: 'Anniversaire aujourd\'hui',
-          dateFmt: 'fr-FR',
-          line1: 'Aujourd\'hui {name} a {age} ans',
-          ageSuffix: 'a {age} ans',
+          appName: 'Cumpleaños', locale: 'es-ES',
+          hashtags: ['#cumpleaños', '#CumpleañosHoy', '#FelizCumpleaños'] },
+    fr: { eyebrow: 'Anniversaire aujourd\'hui', dateFmt: 'fr-FR',
+          line1: 'Aujourd\'hui {name} a {age} ans', ageSuffix: 'a {age} ans',
           prompt: 'Qui célébrez-vous bientôt ? 👇',
+          tagPrompt: 'Identifie un fan de {name} 👇',
+          askPrompt: 'Quel est votre meilleur souvenir de {name} ? 👇',
           pitch: 'Ne ratez plus un anniversaire — gratuit sur l\'App Store',
           cta: 'Ne ratez plus un anniversaire — l\'app Anniversaires vous prévient 1 mois, 1 semaine et 1 jour avant.',
           storeUrl: 'https://apps.apple.com/fr/app/anniversaires/id6758899294',
-          appName: 'Anniversaires', locale: 'fr-FR' },
-    fi: { eyebrow: 'Syntymäpäivä tänään',
-          dateFmt: 'fi-FI',
-          line1: 'Tänään {name} täyttää {age} vuotta',
-          ageSuffix: 'täyttää {age} vuotta',
+          appName: 'Anniversaires', locale: 'fr-FR',
+          hashtags: ['#anniversaire', '#AnniversaireDuJour', '#JoyeuxAnniversaire'] },
+    fi: { eyebrow: 'Syntymäpäivä tänään', dateFmt: 'fi-FI',
+          line1: 'Tänään {name} täyttää {age} vuotta', ageSuffix: 'täyttää {age} vuotta',
           prompt: 'Kenen syntymäpäivä on seuraava? 👇',
+          tagPrompt: 'Merkkaa joku, joka on {name}n fani 👇',
+          askPrompt: 'Mikä on suosikkimuistosi {name}sta? 👇',
           pitch: 'Älä unohda syntymäpäiviä — ilmainen App Storesta',
           cta: 'Älä koskaan unohda syntymäpäivää — Syntymäpäivät-sovellus muistuttaa 1 kk, 1 viikko ja 1 päivä etukäteen.',
           storeUrl: 'https://apps.apple.com/fi/app/syntymäpäivät/id6758899294',
-          appName: 'Syntymäpäivät', locale: 'fi-FI' },
-    is: { eyebrow: 'Afmæli í dag',
-          dateFmt: 'is-IS',
-          line1: 'Í dag verður {name} {age} ára',
-          ageSuffix: 'verður {age} ára',
+          appName: 'Syntymäpäivät', locale: 'fi-FI',
+          hashtags: ['#syntymäpäivä', '#SyntymäpäiväTänään', '#HyvääSyntymäpäivää'] },
+    is: { eyebrow: 'Afmæli í dag', dateFmt: 'is-IS',
+          line1: 'Í dag verður {name} {age} ára', ageSuffix: 'verður {age} ára',
           prompt: 'Hver er næstur að halda upp á? 👇',
+          tagPrompt: 'Taggaðu einhvern sem er aðdáandi {name} 👇',
+          askPrompt: 'Hver er uppáhalds minning þín um {name}? 👇',
           pitch: 'Missir aldrei af afmæli — ókeypis í App Store',
           cta: 'Missir aldrei af afmæli — Afmæli-forritið minnir þig 1 mánuði, 1 viku og 1 degi fyrirfram.',
           storeUrl: 'https://apps.apple.com/is/app/afmæli/id6758899294',
-          appName: 'Afmæli', locale: 'is-IS' },
-    it: { eyebrow: 'Compleanno oggi',
-          dateFmt: 'it-IT',
-          line1: 'Oggi {name} compie {age} anni',
-          ageSuffix: 'compie {age} anni',
+          appName: 'Afmæli', locale: 'is-IS',
+          hashtags: ['#afmæli', '#TilHamingjuMeðAfmælið'] },
+    it: { eyebrow: 'Compleanno oggi', dateFmt: 'it-IT',
+          line1: 'Oggi {name} compie {age} anni', ageSuffix: 'compie {age} anni',
           prompt: 'Chi festeggerai dopo? 👇',
+          tagPrompt: 'Tagga un fan di {name} 👇',
+          askPrompt: 'Qual è il tuo ricordo preferito di {name}? 👇',
           pitch: 'Non perdere un compleanno — gratis su App Store',
           cta: 'Non perdere mai un compleanno — l\'app Compleanni ti ricorda 1 mese, 1 settimana e 1 giorno prima.',
           storeUrl: 'https://apps.apple.com/it/app/compleanni/id6758899294',
-          appName: 'Compleanni', locale: 'it-IT' },
-    el: { eyebrow: 'Γενέθλια σήμερα',
-          dateFmt: 'el-GR',
-          line1: 'Σήμερα {name} γίνεται {age} ετών',
-          ageSuffix: 'γίνεται {age} ετών',
+          appName: 'Compleanni', locale: 'it-IT',
+          hashtags: ['#compleanno', '#CompleannoOggi', '#BuonCompleanno'] },
+    el: { eyebrow: 'Γενέθλια σήμερα', dateFmt: 'el-GR',
+          line1: 'Σήμερα {name} γίνεται {age} ετών', ageSuffix: 'γίνεται {age} ετών',
           prompt: 'Ποιον γιορτάζετε στη συνέχεια; 👇',
+          tagPrompt: 'Κάντε tag κάποιον θαυμαστή του/της {name} 👇',
+          askPrompt: 'Ποια είναι η αγαπημένη σας ανάμνηση από τον/την {name}; 👇',
           pitch: 'Μην ξεχάσετε γενέθλια — δωρεάν στο App Store',
           cta: 'Μην ξεχάσετε ξανά γενέθλια — η εφαρμογή Γενέθλια σας υπενθυμίζει 1 μήνα, 1 εβδομάδα και 1 ημέρα νωρίτερα.',
           storeUrl: 'https://apps.apple.com/gr/app/birthday/id6758899294',
-          appName: 'Γενέθλια', locale: 'el-GR' },
-    nl: { eyebrow: 'Verjaardag vandaag',
-          dateFmt: 'nl-NL',
-          line1: 'Vandaag wordt {name} {age} jaar',
-          ageSuffix: 'wordt {age} jaar',
+          appName: 'Γενέθλια', locale: 'el-GR',
+          hashtags: ['#γενέθλια', '#ΧρόνιαΠολλά'] },
+    nl: { eyebrow: 'Verjaardag vandaag', dateFmt: 'nl-NL',
+          line1: 'Vandaag wordt {name} {age} jaar', ageSuffix: 'wordt {age} jaar',
           prompt: 'Wie vier je hierna? 👇',
+          tagPrompt: 'Tag iemand die fan is van {name} 👇',
+          askPrompt: 'Wat is jouw favoriete herinnering aan {name}? 👇',
           pitch: 'Vergeet nooit een verjaardag — gratis in de App Store',
           cta: 'Vergeet nooit meer een verjaardag — de Verjaardagen-app herinnert je 1 maand, 1 week en 1 dag van tevoren.',
           storeUrl: 'https://apps.apple.com/nl/app/verjaardagen/id6758899294',
-          appName: 'Verjaardagen', locale: 'nl-NL' },
-    pl: { eyebrow: 'Urodziny dzisiaj',
-          dateFmt: 'pl-PL',
-          line1: 'Dzisiaj {name} kończy {age} lat',
-          ageSuffix: 'kończy {age} lat',
+          appName: 'Verjaardagen', locale: 'nl-NL',
+          hashtags: ['#verjaardag', '#VerjaardagVandaag', '#GefeliciteerD'] },
+    pl: { eyebrow: 'Urodziny dzisiaj', dateFmt: 'pl-PL',
+          line1: 'Dzisiaj {name} kończy {age} lat', ageSuffix: 'kończy {age} lat',
           prompt: 'Kto następny ma urodziny? 👇',
+          tagPrompt: 'Oznacz kogoś, kto jest fanem {name} 👇',
+          askPrompt: 'Jakie jest twoje ulubione wspomnienie o {name}? 👇',
           pitch: 'Nie zapomnij urodzin — darmowa aplikacja w App Store',
           cta: 'Nie zapomnij już o urodzinach — aplikacja Urodziny przypomni Ci 1 miesiąc, 1 tydzień i 1 dzień wcześniej.',
           storeUrl: 'https://apps.apple.com/pl/app/urodziny/id6758899294',
-          appName: 'Urodziny', locale: 'pl-PL' },
-    pt: { eyebrow: 'Aniversário hoje',
-          dateFmt: 'pt-PT',
-          line1: 'Hoje {name} faz {age} anos',
-          ageSuffix: 'faz {age} anos',
+          appName: 'Urodziny', locale: 'pl-PL',
+          hashtags: ['#urodziny', '#UrodzinyDzisiaj', '#WszystkiegoNajlepszego'] },
+    pt: { eyebrow: 'Aniversário hoje', dateFmt: 'pt-PT',
+          line1: 'Hoje {name} faz {age} anos', ageSuffix: 'faz {age} anos',
           prompt: 'A quem celebras a seguir? 👇',
+          tagPrompt: 'Marca alguém que é fã do/da {name} 👇',
+          askPrompt: 'Qual é a tua memória favorita do/da {name}? 👇',
           pitch: 'Não te esqueças de aniversários — grátis na App Store',
           cta: 'Nunca mais te esqueças de um aniversário — a app Aniversários avisa-te 1 mês, 1 semana e 1 dia antes.',
           storeUrl: 'https://apps.apple.com/pt/app/aniversários/id6758899294',
-          appName: 'Aniversários', locale: 'pt-PT' },
+          appName: 'Aniversários', locale: 'pt-PT',
+          hashtags: ['#aniversário', '#AniversárioHoje', '#FelizAniversário'] },
   };
 
   function format(template: string, name: string, age: number | string): string {
@@ -576,7 +613,7 @@ const today = new Date();
     results.classList.add('hidden');
     canvas.classList.add('hidden');
     shareActions.classList.add('hidden');
-    postCopy.classList.add('hidden');
+    captionsBox.classList.add('hidden');
     try {
       const data = await fetchOnThisDay(date.getMonth() + 1, date.getDate());
       render(data);
@@ -859,31 +896,109 @@ const today = new Date();
     ctx.fillText(`🎂  ${t.appName.toUpperCase()}`, W / 2, 1000);
   }
 
-  function buildPostCopy(person: Hero, lang: string): string {
+  // ── Three caption variants, each tuned for a different algo lever ─
+  // Variant 1 (TAG) drives shares — the strongest reach signal on FB
+  // 2026. Variant 2 (ASK) drives long-form comments — second signal.
+  // Variant 3 (DIRECT) drives clicks to App Store — conversion focus.
+  type Variant = {
+    key: 'tag' | 'ask' | 'direct';
+    label: string;
+    sublabel: string;
+    text: string;
+  };
+
+  function buildVariants(
+    person: Hero,
+    lang: string,
+    includeHashtags: boolean,
+  ): Variant[] {
     const t = i18n[lang] ?? i18n.sv;
     const age = currentAge(person.year);
-    const lines: string[] = [];
-    // Headline with 🎂 — emoji belongs in the caption (text), not on
-    // the elegant image. FB feed scans benefit from a single emoji.
-    lines.push(
-      age !== null ? `🎂 ${format(t.line1, person.name, age)}` : person.name,
-    );
-    // Description is in Swedish (from sv.wikipedia.org). Only include
-    // it if the post itself is Swedish — otherwise it sticks out as
-    // foreign text in an otherwise-English/German/… caption.
-    if (person.desc && lang === 'sv') {
-      lines.push('');
-      lines.push(person.desc);
+    const headline = age !== null
+      ? `🎂 ${format(t.line1, person.name, age)}`
+      : person.name;
+    const desc = person.desc && lang === 'sv' ? `\n\n${person.desc}` : '';
+    const tags = includeHashtags ? `\n\n${t.hashtags.join(' ')}` : '';
+    const link = `\n\n📲 ${t.storeUrl}`;
+
+    const tagPrompt = format(t.tagPrompt, person.name, age ?? '');
+    const askPrompt = format(t.askPrompt, person.name, age ?? '');
+
+    const variants: Variant[] = [
+      {
+        key: 'tag',
+        label: 'TAGGA',
+        sublabel: 'Driver delningar',
+        text: `${headline}${desc}\n\n${tagPrompt}\n\n${t.pitch}${link}${tags}`,
+      },
+      {
+        key: 'ask',
+        label: 'FRÅGA',
+        sublabel: 'Driver kommentarer',
+        text: `${headline}${desc}\n\n${askPrompt}\n\n${t.cta}${link}${tags}`,
+      },
+      {
+        key: 'direct',
+        label: 'DIREKT',
+        sublabel: 'Driver klick till appen',
+        text: `${headline}${desc}\n\n${t.prompt}\n\n${t.cta}${link}${tags}`,
+      },
+    ];
+
+    // Localize labels for non-sv UIs. Swedish UI text is fine because
+    // this control panel is for the page admin (you), not end users.
+    return variants;
+  }
+
+  function renderCaptions(person: Hero, lang: string) {
+    const variants = buildVariants(person, lang, hashtagsOn.checked);
+    captionList.innerHTML = '';
+    for (const v of variants) {
+      const card = document.createElement('div');
+      card.className = 'rounded-xl border border-amber-200 bg-white p-4';
+      const id = `cap-${v.key}-${Math.random().toString(36).slice(2, 7)}`;
+      card.innerHTML = `
+        <div class="flex items-baseline justify-between mb-2">
+          <div>
+            <span class="text-xs font-black text-amber-700 tracking-wider">${v.label}</span>
+            <span class="ml-2 text-xs text-slate-500">${v.sublabel}</span>
+          </div>
+          <button
+            data-copy-target="${id}"
+            class="rounded-md bg-slate-900 px-3 py-1 text-xs font-bold text-white hover:bg-slate-700"
+          >Kopiera</button>
+        </div>
+        <textarea
+          id="${id}"
+          readonly
+          rows="7"
+          class="w-full rounded-md border border-slate-200 bg-slate-50 px-2.5 py-2 text-xs font-mono leading-relaxed"
+        ></textarea>
+      `;
+      (card.querySelector(`#${id}`) as HTMLTextAreaElement).value = v.text;
+      captionList.appendChild(card);
     }
-    // Engagement prompt — drives comments → algo boost.
-    lines.push('');
-    lines.push(t.prompt);
-    // Pitch + App Store
-    lines.push('');
-    lines.push(t.cta);
-    lines.push('');
-    lines.push(`📲 ${t.storeUrl}`);
-    return lines.join('\n');
+
+    // Wire up copy buttons.
+    captionList.querySelectorAll('button[data-copy-target]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const targetId = (btn as HTMLElement).dataset.copyTarget!;
+        const txt = (document.getElementById(targetId) as HTMLTextAreaElement).value;
+        try {
+          await navigator.clipboard.writeText(txt);
+          const original = btn.textContent;
+          btn.textContent = '✓ Kopierat';
+          setTimeout(() => { btn.textContent = original; }, 1500);
+        } catch {
+          // Clipboard blocked — fall back to selecting the textarea
+          const ta = document.getElementById(targetId) as HTMLTextAreaElement;
+          ta.select();
+        }
+      });
+    });
+
+    // First variant becomes the default for Web Share API.
+    postCopyText.value = variants[0].text;
   }
 
   async function generateShareImage() {
@@ -902,9 +1017,9 @@ const today = new Date();
 
     await paintHero(ctx, person, lang);
 
-    // Build post copy + show
-    postCopyText.value = buildPostCopy(person, lang);
-    postCopy.classList.remove('hidden');
+    // Build the three caption variants + show them
+    renderCaptions(person, lang);
+    captionsBox.classList.remove('hidden');
 
     // Wire up download + Web Share
     canvas.toBlob((blob) => {
@@ -926,7 +1041,10 @@ const today = new Date();
             await navigator.share({
               files: [file],
               title: 'Födelsedagar',
-              text: buildPostCopy(person, lang),
+              // postCopyText.value is the TAGGA variant — the strongest
+              // share-driver, and a safe default if the user uses Web
+              // Share API directly without picking a variant.
+              text: postCopyText.value,
             });
           } catch {/* cancelled */}
         } else {
@@ -936,12 +1054,12 @@ const today = new Date();
     }, 'image/png');
   }
 
-  copyTextBtn.addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(postCopyText.value);
-      copyTextBtn.textContent = '✓ Kopierat!';
-      setTimeout(() => { copyTextBtn.textContent = 'Kopiera text'; }, 1500);
-    } catch {/* clipboard blocked */}
+  // Toggling hashtags rerenders the variants with/without them so
+  // the user can quickly compare lengths before posting.
+  hashtagsOn.addEventListener('change', () => {
+    if (currentTop.length === 0) return;
+    const idx = parseInt(personSel.value, 10) || 0;
+    renderCaptions(currentTop[idx], langSel.value);
   });
 
   generateBtn.addEventListener('click', generateShareImage);
