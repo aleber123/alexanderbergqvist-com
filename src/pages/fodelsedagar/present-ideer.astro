@@ -1,0 +1,392 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FAQ from '../../components/FAQ.astro';
+import AppStoreBadge from '../../components/AppStoreBadge.astro';
+
+const app = await getEntry('apps', 'fodelsedagar');
+const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
+
+const faq = [
+  {
+    q: 'Vilken är den vanligaste födelsedagspresenten?',
+    a: 'Enligt återkommande svenska konsumentundersökningar är blommor, böcker, parfym och presentkort de fyra vanligaste kategorierna. Pengar i kuvert till barn och tonåringar har dock blivit normen — uppskattning skiftar med åldern.',
+  },
+  {
+    q: 'Vad ger man en 50-åring?',
+    a: 'Vid 50-årsdagar uppskattas oftast något personligt eller minnesvärt mer än en sak — t.ex. en upplevelse (vinprovning, helgresa, golfrunda), en bok inom personens intresse, ett kvalitets-hemtillbehör, eller fingerade bilder/inramad text från familjen. Räknaren ovan ger fler exempel per ålder.',
+  },
+  {
+    q: 'Hur mycket är lämpligt att ge i pengar?',
+    a: 'En tumregel i Sverige: 100–200 kr till bekanta barn, 300–500 kr till nära släktbarn, 500–1000 kr till vuxna nära släktingar/vänner, och högre belopp till partner. Det är dock totalt fritt och beror på relation, ekonomi och kultur.',
+  },
+  {
+    q: 'Vad är skillnaden mellan vad man ger en kollega vs vän?',
+    a: 'Kollegor: håll det enkelt och opersonligt — choklad, presentkort, blommor, eller en gemensam present från avdelningen (50–150 kr). Vänner: mer personligt — något som speglar gemensamma intressen, en bok inom deras nisch, eller en upplevelse ni delar.',
+  },
+  {
+    q: 'När ska man köpa presenten?',
+    a: 'Två veckor innan är optimalt. Då hinner du jämföra alternativ, beställa online, och har en buffert om det blir leveransfel. Sista-minuten-presenter blir oftare urvattnade. Födelsedagar-appen visar dig påminnelser 1 månad, 1 vecka och 1 dag innan — exakt för att ge dig planeringsutrymme.',
+  },
+];
+
+interface Idea {
+  title: string;
+  price: string;
+  emoji: string;
+}
+
+interface AgeBand {
+  range: string;
+  minAge: number;
+  maxAge: number;
+  closeFamily: Idea[];
+  friend: Idea[];
+  colleague: Idea[];
+}
+
+const bands: AgeBand[] = [
+  {
+    range: '0–3 år',
+    minAge: 0,
+    maxAge: 3,
+    closeFamily: [
+      { title: 'Trä-leksak från Brio eller Goki', price: '300–800 kr', emoji: '🧸' },
+      { title: 'Bilderbok (klassikerna: Pippi, Mamma Mu)', price: '100–250 kr', emoji: '📚' },
+      { title: 'Klätterställning / soft-block', price: '500–1500 kr', emoji: '🎁' },
+      { title: 'Personligt fotoalbum med familjebilder', price: '200–500 kr', emoji: '📸' },
+    ],
+    friend: [
+      { title: 'Mjukdjur (klassisk teddy eller Jellycat)', price: '200–500 kr', emoji: '🧸' },
+      { title: 'Pekbok i tyg eller hårdpapp', price: '100–200 kr', emoji: '📖' },
+    ],
+    colleague: [
+      { title: 'Presentkort till BR-leksaker', price: '200–500 kr', emoji: '🎫' },
+    ],
+  },
+  {
+    range: '4–7 år',
+    minAge: 4,
+    maxAge: 7,
+    closeFamily: [
+      { title: 'Lego Friends eller Lego City-set', price: '300–800 kr', emoji: '🧱' },
+      { title: 'Cykel eller sparkcykel', price: '1000–3000 kr', emoji: '🚲' },
+      { title: 'Sport-utrustning (fotboll, ridhjälm, simglasögon)', price: '300–800 kr', emoji: '⚽' },
+      { title: 'Pyssel-låda (Crayola, klistermärken, modellera)', price: '200–500 kr', emoji: '🎨' },
+    ],
+    friend: [
+      { title: 'Bok (Petson & Findus, Halvan, Anna och Ahmed)', price: '150–250 kr', emoji: '📚' },
+      { title: 'Pussel (50–100 bitar)', price: '150–300 kr', emoji: '🧩' },
+      { title: 'Liten Lego-uppgift', price: '200–400 kr', emoji: '🧱' },
+    ],
+    colleague: [
+      { title: 'Presentkort till Akademibokhandeln', price: '200–500 kr', emoji: '🎫' },
+    ],
+  },
+  {
+    range: '8–12 år',
+    minAge: 8,
+    maxAge: 12,
+    closeFamily: [
+      { title: 'Lego Technic eller Star Wars-set', price: '500–1500 kr', emoji: '🧱' },
+      { title: 'Nintendo Switch-spel', price: '400–700 kr', emoji: '🎮' },
+      { title: 'Skateboard / rullskridskor', price: '500–1500 kr', emoji: '🛹' },
+      { title: 'Hörlurar (JBL eller AirPods för åldern)', price: '300–1500 kr', emoji: '🎧' },
+    ],
+    friend: [
+      { title: 'Bokserie (Harry Potter, Diary of a Wimpy Kid)', price: '100–300 kr', emoji: '📚' },
+      { title: 'Bordsspel (Catan Junior, Carcassonne)', price: '200–400 kr', emoji: '🎲' },
+    ],
+    colleague: [
+      { title: 'Presentkort till Apple App Store', price: '200–500 kr', emoji: '🎫' },
+    ],
+  },
+  {
+    range: '13–17 år',
+    minAge: 13,
+    maxAge: 17,
+    closeFamily: [
+      { title: 'AirPods eller bättre hörlurar', price: '1500–3000 kr', emoji: '🎧' },
+      { title: 'Pengar (300–1500 kr beroende på relation)', price: '300–1500 kr', emoji: '💵' },
+      { title: 'Konsertbiljett eller festival', price: '500–2500 kr', emoji: '🎟️' },
+      { title: 'Snygg ryggsäck (Fjällräven Kånken eller liknande)', price: '700–1500 kr', emoji: '🎒' },
+    ],
+    friend: [
+      { title: 'Presentkort till Zalando eller H&M', price: '200–500 kr', emoji: '🎫' },
+      { title: 'Spotify Premium 3 månader', price: '300 kr', emoji: '🎵' },
+    ],
+    colleague: [
+      { title: 'Presentkort till Spotify eller Netflix', price: '200–300 kr', emoji: '🎫' },
+    ],
+  },
+  {
+    range: '18–25 år',
+    minAge: 18,
+    maxAge: 25,
+    closeFamily: [
+      { title: 'Apple-produkt (AirPods Pro, Apple Watch, iPad)', price: '2000–6000 kr', emoji: '📱' },
+      { title: 'Resa eller hotellnatt (presentvärde)', price: '1500–5000 kr', emoji: '✈️' },
+      { title: 'Studentlitteratur / kursavgift / körlektioner', price: '500–3000 kr', emoji: '🎓' },
+      { title: 'Pengar till hyran eller första lägenheten', price: '500–3000 kr', emoji: '💵' },
+    ],
+    friend: [
+      { title: 'Restaurangbesök (ge presentkort eller följ med)', price: '300–800 kr', emoji: '🍽️' },
+      { title: 'Spelplatta-licens (Disney+, HBO Max)', price: '200–400 kr', emoji: '📺' },
+      { title: 'Snygg vattenflaska (Stanley, Yeti)', price: '300–500 kr', emoji: '💧' },
+    ],
+    colleague: [
+      { title: 'Blommor + presentkort till restaurang', price: '200–500 kr', emoji: '💐' },
+    ],
+  },
+  {
+    range: '26–40 år',
+    minAge: 26,
+    maxAge: 40,
+    closeFamily: [
+      { title: 'Upplevelse (vinprovning, spa, sjöutflykt)', price: '500–2500 kr', emoji: '🍷' },
+      { title: 'Bra kvalitets-hemtillbehör (Hay, Iittala, Marimekko)', price: '300–1500 kr', emoji: '🏺' },
+      { title: 'Smycke eller klocka', price: '500–5000 kr', emoji: '💍' },
+      { title: 'Konsert- eller biljettpresent', price: '500–2000 kr', emoji: '🎟️' },
+    ],
+    friend: [
+      { title: 'Bra vin eller specialtillverkad sprit', price: '200–500 kr', emoji: '🍷' },
+      { title: 'Bok inom deras intresse (specifik genre)', price: '200–400 kr', emoji: '📚' },
+      { title: 'Brunch-presentkort eller restaurang', price: '300–700 kr', emoji: '🍳' },
+    ],
+    colleague: [
+      { title: 'Blommor (säsongsbukett)', price: '300–500 kr', emoji: '💐' },
+      { title: 'Presentkort till lunchrestaurang', price: '200–400 kr', emoji: '🎫' },
+    ],
+  },
+  {
+    range: '41–65 år',
+    minAge: 41,
+    maxAge: 65,
+    closeFamily: [
+      { title: 'Helgresa eller weekend-paket', price: '2000–8000 kr', emoji: '🏨' },
+      { title: 'Whiskey, vin eller specialtillverkad sprit', price: '500–2000 kr', emoji: '🥃' },
+      { title: 'Konst, fotografi eller signerad bok', price: '500–3000 kr', emoji: '🖼️' },
+      { title: 'Sport-hobby (golfutrustning, fiskeprylar)', price: '500–3000 kr', emoji: '⛳' },
+    ],
+    friend: [
+      { title: 'Boklåda inom deras genre', price: '300–800 kr', emoji: '📚' },
+      { title: 'Hemtillbehör — keramik, ljus, träbricka', price: '200–600 kr', emoji: '🕯️' },
+    ],
+    colleague: [
+      { title: 'Blommor + bok eller choklad', price: '300–500 kr', emoji: '💐' },
+    ],
+  },
+  {
+    range: '65+ år',
+    minAge: 66,
+    maxAge: 120,
+    closeFamily: [
+      { title: 'Tid tillsammans — middagsbjudning, dagsutflykt', price: 'Pris efter eget val', emoji: '👨‍👩‍👧' },
+      { title: 'Inramat fotokollage eller fotobok', price: '300–800 kr', emoji: '📸' },
+      { title: 'Trädgårdsgrejer (om de odlar)', price: '200–1000 kr', emoji: '🌷' },
+      { title: 'Klassisk musik / kulturupplevelse', price: '300–1500 kr', emoji: '🎼' },
+    ],
+    friend: [
+      { title: 'Bok (memoarer, kokböcker, klassiker)', price: '200–400 kr', emoji: '📚' },
+      { title: 'Blommor — gärna säsongsbukett', price: '200–400 kr', emoji: '💐' },
+    ],
+    colleague: [
+      { title: 'Bukett + handskriven hälsning', price: '200–400 kr', emoji: '💐' },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="Födelsedagspresent-idéer — vad ge i present per ålder?"
+  description="Hitta rätt födelsedagspresent baserat på ålder och relation. 30+ konkreta tips för barn, tonåringar, vuxna och pensionärer — från familjepresent till kollegapresent."
+  keywords={[
+    'födelsedagspresent ideer',
+    'vad ge i present',
+    'födelsedagspresent ålder',
+    'present till 50 åring',
+    'present till barn',
+    'present till mamma',
+    'present till kollega',
+    'gåvor födelsedag',
+  ]}
+  appStoreId={appStoreId}
+>
+  <section class="max-w-3xl mx-auto px-6 py-8">
+    <Breadcrumbs
+      trail={[
+        { name: 'Hem', url: '/' },
+        { name: 'Födelsedagar', url: '/fodelsedagar/' },
+        { name: 'Present-idéer' },
+      ]}
+    />
+    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-slate-500">
+      Fri kalkylator
+    </span>
+    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+      Födelsedagspresent-idéer
+    </h1>
+    <p class="mt-3 text-lg text-slate-600">
+      Välj ålder och relation så får du 5–10 konkreta presenttips med
+      ungefärligt prisspann. Idéer för barn, tonåringar, vuxna och pensionärer.
+    </p>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-white p-6 md:p-8">
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-bold mb-2" for="age">
+            Ålder
+          </label>
+          <input
+            id="age"
+            type="number"
+            min="0"
+            max="120"
+            placeholder="30"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-pink-500 focus:outline-none"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-2" for="rel">
+            Relation
+          </label>
+          <select
+            id="rel"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-pink-500 focus:outline-none bg-white"
+          >
+            <option value="closeFamily">Närstående (familj, partner)</option>
+            <option value="friend">Vän</option>
+            <option value="colleague">Kollega / bekant</option>
+          </select>
+        </div>
+      </div>
+
+      <div
+        id="band"
+        class="mt-6 rounded-xl bg-pink-50 border border-pink-200 px-4 py-3 text-sm font-bold text-pink-900"
+      >
+        Ålderskategori: 26–40 år
+      </div>
+
+      <div
+        id="ideas"
+        class="mt-4 grid gap-3"
+      ></div>
+    </div>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-gradient-to-br from-pink-50 to-white p-6 md:p-8">
+      <h2 class="text-xl font-black">Bygg en önskelista i appen</h2>
+      <p class="mt-2 text-slate-700">
+        Födelsedagar-appen har en önskelista per person. Lägg in idéer som
+        kommer från familjen så slipper alla köpa samma sak till samma 50-åring.
+        Premium-funktion.
+      </p>
+      <div class="mt-6">
+        <AppStoreBadge
+          url="https://apps.apple.com/se/app/f%C3%B6delsedagar/id6758899294"
+          status="live"
+        />
+      </div>
+    </div>
+
+    <div class="prose mt-12">
+      <h2>Hur väljer man rätt födelsedagspresent?</h2>
+      <p>
+        Tre frågor löser de flesta presentkriserna: (1) hur nära är du
+        personen? (2) hur gammal blir hen? (3) finns det en aktiv hobby eller
+        intresse? Räknaren här ovan svarar på (1) och (2). För (3) — fråga
+        familjemedlemmar eller skrolla deras Instagram för ledtrådar.
+      </p>
+
+      <h2>Vad ger man en 30-, 40-, 50- eller 60-åring?</h2>
+      <p>
+        Milstolpe-födelsedagar förtjänar mer än vanlig present. Vid 30 funkar
+        upplevelser (resa, restaurangkväll). 40 → hemtillbehör eller smycke.
+        50 → vin eller hobbygrej inom deras specifika intresse. 60 → tid
+        tillsammans + minnesbild. Klicka i räknaren ovan för konkreta priser.
+      </p>
+
+      <h2>Prisnivåer per relation</h2>
+      <ul>
+        <li><strong>Närstående familj:</strong> 500–3000 kr för vuxna, 200–1500 för barn</li>
+        <li><strong>Vän:</strong> 200–500 kr för vuxna, 100–300 för barn</li>
+        <li><strong>Kollega:</strong> 100–300 kr, ofta gemensam present från gruppen</li>
+      </ul>
+
+      <h2>Vad ger man som inte ger fel intryck?</h2>
+      <p>
+        Undvik kategorier som signalerar fel sak: parfym till någon du inte
+        känner väl (för intimt), bantningsprodukter (alltid problematiskt),
+        eller städutrustning till en partner (oavsett kvalitet). Säkert:
+        konsumtionsvaror med kort hållbarhetstid (vin, choklad, blommor)
+        eller upplevelser.
+      </p>
+
+      <h2>Online vs fysisk butik</h2>
+      <p>
+        Online ger bredare urval, lägre pris och leverans hem.
+        Fysisk butik ger taktil känsla, ingen leveranstid och möjlighet att
+        be om hjälp. Tumregel: beställ böcker, hemtillbehör och elektronik
+        online (Bokus, CDON, Amazon). Köp blommor, choklad och vin lokalt.
+      </p>
+    </div>
+
+    <FAQ items={faq} />
+  </section>
+</BaseLayout>
+
+<script>
+  type Idea = { title: string; price: string; emoji: string };
+  type AgeBand = {
+    range: string;
+    minAge: number;
+    maxAge: number;
+    closeFamily: Idea[];
+    friend: Idea[];
+    colleague: Idea[];
+  };
+
+  const bands: AgeBand[] = JSON.parse(`[
+    {"range":"0–3 år","minAge":0,"maxAge":3,"closeFamily":[{"title":"Trä-leksak från Brio eller Goki","price":"300–800 kr","emoji":"🧸"},{"title":"Bilderbok (klassikerna: Pippi, Mamma Mu)","price":"100–250 kr","emoji":"📚"},{"title":"Klätterställning / soft-block","price":"500–1500 kr","emoji":"🎁"},{"title":"Personligt fotoalbum med familjebilder","price":"200–500 kr","emoji":"📸"}],"friend":[{"title":"Mjukdjur (klassisk teddy eller Jellycat)","price":"200–500 kr","emoji":"🧸"},{"title":"Pekbok i tyg eller hårdpapp","price":"100–200 kr","emoji":"📖"}],"colleague":[{"title":"Presentkort till BR-leksaker","price":"200–500 kr","emoji":"🎫"}]},
+    {"range":"4–7 år","minAge":4,"maxAge":7,"closeFamily":[{"title":"Lego Friends eller Lego City-set","price":"300–800 kr","emoji":"🧱"},{"title":"Cykel eller sparkcykel","price":"1000–3000 kr","emoji":"🚲"},{"title":"Sport-utrustning (fotboll, ridhjälm, simglasögon)","price":"300–800 kr","emoji":"⚽"},{"title":"Pyssel-låda (Crayola, klistermärken, modellera)","price":"200–500 kr","emoji":"🎨"}],"friend":[{"title":"Bok (Petson & Findus, Halvan, Anna och Ahmed)","price":"150–250 kr","emoji":"📚"},{"title":"Pussel (50–100 bitar)","price":"150–300 kr","emoji":"🧩"},{"title":"Liten Lego-uppgift","price":"200–400 kr","emoji":"🧱"}],"colleague":[{"title":"Presentkort till Akademibokhandeln","price":"200–500 kr","emoji":"🎫"}]},
+    {"range":"8–12 år","minAge":8,"maxAge":12,"closeFamily":[{"title":"Lego Technic eller Star Wars-set","price":"500–1500 kr","emoji":"🧱"},{"title":"Nintendo Switch-spel","price":"400–700 kr","emoji":"🎮"},{"title":"Skateboard / rullskridskor","price":"500–1500 kr","emoji":"🛹"},{"title":"Hörlurar (JBL eller AirPods för åldern)","price":"300–1500 kr","emoji":"🎧"}],"friend":[{"title":"Bokserie (Harry Potter, Diary of a Wimpy Kid)","price":"100–300 kr","emoji":"📚"},{"title":"Bordsspel (Catan Junior, Carcassonne)","price":"200–400 kr","emoji":"🎲"}],"colleague":[{"title":"Presentkort till Apple App Store","price":"200–500 kr","emoji":"🎫"}]},
+    {"range":"13–17 år","minAge":13,"maxAge":17,"closeFamily":[{"title":"AirPods eller bättre hörlurar","price":"1500–3000 kr","emoji":"🎧"},{"title":"Pengar (300–1500 kr beroende på relation)","price":"300–1500 kr","emoji":"💵"},{"title":"Konsertbiljett eller festival","price":"500–2500 kr","emoji":"🎟️"},{"title":"Snygg ryggsäck (Fjällräven Kånken eller liknande)","price":"700–1500 kr","emoji":"🎒"}],"friend":[{"title":"Presentkort till Zalando eller H&M","price":"200–500 kr","emoji":"🎫"},{"title":"Spotify Premium 3 månader","price":"300 kr","emoji":"🎵"}],"colleague":[{"title":"Presentkort till Spotify eller Netflix","price":"200–300 kr","emoji":"🎫"}]},
+    {"range":"18–25 år","minAge":18,"maxAge":25,"closeFamily":[{"title":"Apple-produkt (AirPods Pro, Apple Watch, iPad)","price":"2000–6000 kr","emoji":"📱"},{"title":"Resa eller hotellnatt (presentvärde)","price":"1500–5000 kr","emoji":"✈️"},{"title":"Studentlitteratur / kursavgift / körlektioner","price":"500–3000 kr","emoji":"🎓"},{"title":"Pengar till hyran eller första lägenheten","price":"500–3000 kr","emoji":"💵"}],"friend":[{"title":"Restaurangbesök (ge presentkort eller följ med)","price":"300–800 kr","emoji":"🍽️"},{"title":"Spelplatta-licens (Disney+, HBO Max)","price":"200–400 kr","emoji":"📺"},{"title":"Snygg vattenflaska (Stanley, Yeti)","price":"300–500 kr","emoji":"💧"}],"colleague":[{"title":"Blommor + presentkort till restaurang","price":"200–500 kr","emoji":"💐"}]},
+    {"range":"26–40 år","minAge":26,"maxAge":40,"closeFamily":[{"title":"Upplevelse (vinprovning, spa, sjöutflykt)","price":"500–2500 kr","emoji":"🍷"},{"title":"Bra kvalitets-hemtillbehör (Hay, Iittala, Marimekko)","price":"300–1500 kr","emoji":"🏺"},{"title":"Smycke eller klocka","price":"500–5000 kr","emoji":"💍"},{"title":"Konsert- eller biljettpresent","price":"500–2000 kr","emoji":"🎟️"}],"friend":[{"title":"Bra vin eller specialtillverkad sprit","price":"200–500 kr","emoji":"🍷"},{"title":"Bok inom deras intresse (specifik genre)","price":"200–400 kr","emoji":"📚"},{"title":"Brunch-presentkort eller restaurang","price":"300–700 kr","emoji":"🍳"}],"colleague":[{"title":"Blommor (säsongsbukett)","price":"300–500 kr","emoji":"💐"},{"title":"Presentkort till lunchrestaurang","price":"200–400 kr","emoji":"🎫"}]},
+    {"range":"41–65 år","minAge":41,"maxAge":65,"closeFamily":[{"title":"Helgresa eller weekend-paket","price":"2000–8000 kr","emoji":"🏨"},{"title":"Whiskey, vin eller specialtillverkad sprit","price":"500–2000 kr","emoji":"🥃"},{"title":"Konst, fotografi eller signerad bok","price":"500–3000 kr","emoji":"🖼️"},{"title":"Sport-hobby (golfutrustning, fiskeprylar)","price":"500–3000 kr","emoji":"⛳"}],"friend":[{"title":"Boklåda inom deras genre","price":"300–800 kr","emoji":"📚"},{"title":"Hemtillbehör — keramik, ljus, träbricka","price":"200–600 kr","emoji":"🕯️"}],"colleague":[{"title":"Blommor + bok eller choklad","price":"300–500 kr","emoji":"💐"}]},
+    {"range":"65+ år","minAge":66,"maxAge":120,"closeFamily":[{"title":"Tid tillsammans — middagsbjudning, dagsutflykt","price":"Pris efter eget val","emoji":"👨‍👩‍👧"},{"title":"Inramat fotokollage eller fotobok","price":"300–800 kr","emoji":"📸"},{"title":"Trädgårdsgrejer (om de odlar)","price":"200–1000 kr","emoji":"🌷"},{"title":"Klassisk musik / kulturupplevelse","price":"300–1500 kr","emoji":"🎼"}],"friend":[{"title":"Bok (memoarer, kokböcker, klassiker)","price":"200–400 kr","emoji":"📚"},{"title":"Blommor — gärna säsongsbukett","price":"200–400 kr","emoji":"💐"}],"colleague":[{"title":"Bukett + handskriven hälsning","price":"200–400 kr","emoji":"💐"}]}
+  ]`);
+
+  const ageInp = document.getElementById('age') as HTMLInputElement;
+  const relSel = document.getElementById('rel') as HTMLSelectElement;
+  const bandLabel = document.getElementById('band')!;
+  const ideasList = document.getElementById('ideas')!;
+
+  function render() {
+    const age = parseInt(ageInp.value, 10);
+    if (isNaN(age) || age < 0 || age > 120) return;
+    const band = bands.find((b) => age >= b.minAge && age <= b.maxAge);
+    if (!band) return;
+    bandLabel.textContent = `Ålderskategori: ${band.range}`;
+
+    const ideas = (band as any)[relSel.value] as Idea[];
+    ideasList.innerHTML = ideas
+      .map(
+        (i) => `
+        <div class="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4">
+          <span class="text-2xl">${i.emoji}</span>
+          <div class="flex-1">
+            <div class="font-bold text-slate-900">${i.title}</div>
+            <div class="text-xs text-slate-500 mt-0.5">${i.price}</div>
+          </div>
+        </div>`,
+      )
+      .join('');
+  }
+
+  ageInp.addEventListener('input', render);
+  relSel.addEventListener('change', render);
+  ageInp.value = '30';
+  render();
+</script>

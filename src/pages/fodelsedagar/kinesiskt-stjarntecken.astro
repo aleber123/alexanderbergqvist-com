@@ -1,0 +1,245 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FAQ from '../../components/FAQ.astro';
+import AppStoreBadge from '../../components/AppStoreBadge.astro';
+
+const app = await getEntry('apps', 'fodelsedagar');
+const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
+
+const faq = [
+  {
+    q: 'Hur räknar man ut sitt kinesiska stjärntecken?',
+    a: 'Kinesiska stjärntecken bygger på födelseår — inte datum som västerländska. Cykeln är 12 år lång och börjar på Råttan. Räknaren här ovan tar ditt födelseår och pekar ut djuret direkt.',
+  },
+  {
+    q: 'Vad är skillnaden mellan kinesiskt och västerländskt stjärntecken?',
+    a: 'Västerländska tecken är 12 stycken baserat på födelsemånad (Vädur, Oxen, Tvillingarna…). Kinesiska tecken är 12 djur baserat på födelseår (Råtta, Oxe, Tiger, Kanin, Drake, Orm, Häst, Get, Apa, Tupp, Hund, Gris). Cyklerna är helt olika — en person född 1988 är Drake i kinesisk astrologi men kan vara vilket västerländskt tecken som helst beroende på exakt datum.',
+  },
+  {
+    q: 'Varför börjar inte cykeln första januari?',
+    a: 'Kinesiskt nyår infaller någonstans i januari–februari beroende på månkalendern. Strikt sett byter du tecken vid kinesiska nyåret, inte vid 1 januari. Räknaren här använder förenklat västerländskt år för enkelhet — om du är född i januari eller början av februari kan ditt riktiga kinesiska tecken vara det föregående året. Slå upp exakt nyårsdatum för ditt år om du vill veta säkert.',
+  },
+  {
+    q: 'Är kinesisk astrologi vetenskap?',
+    a: 'Nej. Liksom västerländsk astrologi finns det inget vetenskapligt stöd för att stjärntecken (kinesiska eller andra) korrelerar med personlighet. Det är ett intressant kulturellt fenomen med tusenåriga rötter — men ingen prediktiv kraft.',
+  },
+  {
+    q: 'Vilket är det "bästa" tecknet?',
+    a: 'Det finns inget objektivt bästa. I kinesisk tradition betraktas Draken som lyckligt och prestigefullt — många vill gärna föda barn under Drak-år. Men varje djur har egenskaper som anses positiva i sin egen tradition.',
+  },
+];
+
+const animals = [
+  { sv: 'Råtta', cn: '鼠', emoji: '🐀', element: 'Vatten', traits: 'Smart, anpassningsbar, snabbtänkt' },
+  { sv: 'Oxe', cn: '牛', emoji: '🐂', element: 'Jord', traits: 'Pålitlig, tålmodig, hårt arbetande' },
+  { sv: 'Tiger', cn: '虎', emoji: '🐅', element: 'Trä', traits: 'Modig, självsäker, karismatisk' },
+  { sv: 'Kanin', cn: '兔', emoji: '🐇', element: 'Trä', traits: 'Vänlig, elegant, försiktig' },
+  { sv: 'Drake', cn: '龙', emoji: '🐉', element: 'Jord', traits: 'Energisk, beslutsam, lycklig' },
+  { sv: 'Orm', cn: '蛇', emoji: '🐍', element: 'Eld', traits: 'Vis, mystisk, introspektiv' },
+  { sv: 'Häst', cn: '马', emoji: '🐎', element: 'Eld', traits: 'Aktiv, fri, social' },
+  { sv: 'Get', cn: '羊', emoji: '🐐', element: 'Jord', traits: 'Kreativ, empatisk, fredsälskande' },
+  { sv: 'Apa', cn: '猴', emoji: '🐒', element: 'Metall', traits: 'Listig, lekfull, uppfinningsrik' },
+  { sv: 'Tupp', cn: '鸡', emoji: '🐓', element: 'Metall', traits: 'Observant, hårt arbetande, modig' },
+  { sv: 'Hund', cn: '狗', emoji: '🐕', element: 'Jord', traits: 'Lojal, ärlig, ansvarsfull' },
+  { sv: 'Gris', cn: '猪', emoji: '🐖', element: 'Vatten', traits: 'Generös, omsorgsfull, ärlig' },
+];
+---
+
+<BaseLayout
+  title="Kinesiskt stjärntecken — räkna ut ditt djur från födelseår"
+  description="Skriv in födelseåret så ser du ditt kinesiska stjärntecken direkt. Alla 12 djur: Råtta, Oxe, Tiger, Kanin, Drake, Orm, Häst, Get, Apa, Tupp, Hund, Gris."
+  keywords={[
+    'kinesiskt stjärntecken',
+    'kinesisk astrologi',
+    'kinesiska djur stjärntecken',
+    'vilket djur är jag',
+    'drake stjärntecken',
+    'kinesiskt nyår',
+  ]}
+  appStoreId={appStoreId}
+>
+  <section class="max-w-3xl mx-auto px-6 py-8">
+    <Breadcrumbs
+      trail={[
+        { name: 'Hem', url: '/' },
+        { name: 'Födelsedagar', url: '/fodelsedagar/' },
+        { name: 'Kinesiskt stjärntecken' },
+      ]}
+    />
+    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-slate-500">
+      Fri kalkylator
+    </span>
+    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+      Kinesiskt stjärntecken
+    </h1>
+    <p class="mt-3 text-lg text-slate-600">
+      Skriv in födelseåret — räknaren visar vilket av de 12 djuren i den
+      kinesiska zodiaken som tillhör dig.
+    </p>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-white p-6 md:p-8">
+      <label class="block text-sm font-bold mb-2" for="year">
+        Födelseår
+      </label>
+      <input
+        id="year"
+        type="number"
+        min="1900"
+        max="2100"
+        class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-pink-500 focus:outline-none"
+      />
+
+      <div
+        id="result"
+        class="mt-6 rounded-2xl bg-gradient-to-br from-pink-500 to-pink-700 p-6 text-white"
+      >
+        <div class="flex items-center gap-4">
+          <span class="text-6xl" data-out="emoji">🐉</span>
+          <div>
+            <div class="text-xs font-black uppercase tracking-widest opacity-80">
+              Ditt djur
+            </div>
+            <div class="text-3xl font-black" data-out="name">Drake</div>
+            <div class="text-sm opacity-90" data-out="cn">龙</div>
+          </div>
+        </div>
+        <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
+          <div class="rounded-lg bg-white/15 p-3">
+            <div class="font-bold opacity-80 text-xs uppercase tracking-wide">Element</div>
+            <div class="font-black text-base" data-out="element">Jord</div>
+          </div>
+          <div class="rounded-lg bg-white/15 p-3">
+            <div class="font-bold opacity-80 text-xs uppercase tracking-wide">Egenskaper</div>
+            <div class="font-medium text-sm" data-out="traits">Energisk</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-gradient-to-br from-pink-50 to-white p-6 md:p-8">
+      <h2 class="text-xl font-black">Spåra alla födelsedagar i appen</h2>
+      <p class="mt-2 text-slate-700">
+        Födelsedagar-appen visar både västerländskt och kinesiskt stjärntecken
+        för varje person i din lista — automatiskt baserat på födelsedatum.
+      </p>
+      <div class="mt-6">
+        <AppStoreBadge
+          url="https://apps.apple.com/se/app/f%C3%B6delsedagar/id6758899294"
+          status="live"
+        />
+      </div>
+    </div>
+
+    <div class="prose mt-12">
+      <h2>De 12 kinesiska djuren</h2>
+      <p>
+        I kinesisk tradition återkommer ett djur vart 12:e år. Den nuvarande
+        cykeln började 2020 med Råttan. Tabellen nedan visar varje djur, dess
+        kinesiska tecken, dominant element och karaktäristiska drag.
+      </p>
+
+      <table class="w-full border-collapse mt-4">
+        <thead>
+          <tr class="border-b-2 border-slate-300">
+            <th class="text-left py-2">Djur</th>
+            <th class="text-left py-2">汉字</th>
+            <th class="text-left py-2">Element</th>
+            <th class="text-left py-2">Egenskaper</th>
+          </tr>
+        </thead>
+        <tbody>
+          {animals.map((a) => (
+            <tr class="border-b border-slate-200">
+              <td class="py-2 font-bold">
+                <span class="mr-2">{a.emoji}</span>{a.sv}
+              </td>
+              <td class="py-2 text-slate-600">{a.cn}</td>
+              <td class="py-2 text-slate-600">{a.element}</td>
+              <td class="py-2 text-slate-600 text-sm">{a.traits}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <h2>Skillnaden mot västerländska stjärntecken</h2>
+      <p>
+        Västerländska tecken delar in året i 12 perioder av cirka 30 dagar
+        baserat på solens rörelse. Kinesiska tecken delar in tiden i
+        12-årscykler — alla födda under samma år delar samma djur. Du har
+        alltså båda samtidigt: ett från månad-och-dag, ett från år.
+      </p>
+      <p>
+        Vill du veta ditt västerländska tecken också? Använd vår
+        <a href="/fodelsedagar/stjarntecken/"> stjärntecken-räknare</a>.
+      </p>
+
+      <h2>Vad är "fem element"?</h2>
+      <p>
+        Utöver de 12 djuren har kinesisk astrologi också fem element
+        (Trä, Eld, Jord, Metall, Vatten) som roterar i en 10-årscykel.
+        Kombinationen av djur + element ger en 60-årscykel. Räknaren här
+        visar bara djuret — men du kan se elementet i tabellen ovan.
+      </p>
+
+      <h2>Tur eller otur enligt djur?</h2>
+      <p>
+        Tradition säger att vissa djur har bättre relationer än andra.
+        Råtta och Oxe sägs t.ex. matcha bra, medan Häst och Råtta anses
+        konfliktbenägna. Det är dock djupt traditionellt — modern kinesisk
+        kultur tar det inte särskilt seriöst för partnerval.
+      </p>
+    </div>
+
+    <FAQ items={faq} />
+  </section>
+</BaseLayout>
+
+<script>
+  const inp = document.getElementById('year') as HTMLInputElement;
+  const out = {
+    emoji: document.querySelector('[data-out="emoji"]')!,
+    name: document.querySelector('[data-out="name"]')!,
+    cn: document.querySelector('[data-out="cn"]')!,
+    element: document.querySelector('[data-out="element"]')!,
+    traits: document.querySelector('[data-out="traits"]')!,
+  };
+
+  const animals = [
+    { sv: 'Råtta', cn: '鼠', emoji: '🐀', element: 'Vatten', traits: 'Smart, anpassningsbar, snabbtänkt' },
+    { sv: 'Oxe', cn: '牛', emoji: '🐂', element: 'Jord', traits: 'Pålitlig, tålmodig, hårt arbetande' },
+    { sv: 'Tiger', cn: '虎', emoji: '🐅', element: 'Trä', traits: 'Modig, självsäker, karismatisk' },
+    { sv: 'Kanin', cn: '兔', emoji: '🐇', element: 'Trä', traits: 'Vänlig, elegant, försiktig' },
+    { sv: 'Drake', cn: '龙', emoji: '🐉', element: 'Jord', traits: 'Energisk, beslutsam, lycklig' },
+    { sv: 'Orm', cn: '蛇', emoji: '🐍', element: 'Eld', traits: 'Vis, mystisk, introspektiv' },
+    { sv: 'Häst', cn: '马', emoji: '🐎', element: 'Eld', traits: 'Aktiv, fri, social' },
+    { sv: 'Get', cn: '羊', emoji: '🐐', element: 'Jord', traits: 'Kreativ, empatisk, fredsälskande' },
+    { sv: 'Apa', cn: '猴', emoji: '🐒', element: 'Metall', traits: 'Listig, lekfull, uppfinningsrik' },
+    { sv: 'Tupp', cn: '鸡', emoji: '🐓', element: 'Metall', traits: 'Observant, hårt arbetande, modig' },
+    { sv: 'Hund', cn: '狗', emoji: '🐕', element: 'Jord', traits: 'Lojal, ärlig, ansvarsfull' },
+    { sv: 'Gris', cn: '猪', emoji: '🐖', element: 'Vatten', traits: 'Generös, omsorgsfull, ärlig' },
+  ];
+
+  // 2020 = Råtta (index 0). Formula: (year - 2020) mod 12, but handle
+  // negative years (before 2020) via positive-modulo trick.
+  function animalFor(year: number) {
+    const idx = ((year - 2020) % 12 + 12) % 12;
+    return animals[idx];
+  }
+
+  function compute() {
+    const val = parseInt(inp.value, 10);
+    if (isNaN(val) || val < 1900 || val > 2100) return;
+    const a = animalFor(val);
+    out.emoji.textContent = a.emoji;
+    out.name.textContent = a.sv;
+    out.cn.textContent = a.cn;
+    out.element.textContent = a.element;
+    out.traits.textContent = a.traits;
+  }
+
+  inp.addEventListener('input', compute);
+  inp.value = String(new Date().getFullYear() - 30);
+  compute();
+</script>
