@@ -280,49 +280,50 @@ const today = new Date();
     cta: string;
     storeUrl: string;
     locale: string;
+    appName: string;
   }> = {
     sv: { titleTop: 'FÖDELSEDAG IDAG', line1: 'Idag fyller {name} {age} år! 🎂',
           cta: 'Glöm aldrig en födelsedag igen — Födelsedagar-appen påminner dig 1 månad, 1 vecka och 1 dag innan.',
-          storeUrl: 'https://apps.apple.com/se/app/födelsedagar/id6758899294', locale: 'sv-SE' },
+          storeUrl: 'https://apps.apple.com/se/app/födelsedagar/id6758899294', locale: 'sv-SE', appName: 'Födelsedagar — appen som påminner' },
     en: { titleTop: 'BIRTHDAY TODAY', line1: 'Today {name} turns {age}! 🎂',
           cta: 'Never miss a birthday again — the Birthdays app reminds you 1 month, 1 week and 1 day before.',
-          storeUrl: 'https://apps.apple.com/us/app/birthday-remind-me/id6758899294', locale: 'en-US' },
+          storeUrl: 'https://apps.apple.com/us/app/birthday-remind-me/id6758899294', locale: 'en-US', appName: 'Birthdays — never miss one again' },
     de: { titleTop: 'GEBURTSTAG HEUTE', line1: 'Heute wird {name} {age} Jahre alt! 🎂',
           cta: 'Verpasse keinen Geburtstag mehr — die Geburtstage-App erinnert dich 1 Monat, 1 Woche und 1 Tag vorher.',
-          storeUrl: 'https://apps.apple.com/de/app/geburtstage-familie/id6758899294', locale: 'de-DE' },
+          storeUrl: 'https://apps.apple.com/de/app/geburtstage-familie/id6758899294', locale: 'de-DE', appName: 'Geburtstage — verpasse keinen mehr' },
     no: { titleTop: 'BURSDAG I DAG', line1: 'I dag fyller {name} {age} år! 🎂',
           cta: 'Glem aldri en bursdag igjen — Bursdager-appen minner deg på 1 måned, 1 uke og 1 dag i forveien.',
-          storeUrl: 'https://apps.apple.com/no/app/bursdager/id6758899294', locale: 'nb-NO' },
+          storeUrl: 'https://apps.apple.com/no/app/bursdager/id6758899294', locale: 'nb-NO', appName: 'Bursdager — glem aldri en igjen' },
     da: { titleTop: 'FØDSELSDAG I DAG', line1: 'I dag fylder {name} {age} år! 🎂',
           cta: 'Glem aldrig en fødselsdag igen — Fødselsdage-appen minder dig om det 1 måned, 1 uge og 1 dag før.',
-          storeUrl: 'https://apps.apple.com/dk/app/fødselsdage/id6758899294', locale: 'da-DK' },
+          storeUrl: 'https://apps.apple.com/dk/app/fødselsdage/id6758899294', locale: 'da-DK', appName: 'Fødselsdage — glem aldrig en igen' },
     es: { titleTop: 'CUMPLEAÑOS HOY', line1: '¡Hoy {name} cumple {age} años! 🎂',
           cta: 'Nunca olvides un cumpleaños — la app Cumpleaños te avisa 1 mes, 1 semana y 1 día antes.',
-          storeUrl: 'https://apps.apple.com/es/app/cumpleaños/id6758899294', locale: 'es-ES' },
+          storeUrl: 'https://apps.apple.com/es/app/cumpleaños/id6758899294', locale: 'es-ES', appName: 'Cumpleaños — nunca olvides ninguno' },
     fr: { titleTop: 'ANNIVERSAIRE AUJOURD\'HUI', line1: 'Aujourd\'hui {name} a {age} ans ! 🎂',
           cta: 'Ne ratez plus un anniversaire — l\'app Anniversaires vous prévient 1 mois, 1 semaine et 1 jour avant.',
-          storeUrl: 'https://apps.apple.com/fr/app/anniversaires/id6758899294', locale: 'fr-FR' },
+          storeUrl: 'https://apps.apple.com/fr/app/anniversaires/id6758899294', locale: 'fr-FR', appName: 'Anniversaires — ne ratez plus rien' },
     fi: { titleTop: 'SYNTYMÄPÄIVÄ TÄNÄÄN', line1: 'Tänään {name} täyttää {age} vuotta! 🎂',
           cta: 'Älä koskaan unohda syntymäpäivää — Syntymäpäivät-sovellus muistuttaa 1 kk, 1 viikko ja 1 päivä etukäteen.',
-          storeUrl: 'https://apps.apple.com/fi/app/syntymäpäivät/id6758899294', locale: 'fi-FI' },
+          storeUrl: 'https://apps.apple.com/fi/app/syntymäpäivät/id6758899294', locale: 'fi-FI', appName: 'Syntymäpäivät — älä koskaan unohda' },
     is: { titleTop: 'AFMÆLI Í DAG', line1: 'Í dag verður {name} {age} ára! 🎂',
           cta: 'Missir aldrei af afmæli — Afmæli-forritið minnir þig 1 mánuði, 1 viku og 1 degi fyrirfram.',
-          storeUrl: 'https://apps.apple.com/is/app/afmæli/id6758899294', locale: 'is-IS' },
+          storeUrl: 'https://apps.apple.com/is/app/afmæli/id6758899294', locale: 'is-IS', appName: 'Afmæli — missir aldrei af einu' },
     it: { titleTop: 'COMPLEANNO OGGI', line1: 'Oggi {name} compie {age} anni! 🎂',
           cta: 'Non perdere mai un compleanno — l\'app Compleanni ti ricorda 1 mese, 1 settimana e 1 giorno prima.',
-          storeUrl: 'https://apps.apple.com/it/app/compleanni/id6758899294', locale: 'it-IT' },
+          storeUrl: 'https://apps.apple.com/it/app/compleanni/id6758899294', locale: 'it-IT', appName: 'Compleanni — non perderne nessuno' },
     el: { titleTop: 'ΓΕΝΕΘΛΙΑ ΣΗΜΕΡΑ', line1: 'Σήμερα {name} γίνεται {age} ετών! 🎂',
           cta: 'Μην ξεχάσετε ξανά γενέθλια — η εφαρμογή Γενέθλια σας υπενθυμίζει 1 μήνα, 1 εβδομάδα και 1 ημέρα νωρίτερα.',
-          storeUrl: 'https://apps.apple.com/gr/app/birthday/id6758899294', locale: 'el-GR' },
+          storeUrl: 'https://apps.apple.com/gr/app/birthday/id6758899294', locale: 'el-GR', appName: 'Γενέθλια — μην ξεχνάτε ποτέ' },
     nl: { titleTop: 'VERJAARDAG VANDAAG', line1: 'Vandaag wordt {name} {age} jaar! 🎂',
           cta: 'Vergeet nooit meer een verjaardag — de Verjaardagen-app herinnert je 1 maand, 1 week en 1 dag van tevoren.',
-          storeUrl: 'https://apps.apple.com/nl/app/verjaardagen/id6758899294', locale: 'nl-NL' },
+          storeUrl: 'https://apps.apple.com/nl/app/verjaardagen/id6758899294', locale: 'nl-NL', appName: 'Verjaardagen — vergeet er nooit een' },
     pl: { titleTop: 'URODZINY DZISIAJ', line1: 'Dzisiaj {name} kończy {age} lat! 🎂',
           cta: 'Nie zapomnij już o urodzinach — aplikacja Urodziny przypomni Ci 1 miesiąc, 1 tydzień i 1 dzień wcześniej.',
-          storeUrl: 'https://apps.apple.com/pl/app/urodziny/id6758899294', locale: 'pl-PL' },
+          storeUrl: 'https://apps.apple.com/pl/app/urodziny/id6758899294', locale: 'pl-PL', appName: 'Urodziny — nigdy nie zapomnij' },
     pt: { titleTop: 'ANIVERSÁRIO HOJE', line1: 'Hoje {name} faz {age} anos! 🎂',
           cta: 'Nunca mais te esqueças de um aniversário — a app Aniversários avisa-te 1 mês, 1 semana e 1 dia antes.',
-          storeUrl: 'https://apps.apple.com/pt/app/aniversários/id6758899294', locale: 'pt-PT' },
+          storeUrl: 'https://apps.apple.com/pt/app/aniversários/id6758899294', locale: 'pt-PT', appName: 'Aniversários — nunca te esqueças' },
   };
 
   function format(template: string, name: string, age: number | string): string {
@@ -640,19 +641,23 @@ const today = new Date();
       : person.name;
     wrap(ctx, caption, W / 2, captionY, W - 120, 68);
 
-    // Subtitle if there's a description
-    if (person.desc) {
+    // Subtitle — only if we have a description AND the language is
+    // Swedish. Wikipedia descriptions come from sv.wikipedia.org so
+    // they're always in Swedish; rather than mix languages on the
+    // image, we omit it for non-sv posts.
+    if (person.desc && lang === 'sv') {
       ctx.fillStyle = 'rgba(255,255,255,0.8)';
       ctx.font = '32px system-ui, sans-serif';
       const subY = captionY + (caption.length > 35 ? 180 : 100);
       wrap(ctx, person.desc, W / 2, subY, W - 200, 40);
     }
 
-    // Footer (always sv-style branding, kept short)
-    ctx.fillStyle = 'rgba(255,255,255,0.65)';
-    ctx.font = '26px system-ui, sans-serif';
+    // Footer — localized app tagline. Keeps focus on the app
+    // download (which is what we're driving), not the website.
+    ctx.fillStyle = 'rgba(255,255,255,0.75)';
+    ctx.font = 'bold 28px system-ui, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('alexanderbergqvist.com — Födelsedagar', W / 2, H - 50);
+    ctx.fillText(t.appName, W / 2, H - 50);
   }
 
   function buildPostCopy(person: Hero, lang: string): string {
@@ -662,7 +667,10 @@ const today = new Date();
     lines.push(
       age !== null ? format(t.line1, person.name, age) : person.name,
     );
-    if (person.desc) {
+    // Description is in Swedish (from sv.wikipedia.org). Only include
+    // it if the post itself is Swedish — otherwise it sticks out as
+    // foreign text in an otherwise-English/German/… caption.
+    if (person.desc && lang === 'sv') {
       lines.push('');
       lines.push(person.desc);
     }
