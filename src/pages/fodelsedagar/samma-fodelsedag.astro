@@ -1,0 +1,522 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FAQ from '../../components/FAQ.astro';
+import AppStoreBadge from '../../components/AppStoreBadge.astro';
+
+const app = await getEntry('apps', 'fodelsedagar');
+const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
+
+const faq = [
+  {
+    q: 'Var kommer datan från?',
+    a: 'Direkt från svenska Wikipedia via deras öppna API. Födelsedagar, dödsdatum och historiska händelser uppdateras kontinuerligt av Wikipedia-frivilliga. Allt körs i din webbläsare — vi sparar inga datum eller besöksdata om dig.',
+  },
+  {
+    q: 'Varför saknas vissa kändisar?',
+    a: 'Vi visar bara personer som har en Wikipedia-artikel på svenska. Om en person bara har engelsk artikel kanske de inte syns. Vi prioriterar personer med bilder eftersom det indikerar att de är välkända nog för redaktionsarbete.',
+  },
+  {
+    q: 'Kan jag dela resultatet?',
+    a: 'Ja. Tryck på "Skapa delningsbar bild" så genereras en 9:16-bild (Instagram Stories / WhatsApp Status-format) med din match. Du kan spara eller dela direkt till valfri app.',
+  },
+  {
+    q: 'Funkar det för 29 februari?',
+    a: 'Ja. Skottdagen har också Wikipedia-data. Bara att den är något kortare än andra datum eftersom färre personer fyller år just då.',
+  },
+  {
+    q: 'Vad bygger appen Födelsedagar in?',
+    a: 'Födelsedagar-appen visar både stjärntecken och milstolpe-flagga för alla i din lista. Med Premium kan du även se "vem delar födelsedag med vem" inom din krets — kul vid stora familjeträffar.',
+  },
+];
+
+const today = new Date();
+---
+
+<BaseLayout
+  title="Vem delar du födelsedag med? Hitta kändisar samma dag"
+  description="Skriv in ditt födelsedatum så ser du vilka berömda svenskar och världen som fyller år samma dag som dig. Plus historiska händelser. Gratis verktyg."
+  keywords={[
+    'kändisar samma födelsedag',
+    'vem delar jag födelsedag med',
+    'vem fyller år 12 maj',
+    'vad hände samma datum',
+    'födelsedag kändisar',
+    'historiska händelser datum',
+  ]}
+  appStoreId={appStoreId}
+>
+  <section class="max-w-3xl mx-auto px-6 py-8">
+    <Breadcrumbs
+      trail={[
+        { name: 'Hem', url: '/' },
+        { name: 'Födelsedagar', url: '/fodelsedagar/' },
+        { name: 'Samma födelsedag' },
+      ]}
+    />
+    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-slate-500">
+      Fri kalkylator
+    </span>
+    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+      Vem delar du födelsedag med?
+    </h1>
+    <p class="mt-3 text-lg text-slate-600">
+      Skriv in din födelsedag så ser du vilka kändisar — svenskar och andra
+      — som fyller år samma dag, plus vilka historiska händelser som hänt
+      genom åren. Data från Wikipedia, helt fri.
+    </p>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-white p-6 md:p-8">
+      <label class="block text-sm font-bold mb-2" for="bdate">
+        Ditt födelsedatum (datum + månad räcker)
+      </label>
+      <input
+        id="bdate"
+        type="date"
+        class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-pink-500 focus:outline-none"
+      />
+
+      <div id="loading" class="mt-6 hidden text-slate-500 text-sm">
+        Hämtar från Wikipedia…
+      </div>
+      <div
+        id="error"
+        class="mt-6 hidden rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+      ></div>
+
+      <section id="results" class="mt-8 hidden">
+        <div class="rounded-2xl bg-gradient-to-br from-pink-500 to-pink-700 p-6 text-white mb-6">
+          <div class="text-xs font-black uppercase tracking-widest opacity-80">
+            Du delar födelsedag med
+          </div>
+          <div id="hero" class="mt-2">
+            <div class="text-2xl md:text-3xl font-black" data-out="heroName">–</div>
+            <div class="text-sm opacity-90 mt-1" data-out="heroDesc">–</div>
+          </div>
+        </div>
+
+        <h2 class="text-xl font-black mb-3">🎂 Födda samma dag</h2>
+        <ul id="births" class="space-y-2 mb-8"></ul>
+
+        <h2 class="text-xl font-black mb-3">📜 Historiska händelser</h2>
+        <ul id="events" class="space-y-2 mb-8"></ul>
+
+        <div class="rounded-2xl border-2 border-pink-300 bg-pink-50 p-6">
+          <h3 class="font-black text-lg mb-2">Dela på Instagram / WhatsApp</h3>
+          <p class="text-sm text-slate-700 mb-4">
+            Skapa en 9:16-bild med din match — perfekt format för Stories.
+          </p>
+          <button
+            id="generateImage"
+            class="w-full rounded-xl bg-pink-600 px-6 py-3 font-bold text-white hover:bg-pink-700 transition"
+          >
+            🎨 Skapa delningsbar bild
+          </button>
+          <canvas
+            id="shareCanvas"
+            width="1080"
+            height="1920"
+            class="hidden mt-4 w-full rounded-xl border border-slate-300"
+          ></canvas>
+          <div id="shareActions" class="hidden mt-4 flex gap-2">
+            <a
+              id="downloadImage"
+              class="flex-1 rounded-xl bg-slate-900 px-4 py-3 text-center font-bold text-white hover:bg-slate-800 transition"
+              download="min-fodelsedag.png"
+            >
+              ⬇️ Ladda ner
+            </a>
+            <button
+              id="shareImage"
+              class="flex-1 rounded-xl bg-pink-600 px-4 py-3 font-bold text-white hover:bg-pink-700 transition"
+            >
+              📤 Dela
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-gradient-to-br from-pink-50 to-white p-6 md:p-8">
+      <h2 class="text-xl font-black">Spåra alla födelsedagar i appen</h2>
+      <p class="mt-2 text-slate-700">
+        Födelsedagar-appen visar stjärntecken, milstolpar och påminner
+        långt i förväg om alla i din lista. Importera direkt från Kontakter.
+      </p>
+      <div class="mt-6">
+        <AppStoreBadge
+          url="https://apps.apple.com/se/app/f%C3%B6delsedagar/id6758899294"
+          status="live"
+        />
+      </div>
+    </div>
+
+    <div class="prose mt-12">
+      <h2>Varför skapade vi det här verktyget?</h2>
+      <p>
+        Vi tror att födelsedagar är mer än bara ett datum. När du upptäcker
+        att du delar födelsedag med Björn Borg, Greta Thunberg eller en
+        viktig historisk person känns dagen lite mer speciell. Det är också
+        ett trevligt samtalsämne — och hjälper barn att bli mer intresserade
+        av historia när de hittar någon de delar datum med.
+      </p>
+
+      <h2>Hur Wikipedia-API:t fungerar</h2>
+      <p>
+        Wikipedia har ett öppet REST API som returnerar strukturerad data
+        per datum: vilka som föddes, vilka som dog, vilka historiska
+        händelser som inträffade. Det här verktyget gör en API-fråga direkt
+        från din webbläsare — vi har ingen server i mellanlagret, så inget
+        sparas om ditt sökande.
+      </p>
+
+      <h2>Vad gör en kändis "berömd nog" att visa?</h2>
+      <p>
+        Vi prioriterar personer med Wikipedia-artiklar som har bilder.
+        Närvaron av en bild är en bra proxy för att personen är välkänd nog
+        att vara editorialt intressant. Det betyder att lokala kommunpolitiker
+        oftast inte syns — bara personer med bredare igenkänningsfaktor.
+      </p>
+
+      <h2>Tipsa Wikipedia om någon saknas</h2>
+      <p>
+        Wikipedia uppdateras kontinuerligt av frivilliga. Om en specifik
+        svensk kändis saknas på din födelsedag kan du själv lägga till
+        informationen i deras Wikipedia-artikel — det kommer att synas här
+        nästa gång data uppdateras (vanligtvis inom en vecka).
+      </p>
+    </div>
+
+    <FAQ items={faq} />
+  </section>
+</BaseLayout>
+
+<script>
+  const inp = document.getElementById('bdate') as HTMLInputElement;
+  const loading = document.getElementById('loading')!;
+  const errorBox = document.getElementById('error')!;
+  const results = document.getElementById('results')!;
+  const births = document.getElementById('births')!;
+  const events = document.getElementById('events')!;
+  const heroName = document.querySelector('[data-out="heroName"]')!;
+  const heroDesc = document.querySelector('[data-out="heroDesc"]')!;
+  const generateBtn = document.getElementById('generateImage')! as HTMLButtonElement;
+  const canvas = document.getElementById('shareCanvas')! as HTMLCanvasElement;
+  const shareActions = document.getElementById('shareActions')!;
+  const downloadLink = document.getElementById('downloadImage')! as HTMLAnchorElement;
+  const shareBtn = document.getElementById('shareImage')! as HTMLButtonElement;
+
+  type WikiPage = {
+    normalizedtitle?: string;
+    extract?: string;
+    thumbnail?: { source: string };
+  };
+  type WikiEntry = {
+    text: string;
+    year?: number;
+    pages?: WikiPage[];
+  };
+  type Hero = {
+    name: string;
+    year?: number;
+    desc?: string;
+    thumb?: string;
+  };
+
+  let currentHero: Hero | null = null;
+
+  function showError(msg: string) {
+    errorBox.textContent = msg;
+    errorBox.classList.remove('hidden');
+    loading.classList.add('hidden');
+    results.classList.add('hidden');
+  }
+
+  function clean(text: string): string {
+    // Wikipedia returns "Björn Borg, svensk tennisspelare" — strip
+    // anything after the first comma to get just the name for the hero.
+    return text.split(',')[0].trim();
+  }
+
+  function describe(text: string): string {
+    const parts = text.split(',');
+    return parts.length > 1 ? parts.slice(1).join(',').trim() : '';
+  }
+
+  async function fetchOnThisDay(month: number, day: number) {
+    const mm = String(month).padStart(2, '0');
+    const dd = String(day).padStart(2, '0');
+    const url = `https://sv.wikipedia.org/api/rest_v1/feed/onthisday/all/${mm}/${dd}`;
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('Wikipedia svarade inte');
+    return r.json();
+  }
+
+  function render(data: any) {
+    const allBirths: WikiEntry[] = data.births || [];
+    const allEvents: WikiEntry[] = data.events || [];
+
+    // Sort by recency (most recent year first — younger celebrities)
+    // and prioritise entries with thumbnails (= more notable).
+    const scoredBirths = allBirths
+      .map((b) => ({
+        ...b,
+        score:
+          (b.pages?.[0]?.thumbnail ? 1000 : 0) +
+          (b.year ?? 0) / 10,
+      }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 8);
+
+    const scoredEvents = allEvents
+      .map((e) => ({
+        ...e,
+        score:
+          (e.pages?.[0]?.thumbnail ? 1000 : 0) + (e.year ?? 0) / 10,
+      }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 5);
+
+    if (scoredBirths.length === 0) {
+      showError('Wikipedia har ingen data för det datumet — ovanligt men händer.');
+      return;
+    }
+
+    // Hero = first scored birth (highest-ranked notable)
+    const top = scoredBirths[0];
+    currentHero = {
+      name: clean(top.text),
+      year: top.year,
+      desc: describe(top.text),
+      thumb: top.pages?.[0]?.thumbnail?.source,
+    };
+    heroName.textContent =
+      currentHero.name + (top.year ? ` (${top.year})` : '');
+    heroDesc.textContent = currentHero.desc || '';
+
+    births.innerHTML = scoredBirths
+      .map((b) => {
+        const name = clean(b.text);
+        const desc = describe(b.text);
+        const year = b.year ? `<span class="text-pink-700 font-bold">${b.year}</span>` : '';
+        const img = b.pages?.[0]?.thumbnail?.source;
+        return `
+          <li class="flex gap-3 rounded-xl border border-slate-200 bg-white p-3">
+            ${img
+              ? `<img src="${img}" alt="" class="w-12 h-12 rounded-full object-cover flex-shrink-0" loading="lazy">`
+              : `<div class="w-12 h-12 rounded-full bg-slate-200 flex-shrink-0 flex items-center justify-center text-slate-400">🎂</div>`}
+            <div class="flex-1 min-w-0">
+              <div class="font-bold text-sm">${name}</div>
+              <div class="text-xs text-slate-600 truncate">${desc}</div>
+              <div class="text-xs mt-1">${year}</div>
+            </div>
+          </li>`;
+      })
+      .join('');
+
+    events.innerHTML = scoredEvents
+      .map((e) => {
+        const year = e.year ? `<span class="text-pink-700 font-bold">${e.year}</span>` : '';
+        return `
+          <li class="rounded-xl border border-slate-200 bg-white p-3">
+            <div class="text-sm">${e.text}</div>
+            <div class="text-xs mt-1">${year}</div>
+          </li>`;
+      })
+      .join('');
+
+    results.classList.remove('hidden');
+    loading.classList.add('hidden');
+    errorBox.classList.add('hidden');
+  }
+
+  async function loadFor(date: Date) {
+    loading.classList.remove('hidden');
+    errorBox.classList.add('hidden');
+    results.classList.add('hidden');
+    canvas.classList.add('hidden');
+    shareActions.classList.add('hidden');
+    try {
+      const data = await fetchOnThisDay(date.getMonth() + 1, date.getDate());
+      render(data);
+    } catch (e) {
+      showError('Kunde inte hämta från Wikipedia. Försök igen om en stund.');
+    }
+  }
+
+  // ── Share-image generation ─────────────────────────────────────
+  async function loadImage(url: string): Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = url;
+    });
+  }
+
+  function wrap(
+    ctx: CanvasRenderingContext2D,
+    text: string,
+    x: number,
+    y: number,
+    maxWidth: number,
+    lineHeight: number,
+  ): number {
+    const words = text.split(' ');
+    let line = '';
+    let lines = 0;
+    for (const w of words) {
+      const testLine = line + w + ' ';
+      const m = ctx.measureText(testLine);
+      if (m.width > maxWidth && line !== '') {
+        ctx.fillText(line.trim(), x, y);
+        line = w + ' ';
+        y += lineHeight;
+        lines += 1;
+      } else {
+        line = testLine;
+      }
+    }
+    if (line.trim()) {
+      ctx.fillText(line.trim(), x, y);
+      lines += 1;
+    }
+    return lines * lineHeight;
+  }
+
+  async function generateShareImage() {
+    if (!currentHero) return;
+    canvas.classList.remove('hidden');
+    shareActions.classList.add('hidden');
+    const ctx = canvas.getContext('2d')!;
+    const W = canvas.width;
+    const H = canvas.height;
+
+    // Background gradient
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, '#E91E63');
+    grad.addColorStop(1, '#7B1130');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Top label
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.font = 'bold 56px system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('DU DELAR FÖDELSEDAG MED', W / 2, 240);
+
+    // Confetti row
+    ctx.font = '80px system-ui, sans-serif';
+    ctx.fillText('🎉 🎂 🎈', W / 2, 380);
+
+    // Hero photo (or fallback gradient circle)
+    const photoY = 580;
+    const photoR = 280;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(W / 2, photoY + photoR, photoR, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.clip();
+
+    if (currentHero.thumb) {
+      try {
+        const img = await loadImage(currentHero.thumb);
+        // Cover crop the image into the circle
+        const ratio = img.width / img.height;
+        let drawW = photoR * 2;
+        let drawH = photoR * 2;
+        if (ratio > 1) drawW = drawH * ratio;
+        else drawH = drawW / ratio;
+        ctx.drawImage(
+          img,
+          W / 2 - drawW / 2,
+          photoY + photoR - drawH / 2,
+          drawW,
+          drawH,
+        );
+      } catch {
+        ctx.fillStyle = 'rgba(255,255,255,0.2)';
+        ctx.fillRect(0, photoY, W, photoR * 2);
+      }
+    } else {
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.fillRect(0, photoY, W, photoR * 2);
+      ctx.fillStyle = 'white';
+      ctx.font = '200px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('🎂', W / 2, photoY + photoR + 80);
+    }
+    ctx.restore();
+
+    // White ring around photo
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 16;
+    ctx.beginPath();
+    ctx.arc(W / 2, photoY + photoR, photoR, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Name
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 110px system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    wrap(ctx, currentHero.name, W / 2, photoY + photoR * 2 + 160, W - 160, 130);
+
+    // Year + desc
+    if (currentHero.year) {
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      ctx.font = 'bold 64px system-ui, sans-serif';
+      ctx.fillText(`Född ${currentHero.year}`, W / 2, photoY + photoR * 2 + 320);
+    }
+
+    if (currentHero.desc) {
+      ctx.fillStyle = 'rgba(255,255,255,0.75)';
+      ctx.font = '44px system-ui, sans-serif';
+      wrap(ctx, currentHero.desc, W / 2, photoY + photoR * 2 + 420, W - 200, 56);
+    }
+
+    // Footer
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = '34px system-ui, sans-serif';
+    ctx.fillText('alexanderbergqvist.com — Födelsedagar', W / 2, H - 100);
+
+    // Show download/share buttons
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const objUrl = URL.createObjectURL(blob);
+      downloadLink.href = objUrl;
+      shareActions.classList.remove('hidden');
+
+      shareBtn.onclick = async () => {
+        if (navigator.share && navigator.canShare?.({ files: [new File([blob], 'fodelsedag.png', { type: 'image/png' })] })) {
+          try {
+            await navigator.share({
+              files: [new File([blob], 'fodelsedag.png', { type: 'image/png' })],
+              title: 'Min födelsedag',
+              text: `Jag delar födelsedag med ${currentHero?.name}!`,
+            });
+          } catch {
+            // user cancelled — silent
+          }
+        } else {
+          // Fallback: download
+          downloadLink.click();
+        }
+      };
+    }, 'image/png');
+  }
+
+  generateBtn.addEventListener('click', generateShareImage);
+
+  inp.addEventListener('change', () => {
+    if (!inp.value) return;
+    const d = new Date(inp.value);
+    if (!isNaN(d.getTime())) loadFor(d);
+  });
+
+  // Default: today's date so visitors immediately see something.
+  const t = new Date();
+  inp.value = t.toISOString().slice(0, 10);
+  loadFor(t);
+</script>
