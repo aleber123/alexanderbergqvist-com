@@ -272,58 +272,148 @@ const today = new Date();
   const postCopyText = document.getElementById('postCopyText')! as HTMLTextAreaElement;
   const copyTextBtn = document.getElementById('copyText')! as HTMLButtonElement;
 
-  // Per-language post strings. Variables: {name}, {age}.
-  // The first line is also used as the image hero caption.
+  // Per-language post strings. `line1` is the hero caption on the
+  // image; `prompt` is the engagement question that drives comments
+  // (algorithm boost); `pitch` is the short sales line on the card;
+  // `cta` is the longer text used in the post copy under the image.
   const i18n: Record<string, {
-    titleTop: string;
-    line1: string;
-    cta: string;
+    eyebrow: string;     // small label above name (e.g. "Födelsedag idag")
+    dateFmt: string;     // BCP-47 locale for date formatting
+    line1: string;       // hero caption, uses {name} {age}
+    ageSuffix: string;   // e.g. "fyller 39 år"; uses {age}
+    prompt: string;      // engagement question — drives comments
+    pitch: string;       // selling line on the card itself
+    cta: string;         // longer pitch for the post text
     storeUrl: string;
-    locale: string;
     appName: string;
+    locale: string;
   }> = {
-    sv: { titleTop: 'FÖDELSEDAG IDAG', line1: 'Idag fyller {name} {age} år! 🎂',
+    sv: { eyebrow: 'Födelsedag idag',
+          dateFmt: 'sv-SE',
+          line1: 'Idag fyller {name} {age} år',
+          ageSuffix: 'fyller {age} år',
+          prompt: 'Vem firar du nästa? 👇',
+          pitch: 'Glöm aldrig en födelsedag — gratis i App Store',
           cta: 'Glöm aldrig en födelsedag igen — Födelsedagar-appen påminner dig 1 månad, 1 vecka och 1 dag innan.',
-          storeUrl: 'https://apps.apple.com/se/app/födelsedagar/id6758899294', locale: 'sv-SE', appName: 'Födelsedagar — appen som påminner' },
-    en: { titleTop: 'BIRTHDAY TODAY', line1: 'Today {name} turns {age}! 🎂',
+          storeUrl: 'https://apps.apple.com/se/app/födelsedagar/id6758899294',
+          appName: 'Födelsedagar', locale: 'sv-SE' },
+    en: { eyebrow: 'Birthday today',
+          dateFmt: 'en-US',
+          line1: 'Today {name} turns {age}',
+          ageSuffix: 'turns {age} today',
+          prompt: 'Who\'s next in your life? 👇',
+          pitch: 'Never miss a birthday — free on the App Store',
           cta: 'Never miss a birthday again — the Birthdays app reminds you 1 month, 1 week and 1 day before.',
-          storeUrl: 'https://apps.apple.com/us/app/birthday-remind-me/id6758899294', locale: 'en-US', appName: 'Birthdays — never miss one again' },
-    de: { titleTop: 'GEBURTSTAG HEUTE', line1: 'Heute wird {name} {age} Jahre alt! 🎂',
+          storeUrl: 'https://apps.apple.com/us/app/birthday-remind-me/id6758899294',
+          appName: 'Birthdays', locale: 'en-US' },
+    de: { eyebrow: 'Geburtstag heute',
+          dateFmt: 'de-DE',
+          line1: 'Heute wird {name} {age} Jahre alt',
+          ageSuffix: 'wird {age} Jahre alt',
+          prompt: 'Wer ist als Nächster dran? 👇',
+          pitch: 'Vergiss keinen Geburtstag — kostenlos im App Store',
           cta: 'Verpasse keinen Geburtstag mehr — die Geburtstage-App erinnert dich 1 Monat, 1 Woche und 1 Tag vorher.',
-          storeUrl: 'https://apps.apple.com/de/app/geburtstage-familie/id6758899294', locale: 'de-DE', appName: 'Geburtstage — verpasse keinen mehr' },
-    no: { titleTop: 'BURSDAG I DAG', line1: 'I dag fyller {name} {age} år! 🎂',
+          storeUrl: 'https://apps.apple.com/de/app/geburtstage-familie/id6758899294',
+          appName: 'Geburtstage', locale: 'de-DE' },
+    no: { eyebrow: 'Bursdag i dag',
+          dateFmt: 'nb-NO',
+          line1: 'I dag fyller {name} {age} år',
+          ageSuffix: 'fyller {age} år',
+          prompt: 'Hvem feirer du neste gang? 👇',
+          pitch: 'Glem aldri en bursdag — gratis i App Store',
           cta: 'Glem aldri en bursdag igjen — Bursdager-appen minner deg på 1 måned, 1 uke og 1 dag i forveien.',
-          storeUrl: 'https://apps.apple.com/no/app/bursdager/id6758899294', locale: 'nb-NO', appName: 'Bursdager — glem aldri en igjen' },
-    da: { titleTop: 'FØDSELSDAG I DAG', line1: 'I dag fylder {name} {age} år! 🎂',
+          storeUrl: 'https://apps.apple.com/no/app/bursdager/id6758899294',
+          appName: 'Bursdager', locale: 'nb-NO' },
+    da: { eyebrow: 'Fødselsdag i dag',
+          dateFmt: 'da-DK',
+          line1: 'I dag fylder {name} {age} år',
+          ageSuffix: 'fylder {age} år',
+          prompt: 'Hvem fejrer du næste gang? 👇',
+          pitch: 'Glem aldrig en fødselsdag — gratis i App Store',
           cta: 'Glem aldrig en fødselsdag igen — Fødselsdage-appen minder dig om det 1 måned, 1 uge og 1 dag før.',
-          storeUrl: 'https://apps.apple.com/dk/app/fødselsdage/id6758899294', locale: 'da-DK', appName: 'Fødselsdage — glem aldrig en igen' },
-    es: { titleTop: 'CUMPLEAÑOS HOY', line1: '¡Hoy {name} cumple {age} años! 🎂',
+          storeUrl: 'https://apps.apple.com/dk/app/fødselsdage/id6758899294',
+          appName: 'Fødselsdage', locale: 'da-DK' },
+    es: { eyebrow: 'Cumpleaños hoy',
+          dateFmt: 'es-ES',
+          line1: 'Hoy {name} cumple {age} años',
+          ageSuffix: 'cumple {age} años',
+          prompt: '¿A quién celebras a continuación? 👇',
+          pitch: 'No olvides ningún cumpleaños — gratis en App Store',
           cta: 'Nunca olvides un cumpleaños — la app Cumpleaños te avisa 1 mes, 1 semana y 1 día antes.',
-          storeUrl: 'https://apps.apple.com/es/app/cumpleaños/id6758899294', locale: 'es-ES', appName: 'Cumpleaños — nunca olvides ninguno' },
-    fr: { titleTop: 'ANNIVERSAIRE AUJOURD\'HUI', line1: 'Aujourd\'hui {name} a {age} ans ! 🎂',
+          storeUrl: 'https://apps.apple.com/es/app/cumpleaños/id6758899294',
+          appName: 'Cumpleaños', locale: 'es-ES' },
+    fr: { eyebrow: 'Anniversaire aujourd\'hui',
+          dateFmt: 'fr-FR',
+          line1: 'Aujourd\'hui {name} a {age} ans',
+          ageSuffix: 'a {age} ans',
+          prompt: 'Qui célébrez-vous bientôt ? 👇',
+          pitch: 'Ne ratez plus un anniversaire — gratuit sur l\'App Store',
           cta: 'Ne ratez plus un anniversaire — l\'app Anniversaires vous prévient 1 mois, 1 semaine et 1 jour avant.',
-          storeUrl: 'https://apps.apple.com/fr/app/anniversaires/id6758899294', locale: 'fr-FR', appName: 'Anniversaires — ne ratez plus rien' },
-    fi: { titleTop: 'SYNTYMÄPÄIVÄ TÄNÄÄN', line1: 'Tänään {name} täyttää {age} vuotta! 🎂',
+          storeUrl: 'https://apps.apple.com/fr/app/anniversaires/id6758899294',
+          appName: 'Anniversaires', locale: 'fr-FR' },
+    fi: { eyebrow: 'Syntymäpäivä tänään',
+          dateFmt: 'fi-FI',
+          line1: 'Tänään {name} täyttää {age} vuotta',
+          ageSuffix: 'täyttää {age} vuotta',
+          prompt: 'Kenen syntymäpäivä on seuraava? 👇',
+          pitch: 'Älä unohda syntymäpäiviä — ilmainen App Storesta',
           cta: 'Älä koskaan unohda syntymäpäivää — Syntymäpäivät-sovellus muistuttaa 1 kk, 1 viikko ja 1 päivä etukäteen.',
-          storeUrl: 'https://apps.apple.com/fi/app/syntymäpäivät/id6758899294', locale: 'fi-FI', appName: 'Syntymäpäivät — älä koskaan unohda' },
-    is: { titleTop: 'AFMÆLI Í DAG', line1: 'Í dag verður {name} {age} ára! 🎂',
+          storeUrl: 'https://apps.apple.com/fi/app/syntymäpäivät/id6758899294',
+          appName: 'Syntymäpäivät', locale: 'fi-FI' },
+    is: { eyebrow: 'Afmæli í dag',
+          dateFmt: 'is-IS',
+          line1: 'Í dag verður {name} {age} ára',
+          ageSuffix: 'verður {age} ára',
+          prompt: 'Hver er næstur að halda upp á? 👇',
+          pitch: 'Missir aldrei af afmæli — ókeypis í App Store',
           cta: 'Missir aldrei af afmæli — Afmæli-forritið minnir þig 1 mánuði, 1 viku og 1 degi fyrirfram.',
-          storeUrl: 'https://apps.apple.com/is/app/afmæli/id6758899294', locale: 'is-IS', appName: 'Afmæli — missir aldrei af einu' },
-    it: { titleTop: 'COMPLEANNO OGGI', line1: 'Oggi {name} compie {age} anni! 🎂',
+          storeUrl: 'https://apps.apple.com/is/app/afmæli/id6758899294',
+          appName: 'Afmæli', locale: 'is-IS' },
+    it: { eyebrow: 'Compleanno oggi',
+          dateFmt: 'it-IT',
+          line1: 'Oggi {name} compie {age} anni',
+          ageSuffix: 'compie {age} anni',
+          prompt: 'Chi festeggerai dopo? 👇',
+          pitch: 'Non perdere un compleanno — gratis su App Store',
           cta: 'Non perdere mai un compleanno — l\'app Compleanni ti ricorda 1 mese, 1 settimana e 1 giorno prima.',
-          storeUrl: 'https://apps.apple.com/it/app/compleanni/id6758899294', locale: 'it-IT', appName: 'Compleanni — non perderne nessuno' },
-    el: { titleTop: 'ΓΕΝΕΘΛΙΑ ΣΗΜΕΡΑ', line1: 'Σήμερα {name} γίνεται {age} ετών! 🎂',
+          storeUrl: 'https://apps.apple.com/it/app/compleanni/id6758899294',
+          appName: 'Compleanni', locale: 'it-IT' },
+    el: { eyebrow: 'Γενέθλια σήμερα',
+          dateFmt: 'el-GR',
+          line1: 'Σήμερα {name} γίνεται {age} ετών',
+          ageSuffix: 'γίνεται {age} ετών',
+          prompt: 'Ποιον γιορτάζετε στη συνέχεια; 👇',
+          pitch: 'Μην ξεχάσετε γενέθλια — δωρεάν στο App Store',
           cta: 'Μην ξεχάσετε ξανά γενέθλια — η εφαρμογή Γενέθλια σας υπενθυμίζει 1 μήνα, 1 εβδομάδα και 1 ημέρα νωρίτερα.',
-          storeUrl: 'https://apps.apple.com/gr/app/birthday/id6758899294', locale: 'el-GR', appName: 'Γενέθλια — μην ξεχνάτε ποτέ' },
-    nl: { titleTop: 'VERJAARDAG VANDAAG', line1: 'Vandaag wordt {name} {age} jaar! 🎂',
+          storeUrl: 'https://apps.apple.com/gr/app/birthday/id6758899294',
+          appName: 'Γενέθλια', locale: 'el-GR' },
+    nl: { eyebrow: 'Verjaardag vandaag',
+          dateFmt: 'nl-NL',
+          line1: 'Vandaag wordt {name} {age} jaar',
+          ageSuffix: 'wordt {age} jaar',
+          prompt: 'Wie vier je hierna? 👇',
+          pitch: 'Vergeet nooit een verjaardag — gratis in de App Store',
           cta: 'Vergeet nooit meer een verjaardag — de Verjaardagen-app herinnert je 1 maand, 1 week en 1 dag van tevoren.',
-          storeUrl: 'https://apps.apple.com/nl/app/verjaardagen/id6758899294', locale: 'nl-NL', appName: 'Verjaardagen — vergeet er nooit een' },
-    pl: { titleTop: 'URODZINY DZISIAJ', line1: 'Dzisiaj {name} kończy {age} lat! 🎂',
+          storeUrl: 'https://apps.apple.com/nl/app/verjaardagen/id6758899294',
+          appName: 'Verjaardagen', locale: 'nl-NL' },
+    pl: { eyebrow: 'Urodziny dzisiaj',
+          dateFmt: 'pl-PL',
+          line1: 'Dzisiaj {name} kończy {age} lat',
+          ageSuffix: 'kończy {age} lat',
+          prompt: 'Kto następny ma urodziny? 👇',
+          pitch: 'Nie zapomnij urodzin — darmowa aplikacja w App Store',
           cta: 'Nie zapomnij już o urodzinach — aplikacja Urodziny przypomni Ci 1 miesiąc, 1 tydzień i 1 dzień wcześniej.',
-          storeUrl: 'https://apps.apple.com/pl/app/urodziny/id6758899294', locale: 'pl-PL', appName: 'Urodziny — nigdy nie zapomnij' },
-    pt: { titleTop: 'ANIVERSÁRIO HOJE', line1: 'Hoje {name} faz {age} anos! 🎂',
+          storeUrl: 'https://apps.apple.com/pl/app/urodziny/id6758899294',
+          appName: 'Urodziny', locale: 'pl-PL' },
+    pt: { eyebrow: 'Aniversário hoje',
+          dateFmt: 'pt-PT',
+          line1: 'Hoje {name} faz {age} anos',
+          ageSuffix: 'faz {age} anos',
+          prompt: 'A quem celebras a seguir? 👇',
+          pitch: 'Não te esqueças de aniversários — grátis na App Store',
           cta: 'Nunca mais te esqueças de um aniversário — a app Aniversários avisa-te 1 mês, 1 semana e 1 dia antes.',
-          storeUrl: 'https://apps.apple.com/pt/app/aniversários/id6758899294', locale: 'pt-PT', appName: 'Aniversários — nunca te esqueças' },
+          storeUrl: 'https://apps.apple.com/pt/app/aniversários/id6758899294',
+          appName: 'Aniversários', locale: 'pt-PT' },
   };
 
   function format(template: string, name: string, age: number | string): string {
@@ -540,67 +630,148 @@ const today = new Date();
   const CANVAS_W = 1080;
   const CANVAS_H = 1080;
 
+  // ── Design tokens (deep audience research drove these) ─────────
+  // 50+ Swedish FB users respond to:
+  //   - Warm cream + deep wine + muted gold (not pink, not stark white)
+  //   - Serif typography (signals tradition + trust)
+  //   - Polaroid / portrait frame (nostalgia trigger)
+  //   - Question-prompt captions (drives comments → algo boost)
+  const COLOR = {
+    bgTop:      '#FBF3E1',   // warm cream top
+    bgBottom:   '#F2E0BE',   // deeper parchment bottom
+    ink:        '#2C1810',   // dark warm brown — readable, premium
+    accent:     '#8B2635',   // deep wine red — birthday + elegance
+    gold:       '#B8941F',   // subdued gold (frame, dividers)
+    softInk:    '#6B5A4A',   // secondary text
+    photoBg:    '#FFFCEF',   // photo card background
+  };
+  // Fonts — Georgia is universally available and renders beautifully
+  // at large sizes. Loading a webfont via FontFace would be nicer but
+  // adds async complexity + a network round-trip; Georgia is "good
+  // enough beautiful" and works offline.
+  const FONT_SERIF = 'Georgia, "Times New Roman", serif';
+  const FONT_SANS = 'system-ui, -apple-system, "Segoe UI", sans-serif';
+
   function paintBackground(ctx: CanvasRenderingContext2D, W: number, H: number) {
     const grad = ctx.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0, '#E91E63');
-    grad.addColorStop(1, '#7B1130');
+    grad.addColorStop(0, COLOR.bgTop);
+    grad.addColorStop(1, COLOR.bgBottom);
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
   }
 
-  function paintFooter(ctx: CanvasRenderingContext2D, W: number, H: number, small: boolean) {
-    ctx.fillStyle = 'rgba(255,255,255,0.65)';
-    ctx.font = `${small ? 22 : 32}px system-ui, sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.fillText('alexanderbergqvist.com — Födelsedagar-appen', W / 2, H - (small ? 30 : 60));
-  }
-
-  async function drawCircleImage(
+  /**
+   * Photo in a Polaroid-style frame: cream card with soft drop shadow,
+   * thin gold inner line, photo with a subtle 8px ivory padding. Gives
+   * the "portrait" feeling that ages 50+ associate with treasured
+   * family photos.
+   */
+  async function drawPolaroidImage(
     ctx: CanvasRenderingContext2D,
     cx: number,
     cy: number,
-    r: number,
+    w: number,
+    h: number,
     thumb: string | undefined,
-    fallbackEmoji: string,
+    fallback: string,
   ) {
+    const x = cx - w / 2;
+    const y = cy - h / 2;
+    const r = 14;
+
+    // Drop shadow (offset behind)
+    ctx.save();
+    ctx.shadowColor = 'rgba(44, 24, 16, 0.18)';
+    ctx.shadowBlur = 32;
+    ctx.shadowOffsetY = 12;
+
+    // Card background (the "Polaroid" itself)
+    ctx.fillStyle = COLOR.photoBg;
+    ctx.beginPath();
+    if (typeof (ctx as any).roundRect === 'function') {
+      (ctx as any).roundRect(x, y, w, h, r);
+    } else {
+      ctx.rect(x, y, w, h);
+    }
+    ctx.fill();
+    ctx.restore();
+
+    // Thin gold inner line for elegance
+    ctx.strokeStyle = COLOR.gold;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    if (typeof (ctx as any).roundRect === 'function') {
+      (ctx as any).roundRect(x + 8, y + 8, w - 16, h - 16, r - 4);
+    } else {
+      ctx.rect(x + 8, y + 8, w - 16, h - 16);
+    }
+    ctx.stroke();
+
+    // Photo area: 24px padding inside the gold line
+    const inset = 24;
+    const px = x + inset;
+    const py = y + inset;
+    const pw = w - inset * 2;
+    const ph = h - inset * 2;
+
     ctx.save();
     ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    if (typeof (ctx as any).roundRect === 'function') {
+      (ctx as any).roundRect(px, py, pw, ph, 6);
+    } else {
+      ctx.rect(px, py, pw, ph);
+    }
     ctx.closePath();
     ctx.clip();
+
     let painted = false;
     if (thumb) {
       try {
         const img = await loadImage(thumb);
         const ratio = img.width / img.height;
-        let drawW = r * 2;
-        let drawH = r * 2;
-        if (ratio > 1) drawW = drawH * ratio;
-        else drawH = drawW / ratio;
-        ctx.drawImage(img, cx - drawW / 2, cy - drawH / 2, drawW, drawH);
+        let drawW = pw;
+        let drawH = ph;
+        // Cover crop
+        const targetRatio = pw / ph;
+        if (ratio > targetRatio) {
+          drawH = ph;
+          drawW = ph * ratio;
+        } else {
+          drawW = pw;
+          drawH = pw / ratio;
+        }
+        ctx.drawImage(img, px + (pw - drawW) / 2, py + (ph - drawH) / 2, drawW, drawH);
         painted = true;
       } catch {/* fall through */}
     }
     if (!painted) {
-      ctx.fillStyle = 'rgba(255,255,255,0.2)';
-      ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
-      ctx.fillStyle = 'white';
-      ctx.font = `${r * 0.9}px system-ui, sans-serif`;
+      ctx.fillStyle = '#E8DDC5';
+      ctx.fillRect(px, py, pw, ph);
+      ctx.fillStyle = COLOR.softInk;
+      ctx.font = `${pw * 0.5}px ${FONT_SERIF}`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(fallbackEmoji, cx, cy);
+      ctx.fillText(fallback, cx, cy);
       ctx.textBaseline = 'alphabetic';
     }
     ctx.restore();
-    // White ring
-    ctx.strokeStyle = 'white';
-    ctx.lineWidth = Math.max(6, r * 0.05);
-    ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    ctx.stroke();
   }
 
-  // ── Layout: HERO (single selected person) ───────────────────────
+  /** Decorative divider — three small diamonds in muted gold. */
+  function paintDivider(ctx: CanvasRenderingContext2D, cx: number, y: number) {
+    ctx.fillStyle = COLOR.gold;
+    const gap = 16;
+    const size = 5;
+    for (let i = -1; i <= 1; i++) {
+      ctx.save();
+      ctx.translate(cx + i * gap * 4, y);
+      ctx.rotate(Math.PI / 4);
+      ctx.fillRect(-size / 2, -size / 2, size, size);
+      ctx.restore();
+    }
+  }
+
+  // ── Layout: ELEGANT PORTRAIT (Polaroid-style, 50+ optimized) ───
   async function paintHero(ctx: CanvasRenderingContext2D, person: Hero, lang: string) {
     const W = CANVAS_W;
     const H = CANVAS_H;
@@ -609,63 +780,102 @@ const today = new Date();
 
     paintBackground(ctx, W, H);
 
-    // Top label — "FÖDELSEDAG IDAG" / "BIRTHDAY TODAY" / …
-    ctx.fillStyle = 'rgba(255,255,255,0.9)';
-    ctx.font = 'bold 42px system-ui, sans-serif';
+    // ── 1. EYEBROW + DATE (top section) ──────────────────────────
+    // Small italic eyebrow signals editorial/magazine feel.
+    ctx.fillStyle = COLOR.accent;
+    ctx.font = `italic 30px ${FONT_SERIF}`;
     ctx.textAlign = 'center';
-    ctx.fillText(t.titleTop, W / 2, 90);
+    ctx.fillText(t.eyebrow, W / 2, 92);
 
-    // Date subtitle
+    // Date in larger serif — like a vintage stamp
     if (currentDate) {
-      ctx.fillStyle = 'rgba(255,255,255,0.7)';
-      ctx.font = 'bold 28px system-ui, sans-serif';
-      const dateStr = currentDate.toLocaleDateString(t.locale, {
+      const dateStr = currentDate.toLocaleDateString(t.dateFmt, {
         day: 'numeric',
         month: 'long',
+        year: 'numeric',
       });
-      ctx.fillText(dateStr, W / 2, 140);
+      ctx.fillStyle = COLOR.softInk;
+      ctx.font = `400 26px ${FONT_SERIF}`;
+      ctx.fillText(dateStr, W / 2, 134);
     }
 
-    // Hero photo
-    const photoR = 220;
-    const photoCY = 380;
-    await drawCircleImage(ctx, W / 2, photoCY, photoR, person.thumb, '🎂');
+    // Small ornamental divider under date
+    paintDivider(ctx, W / 2, 170);
 
-    // Hero caption — "Idag fyller Björn Borg 70 år! 🎂" or per-locale equivalent.
-    const captionY = photoCY + photoR + 90;
-    ctx.fillStyle = 'white';
-    ctx.font = 'bold 56px system-ui, sans-serif';
+    // ── 2. POLAROID PHOTO ─────────────────────────────────────────
+    const photoW = 440;
+    const photoH = 460;
+    const photoCY = 220 + photoH / 2;
+    await drawPolaroidImage(
+      ctx, W / 2, photoCY, photoW, photoH, person.thumb, '🎂',
+    );
+
+    // ── 3. NAME (big elegant serif) ──────────────────────────────
+    const nameY = photoCY + photoH / 2 + 90;
+    ctx.fillStyle = COLOR.ink;
+    ctx.font = `700 70px ${FONT_SERIF}`;
     ctx.textAlign = 'center';
-    const caption = age !== null
-      ? format(t.line1, person.name, age)
-      : person.name;
-    wrap(ctx, caption, W / 2, captionY, W - 120, 68);
+    // Wrap if very long. wrap() returns total height, but we don't
+    // use it here — assume 1-2 lines max.
+    wrap(ctx, person.name, W / 2, nameY, W - 140, 80);
 
-    // Subtitle — only if we have a description AND the language is
-    // Swedish. Wikipedia descriptions come from sv.wikipedia.org so
-    // they're always in Swedish; rather than mix languages on the
-    // image, we omit it for non-sv posts.
+    // ── 4. AGE LINE — italic serif, like a portrait label ─────────
+    const nameLines = person.name.length > 22 ? 2 : 1;
+    const ageY = nameY + (nameLines * 76) + 24;
+    if (age !== null) {
+      ctx.fillStyle = COLOR.accent;
+      ctx.font = `italic 38px ${FONT_SERIF}`;
+      const ageLine = format(t.ageSuffix, person.name, age);
+      ctx.fillText(ageLine, W / 2, ageY);
+    }
+
+    // ── 5. WIKIPEDIA DESC (only on sv posts, italic small) ────────
     if (person.desc && lang === 'sv') {
-      ctx.fillStyle = 'rgba(255,255,255,0.8)';
-      ctx.font = '32px system-ui, sans-serif';
-      const subY = captionY + (caption.length > 35 ? 180 : 100);
-      wrap(ctx, person.desc, W / 2, subY, W - 200, 40);
+      ctx.fillStyle = COLOR.softInk;
+      ctx.font = `italic 24px ${FONT_SERIF}`;
+      const descY = ageY + 50;
+      wrap(ctx, `"${person.desc}"`, W / 2, descY, W - 200, 32);
     }
 
-    // Footer — localized app tagline. Keeps focus on the app
-    // download (which is what we're driving), not the website.
-    ctx.fillStyle = 'rgba(255,255,255,0.75)';
-    ctx.font = 'bold 28px system-ui, sans-serif';
+    // ── 6. ENGAGEMENT PROMPT + CTA (bottom 180px reserved) ───────
+    // Engagement question is the algorithm-boost lever. The pitch
+    // below sells the app in 1 line. Together they sit in a soft
+    // gold divider band so the eye gravitates there last.
+    const ctaTop = H - 200;
+
+    // Thin gold divider line
+    ctx.strokeStyle = COLOR.gold;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(W / 2 - 200, ctaTop);
+    ctx.lineTo(W / 2 + 200, ctaTop);
+    ctx.stroke();
+
+    // Engagement prompt (question that drives comments)
+    ctx.fillStyle = COLOR.accent;
+    ctx.font = `bold 36px ${FONT_SERIF}`;
     ctx.textAlign = 'center';
-    ctx.fillText(t.appName, W / 2, H - 50);
+    ctx.fillText(t.prompt, W / 2, ctaTop + 56);
+
+    // Pitch — one short emotional line about the app
+    ctx.fillStyle = COLOR.ink;
+    ctx.font = `400 26px ${FONT_SANS}`;
+    ctx.fillText(t.pitch, W / 2, ctaTop + 110);
+
+    // Tiny app name badge
+    ctx.fillStyle = COLOR.gold;
+    ctx.font = `bold 20px ${FONT_SANS}`;
+    ctx.fillText(`🎂  ${t.appName.toUpperCase()}`, W / 2, ctaTop + 156);
   }
 
   function buildPostCopy(person: Hero, lang: string): string {
     const t = i18n[lang] ?? i18n.sv;
     const age = currentAge(person.year);
     const lines: string[] = [];
+    // Headline with 🎂 — emoji belongs in the caption (text), not on
+    // the elegant image. FB feed scans benefit from a single emoji.
     lines.push(
-      age !== null ? format(t.line1, person.name, age) : person.name,
+      age !== null ? `🎂 ${format(t.line1, person.name, age)}` : person.name,
     );
     // Description is in Swedish (from sv.wikipedia.org). Only include
     // it if the post itself is Swedish — otherwise it sticks out as
@@ -674,6 +884,10 @@ const today = new Date();
       lines.push('');
       lines.push(person.desc);
     }
+    // Engagement prompt — drives comments → algo boost.
+    lines.push('');
+    lines.push(t.prompt);
+    // Pitch + App Store
     lines.push('');
     lines.push(t.cta);
     lines.push('');
