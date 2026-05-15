@@ -772,6 +772,11 @@ const today = new Date();
   }
 
   // ── Layout: ELEGANT PORTRAIT (Polaroid-style, 50+ optimized) ───
+  // All Y positions are fixed and tuned so the bottom CTA block
+  // never collides with the name/age area regardless of name length.
+  // The Wikipedia description is intentionally NOT drawn on the card
+  // — it pushes content into the CTA strip and made the bottom half
+  // overlap. The description still lives in the post copy below.
   async function paintHero(ctx: CanvasRenderingContext2D, person: Hero, lang: string) {
     const W = CANVAS_W;
     const H = CANVAS_H;
@@ -780,14 +785,12 @@ const today = new Date();
 
     paintBackground(ctx, W, H);
 
-    // ── 1. EYEBROW + DATE (top section) ──────────────────────────
-    // Small italic eyebrow signals editorial/magazine feel.
+    // ── 1. EYEBROW + DATE ────────────────────────────────────────
     ctx.fillStyle = COLOR.accent;
     ctx.font = `italic 30px ${FONT_SERIF}`;
     ctx.textAlign = 'center';
     ctx.fillText(t.eyebrow, W / 2, 92);
 
-    // Date in larger serif — like a vintage stamp
     if (currentDate) {
       const dateStr = currentDate.toLocaleDateString(t.dateFmt, {
         day: 'numeric',
@@ -799,73 +802,61 @@ const today = new Date();
       ctx.fillText(dateStr, W / 2, 134);
     }
 
-    // Small ornamental divider under date
     paintDivider(ctx, W / 2, 170);
 
-    // ── 2. POLAROID PHOTO ─────────────────────────────────────────
-    const photoW = 440;
-    const photoH = 460;
-    const photoCY = 220 + photoH / 2;
+    // ── 2. POLAROID PHOTO ───────────────────────────────────────
+    // 420×400 fits a comfortable rectangle without crowding either
+    // side of the card. Photo runs y=210 to y=610.
+    const photoW = 420;
+    const photoH = 400;
+    const photoCY = 210 + photoH / 2;
     await drawPolaroidImage(
       ctx, W / 2, photoCY, photoW, photoH, person.thumb, '🎂',
     );
 
-    // ── 3. NAME (big elegant serif) ──────────────────────────────
-    const nameY = photoCY + photoH / 2 + 90;
+    // ── 3. NAME — auto-shrink to one line, fixed baseline ────────
+    const NAME_Y = 695;
+    const NAME_MAX_WIDTH = W - 140; // 940 px
+    let nameFont = 64;
+    ctx.font = `700 ${nameFont}px ${FONT_SERIF}`;
+    while (ctx.measureText(person.name).width > NAME_MAX_WIDTH && nameFont > 36) {
+      nameFont -= 4;
+      ctx.font = `700 ${nameFont}px ${FONT_SERIF}`;
+    }
     ctx.fillStyle = COLOR.ink;
-    ctx.font = `700 70px ${FONT_SERIF}`;
     ctx.textAlign = 'center';
-    // Wrap if very long. wrap() returns total height, but we don't
-    // use it here — assume 1-2 lines max.
-    wrap(ctx, person.name, W / 2, nameY, W - 140, 80);
+    ctx.fillText(person.name, W / 2, NAME_Y);
 
-    // ── 4. AGE LINE — italic serif, like a portrait label ─────────
-    const nameLines = person.name.length > 22 ? 2 : 1;
-    const ageY = nameY + (nameLines * 76) + 24;
+    // ── 4. AGE — italic serif, fixed baseline below name ──────────
     if (age !== null) {
       ctx.fillStyle = COLOR.accent;
-      ctx.font = `italic 38px ${FONT_SERIF}`;
-      const ageLine = format(t.ageSuffix, person.name, age);
-      ctx.fillText(ageLine, W / 2, ageY);
+      ctx.font = `italic 36px ${FONT_SERIF}`;
+      ctx.fillText(format(t.ageSuffix, person.name, age), W / 2, 760);
     }
 
-    // ── 5. WIKIPEDIA DESC (only on sv posts, italic small) ────────
-    if (person.desc && lang === 'sv') {
-      ctx.fillStyle = COLOR.softInk;
-      ctx.font = `italic 24px ${FONT_SERIF}`;
-      const descY = ageY + 50;
-      wrap(ctx, `"${person.desc}"`, W / 2, descY, W - 200, 32);
-    }
-
-    // ── 6. ENGAGEMENT PROMPT + CTA (bottom 180px reserved) ───────
-    // Engagement question is the algorithm-boost lever. The pitch
-    // below sells the app in 1 line. Together they sit in a soft
-    // gold divider band so the eye gravitates there last.
-    const ctaTop = H - 200;
-
-    // Thin gold divider line
+    // ── 5. THIN GOLD DIVIDER LINE ────────────────────────────────
     ctx.strokeStyle = COLOR.gold;
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(W / 2 - 200, ctaTop);
-    ctx.lineTo(W / 2 + 200, ctaTop);
+    ctx.moveTo(W / 2 - 200, 815);
+    ctx.lineTo(W / 2 + 200, 815);
     ctx.stroke();
 
-    // Engagement prompt (question that drives comments)
+    // ── 6. ENGAGEMENT PROMPT (algorithm-boost lever) ─────────────
     ctx.fillStyle = COLOR.accent;
     ctx.font = `bold 36px ${FONT_SERIF}`;
     ctx.textAlign = 'center';
-    ctx.fillText(t.prompt, W / 2, ctaTop + 56);
+    ctx.fillText(t.prompt, W / 2, 875);
 
-    // Pitch — one short emotional line about the app
+    // ── 7. PITCH — one short emotional sales line ────────────────
     ctx.fillStyle = COLOR.ink;
     ctx.font = `400 26px ${FONT_SANS}`;
-    ctx.fillText(t.pitch, W / 2, ctaTop + 110);
+    ctx.fillText(t.pitch, W / 2, 935);
 
-    // Tiny app name badge
+    // ── 8. APP BADGE — tasteful gold wordmark at bottom ──────────
     ctx.fillStyle = COLOR.gold;
     ctx.font = `bold 20px ${FONT_SANS}`;
-    ctx.fillText(`🎂  ${t.appName.toUpperCase()}`, W / 2, ctaTop + 156);
+    ctx.fillText(`🎂  ${t.appName.toUpperCase()}`, W / 2, 1000);
   }
 
   function buildPostCopy(person: Hero, lang: string): string {
