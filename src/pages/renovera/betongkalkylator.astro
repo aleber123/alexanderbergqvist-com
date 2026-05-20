@@ -1,0 +1,168 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../components/BaseLayout.astro';
+import AppStoreBadge from '../../components/AppStoreBadge.astro';
+
+const app = await getEntry('apps', 'renovera');
+const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
+---
+
+<BaseLayout
+  title="Betongkalkylator – räkna säckar och kubikmeter betong"
+  description="Räkna ut hur många säckar betong du behöver för din gjutning. Stöd för 25, 40 och 50 kg-säckar. Gratis kalkylator för plintar, plattor, murar."
+  keywords={[
+    'betongkalkylator',
+    'betong säckar kalkylator',
+    'hur mycket betong',
+    'cement kalkylator',
+    'gjuta betong kalkylator',
+    'platta på mark betong',
+    'plintar betong',
+  ]}
+  appStoreId={appStoreId}
+>
+  <section class="max-w-3xl mx-auto px-6 py-12 md:py-16">
+    <span class="inline-block text-xs font-black uppercase tracking-widest text-slate-500">
+      Fri kalkylator från Renovera-appen
+    </span>
+    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+      Hur mycket betong behöver du?
+    </h1>
+    <p class="mt-4 text-lg text-slate-600">
+      Mata in mått på gjutningen och välj säckstorlek – så räknar vi ut exakt
+      antal säckar och total volym i kubikmeter (m³).
+    </p>
+
+    <div class="mt-10 rounded-2xl border border-slate-200 bg-white p-6 md:p-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm font-bold mb-2" for="laengd">Längd (m)</label>
+          <input id="laengd" type="number" min="0" step="0.1" value="5"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-amber-500 focus:outline-none" />
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-2" for="bredd">Bredd (m)</label>
+          <input id="bredd" type="number" min="0" step="0.1" value="3"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-amber-500 focus:outline-none" />
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-2" for="djup">Djup (m)</label>
+          <input id="djup" type="number" min="0" step="0.01" value="0.1"
+            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-amber-500 focus:outline-none" />
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <label class="block text-sm font-bold mb-2">Säckstorlek</label>
+        <div class="flex flex-wrap gap-2" data-bag-group>
+          <button type="button" data-bag="25" class="bag-btn bag-active rounded-full px-4 py-2 text-sm font-bold border-2">25 kg</button>
+          <button type="button" data-bag="40" class="bag-btn rounded-full px-4 py-2 text-sm font-bold border-2">40 kg</button>
+          <button type="button" data-bag="50" class="bag-btn rounded-full px-4 py-2 text-sm font-bold border-2">50 kg</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8 grid grid-cols-2 gap-3">
+      <div class="rounded-2xl bg-amber-50 border border-amber-200 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-amber-700">
+          Volym
+        </div>
+        <div class="mt-1 text-3xl font-black text-amber-900" data-out="volume">–</div>
+        <div class="text-xs text-amber-700 mt-1">m³ betong</div>
+      </div>
+      <div class="rounded-2xl bg-amber-100 border border-amber-300 p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-amber-800">
+          Säckar
+        </div>
+        <div class="mt-1 text-3xl font-black text-amber-900" data-out="bags">–</div>
+        <div class="text-xs text-amber-800 mt-1" data-out="bag-label">av 25 kg</div>
+      </div>
+    </div>
+
+    <div class="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-700">
+      <strong class="text-slate-900">Friskrivning:</strong>
+      Beräkningarna är vägledande. Allt arbete bör utföras eller granskas av
+      fackman, särskilt vid bärande konstruktion.
+    </div>
+
+    <div class="mt-10 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 p-6 md:p-8">
+      <h2 class="text-2xl font-black tracking-tight">Behöver du fler kalkylatorer?</h2>
+      <p class="mt-2 text-slate-700">
+        Renovera-appen har 31 kalkylatorer för bygg, inredning, trädgård och
+        energi — kakel, färg, trall, isolering, solpaneler och mycket mer.
+        Spara projekt och exportera inköpslistor som PDF.
+      </p>
+      <div class="mt-5">
+        <AppStoreBadge url={app?.data.appStoreUrl} />
+      </div>
+    </div>
+
+    <section class="mt-12 prose prose-slate max-w-none">
+      <h2>Så här räknar du ut betongmängden</h2>
+      <p>
+        Volym i kubikmeter = <em>längd × bredd × djup</em> (alla i meter).
+        Multiplicera med 1000 för att få liter färdig blandning.
+      </p>
+      <p>
+        En 25 kg-säck torrbruk ger cirka 12,5 liter färdigblandad betong.
+        Säckar = liter ÷ 12,5 (avrunda alltid uppåt så du har lite extra).
+      </p>
+      <h3>Vanliga djup för olika gjutningar</h3>
+      <ul>
+        <li><strong>Platta på mark:</strong> 0,10 m (10 cm)</li>
+        <li><strong>Plintar:</strong> 0,40 m (40 cm)</li>
+        <li><strong>Pelarfundament:</strong> 0,50 m eller mer</li>
+        <li><strong>Garageinfart:</strong> 0,12–0,15 m</li>
+      </ul>
+    </section>
+  </section>
+
+  <script is:inline>
+    (() => {
+      const $ = (s) => document.querySelector(s);
+      const $$ = (s) => document.querySelectorAll(s);
+      // Yield per kg of dry mix in liters wet concrete.
+      // 25kg ≈ 12.5L, 40kg ≈ 20L, 50kg ≈ 25L.
+      const yieldFor = (kg) => kg / 2;
+      let bagSize = 25;
+
+      function calc() {
+        const L = parseFloat($('#laengd').value.replace(',', '.')) || 0;
+        const W = parseFloat($('#bredd').value.replace(',', '.')) || 0;
+        const D = parseFloat($('#djup').value.replace(',', '.')) || 0;
+        const m3 = L * W * D;
+        const liters = m3 * 1000;
+        const bags = liters > 0 ? Math.ceil(liters / yieldFor(bagSize)) : 0;
+        $('[data-out="volume"]').textContent = m3.toFixed(2);
+        $('[data-out="bags"]').textContent = bags.toString();
+        $('[data-out="bag-label"]').textContent = 'av ' + bagSize + ' kg';
+      }
+
+      $$('#laengd, #bredd, #djup').forEach((el) =>
+        el.addEventListener('input', calc),
+      );
+      $$('[data-bag]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          bagSize = parseInt(btn.dataset.bag, 10);
+          $$('.bag-btn').forEach((b) => b.classList.remove('bag-active'));
+          btn.classList.add('bag-active');
+          calc();
+        });
+      });
+      calc();
+    })();
+  </script>
+
+  <style>
+    .bag-btn {
+      border-color: rgb(203 213 225);
+      background: white;
+      color: rgb(15 23 42);
+    }
+    .bag-btn.bag-active {
+      background: rgb(245 158 11);
+      border-color: rgb(217 119 6);
+      color: white;
+    }
+  </style>
+</BaseLayout>

@@ -1,24 +1,31 @@
 {
   "name": "Renovera",
-  "tagline": "Håll koll på renoveringsprojektet — budget, tid och leverantörer.",
-  "description": "Renovera är iOS-appen för dig som renoverar hemma. Logga utgifter, samla offerter, planera tidslinje och spara kvitton för ROT-avdrag.",
+  "tagline": "31 kalkylatorer för dig som renoverar hemma.",
+  "description": "Renovera är iOS-appen med 31 kalkylatorer för hemmarenovering — kakel, färg, betong, isolering, solpaneler, värmepump och mycket mer. Räkna ut exakt vad du behöver utan att googla formler. Spara projekt och inköpslistor.",
   "icon": "/apps/renovera.png",
   "accent": "#795548",
   "accentDark": "#3E2723",
+  "appStoreUrl": "https://apps.apple.com/se/app/renovera/id6763392279",
+  "appStoreId": "6763392279",
   "bundleId": "com.alexanderbergqvist.renoveraapp",
   "category": "Livsstil",
   "keywords": [
-    "renovera app",
-    "renoveringsbudget",
-    "rot-avdrag",
-    "hus renovering"
+    "renovera kalkylator",
+    "betong säckar",
+    "färg liter kalkylator",
+    "kakel m2 kalkylator",
+    "solpanel kalkylator",
+    "värmepump dimensionera"
   ],
   "features": [
-    "Logga utgifter per rum eller projekt",
-    "Spara kvitton med foto",
-    "Budget vs. faktiskt",
-    "Stöd för ROT-avdragsexport"
+    "31 kalkylatorer för bygg, inredning, trädgård och energi",
+    "Spara projekt och inköpslistor",
+    "Exportera PDF att ta med i byggaffären",
+    "Affiliate-tips till Bauhaus & Byggmax",
+    "Solpaneler, värmepump, isolering och mer"
   ],
-  "status": "soon",
-  "order": 9
+  "status": "live",
+  "order": 4,
+  "seoTitle": "Renovera-app för iPhone – 31 kalkylatorer för hemmarenovering",
+  "seoDescription": "Räkna ut färg, kakel, betong, trall, isolering, solpaneler och mer. 31 gratis kalkylatorer i en app — utan formler."
 }

@@ -142,6 +142,22 @@ const toolsByApp: Record<
 };
 const tools = toolsByApp[app.id] ?? [];
 
+// Direct-link every sourdough recipe from /surdeg/ so the 33 recipe
+// pages aren't orphaned 2 levels deep. Without this, Google only
+// reaches them via /surdeg/ → /surdeg/recept/ → /surdeg/recept/[slug]/
+// and most stay in "Discovered – currently not indexed".
+type RecipeLink = { id: string; title: string; subtitle: string };
+let recipeLinks: RecipeLink[] = [];
+if (app.id === 'surdeg') {
+  const recipesModule = await import('../../data/recipes.json');
+  const all = recipesModule.default as RecipeLink[];
+  recipeLinks = all.map((r) => ({
+    id: r.id,
+    title: r.title,
+    subtitle: r.subtitle,
+  }));
+}
+
 // Map Swedish category labels to schema.org's canonical
 // `applicationCategory` enum so Google can classify the app correctly
 // in mobile-app rich results. Falls back to the raw value when no
@@ -324,6 +340,31 @@ const appStoreId = appStoreUrl
           </a>
         ))}
       </div>
+    </section>
+  )}
+
+  {recipeLinks.length > 0 && (
+    <section class="max-w-6xl mx-auto px-6 py-16 border-t border-slate-200">
+      <h2 class="text-2xl md:text-3xl font-black mb-3">
+        Alla {recipeLinks.length} surdegsrecept
+      </h2>
+      <p class="text-slate-600 mb-8 max-w-2xl">
+        Klassiska bröd, söta bullar, knäckebröd, pizza och tunnbröd —
+        steg-för-steg med hydration, jäsningstider och temperaturer.
+      </p>
+      <ul class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-2">
+        {recipeLinks.map((r) => (
+          <li>
+            <a
+              href={`/surdeg/recept/${r.id}/`}
+              class="block py-2 text-slate-900 hover:text-slate-600 hover:underline"
+            >
+              <span class="font-semibold">{r.title}</span>
+              <span class="text-slate-500"> — {r.subtitle}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
     </section>
   )}
 
