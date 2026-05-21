@@ -5,6 +5,7 @@
   "icon": "/apps/andas.png",
   "accent": "#3E6D96",
   "accentDark": "#2A4D6B",
+  "appStoreUrl": "https://apps.apple.com/se/app/andas/id6766963076",
   "bundleId": "com.alexanderbergqvist.andas",
   "category": "Hälsa och träning",
   "keywords": [

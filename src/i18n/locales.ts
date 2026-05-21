@@ -131,7 +131,7 @@ export const APP_LOCALES: Record<string, readonly (Locale | 'sv')[]> = {
     'sv', 'en', 'de', 'no', 'da', 'fr', 'fi', 'is',
   ],
   rita: [
-    'sv', 'en', 'de', 'no', 'da', 'es', 'fr', 'fi', 'is',
+    'sv',
   ],
 };
 
