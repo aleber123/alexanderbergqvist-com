@@ -1,48 +1,71 @@
 ---
 import { getCollection, render } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
-import BaseLayout from '../../components/BaseLayout.astro';
-import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import FAQ from '../../components/FAQ.astro';
-import AppStoreBadge from '../../components/AppStoreBadge.astro';
+import BaseLayout from '../../../components/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import FAQ from '../../../components/FAQ.astro';
+import AppStoreBadge from '../../../components/AppStoreBadge.astro';
+import {
+  LOCALES,
+  LOCALE_BCP47,
+  type Locale,
+} from '../../../i18n/locales';
 
 export const getStaticPaths = (async () => {
-  // Only Swedish articles live at the root /<app>/<slug>/.
-  // Translated articles route through /<lang>/<app>/<slug>/.
   const articles = await getCollection(
     'articles',
-    (a) => !a.data.draft && a.data.lang === 'sv',
+    (a) => !a.data.draft && a.data.lang !== 'sv',
   );
   return articles.map((article) => {
     const slug = article.id.split('/').pop()!;
     return {
-      params: { app: article.data.app, slug },
+      params: {
+        lang: article.data.lang,
+        app: article.data.app,
+        slug,
+      },
       props: { article },
     };
   });
 }) satisfies GetStaticPaths;
 
 const { article } = Astro.props;
+const lang = Astro.params.lang as Locale;
 const { Content } = await render(article);
 
 const apps = await getCollection('apps');
 const app = apps.find((a) => a.id === article.data.app);
 
-// Other articles for the same app — surface as related links at the
-// bottom. Boosts internal linking + topical authority.
+// Localized "Read more" headings + breadcrumb labels — keeps UI in the
+// same language as the article instead of leaking Swedish into an
+// otherwise English/German/French page.
+const ARTICLE_UI: Record<Locale, { home: string; readMore: string; updated: string }> = {
+  en: { home: 'Home', readMore: 'Read more', updated: 'Updated' },
+  de: { home: 'Start', readMore: 'Mehr lesen', updated: 'Aktualisiert' },
+  no: { home: 'Hjem', readMore: 'Les mer', updated: 'Oppdatert' },
+  da: { home: 'Hjem', readMore: 'Læs mere', updated: 'Opdateret' },
+  es: { home: 'Inicio', readMore: 'Leer más', updated: 'Actualizado' },
+  fr: { home: 'Accueil', readMore: 'Lire la suite', updated: 'Mis à jour' },
+  fi: { home: 'Etusivu', readMore: 'Lue lisää', updated: 'Päivitetty' },
+  is: { home: 'Heim', readMore: 'Lesa meira', updated: 'Uppfært' },
+  it: { home: 'Home', readMore: 'Leggi di più', updated: 'Aggiornato' },
+  el: { home: 'Αρχική', readMore: 'Διαβάστε περισσότερα', updated: 'Ενημερώθηκε' },
+  nl: { home: 'Home', readMore: 'Lees meer', updated: 'Bijgewerkt' },
+  pl: { home: 'Strona główna', readMore: 'Czytaj więcej', updated: 'Zaktualizowano' },
+  pt: { home: 'Início', readMore: 'Ler mais', updated: 'Atualizado' },
+};
+const ui = ARTICLE_UI[lang];
+
 const allArticles = await getCollection('articles', (a) => !a.data.draft);
 const related = allArticles
   .filter(
     (a) =>
       a.data.app === article.data.app &&
-      a.data.lang === article.data.lang &&
+      a.data.lang === lang &&
       a.id !== article.id,
   )
   .slice(0, 3);
 
-// Smart App Banner — let iOS Safari show install banner above the
-// article when the parent app is live in App Store. Big install
-// driver since SEO articles bring iOS-curious organic traffic.
 const appStoreId = app?.data.appStoreUrl
   ? app.data.appStoreUrl.match(/\/id(\d+)/)?.[1]
   : undefined;
@@ -57,13 +80,14 @@ const appStoreId = app?.data.appStoreUrl
   keywords={article.data.keywords}
   image={`/og/${article.data.app}-${article.id.split('/').pop()}.png`}
   appStoreId={appStoreId}
+  htmlLang={LOCALE_BCP47[lang]}
 >
   <article class="max-w-3xl mx-auto px-6 py-8 md:py-10">
     {app && (
       <Breadcrumbs
         trail={[
-          { name: 'Hem', url: '/' },
-          { name: app.data.name, url: `/${app.id}/` },
+          { name: ui.home, url: `/${lang}/` },
+          { name: app.data.name, url: `/${lang}/${app.id}/` },
           { name: article.data.title },
         ]}
       />
@@ -74,7 +98,7 @@ const appStoreId = app?.data.appStoreUrl
     <p class="mt-3 text-lg text-slate-600">{article.data.description}</p>
     <div class="mt-4 flex items-center gap-3 text-sm text-slate-500">
       <time datetime={article.data.publishedAt.toISOString()}>
-        {article.data.publishedAt.toLocaleDateString('sv-SE', {
+        {article.data.publishedAt.toLocaleDateString(LOCALE_BCP47[lang], {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
@@ -82,7 +106,7 @@ const appStoreId = app?.data.appStoreUrl
       </time>
       {article.data.updatedAt && (
         <span class="text-slate-400">
-          · Uppdaterad {article.data.updatedAt.toLocaleDateString('sv-SE')}
+          · {ui.updated} {article.data.updatedAt.toLocaleDateString(LOCALE_BCP47[lang])}
         </span>
       )}
     </div>
@@ -102,7 +126,7 @@ const appStoreId = app?.data.appStoreUrl
         <div class="flex items-start gap-4">
           <img
             src={app.data.icon}
-            alt={`${app.data.name} ikon`}
+            alt={`${app.data.name}`}
             class="w-16 h-16 rounded-xl flex-shrink-0"
             style={`background: ${app.data.accent};`}
             loading="lazy"
@@ -123,13 +147,13 @@ const appStoreId = app?.data.appStoreUrl
 
     {related.length > 0 && (
       <section class="mt-12">
-        <h2 class="text-xl font-black mb-4">Läs vidare</h2>
+        <h2 class="text-xl font-black mb-4">{ui.readMore}</h2>
         <div class="grid md:grid-cols-2 gap-3">
           {related.map((r) => {
             const slug = r.id.split('/').pop();
             return (
               <a
-                href={`/${r.data.app}/${slug}/`}
+                href={`/${lang}/${r.data.app}/${slug}/`}
                 class="block rounded-xl border border-slate-200 p-4 hover:border-slate-300 hover:shadow-md transition"
               >
                 <div class="font-bold text-slate-900">{r.data.title}</div>

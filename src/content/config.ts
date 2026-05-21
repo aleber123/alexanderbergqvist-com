@@ -40,6 +40,14 @@ const articles = defineCollection({
     title: z.string(),
     description: z.string(),
     app: z.string(), // matches an app slug
+    /** Locale. 'sv' renders at /<app>/<slug>/, others at
+     *  /<lang>/<app>/<slug>/. Default keeps existing sv articles working. */
+    lang: z
+      .enum([
+        'sv', 'en', 'de', 'no', 'da', 'es', 'fr', 'fi', 'is',
+        'it', 'el', 'nl', 'pl', 'pt',
+      ])
+      .default('sv'),
     publishedAt: z.coerce.date(),
     updatedAt: z.coerce.date().optional(),
     keywords: z.array(z.string()).default([]),
