@@ -1,0 +1,31 @@
+{
+  "name": "Pomatic",
+  "tagline": "Pomodoro-timer för djupfokus.",
+  "description": "Pomatic är en svensk Pomodoro-app med 25-minuters fokus-pass, automatiska pauser, Live Activity i Dynamic Island och Lock Screen-widget. Logga fokus-tid direkt i Apple Health Mindfulness — ingen inloggning, ingen kontoinställning, inga distraktioner.",
+  "icon": "/apps/pomatic.png",
+  "accent": "#E63946",
+  "accentDark": "#B0212B",
+  "bundleId": "com.alexanderbergqvist.fokus",
+  "appStoreUrl": "https://apps.apple.com/se/app/pomatic/id6770679116",
+  "category": "Produktivitet",
+  "keywords": [
+    "pomodoro",
+    "fokus timer",
+    "25 minuter",
+    "djupfokus",
+    "studieteknik",
+    "deep work",
+    "produktivitet",
+    "pomatic"
+  ],
+  "features": [
+    "25/5/15-minuters Pomodoro-cykler (gratis)",
+    "Live Activity och Lock Screen-widget",
+    "Streak och daglig statistik",
+    "Apple Health Mindfulness-loggning",
+    "Egna intervaller och färgteman (Premium)",
+    "Annonsfri med Premium"
+  ],
+  "status": "live",
+  "order": 8
+}
