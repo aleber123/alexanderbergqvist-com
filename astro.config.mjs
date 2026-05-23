@@ -1,12 +1,19 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
 
 const SITE = 'https://alexanderbergqvist.com';
 
 export default defineConfig({
   site: SITE,
+  // Hybrid: everything is static by default. Only routes marked
+  // `export const prerender = false;` run server-side — currently just
+  // the /admin/seo-reports admin + its API endpoint, which need
+  // service-account auth to hit Search Console + GA4.
+  output: 'static',
+  adapter: vercel(),
   // Path-based i18n: Swedish keeps the root (/, /fodelsedagar/, …) so
   // existing rankings don't break. New locales live under /en/, /de/,
   // /no/, /da/, /es/ and are limited to the universal apps + home.
