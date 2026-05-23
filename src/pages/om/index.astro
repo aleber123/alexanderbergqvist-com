@@ -1,11 +1,43 @@
 ---
 import BaseLayout from '../../components/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const apps = (await getCollection('apps')).sort(
+  (a, b) => (a.data.order ?? 99) - (b.data.order ?? 99)
+);
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Alexander Bergqvist',
+  url: 'https://alexanderbergqvist.com',
+  email: 'alexander.bergqvist@gmail.com',
+  jobTitle: 'Indie iOS Developer',
+  description:
+    'Indie iOS-utvecklare från Sverige. Bygger appar som löser konkreta vardagsproblem.',
+  knowsAbout: [
+    'iOS Development',
+    'Flutter',
+    'SwiftUI',
+    'App Store Optimization',
+    'Indie App Business',
+  ],
+  sameAs: [
+    'https://apps.apple.com/se/developer/alexander-bergqvist/id1830340527',
+  ],
+};
 ---
 
 <BaseLayout
-  title="Om mig"
-  description="Alexander Bergqvist — indie iOS-utvecklare från Sverige. Bygger appar som löser konkreta vardagsproblem."
+  title="Om Alexander Bergqvist — indie iOS-utvecklare"
+  description="Alexander Bergqvist — indie iOS-utvecklare från Sverige. Bygger appar som löser konkreta vardagsproblem: påminnelser, träning, odling, hälsa och mer."
 >
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify(personSchema)}
+    is:inline
+  />
+
   <section class="max-w-2xl mx-auto px-6 py-16 prose">
     <h1>Om mig</h1>
     <p>
@@ -18,11 +50,54 @@ import BaseLayout from '../../components/BaseLayout.astro';
       uppmärksamhet, utan verktyg du öppnar 1–2 gånger om dagen, får hjälp av,
       och stänger igen.
     </p>
+
+    <h2>Mina appar</h2>
     <p>
-      Här på sajten samlar jag mina appar och bygger ut fria verktyg
-      (kalkylatorer, räknare, kunskapsbankar) som lever helt på webben. Tanken
-      är att du ska kunna få nytta av min kod även utan att ladda ner något.
+      Alla appar är gratis att ladda ner. De flesta har en premium-version
+      (49 kr/mån eller 299 kr/år) som låser upp obegränsad användning.
     </p>
+    <ul>
+      {
+        apps.map((app) => (
+          <li>
+            <a href={`/${app.id}/`}>
+              <strong>{app.data.name}</strong>
+            </a>{' '}
+            — {app.data.tagline}
+          </li>
+        ))
+      }
+    </ul>
+
+    <h2>Hur jag bygger</h2>
+    <p>
+      Jag använder mest <strong>Flutter</strong> för apparna (delad kod mellan
+      iOS och Android, även om de flesta är iOS-only just nu) och{' '}
+      <strong>SwiftUI</strong> för några snabbare projekt. Sajten du läser
+      detta på är byggd med <strong>Astro</strong> och <strong>Tailwind</strong>,
+      hostad på <strong>Vercel</strong>. Data hanteras lokalt på enheten i
+      apparna — inga molnservrar, inga konton.
+    </p>
+    <p>
+      Designprincip: en användning per dag ska ta under 10 sekunder. Allt
+      annat är onödig friktion.
+    </p>
+
+    <h2>Varför indie?</h2>
+    <p>
+      Idéerna kommer från konkreta vardagsproblem — min pappa som glömmer
+      barnbarnens födelsedagar, min frus surdegssfas, vänner som vill sluta
+      snusa. Stora bolag bygger inte den typen av appar för en svensk
+      målgrupp. Indie kan jag bygga något smalt och göra det riktigt bra.
+    </p>
+
+    <h2>Här på sajten</h2>
+    <p>
+      Förutom mina appar samlar jag fria verktyg (kalkylatorer, räknare,
+      kunskapsbankar) som lever helt på webben. Tanken är att du ska kunna få
+      nytta av min kod även utan att ladda ner något.
+    </p>
+
     <h2>Kontakt</h2>
     <p>
       Mejla på <a href="mailto:alexander.bergqvist@gmail.com"
