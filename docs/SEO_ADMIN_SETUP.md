@@ -78,15 +78,29 @@ seo-reader@alexanderbergqvist-seo.iam.gserviceaccount.com
 
 Vercel Dashboard → alexanderbergqvist.com → **Settings** → **Environment Variables**
 
-Lägg till tre nya, alla för **Production** + **Preview**:
+Lägg till **sju** env vars, alla för **Production** + **Preview**:
+
+### Grundläggande (krävs för basrapporter)
 
 | Namn | Värde |
 |---|---|
-| `GOOGLE_SERVICE_ACCOUNT_JSON` | Hela innehållet i JSON-filen från steg 4 (öppna filen i en text-editor, kopiera ALLT inkl `{` och `}`, klistra in) |
-| `GA_PROPERTY_ID` | Siffror från GA4 Property Details (t.ex. `123456789`) |
-| `ADMIN_PASSWORD` | Långt slumpmässigt lösenord (du loggar in med detta) |
+| `GOOGLE_SERVICE_ACCOUNT_JSON` | Hela innehållet i JSON-filen från steg 4 |
+| `GA_PROPERTY_ID` | Siffror från GA4 Property Details |
+| `ADMIN_PASSWORD` | Långt slumpmässigt lösenord |
 
-**Save** alla tre.
+### App Store Connect (krävs för 🧠 SEO Expert-läget)
+
+`SEO Expert`-läget kombinerar GSC + GA4 + ASC sales för att hitta funnel-läckor.
+Utan dessa fyra fungerar de andra rapporterna men Expert-läget visar "ASC ej konfigurerad".
+
+| Namn | Värde |
+|---|---|
+| `ASC_KEY_ID` | 10-char ASC API key id (samma som `asc-launcher` använder) |
+| `ASC_ISSUER_ID` | Issuer UUID (samma) |
+| `ASC_PRIVATE_KEY` | Innehållet i `.p8`-filen (öppna i text-editor, kopiera ALLT inkl `-----BEGIN PRIVATE KEY-----` / `-----END PRIVATE KEY-----`-raderna). **Eller:** base64-encode hela filen (`base64 -i AuthKey_XXX.p8 \| pbcopy`) och spara i `ASC_PRIVATE_KEY_B64` istället. |
+| `ASC_VENDOR_NUMBER` | Apple vendor number (~10 siffror, hittar i [ASC → Sales and Trends](https://appstoreconnect.apple.com/trends/) längst upp på sidan) |
+
+**Save** alla.
 
 ## Steg 7 — Redeploy
 

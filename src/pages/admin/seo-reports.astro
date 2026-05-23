@@ -75,6 +75,9 @@ import BaseLayout from '../../components/BaseLayout.astro';
       </div>
 
       <div class="flex flex-wrap gap-2 mb-6">
+        <button data-type="expert" class="report-btn">
+          🧠 SEO Expert
+        </button>
         <button data-type="queries" class="report-btn">
           🔎 Toppsökord
         </button>
@@ -291,8 +294,13 @@ import BaseLayout from '../../components/BaseLayout.astro';
       status.textContent = 'Hämtar...';
       insightsDiv.innerHTML = '';
       tableDiv.innerHTML = '';
+      // Expert uses a different endpoint that joins GSC + GA4 + ASC
+      const endpoint =
+        currentType === 'expert'
+          ? '/api/admin/seo-expert'
+          : '/api/admin/seo-report';
       try {
-        const res = await fetch('/api/admin/seo-report', {
+        const res = await fetch(endpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -310,12 +318,79 @@ import BaseLayout from '../../components/BaseLayout.astro';
           status.textContent = `Fel: ${data.error || 'okänt'}`;
           return;
         }
-        status.textContent = `${data.rows.length} rader, ${data.range.days} dagar (${data.range.startDate} → ${data.range.endDate})`;
-        renderInsights(data.insights || []);
-        renderTable(currentType, data.rows);
+        if (currentType === 'expert') {
+          renderExpertStatus(data);
+          renderInsights(data.insights || []);
+          renderExpertTable(data.apps || []);
+        } else {
+          status.textContent = `${data.rows.length} rader, ${data.range.days} dagar (${data.range.startDate} → ${data.range.endDate})`;
+          renderInsights(data.insights || []);
+          renderTable(currentType, data.rows);
+        }
       } catch (e) {
         status.textContent = `Nätverksfel: ${e.message}`;
       }
+    }
+
+    function renderExpertStatus(data) {
+      const src = data.sources;
+      const parts = [
+        `${data.apps.length} appar`,
+        `${data.range.days} dagar (${data.range.startDate} → ${data.range.endDate})`,
+        `GSC: ${src.gsc.ok ? '✓ ' + src.gsc.rowCount + ' rader' : '✗ ' + (src.gsc.error || '')}`,
+        `GA4: ${src.ga4.ok ? '✓ ' + src.ga4.rowCount + ' sidor' : '✗ ' + (src.ga4.error || '')}`,
+        `ASC: ${src.asc.ok ? '✓ ' + src.asc.appCount + ' appar' + (src.asc.salesRange ? ', ' + src.asc.salesRange.rowCount + ' sales-rader' : '') : '✗ ' + (src.asc.error || '')}`,
+      ];
+      status.innerHTML = parts.join(' · ');
+    }
+
+    function renderExpertTable(apps) {
+      if (!apps.length) {
+        tableDiv.innerHTML = '<p>Ingen data.</p>';
+        return;
+      }
+      const cols = [
+        'App',
+        'GSC klick',
+        'GSC exp',
+        'Pos',
+        'GA sessions',
+        'Bounce %',
+        'Installs',
+        'Revenue',
+        'Sök→Install %',
+      ];
+      const html =
+        '<table><thead><tr>' +
+        cols
+          .map((c, i) => `<th${i > 0 ? ' class="num"' : ''}>${c}</th>`)
+          .join('') +
+        '</tr></thead><tbody>' +
+        apps
+          .map((a) => {
+            const revStr = a.ascProceeds
+              ? a.ascProceeds.toFixed(0) + ' ' + a.ascCurrency
+              : '–';
+            const convStr = a.gscClicks
+              ? (a.searchToInstall * 100).toFixed(0) + '%'
+              : '–';
+            return (
+              '<tr>' +
+              `<td>${escapeHtml(a.name)}</td>` +
+              `<td class="num">${a.gscClicks}</td>` +
+              `<td class="num">${a.gscImpressions}</td>` +
+              `<td class="num">${a.gscAvgPosition ? a.gscAvgPosition.toFixed(1) : '–'}</td>` +
+              `<td class="num">${a.gaSessions}</td>` +
+              `<td class="num">${a.gaSessions ? (a.gaBounceRate * 100).toFixed(0) : '–'}</td>` +
+              `<td class="num">${a.ascUnits}</td>` +
+              `<td class="num">${revStr}</td>` +
+              `<td class="num">${convStr}</td>` +
+              '</tr>'
+            );
+          })
+          .join('') +
+        '</tbody></table>';
+      tableDiv.innerHTML = html;
     }
 
     function renderInsights(insights) {
