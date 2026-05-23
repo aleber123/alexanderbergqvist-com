@@ -45,20 +45,37 @@ async function resolveSiteUrl(): Promise<string> {
     { headers: { Authorization: `Bearer ${token}` } },
   );
   if (!res.ok) {
-    // If list-sites fails, fall back to first candidate so the original
-    // error surfaces from the actual query.
-    return SITE_CANDIDATES[0];
+    throw new Error(
+      `Search Console sites list failed (${res.status}): ${await res.text()}`,
+    );
   }
   const data = (await res.json()) as {
     siteEntry?: { siteUrl: string; permissionLevel: string }[];
   };
   const sites = data.siteEntry || [];
+  if (sites.length === 0) {
+    const creds = getCreds();
+    const saEmail = creds?.client_email || 'unknown SA';
+    throw new Error(
+      `Service account "${saEmail}" har inga GSC-properties. ` +
+        `Lägg till SA:n som Restricted user på alexanderbergqvist.com ` +
+        `i Search Console → Settings → Users and Permissions. ` +
+        `Vänta sedan 5-10 min och försök igen.`,
+    );
+  }
   const match = SITE_CANDIDATES.find((c) =>
     sites.some((s) => s.siteUrl === c),
   );
-  resolvedSiteUrl = match || SITE_CANDIDATES[0];
+  if (!match) {
+    throw new Error(
+      `Inget matchande property för alexanderbergqvist.com. ` +
+        `SA:n har bara access till: ${sites.map((s) => s.siteUrl).join(', ')}. ` +
+        `Lägg till alexanderbergqvist.com-propertyn i Search Console.`,
+    );
+  }
+  resolvedSiteUrl = match;
   console.log(
-    `[seo-report] resolved site URL: ${resolvedSiteUrl} (SA has access to: ${sites.map((s) => s.siteUrl).join(', ') || 'none'})`,
+    `[seo-report] resolved site URL: ${resolvedSiteUrl} (SA: ${sites.length} sites total)`,
   );
   return resolvedSiteUrl;
 }
