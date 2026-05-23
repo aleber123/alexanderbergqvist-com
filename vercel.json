@@ -22,6 +22,150 @@
   ],
   "redirects": [
     {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^en.*"
+        }
+      ],
+      "missing": [
+        {
+          "type": "cookie",
+          "key": "preferred_lang"
+        }
+      ],
+      "destination": "/en/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^de.*"
+        }
+      ],
+      "missing": [
+        {
+          "type": "cookie",
+          "key": "preferred_lang"
+        }
+      ],
+      "destination": "/de/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^fr.*"
+        }
+      ],
+      "missing": [
+        {
+          "type": "cookie",
+          "key": "preferred_lang"
+        }
+      ],
+      "destination": "/fr/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^es.*"
+        }
+      ],
+      "missing": [
+        {
+          "type": "cookie",
+          "key": "preferred_lang"
+        }
+      ],
+      "destination": "/es/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^it.*"
+        }
+      ],
+      "missing": [
+        {
+          "type": "cookie",
+          "key": "preferred_lang"
+        }
+      ],
+      "destination": "/it/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^(no|nb).*"
+        }
+      ],
+      "missing": [
+        {
+          "type": "cookie",
+          "key": "preferred_lang"
+        }
+      ],
+      "destination": "/no/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^da.*"
+        }
+      ],
+      "missing": [
+        {
+          "type": "cookie",
+          "key": "preferred_lang"
+        }
+      ],
+      "destination": "/da/",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept-language",
+          "value": "^fi.*"
+        }
+      ],
+      "missing": [
+        {
+          "type": "cookie",
+          "key": "preferred_lang"
+        }
+      ],
+      "destination": "/fi/",
+      "permanent": false
+    },
+    {
       "source": "/andas/4-7-8-atmung-schlaf",
       "destination": "/de/andas/4-7-8-atmung-schlaf",
       "permanent": true

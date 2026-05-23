@@ -38,6 +38,13 @@ const { htmlLang = 'sv', hreflangAlternates, ...props } = Astro.props;
     <Analytics />
   </head>
   <body class="min-h-screen flex flex-col">
+    <script is:inline define:vars={{ pageLang: htmlLang.split('-')[0] }}>
+      // Remember which lang this user actually browsed in. The Vercel
+      // edge redirect from `/` to `/<lang>/` only fires when this
+      // cookie is missing — so once set (here, on any page load), we
+      // never auto-redirect them again. Lets manual lang choices stick.
+      document.cookie = `preferred_lang=${pageLang}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
+    </script>
     <Nav />
     <main class="flex-1">
       <slot />

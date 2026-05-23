@@ -122,6 +122,36 @@ const ldJson = {
 const appStoreId = appStoreUrl
   ? appStoreUrl.match(/\/id(\d+)/)?.[1]
   : undefined;
+
+// Localized articles for this app/lang — so the German visitor on
+// /de/fodelsedagar/ has somewhere to discover related reading
+// (otherwise they'd hit a dead-end after the download CTA).
+const allArticles = await getCollection('articles', (a) => !a.data.draft);
+const localizedArticles = allArticles
+  .filter((a) => a.data.app === appId && a.data.lang === lang)
+  .sort(
+    (a, b) =>
+      b.data.publishedAt.getTime() - a.data.publishedAt.getTime(),
+  )
+  .slice(0, 6);
+
+// Localized "Articles" heading per locale.
+const ARTICLES_HEADING: Record<Locale, string> = {
+  en: 'Articles',
+  de: 'Artikel',
+  no: 'Artikler',
+  da: 'Artikler',
+  es: 'Artículos',
+  fr: 'Articles',
+  fi: 'Artikkelit',
+  is: 'Greinar',
+  it: 'Articoli',
+  el: 'Άρθρα',
+  nl: 'Artikelen',
+  pl: 'Artykuły',
+  pt: 'Artigos',
+};
+const articlesHeading = ARTICLES_HEADING[lang];
 ---
 
 <BaseLayout
@@ -210,6 +240,32 @@ const appStoreId = appStoreUrl
             </li>
           ))}
         </ul>
+      </div>
+    </section>
+  )}
+
+  {localizedArticles.length > 0 && (
+    <section class="max-w-6xl mx-auto px-6 py-16">
+      <h2 class="text-2xl md:text-3xl font-black mb-8">
+        {articlesHeading}
+      </h2>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {localizedArticles.map((article) => {
+          const slug = article.id.split('/').pop();
+          return (
+            <a
+              href={`/${lang}/${appId}/${slug}/`}
+              class="block rounded-xl border border-slate-200 p-5 hover:border-slate-300 hover:shadow-md transition bg-white"
+            >
+              <div class="font-bold text-slate-900 leading-snug">
+                {article.data.title}
+              </div>
+              <p class="text-sm text-slate-600 mt-2 line-clamp-3">
+                {article.data.description}
+              </p>
+            </a>
+          );
+        })}
       </div>
     </section>
   )}
