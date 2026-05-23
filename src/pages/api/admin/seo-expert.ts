@@ -302,15 +302,25 @@ export const POST: APIRoute = async ({ request }) => {
     // ASC sales — only fetch if we successfully listed apps. The
     // listApps() call validates ASC auth works.
     let ascSummaries: AppSalesSummary[] = [];
-    let salesRange: { start: string; end: string; rowCount: number } | null = null;
+    let salesRange: {
+      start: string;
+      end: string;
+      rowCount: number;
+      daysFetched: number;
+      daysSkipped: number;
+      firstError: string | null;
+    } | null = null;
     if (ascApps.length > 0) {
       try {
         const sales = await fetchSalesRange(gaStartDate, gaEndDate);
-        ascSummaries = summarizeByApp(sales);
+        ascSummaries = summarizeByApp(sales.rows);
         salesRange = {
           start: range.startDate,
           end: range.endDate,
-          rowCount: sales.length,
+          rowCount: sales.rows.length,
+          daysFetched: sales.daysFetched,
+          daysSkipped: sales.daysSkipped,
+          firstError: sales.firstError,
         };
       } catch (e) {
         console.warn('[seo-expert] ASC sales fetch failed:', e);

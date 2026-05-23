@@ -129,13 +129,15 @@ export async function fetchDailySales(dateYyyyMmDd: string): Promise<SalesRow[]>
   if (!vendorNumber) throw new Error('ASC_VENDOR_NUMBER not set');
   const token = getJwt();
 
+  // No filter[version] — that's for SUBSCRIPTION reports only. For
+  // plain SALES.SUMMARY.DAILY Apple defaults to the latest version,
+  // which works for our use (units + developer proceeds per country).
   const params = new URLSearchParams({
     'filter[frequency]': 'DAILY',
     'filter[reportType]': 'SALES',
     'filter[reportSubType]': 'SUMMARY',
     'filter[vendorNumber]': vendorNumber,
     'filter[reportDate]': dateYyyyMmDd,
-    'filter[version]': '1_3',
   });
   const url = `https://api.appstoreconnect.apple.com/v1/salesReports?${params}`;
   const res = await fetch(url, {
@@ -192,14 +194,18 @@ function parseSalesTsv(tsv: string, fallbackDate: string): SalesRow[] {
 
 /**
  * Fetches sales for a date range (inclusive on both ends). Apple has
- * per-day reports only — we loop. Returns all rows flattened.
+ * per-day reports only — we loop. Returns flat rows + any errors hit
+ * so callers can decide if 0 rows means "no sales" or "API problem".
  */
 export async function fetchSalesRange(
   startDate: Date,
   endDate: Date,
-): Promise<SalesRow[]> {
+): Promise<{ rows: SalesRow[]; daysFetched: number; daysSkipped: number; firstError: string | null }> {
   const rows: SalesRow[] = [];
   const day = 24 * 60 * 60 * 1000;
+  let daysFetched = 0;
+  let daysSkipped = 0;
+  let firstError: string | null = null;
   for (let t = startDate.getTime(); t <= endDate.getTime(); t += day) {
     const d = new Date(t);
     const yyyy = d.getUTCFullYear();
@@ -208,15 +214,18 @@ export async function fetchSalesRange(
     try {
       const dayRows = await fetchDailySales(`${yyyy}-${mm}-${dd}`);
       rows.push(...dayRows);
+      daysFetched += 1;
     } catch (e) {
-      // Skip days Apple hasn't published yet — common for last 2-3 days
+      // Skip 404 silently — common for last 2-3 days Apple hasn't published.
+      // Surface other errors so we can debug auth / param issues.
       const msg = e instanceof Error ? e.message : String(e);
-      if (!msg.includes('404')) {
-        console.warn(`[asc] skipping ${yyyy}-${mm}-${dd}: ${msg}`);
+      daysSkipped += 1;
+      if (!msg.includes('404') && firstError === null) {
+        firstError = `${yyyy}-${mm}-${dd}: ${msg}`;
       }
     }
   }
-  return rows;
+  return { rows, daysFetched, daysSkipped, firstError };
 }
 
 // ─── Aggregations ──────────────────────────────────────────────────────

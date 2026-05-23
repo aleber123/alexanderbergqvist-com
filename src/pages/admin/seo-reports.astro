@@ -334,12 +334,23 @@ import BaseLayout from '../../components/BaseLayout.astro';
 
     function renderExpertStatus(data) {
       const src = data.sources;
+      let ascStr;
+      if (src.asc.ok) {
+        const sr = src.asc.salesRange;
+        ascStr = '✓ ' + src.asc.appCount + ' appar';
+        if (sr) {
+          ascStr += `, ${sr.rowCount} sales-rader (${sr.daysFetched}/${sr.daysFetched + sr.daysSkipped} dagar)`;
+          if (sr.firstError) ascStr += ` — fel: ${sr.firstError}`;
+        }
+      } else {
+        ascStr = '✗ ' + (src.asc.error || '');
+      }
       const parts = [
         `${data.apps.length} appar`,
         `${data.range.days} dagar (${data.range.startDate} → ${data.range.endDate})`,
         `GSC: ${src.gsc.ok ? '✓ ' + src.gsc.rowCount + ' rader' : '✗ ' + (src.gsc.error || '')}`,
         `GA4: ${src.ga4.ok ? '✓ ' + src.ga4.rowCount + ' sidor' : '✗ ' + (src.ga4.error || '')}`,
-        `ASC: ${src.asc.ok ? '✓ ' + src.asc.appCount + ' appar' + (src.asc.salesRange ? ', ' + src.asc.salesRange.rowCount + ' sales-rader' : '') : '✗ ' + (src.asc.error || '')}`,
+        `ASC: ${ascStr}`,
       ];
       status.innerHTML = parts.join(' · ');
     }
