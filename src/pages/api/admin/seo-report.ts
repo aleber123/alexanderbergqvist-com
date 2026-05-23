@@ -31,12 +31,12 @@ const SITE_URL = 'https://alexanderbergqvist.com/';
 
 // GA4 property ID. Read from env so the same code works without code
 // changes if we ever migrate properties. Set GA_PROPERTY_ID in Vercel.
-const GA4_PROPERTY_ID = import.meta.env.GA_PROPERTY_ID;
+const GA4_PROPERTY_ID = process.env.GA_PROPERTY_ID;
 
 // ─── Auth ──────────────────────────────────────────────────────────────
 
 function getCreds(): any | null {
-  const jsonStr = import.meta.env.GOOGLE_SERVICE_ACCOUNT_JSON;
+  const jsonStr = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
   if (jsonStr) {
     try {
       return JSON.parse(jsonStr);
@@ -266,7 +266,7 @@ function buildPageInsights(rows: SearchAnalyticsRow[]): Insight[] {
 // ─── Handler ───────────────────────────────────────────────────────────
 
 export const POST: APIRoute = async ({ request }) => {
-  const adminPassword = import.meta.env.ADMIN_PASSWORD;
+  const adminPassword = process.env.ADMIN_PASSWORD;
   if (!adminPassword) {
     return json({ error: 'ADMIN_PASSWORD not configured on server' }, 500);
   }
