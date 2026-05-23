@@ -30,8 +30,11 @@ const {
 } = app.data;
 
 const allArticles = await getCollection('articles', (a) => !a.data.draft);
+// Default (sv) landing page only shows Swedish articles — the localized
+// /<lang>/<app>/ pages handle the rest. Without this filter all language
+// variants got mixed in one list, which is unreadable for any single user.
 const appArticles = allArticles
-  .filter((a) => a.data.app === app.id)
+  .filter((a) => a.data.app === app.id && a.data.lang === 'sv')
   .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
 
 // Hand-curated map of free tool slugs per app. Each entry shows up
