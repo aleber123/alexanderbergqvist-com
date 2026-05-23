@@ -27,7 +27,41 @@ import { GoogleAuth } from 'google-auth-library';
 
 export const prerender = false;
 
-const SITE_URL = 'https://alexanderbergqvist.com/';
+// Tried in order — Search Console requires the exact property ID,
+// which depends on how the property was verified. Domain properties
+// use `sc-domain:` prefix, URL prefix properties use the full URL.
+// We auto-detect on first call by listing sites the SA has access to.
+const SITE_CANDIDATES = [
+  'sc-domain:alexanderbergqvist.com',
+  'https://alexanderbergqvist.com/',
+];
+let resolvedSiteUrl: string | null = null;
+
+async function resolveSiteUrl(): Promise<string> {
+  if (resolvedSiteUrl) return resolvedSiteUrl;
+  const token = await getAccessToken();
+  const res = await fetch(
+    'https://searchconsole.googleapis.com/webmasters/v3/sites',
+    { headers: { Authorization: `Bearer ${token}` } },
+  );
+  if (!res.ok) {
+    // If list-sites fails, fall back to first candidate so the original
+    // error surfaces from the actual query.
+    return SITE_CANDIDATES[0];
+  }
+  const data = (await res.json()) as {
+    siteEntry?: { siteUrl: string; permissionLevel: string }[];
+  };
+  const sites = data.siteEntry || [];
+  const match = SITE_CANDIDATES.find((c) =>
+    sites.some((s) => s.siteUrl === c),
+  );
+  resolvedSiteUrl = match || SITE_CANDIDATES[0];
+  console.log(
+    `[seo-report] resolved site URL: ${resolvedSiteUrl} (SA has access to: ${sites.map((s) => s.siteUrl).join(', ') || 'none'})`,
+  );
+  return resolvedSiteUrl;
+}
 
 // GA4 property ID. Read from env so the same code works without code
 // changes if we ever migrate properties. Set GA_PROPERTY_ID in Vercel.
@@ -103,7 +137,8 @@ async function querySearchAnalytics(opts: {
       },
     ];
   }
-  const url = `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(SITE_URL)}/searchAnalytics/query`;
+  const siteUrl = await resolveSiteUrl();
+  const url = `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`;
   const res = await fetch(url, {
     method: 'POST',
     headers: {
