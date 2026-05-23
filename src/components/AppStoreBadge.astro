@@ -1,13 +1,67 @@
 ---
+/**
+ * App Store download button. Auto-tags every URL with Apple's
+ * `pt` (provider token) + `ct` (campaign) query params so we get
+ * per-source-page attribution in App Store Connect → App Analytics
+ * → Sources → Web Referrers.
+ *
+ * The pt is a constant label for our web property. The ct is
+ * derived from the current pathname (or overridden via prop) so
+ * each landing page gets its own campaign bucket in ASC.
+ *
+ * GA4 outbound-click tracking lives in Analytics.astro and fires
+ * client-side — separate concern, doesn't depend on these tags.
+ */
 interface Props {
   url?: string;
   status?: 'live' | 'soon' | 'beta';
   variant?: 'dark' | 'light';
+  /** Override the auto-derived campaign tag (ct). Useful when the
+   *  badge appears on a dynamically-routed page where we want a
+   *  more meaningful campaign name than the raw slug. */
+  campaign?: string;
 }
 
-const { url, status = 'live', variant = 'dark' } = Astro.props;
+const { url, status = 'live', variant = 'dark', campaign } = Astro.props;
 const isLight = variant === 'light';
 const disabled = status !== 'live' || !url;
+
+// Constant for ALL App Store links across alex.com — Apple groups
+// installs by `pt` in ASC, so keeping it constant makes the "web"
+// channel visible as a single source. Per Apple, max 40 chars.
+const PROVIDER_TOKEN = 'alexbergqvist-com';
+
+/** Sluggify a pathname into a campaign tag Apple accepts:
+ *    /fodelsedagar/aldersrakna/ → fodelsedagar_aldersrakna
+ *    /                          → home
+ *  Apple's ct field is at most 40 chars; we truncate from the end
+ *  so the most-specific segment is preserved. */
+function pathToCampaign(pathname: string): string {
+  const cleaned = pathname.replace(/^\/+|\/+$/g, '').replace(/[^a-zA-Z0-9-]+/g, '_');
+  if (!cleaned) return 'home';
+  return cleaned.length > 40 ? cleaned.slice(-40) : cleaned;
+}
+
+function withAttribution(rawUrl: string): string {
+  try {
+    const u = new URL(rawUrl);
+    if (!u.hostname.includes('apps.apple.com')) return rawUrl;
+    // Don't double-tag if caller already set their own.
+    if (!u.searchParams.has('pt')) u.searchParams.set('pt', PROVIDER_TOKEN);
+    if (!u.searchParams.has('ct')) {
+      const ct = campaign ?? pathToCampaign(Astro.url.pathname);
+      u.searchParams.set('ct', ct);
+    }
+    // `mt=8` is Apple's legacy "this is an app" marker — some attribution
+    // tools still look for it. Cheap to include.
+    if (!u.searchParams.has('mt')) u.searchParams.set('mt', '8');
+    return u.toString();
+  } catch {
+    return rawUrl;
+  }
+}
+
+const taggedUrl = url ? withAttribution(url) : undefined;
 ---
 
 {
@@ -26,7 +80,7 @@ const disabled = status !== 'live' || !url;
     </span>
   ) : (
     <a
-      href={url}
+      href={taggedUrl}
       class={`inline-flex items-center gap-3 rounded-xl px-5 py-3 font-bold text-sm transition hover:scale-[1.02] ${
         isLight
           ? 'bg-white text-slate-900 hover:bg-slate-100'
