@@ -19,5 +19,837 @@
         }
       ]
     }
+  ],
+  "redirects": [
+    {
+      "source": "/andas/4-7-8-atmung-schlaf",
+      "destination": "/de/andas/4-7-8-atmung-schlaf",
+      "permanent": true
+    },
+    {
+      "source": "/andas/4-7-8-atmung-schlaf/",
+      "destination": "/de/andas/4-7-8-atmung-schlaf/",
+      "permanent": true
+    },
+    {
+      "source": "/andas/4-7-8-breathing-sleep",
+      "destination": "/en/andas/4-7-8-breathing-sleep",
+      "permanent": true
+    },
+    {
+      "source": "/andas/4-7-8-breathing-sleep/",
+      "destination": "/en/andas/4-7-8-breathing-sleep/",
+      "permanent": true
+    },
+    {
+      "source": "/andas/atmung-gegen-stress",
+      "destination": "/de/andas/atmung-gegen-stress",
+      "permanent": true
+    },
+    {
+      "source": "/andas/atmung-gegen-stress/",
+      "destination": "/de/andas/atmung-gegen-stress/",
+      "permanent": true
+    },
+    {
+      "source": "/andas/box-atmung-4-4-4-4",
+      "destination": "/de/andas/box-atmung-4-4-4-4",
+      "permanent": true
+    },
+    {
+      "source": "/andas/box-atmung-4-4-4-4/",
+      "destination": "/de/andas/box-atmung-4-4-4-4/",
+      "permanent": true
+    },
+    {
+      "source": "/andas/box-breathing-4-4-4-4",
+      "destination": "/en/andas/box-breathing-4-4-4-4",
+      "permanent": true
+    },
+    {
+      "source": "/andas/box-breathing-4-4-4-4/",
+      "destination": "/en/andas/box-breathing-4-4-4-4/",
+      "permanent": true
+    },
+    {
+      "source": "/andas/breathing-for-stress",
+      "destination": "/en/andas/breathing-for-stress",
+      "permanent": true
+    },
+    {
+      "source": "/andas/breathing-for-stress/",
+      "destination": "/en/andas/breathing-for-stress/",
+      "permanent": true
+    },
+    {
+      "source": "/andas/methode-wim-hof-respiration",
+      "destination": "/fr/andas/methode-wim-hof-respiration",
+      "permanent": true
+    },
+    {
+      "source": "/andas/methode-wim-hof-respiration/",
+      "destination": "/fr/andas/methode-wim-hof-respiration/",
+      "permanent": true
+    },
+    {
+      "source": "/andas/metodo-wim-hof-respiracion",
+      "destination": "/es/andas/metodo-wim-hof-respiracion",
+      "permanent": true
+    },
+    {
+      "source": "/andas/metodo-wim-hof-respiracion/",
+      "destination": "/es/andas/metodo-wim-hof-respiracion/",
+      "permanent": true
+    },
+    {
+      "source": "/andas/respiracion-4-7-8-dormir",
+      "destination": "/es/andas/respiracion-4-7-8-dormir",
+      "permanent": true
+    },
+    {
+      "source": "/andas/respiracion-4-7-8-dormir/",
+      "destination": "/es/andas/respiracion-4-7-8-dormir/",
+      "permanent": true
+    },
+    {
+      "source": "/andas/respiracion-cuadrada-4-4-4-4",
+      "destination": "/es/andas/respiracion-cuadrada-4-4-4-4",
+      "permanent": true
+    },
+    {
+      "source": "/andas/respiracion-cuadrada-4-4-4-4/",
+      "destination": "/es/andas/respiracion-cuadrada-4-4-4-4/",
+      "permanent": true
+    },
+    {
+      "source": "/andas/respiration-4-7-8-sommeil",
+      "destination": "/fr/andas/respiration-4-7-8-sommeil",
+      "permanent": true
+    },
+    {
+      "source": "/andas/respiration-4-7-8-sommeil/",
+      "destination": "/fr/andas/respiration-4-7-8-sommeil/",
+      "permanent": true
+    },
+    {
+      "source": "/andas/respiration-carree-4-4-4-4",
+      "destination": "/fr/andas/respiration-carree-4-4-4-4",
+      "permanent": true
+    },
+    {
+      "source": "/andas/respiration-carree-4-4-4-4/",
+      "destination": "/fr/andas/respiration-carree-4-4-4-4/",
+      "permanent": true
+    },
+    {
+      "source": "/andas/respirazione-4-7-8-sonno",
+      "destination": "/it/andas/respirazione-4-7-8-sonno",
+      "permanent": true
+    },
+    {
+      "source": "/andas/respirazione-4-7-8-sonno/",
+      "destination": "/it/andas/respirazione-4-7-8-sonno/",
+      "permanent": true
+    },
+    {
+      "source": "/andas/wim-hof-method-breathing",
+      "destination": "/en/andas/wim-hof-method-breathing",
+      "permanent": true
+    },
+    {
+      "source": "/andas/wim-hof-method-breathing/",
+      "destination": "/en/andas/wim-hof-method-breathing/",
+      "permanent": true
+    },
+    {
+      "source": "/andas/wim-hof-methode-atmung",
+      "destination": "/de/andas/wim-hof-methode-atmung",
+      "permanent": true
+    },
+    {
+      "source": "/andas/wim-hof-methode-atmung/",
+      "destination": "/de/andas/wim-hof-methode-atmung/",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/birthday-gift-ideas",
+      "destination": "/en/fodelsedagar/birthday-gift-ideas",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/birthday-gift-ideas/",
+      "destination": "/en/fodelsedagar/birthday-gift-ideas/",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/birthday-party-planning-checklist",
+      "destination": "/en/fodelsedagar/birthday-party-planning-checklist",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/birthday-party-planning-checklist/",
+      "destination": "/en/fodelsedagar/birthday-party-planning-checklist/",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/birthday-text-messages",
+      "destination": "/en/fodelsedagar/birthday-text-messages",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/birthday-text-messages/",
+      "destination": "/en/fodelsedagar/birthday-text-messages/",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/cadeaux-anniversaire-mariage-annee",
+      "destination": "/fr/fodelsedagar/cadeaux-anniversaire-mariage-annee",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/cadeaux-anniversaire-mariage-annee/",
+      "destination": "/fr/fodelsedagar/cadeaux-anniversaire-mariage-annee/",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/calendrier-anniversaires-famille",
+      "destination": "/fr/fodelsedagar/calendrier-anniversaires-famille",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/calendrier-anniversaires-famille/",
+      "destination": "/fr/fodelsedagar/calendrier-anniversaires-famille/",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/checklist-planification-anniversaire",
+      "destination": "/fr/fodelsedagar/checklist-planification-anniversaire",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/checklist-planification-anniversaire/",
+      "destination": "/fr/fodelsedagar/checklist-planification-anniversaire/",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/familien-geburtstagskalender",
+      "destination": "/de/fodelsedagar/familien-geburtstagskalender",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/familien-geburtstagskalender/",
+      "destination": "/de/fodelsedagar/familien-geburtstagskalender/",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/family-birthday-calendar",
+      "destination": "/en/fodelsedagar/family-birthday-calendar",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/family-birthday-calendar/",
+      "destination": "/en/fodelsedagar/family-birthday-calendar/",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/forgot-a-birthday",
+      "destination": "/en/fodelsedagar/forgot-a-birthday",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/forgot-a-birthday/",
+      "destination": "/en/fodelsedagar/forgot-a-birthday/",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/geburtstag-vergessen",
+      "destination": "/de/fodelsedagar/geburtstag-vergessen",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/geburtstag-vergessen/",
+      "destination": "/de/fodelsedagar/geburtstag-vergessen/",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/geburtstagsfeier-checkliste",
+      "destination": "/de/fodelsedagar/geburtstagsfeier-checkliste",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/geburtstagsfeier-checkliste/",
+      "destination": "/de/fodelsedagar/geburtstagsfeier-checkliste/",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/geburtstagsgeschenke-ideen",
+      "destination": "/de/fodelsedagar/geburtstagsgeschenke-ideen",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/geburtstagsgeschenke-ideen/",
+      "destination": "/de/fodelsedagar/geburtstagsgeschenke-ideen/",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/geburtstagswuensche-sms",
+      "destination": "/de/fodelsedagar/geburtstagswuensche-sms",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/geburtstagswuensche-sms/",
+      "destination": "/de/fodelsedagar/geburtstagswuensche-sms/",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/hochzeitstag-geschenke-nach-jahr",
+      "destination": "/de/fodelsedagar/hochzeitstag-geschenke-nach-jahr",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/hochzeitstag-geschenke-nach-jahr/",
+      "destination": "/de/fodelsedagar/hochzeitstag-geschenke-nach-jahr/",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/ideas-regalos-cumpleanos",
+      "destination": "/es/fodelsedagar/ideas-regalos-cumpleanos",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/ideas-regalos-cumpleanos/",
+      "destination": "/es/fodelsedagar/ideas-regalos-cumpleanos/",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/idees-cadeaux-anniversaire",
+      "destination": "/fr/fodelsedagar/idees-cadeaux-anniversaire",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/idees-cadeaux-anniversaire/",
+      "destination": "/fr/fodelsedagar/idees-cadeaux-anniversaire/",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/lista-planificacion-fiesta",
+      "destination": "/es/fodelsedagar/lista-planificacion-fiesta",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/lista-planificacion-fiesta/",
+      "destination": "/es/fodelsedagar/lista-planificacion-fiesta/",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/olvidar-cumpleanos",
+      "destination": "/es/fodelsedagar/olvidar-cumpleanos",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/olvidar-cumpleanos/",
+      "destination": "/es/fodelsedagar/olvidar-cumpleanos/",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/oublier-anniversaire",
+      "destination": "/fr/fodelsedagar/oublier-anniversaire",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/oublier-anniversaire/",
+      "destination": "/fr/fodelsedagar/oublier-anniversaire/",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/sms-anniversaire",
+      "destination": "/fr/fodelsedagar/sms-anniversaire",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/sms-anniversaire/",
+      "destination": "/fr/fodelsedagar/sms-anniversaire/",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/wedding-anniversary-gifts-by-year",
+      "destination": "/en/fodelsedagar/wedding-anniversary-gifts-by-year",
+      "permanent": true
+    },
+    {
+      "source": "/fodelsedagar/wedding-anniversary-gifts-by-year/",
+      "destination": "/en/fodelsedagar/wedding-anniversary-gifts-by-year/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/aussaatkalender-deutschland",
+      "destination": "/de/plantera/aussaatkalender-deutschland",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/aussaatkalender-deutschland/",
+      "destination": "/de/plantera/aussaatkalender-deutschland/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/balkongarten-fuer-anfaenger",
+      "destination": "/de/plantera/balkongarten-fuer-anfaenger",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/balkongarten-fuer-anfaenger/",
+      "destination": "/de/plantera/balkongarten-fuer-anfaenger/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/boden-duenger-grundlagen",
+      "destination": "/de/plantera/boden-duenger-grundlagen",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/boden-duenger-grundlagen/",
+      "destination": "/de/plantera/boden-duenger-grundlagen/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/calendario-semina-orto",
+      "destination": "/it/plantera/calendario-semina-orto",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/calendario-semina-orto/",
+      "destination": "/it/plantera/calendario-semina-orto/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/calendario-siembra-hortalizas",
+      "destination": "/es/plantera/calendario-siembra-hortalizas",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/calendario-siembra-hortalizas/",
+      "destination": "/es/plantera/calendario-siembra-hortalizas/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/calendrier-semis-france",
+      "destination": "/fr/plantera/calendrier-semis-france",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/calendrier-semis-france/",
+      "destination": "/fr/plantera/calendrier-semis-france/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/common-garden-pests-diseases",
+      "destination": "/en/plantera/common-garden-pests-diseases",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/common-garden-pests-diseases/",
+      "destination": "/en/plantera/common-garden-pests-diseases/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/container-gardening-beginners",
+      "destination": "/en/plantera/container-gardening-beginners",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/container-gardening-beginners/",
+      "destination": "/en/plantera/container-gardening-beginners/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/crear-huerto-desde-cero",
+      "destination": "/es/plantera/crear-huerto-desde-cero",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/crear-huerto-desde-cero/",
+      "destination": "/es/plantera/crear-huerto-desde-cero/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/creare-orto-da-zero",
+      "destination": "/it/plantera/creare-orto-da-zero",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/creare-orto-da-zero/",
+      "destination": "/it/plantera/creare-orto-da-zero/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/creer-potager-zero",
+      "destination": "/fr/plantera/creer-potager-zero",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/creer-potager-zero/",
+      "destination": "/fr/plantera/creer-potager-zero/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/easiest-vegetables-to-grow",
+      "destination": "/en/plantera/easiest-vegetables-to-grow",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/easiest-vegetables-to-grow/",
+      "destination": "/en/plantera/easiest-vegetables-to-grow/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/einfachstes-gemuese-anbauen",
+      "destination": "/de/plantera/einfachstes-gemuese-anbauen",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/einfachstes-gemuese-anbauen/",
+      "destination": "/de/plantera/einfachstes-gemuese-anbauen/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/garten-anlegen",
+      "destination": "/de/plantera/garten-anlegen",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/garten-anlegen/",
+      "destination": "/de/plantera/garten-anlegen/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/jardin-balcon-debutants",
+      "destination": "/fr/plantera/jardin-balcon-debutants",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/jardin-balcon-debutants/",
+      "destination": "/fr/plantera/jardin-balcon-debutants/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/jardineria-balcon-principiantes",
+      "destination": "/es/plantera/jardineria-balcon-principiantes",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/jardineria-balcon-principiantes/",
+      "destination": "/es/plantera/jardineria-balcon-principiantes/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/legumes-faciles-cultiver",
+      "destination": "/fr/plantera/legumes-faciles-cultiver",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/legumes-faciles-cultiver/",
+      "destination": "/fr/plantera/legumes-faciles-cultiver/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/orto-balcone-principianti",
+      "destination": "/it/plantera/orto-balcone-principianti",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/orto-balcone-principianti/",
+      "destination": "/it/plantera/orto-balcone-principianti/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/parasites-maladies-potager",
+      "destination": "/fr/plantera/parasites-maladies-potager",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/parasites-maladies-potager/",
+      "destination": "/fr/plantera/parasites-maladies-potager/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/parassiti-malattie-orto",
+      "destination": "/it/plantera/parassiti-malattie-orto",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/parassiti-malattie-orto/",
+      "destination": "/it/plantera/parassiti-malattie-orto/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/plagas-enfermedades-huerto",
+      "destination": "/es/plantera/plagas-enfermedades-huerto",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/plagas-enfermedades-huerto/",
+      "destination": "/es/plantera/plagas-enfermedades-huerto/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/schaedlinge-pflanzenkrankheiten",
+      "destination": "/de/plantera/schaedlinge-pflanzenkrankheiten",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/schaedlinge-pflanzenkrankheiten/",
+      "destination": "/de/plantera/schaedlinge-pflanzenkrankheiten/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/soil-fertilizer-basics",
+      "destination": "/en/plantera/soil-fertilizer-basics",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/soil-fertilizer-basics/",
+      "destination": "/en/plantera/soil-fertilizer-basics/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/sol-engrais-potager",
+      "destination": "/fr/plantera/sol-engrais-potager",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/sol-engrais-potager/",
+      "destination": "/fr/plantera/sol-engrais-potager/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/start-garden-from-scratch",
+      "destination": "/en/plantera/start-garden-from-scratch",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/start-garden-from-scratch/",
+      "destination": "/en/plantera/start-garden-from-scratch/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/suelo-fertilizantes-huerto",
+      "destination": "/es/plantera/suelo-fertilizantes-huerto",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/suelo-fertilizantes-huerto/",
+      "destination": "/es/plantera/suelo-fertilizantes-huerto/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/suolo-fertilizzanti-orto",
+      "destination": "/it/plantera/suolo-fertilizzanti-orto",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/suolo-fertilizzanti-orto/",
+      "destination": "/it/plantera/suolo-fertilizzanti-orto/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/vegetable-sowing-calendar-usda",
+      "destination": "/en/plantera/vegetable-sowing-calendar-usda",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/vegetable-sowing-calendar-usda/",
+      "destination": "/en/plantera/vegetable-sowing-calendar-usda/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/verduras-faciles-cultivar",
+      "destination": "/es/plantera/verduras-faciles-cultivar",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/verduras-faciles-cultivar/",
+      "destination": "/es/plantera/verduras-faciles-cultivar/",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/verdure-facili-coltivare",
+      "destination": "/it/plantera/verdure-facili-coltivare",
+      "permanent": true
+    },
+    {
+      "source": "/plantera/verdure-facili-coltivare/",
+      "destination": "/it/plantera/verdure-facili-coltivare/",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/best-flour-for-sourdough",
+      "destination": "/en/surdeg/best-flour-for-sourdough",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/best-flour-for-sourdough/",
+      "destination": "/en/surdeg/best-flour-for-sourdough/",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/bestes-mehl-fuer-sauerteig",
+      "destination": "/de/surdeg/bestes-mehl-fuer-sauerteig",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/bestes-mehl-fuer-sauerteig/",
+      "destination": "/de/surdeg/bestes-mehl-fuer-sauerteig/",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/equipement-boulange-levain",
+      "destination": "/fr/surdeg/equipement-boulange-levain",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/equipement-boulange-levain/",
+      "destination": "/fr/surdeg/equipement-boulange-levain/",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/levain-au-frigo",
+      "destination": "/fr/surdeg/levain-au-frigo",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/levain-au-frigo/",
+      "destination": "/fr/surdeg/levain-au-frigo/",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/levain-depart-zero",
+      "destination": "/fr/surdeg/levain-depart-zero",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/levain-depart-zero/",
+      "destination": "/fr/surdeg/levain-depart-zero/",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/levain-ne-monte-pas",
+      "destination": "/fr/surdeg/levain-ne-monte-pas",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/levain-ne-monte-pas/",
+      "destination": "/fr/surdeg/levain-ne-monte-pas/",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/meilleure-farine-levain",
+      "destination": "/fr/surdeg/meilleure-farine-levain",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/meilleure-farine-levain/",
+      "destination": "/fr/surdeg/meilleure-farine-levain/",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/ofentrieb-knusprige-kruste",
+      "destination": "/de/surdeg/ofentrieb-knusprige-kruste",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/ofentrieb-knusprige-kruste/",
+      "destination": "/de/surdeg/ofentrieb-knusprige-kruste/",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/oven-spring-crusty-crust",
+      "destination": "/en/surdeg/oven-spring-crusty-crust",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/oven-spring-crusty-crust/",
+      "destination": "/en/surdeg/oven-spring-crusty-crust/",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/sauerteig-ansatz-selber-machen",
+      "destination": "/de/surdeg/sauerteig-ansatz-selber-machen",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/sauerteig-ansatz-selber-machen/",
+      "destination": "/de/surdeg/sauerteig-ansatz-selber-machen/",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/sauerteig-ausruestung",
+      "destination": "/de/surdeg/sauerteig-ausruestung",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/sauerteig-ausruestung/",
+      "destination": "/de/surdeg/sauerteig-ausruestung/",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/sauerteig-geht-nicht-auf",
+      "destination": "/de/surdeg/sauerteig-geht-nicht-auf",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/sauerteig-geht-nicht-auf/",
+      "destination": "/de/surdeg/sauerteig-geht-nicht-auf/",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/sauerteig-im-kuehlschrank",
+      "destination": "/de/surdeg/sauerteig-im-kuehlschrank",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/sauerteig-im-kuehlschrank/",
+      "destination": "/de/surdeg/sauerteig-im-kuehlschrank/",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/sourdough-equipment-guide",
+      "destination": "/en/surdeg/sourdough-equipment-guide",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/sourdough-equipment-guide/",
+      "destination": "/en/surdeg/sourdough-equipment-guide/",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/sourdough-not-rising",
+      "destination": "/en/surdeg/sourdough-not-rising",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/sourdough-not-rising/",
+      "destination": "/en/surdeg/sourdough-not-rising/",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/sourdough-starter-from-scratch",
+      "destination": "/en/surdeg/sourdough-starter-from-scratch",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/sourdough-starter-from-scratch/",
+      "destination": "/en/surdeg/sourdough-starter-from-scratch/",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/sourdough-storage-fridge",
+      "destination": "/en/surdeg/sourdough-storage-fridge",
+      "permanent": true
+    },
+    {
+      "source": "/surdeg/sourdough-storage-fridge/",
+      "destination": "/en/surdeg/sourdough-storage-fridge/",
+      "permanent": true
+    }
   ]
 }
