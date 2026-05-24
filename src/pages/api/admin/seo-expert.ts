@@ -29,10 +29,13 @@ import {
   requireAdminAuth,
 } from '../../../lib/google-api';
 import {
+  fetchLatestSubscriptions,
   fetchSalesRange,
   listApps,
   summarizeByApp,
+  summarizeSubscriptionsByApp,
   type AppSalesSummary,
+  type AppSubscriptionSummary,
   type SalesRow,
 } from '../../../lib/asc';
 
@@ -51,15 +54,22 @@ interface AppRow {
   gaSessions: number;
   gaUsers: number;
   gaBounceRate: number;
-  // ASC
+  // ASC sales (free installs)
   ascUnits: number;
   ascProceeds: number;
   ascCurrency: string;
   ascTopCountries: { cc: string; units: number }[];
+  // ASC subscriptions (paid recurring — this is real money)
+  ascActiveSubs: number;
+  ascFreeTrials: number;
+  ascMrr: number;
+  ascMrrCurrency: string;
+  ascSubTiers: { name: string; active: number; price: number; currency: string; durationDays: number }[];
   // Derived
   searchToSession: number; // gaSessions / gscClicks (1.0 = no loss)
   sessionToInstall: number; // ascUnits / gaSessions
   searchToInstall: number; // ascUnits / gscClicks
+  installToSubConversion: number; // ascActiveSubs / ascUnits — the conversion that matters
 }
 
 interface Insight {
@@ -82,6 +92,7 @@ function buildAppRow(
   gscRows: { keys: string[]; clicks: number; impressions: number; ctr: number; position: number }[],
   gaPages: { page: string; sessions: number; users: number; bounceRate: number }[],
   ascSummary: AppSalesSummary | null,
+  ascSubs: AppSubscriptionSummary | null,
 ): AppRow {
   // GSC rows are keyed by full URL — sum everything starting with /<slug>/
   const urlPrefix = `https://alexanderbergqvist.com/${slug}`;
@@ -128,9 +139,24 @@ function buildAppRow(
     ascProceeds,
     ascCurrency,
     ascTopCountries,
+    ascActiveSubs: ascSubs?.activeSubscribers ?? 0,
+    ascFreeTrials: ascSubs?.freeTrials ?? 0,
+    ascMrr: ascSubs?.mrrEstimate ?? 0,
+    ascMrrCurrency: ascSubs?.mrrCurrency ?? 'USD',
+    ascSubTiers: (ascSubs?.byTier ?? []).map((t) => ({
+      name: t.name,
+      active: t.activeSubs,
+      price: t.price,
+      currency: t.currency,
+      durationDays: t.durationDays,
+    })),
     searchToSession: safeRatio(gaSessions, gscClicks),
     sessionToInstall: safeRatio(ascUnits, gaSessions),
     searchToInstall: safeRatio(ascUnits, gscClicks),
+    installToSubConversion: safeRatio(
+      ascSubs?.activeSubscribers ?? 0,
+      ascSummary?.units ?? 0,
+    ),
   };
 }
 
@@ -213,17 +239,53 @@ function buildInsights(rows: AppRow[]): Insight[] {
     }
   }
 
-  // 7. Portfolio-level: top revenue driver
-  const totalRevenue = rows.reduce((s, r) => s + r.ascProceeds, 0);
-  const topApp = [...rows].sort((a, b) => b.ascProceeds - a.ascProceeds)[0];
-  if (topApp && topApp.ascProceeds > 0) {
-    const pct = ((topApp.ascProceeds / totalRevenue) * 100).toFixed(0);
+  // 7. Subscription conversion bleeders (CORE metric — this is revenue)
+  for (const r of rows) {
+    // Many installs, very few subs → paywall problem
+    if (r.ascUnits >= 50 && r.installToSubConversion < 0.005 && r.ascActiveSubs >= 0) {
+      insights.push({
+        severity: 'high',
+        icon: '💸',
+        app: r.name,
+        title: `${r.name}: ${r.ascUnits} installs → bara ${r.ascActiveSubs} prenumeranter (${(r.installToSubConversion * 100).toFixed(2)}%)`,
+        detail: `Industry benchmark för B2C-iOS-utility-apps är 1-5% install→sub. Under 0.5% indikerar paywall-problem: timing, copy, pris eller value prop.`,
+        action: `Granska /lib/screens/paywall_screen.dart för ${r.slug}. Vanliga fix: visa paywall efter "wow"-moment (inte vid app-start), framhäv free trial tydligt, social proof ("X+ användare"), Apple 3.1.2(c) compliance.`,
+      });
+    }
+    // Strong free trial uptake — focus on trial-to-paid conversion
+    if (r.ascFreeTrials >= 5 && r.ascFreeTrials > r.ascActiveSubs * 2) {
+      insights.push({
+        severity: 'med',
+        icon: '🎁',
+        app: r.name,
+        title: `${r.name}: ${r.ascFreeTrials} free trials aktiva, ${r.ascActiveSubs} betalande`,
+        detail: `Du har trafik IN i trial men många konverterar inte till paid. Trial-to-paid är där 80% av prenumerations-revenue vinns eller förloras.`,
+        action: `Skicka dag-5-notis ("Trial slutar om 2 dagar — så här har du använt appen"). Visa stats om vad de skulle förlora om de inte betalar.`,
+      });
+    }
+  }
+
+  // 8. Portfolio-level: MRR distribution
+  const totalMrr = rows.reduce((s, r) => s + r.ascMrr, 0);
+  if (totalMrr > 0) {
+    const topMrr = [...rows].sort((a, b) => b.ascMrr - a.ascMrr)[0];
+    if (topMrr && topMrr.ascMrr > 0) {
+      const pct = ((topMrr.ascMrr / totalMrr) * 100).toFixed(0);
+      insights.push({
+        severity: 'low',
+        icon: '💰',
+        title: `${topMrr.name} står för ${pct}% av total MRR (${topMrr.ascMrr.toFixed(0)} ${topMrr.ascMrrCurrency})`,
+        detail: `Total MRR portfölj: ${totalMrr.toFixed(0)} ${topMrr.ascMrrCurrency}. ${topMrr.ascActiveSubs} betalande prenumeranter på ${topMrr.name}.`,
+        action: `Diversifiering: bygg en till app till MRR-paritet eller dubblera ner på ${topMrr.name}.`,
+      });
+    }
+  } else {
     insights.push({
-      severity: 'low',
-      icon: '💰',
-      title: `${topApp.name} står för ${pct}% av all revenue`,
-      detail: `${topApp.ascUnits} installs → ${topApp.ascProceeds.toFixed(0)} ${topApp.ascCurrency}.`,
-      action: `Säkerställ att ${topApp.name} har vass SEO + ASO. En enda procent ökad conversion = stor revenue-effekt.`,
+      severity: 'med',
+      icon: '🤔',
+      title: 'Ingen MRR registrerad ännu',
+      detail: 'Antingen har du noll betalande prenumeranter, eller så har Apple inte hunnit publicera senaste Subscription-rapporten (1-2 dagars delay).',
+      action: 'Verifiera manuellt: ASC → Sales and Trends → Subscriptions. Om noll: granska paywalls (timing, free trial, prissättning).',
     });
   }
 
@@ -327,9 +389,30 @@ export const POST: APIRoute = async ({ request }) => {
       }
     }
 
+    // ASC subscriptions — snapshot of active subscribers as of latest
+    // day Apple has published. This is where revenue lives for our apps.
+    let subsByAppId: Map<string, AppSubscriptionSummary> = new Map();
+    let subsDate: string | null = null;
+    let subsRowCount = 0;
+    if (ascApps.length > 0) {
+      try {
+        const latest = await fetchLatestSubscriptions();
+        subsDate = latest.date;
+        subsRowCount = latest.rows.length;
+        subsByAppId = summarizeSubscriptionsByApp(latest.rows);
+      } catch (e) {
+        console.warn('[seo-expert] ASC subscriptions fetch failed:', e);
+      }
+    }
+
     // bundleId → ASC SKU map (sales reports are keyed by SKU, not bundleId)
+    // bundleId → numeric Apple ID (subscription reports use that)
     const bundleToSku = new Map<string, string>();
-    for (const a of ascApps) bundleToSku.set(a.bundleId, a.sku);
+    const bundleToAppleId = new Map<string, string>();
+    for (const a of ascApps) {
+      bundleToSku.set(a.bundleId, a.sku);
+      bundleToAppleId.set(a.bundleId, a.id);
+    }
 
     // Combine into one row per website app
     const appRows: AppRow[] = appCfgs.map((cfg) => {
@@ -337,7 +420,17 @@ export const POST: APIRoute = async ({ request }) => {
       const ascSummary = sku
         ? ascSummaries.find((s) => s.sku === sku) ?? null
         : null;
-      return buildAppRow(cfg.slug, cfg.name, cfg.bundleId, gscData, gaPages, ascSummary);
+      const appleId = bundleToAppleId.get(cfg.bundleId);
+      const ascSubs = appleId ? subsByAppId.get(appleId) ?? null : null;
+      return buildAppRow(
+        cfg.slug,
+        cfg.name,
+        cfg.bundleId,
+        gscData,
+        gaPages,
+        ascSummary,
+        ascSubs,
+      );
     });
 
     appRows.sort((a, b) => b.gscClicks + b.gaSessions - (a.gscClicks + a.gaSessions));
@@ -347,7 +440,13 @@ export const POST: APIRoute = async ({ request }) => {
       sources: {
         gsc: { ok: gscRows.status === 'fulfilled', error: gscRows.status === 'rejected' ? String(gscRows.reason) : null, rowCount: gscData.length },
         ga4: { ok: gaResp.status === 'fulfilled', error: gaResp.status === 'rejected' ? String(gaResp.reason) : null, rowCount: gaPages.length },
-        asc: { ok: ascAppsList.status === 'fulfilled', error: ascAppsList.status === 'rejected' ? String(ascAppsList.reason) : null, appCount: ascApps.length, salesRange },
+        asc: {
+          ok: ascAppsList.status === 'fulfilled',
+          error: ascAppsList.status === 'rejected' ? String(ascAppsList.reason) : null,
+          appCount: ascApps.length,
+          salesRange,
+          subscriptions: { date: subsDate, rowCount: subsRowCount },
+        },
       },
       apps: appRows,
       insights: buildInsights(appRows),

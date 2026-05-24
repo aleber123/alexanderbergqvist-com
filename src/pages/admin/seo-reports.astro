@@ -337,10 +337,15 @@ import BaseLayout from '../../components/BaseLayout.astro';
       let ascStr;
       if (src.asc.ok) {
         const sr = src.asc.salesRange;
+        const subs = src.asc.subscriptions;
         ascStr = '✓ ' + src.asc.appCount + ' appar';
         if (sr) {
           ascStr += `, ${sr.rowCount} sales-rader (${sr.daysFetched}/${sr.daysFetched + sr.daysSkipped} dagar)`;
-          if (sr.firstError) ascStr += ` — fel: ${sr.firstError}`;
+        }
+        if (subs && subs.date) {
+          ascStr += `, subs-snapshot ${subs.date} (${subs.rowCount} rader)`;
+        } else if (subs) {
+          ascStr += ', subs: ingen data tillgänglig än';
         }
       } else {
         ascStr = '✗ ' + (src.asc.error || '');
@@ -363,13 +368,13 @@ import BaseLayout from '../../components/BaseLayout.astro';
       const cols = [
         'App',
         'GSC klick',
-        'GSC exp',
-        'Pos',
         'GA sessions',
         'Bounce %',
         'Installs',
-        'Revenue',
-        'Sök→Install %',
+        'Trials',
+        'Subs',
+        'MRR',
+        'Install→Sub %',
       ];
       const html =
         '<table><thead><tr>' +
@@ -379,29 +384,40 @@ import BaseLayout from '../../components/BaseLayout.astro';
         '</tr></thead><tbody>' +
         apps
           .map((a) => {
-            const revStr = a.ascProceeds
-              ? a.ascProceeds.toFixed(0) + ' ' + a.ascCurrency
+            const mrrStr = a.ascMrr
+              ? a.ascMrr.toFixed(0) + ' ' + a.ascMrrCurrency
               : '–';
-            const convStr = a.gscClicks
-              ? (a.searchToInstall * 100).toFixed(0) + '%'
+            const convStr = a.ascUnits
+              ? (a.installToSubConversion * 100).toFixed(2) + '%'
               : '–';
             return (
               '<tr>' +
               `<td>${escapeHtml(a.name)}</td>` +
               `<td class="num">${a.gscClicks}</td>` +
-              `<td class="num">${a.gscImpressions}</td>` +
-              `<td class="num">${a.gscAvgPosition ? a.gscAvgPosition.toFixed(1) : '–'}</td>` +
               `<td class="num">${a.gaSessions}</td>` +
               `<td class="num">${a.gaSessions ? (a.gaBounceRate * 100).toFixed(0) : '–'}</td>` +
               `<td class="num">${a.ascUnits}</td>` +
-              `<td class="num">${revStr}</td>` +
+              `<td class="num">${a.ascFreeTrials || '–'}</td>` +
+              `<td class="num"><strong>${a.ascActiveSubs || '–'}</strong></td>` +
+              `<td class="num"><strong>${mrrStr}</strong></td>` +
               `<td class="num">${convStr}</td>` +
               '</tr>'
             );
           })
           .join('') +
         '</tbody></table>';
-      tableDiv.innerHTML = html;
+      // Add MRR total row at the bottom
+      const totalMrr = apps.reduce((s, a) => s + (a.ascMrr || 0), 0);
+      const totalSubs = apps.reduce((s, a) => s + (a.ascActiveSubs || 0), 0);
+      const totalInstalls = apps.reduce((s, a) => s + (a.ascUnits || 0), 0);
+      const currency = apps.find((a) => a.ascMrr > 0)?.ascMrrCurrency || 'USD';
+      const summary =
+        '<div style="margin-top:12px;padding:12px;background:#f0fdf4;border-radius:8px;border:1px solid #bbf7d0;font-weight:600;">' +
+        `Total portfolio: <strong>${totalMrr.toFixed(0)} ${currency}/mån</strong> MRR · ` +
+        `${totalSubs} betalande prenumeranter · ` +
+        `${totalInstalls} installs (28 dagar)` +
+        '</div>';
+      tableDiv.innerHTML = html + summary;
     }
 
     function renderInsights(insights) {

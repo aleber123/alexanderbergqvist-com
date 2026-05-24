@@ -261,3 +261,214 @@ export function summarizeByApp(rows: SalesRow[]): AppSalesSummary[] {
   }
   return Array.from(map.values()).sort((a, b) => b.units - a.units);
 }
+
+// ─── Subscription Reports ──────────────────────────────────────────────
+//
+// SUBSCRIPTION reports are snapshots of active subscribers at a point in
+// time (vs SALES which is transactional). They need filter[version]=1_3
+// (unlike SALES which doesn't take a version).
+//
+// We use this to calculate MRR: count active subscribers × monthly price
+// per subscription tier. This is the metric that actually moves the
+// business — downloads without conversions don't pay rent.
+
+export interface SubscriptionRow {
+  date: string;
+  appAppleId: string; // Apple's numeric app id
+  subscriptionAppleId: string; // numeric id of the subscription IAP
+  subscriptionName: string;
+  subscriptionGroupId: string;
+  durationDays: number; // 30 for monthly, 365 for annual
+  customerPrice: number;
+  customerCurrency: string;
+  proceedsCurrency: string;
+  developerProceeds: number; // Apple's cut already subtracted
+  countryCode: string;
+  activeStandardPrice: number;
+  freeTrialIntroOfferSubs: number;
+  paidIntroOfferSubs: number;
+  marketingOptIns: number;
+}
+
+function parseDurationDays(raw: string): number {
+  // Apple writes things like "1 Month", "1 Year", "1 Week"
+  const lower = raw.toLowerCase();
+  if (lower.includes('year')) return 365;
+  if (lower.includes('month')) return 30;
+  if (lower.includes('week')) return 7;
+  if (lower.includes('day')) {
+    const n = parseInt(lower, 10);
+    return Number.isFinite(n) ? n : 30;
+  }
+  return 30;
+}
+
+export async function fetchDailySubscriptions(
+  dateYyyyMmDd: string,
+): Promise<SubscriptionRow[]> {
+  const vendorNumber = process.env.ASC_VENDOR_NUMBER;
+  if (!vendorNumber) throw new Error('ASC_VENDOR_NUMBER not set');
+  const token = getJwt();
+
+  const params = new URLSearchParams({
+    'filter[frequency]': 'DAILY',
+    'filter[reportType]': 'SUBSCRIPTION',
+    'filter[reportSubType]': 'SUMMARY',
+    'filter[vendorNumber]': vendorNumber,
+    'filter[reportDate]': dateYyyyMmDd,
+    // SUBSCRIPTION (unlike SALES) requires version. 1_3 is the latest
+    // we get richer columns including freeTrialIntroOffer counts.
+    'filter[version]': '1_3',
+  });
+  const url = `https://api.appstoreconnect.apple.com/v1/salesReports?${params}`;
+  const res = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/a-gzip, application/json',
+    },
+  });
+  if (res.status === 404) return [];
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`ASC SUBSCRIPTION ${res.status}: ${text}`);
+  }
+  const buf = Buffer.from(await res.arrayBuffer());
+  const tsv = gunzipSync(buf).toString('utf8');
+  return parseSubscriptionTsv(tsv, dateYyyyMmDd);
+}
+
+function parseSubscriptionTsv(
+  tsv: string,
+  fallbackDate: string,
+): SubscriptionRow[] {
+  const lines = tsv.split('\n').filter((l) => l.trim());
+  if (lines.length < 2) return [];
+  const headers = lines[0].split('\t').map((h) => h.trim());
+  const idx = (name: string) => headers.indexOf(name);
+
+  const appIdIdx = idx('App Apple ID');
+  const subAppleIdIdx = idx('Subscription Apple ID');
+  const subNameIdx = idx('Subscription Name');
+  const subGroupIdx = idx('Subscription Group ID');
+  const durationIdx = idx('Standard Subscription Duration');
+  const customerPriceIdx = idx('Customer Price');
+  const customerCurrencyIdx = idx('Customer Currency');
+  const proceedsIdx = idx('Developer Proceeds');
+  const proceedsCurrencyIdx = idx('Proceeds Currency');
+  const countryIdx = idx('Country');
+  const activeIdx = idx('Active Standard Price Subscriptions');
+  const trialIdx = idx('Free Trial Introductory Offer Subscriptions');
+  const introIdx = idx('Paid Introductory Offer Subscriptions');
+  const marketingIdx = idx('Marketing Opt-Ins');
+
+  const out: SubscriptionRow[] = [];
+  for (let i = 1; i < lines.length; i++) {
+    const cells = lines[i].split('\t');
+    if (cells.length < headers.length) continue;
+    out.push({
+      date: fallbackDate,
+      appAppleId: cells[appIdIdx]?.trim() ?? '',
+      subscriptionAppleId: cells[subAppleIdIdx]?.trim() ?? '',
+      subscriptionName: cells[subNameIdx]?.trim() ?? '',
+      subscriptionGroupId: cells[subGroupIdx]?.trim() ?? '',
+      durationDays: parseDurationDays(cells[durationIdx]?.trim() ?? ''),
+      customerPrice: Number(cells[customerPriceIdx] ?? 0) || 0,
+      customerCurrency: cells[customerCurrencyIdx]?.trim() ?? 'USD',
+      proceedsCurrency: cells[proceedsCurrencyIdx]?.trim() ?? 'USD',
+      developerProceeds: Number(cells[proceedsIdx] ?? 0) || 0,
+      countryCode: cells[countryIdx]?.trim() ?? '',
+      activeStandardPrice: Number(cells[activeIdx] ?? 0) || 0,
+      freeTrialIntroOfferSubs: Number(cells[trialIdx] ?? 0) || 0,
+      paidIntroOfferSubs: Number(cells[introIdx] ?? 0) || 0,
+      marketingOptIns: Number(cells[marketingIdx] ?? 0) || 0,
+    });
+  }
+  return out;
+}
+
+/** Returns the most recent day for which Apple has subscription data,
+ *  plus the parsed rows. We try the last 5 days going backwards so the
+ *  function doesn't get stuck on Apple's 1-2 day delay. */
+export async function fetchLatestSubscriptions(): Promise<{
+  date: string | null;
+  rows: SubscriptionRow[];
+}> {
+  const day = 24 * 60 * 60 * 1000;
+  for (let offset = 1; offset <= 5; offset++) {
+    const d = new Date(Date.now() - offset * day);
+    const yyyy = d.getUTCFullYear();
+    const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+    const dd = String(d.getUTCDate()).padStart(2, '0');
+    const dateStr = `${yyyy}-${mm}-${dd}`;
+    try {
+      const rows = await fetchDailySubscriptions(dateStr);
+      if (rows.length > 0) {
+        return { date: dateStr, rows };
+      }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      if (!msg.includes('404')) {
+        console.warn(`[asc] subs ${dateStr}: ${msg}`);
+      }
+    }
+  }
+  return { date: null, rows: [] };
+}
+
+export interface AppSubscriptionSummary {
+  appAppleId: string;
+  activeSubscribers: number; // Sum across all tiers
+  freeTrials: number;
+  paidIntroOffers: number;
+  /** Estimated monthly recurring revenue in proceeds currency.
+   *  Monthly subs count 1×customerPrice, annual subs count price/12, etc. */
+  mrrEstimate: number;
+  mrrCurrency: string;
+  /** Most common currency among rows — used for display. */
+  byTier: { name: string; activeSubs: number; price: number; currency: string; durationDays: number }[];
+}
+
+export function summarizeSubscriptionsByApp(
+  rows: SubscriptionRow[],
+): Map<string, AppSubscriptionSummary> {
+  const map = new Map<string, AppSubscriptionSummary>();
+  for (const r of rows) {
+    let s = map.get(r.appAppleId);
+    if (!s) {
+      s = {
+        appAppleId: r.appAppleId,
+        activeSubscribers: 0,
+        freeTrials: 0,
+        paidIntroOffers: 0,
+        mrrEstimate: 0,
+        mrrCurrency: r.customerCurrency,
+        byTier: [],
+      };
+      map.set(r.appAppleId, s);
+    }
+    s.activeSubscribers += r.activeStandardPrice;
+    s.freeTrials += r.freeTrialIntroOfferSubs;
+    s.paidIntroOffers += r.paidIntroOfferSubs;
+
+    // MRR contribution: monthly = full price, annual = price/12, weekly = price*4.33.
+    const monthlyEquivalent = r.activeStandardPrice * r.customerPrice * (30 / r.durationDays);
+    s.mrrEstimate += monthlyEquivalent;
+
+    // Aggregate by tier (sub name) for breakdown
+    const existing = s.byTier.find(
+      (t) => t.name === r.subscriptionName && t.currency === r.customerCurrency,
+    );
+    if (existing) {
+      existing.activeSubs += r.activeStandardPrice;
+    } else {
+      s.byTier.push({
+        name: r.subscriptionName,
+        activeSubs: r.activeStandardPrice,
+        price: r.customerPrice,
+        currency: r.customerCurrency,
+        durationDays: r.durationDays,
+      });
+    }
+  }
+  return map;
+}
