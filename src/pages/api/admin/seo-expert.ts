@@ -70,6 +70,26 @@ interface AppRow {
   sessionToInstall: number; // ascUnits / gaSessions
   searchToInstall: number; // ascUnits / gscClicks
   installToSubConversion: number; // ascActiveSubs / ascUnits — the conversion that matters
+  // Per-article breakdown: which URLs under this app drive search traffic,
+  // sorted by GSC clicks descending. Lets the UI drill-down from app-row
+  // into the specific articles to attribute MRR per article.
+  topArticles: ArticleRow[];
+}
+
+interface ArticleRow {
+  /** Full URL (relative path with leading /), e.g. /sv/surdeg/sourdough-not-rising/ */
+  path: string;
+  gscClicks: number;
+  gscImpressions: number;
+  gscCtr: number;
+  gscAvgPosition: number;
+  gaSessions: number;
+  /** Share of this app's total GSC clicks contributed by this article (0-1). */
+  shareOfAppClicks: number;
+  /** Estimated MRR contribution = shareOfAppClicks × app's total MRR.
+   *  Assumes search traffic converts uniformly across articles for the same
+   *  app — rough, but lets us rank articles by economic value. */
+  estimatedMrrContribution: number;
 }
 
 interface Insight {
@@ -85,6 +105,29 @@ function safeRatio(num: number, denom: number): number {
   return denom > 0 ? num / denom : 0;
 }
 
+const LOCALE_PREFIXES = [
+  'sv', 'en', 'de', 'fr', 'es', 'it', 'no', 'nb', 'da', 'fi', 'is',
+  'nl', 'pt', 'pl', 'el',
+];
+
+/** True if a full URL (https://...) belongs to the given app slug, both
+ *  for default-locale (/<slug>/...) and lang-prefixed (/<lang>/<slug>/...)
+ *  routes. */
+function isAppUrl(fullUrl: string, slug: string): boolean {
+  const u = fullUrl.replace(/^https?:\/\/[^/]+/, '');
+  return isAppPath(u, slug);
+}
+
+function isAppPath(path: string, slug: string): boolean {
+  if (path.startsWith(`/${slug}/`) || path === `/${slug}`) return true;
+  for (const p of LOCALE_PREFIXES) {
+    if (path.startsWith(`/${p}/${slug}/`) || path === `/${p}/${slug}`) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function buildAppRow(
   slug: string,
   name: string,
@@ -94,9 +137,11 @@ function buildAppRow(
   ascSummary: AppSalesSummary | null,
   ascSubs: AppSubscriptionSummary | null,
 ): AppRow {
-  // GSC rows are keyed by full URL — sum everything starting with /<slug>/
-  const urlPrefix = `https://alexanderbergqvist.com/${slug}`;
-  const sc = gscRows.filter((r) => r.keys[0].startsWith(urlPrefix));
+  // GSC rows are keyed by full URL — match both the default-locale routes
+  // (/<slug>/...) and the lang-prefixed routes (/<lang>/<slug>/...).
+  // Using two prefixes catches /en/surdeg/, /de/surdeg/, etc. without
+  // false-matching, e.g., /surdeg-foo/.
+  const sc = gscRows.filter((r) => isAppUrl(r.keys[0], slug));
   const gscClicks = sc.reduce((s, r) => s + r.clicks, 0);
   const gscImpressions = sc.reduce((s, r) => s + r.impressions, 0);
   const gscCtr = safeRatio(gscClicks, gscImpressions);
@@ -107,7 +152,7 @@ function buildAppRow(
   );
   const gscAvgPosition = gscImpressions > 0 ? positionWeight / gscImpressions : 0;
 
-  const ga = gaPages.filter((p) => p.page.startsWith(`/${slug}`));
+  const ga = gaPages.filter((p) => isAppPath(p.page, slug));
   const gaSessions = ga.reduce((s, p) => s + p.sessions, 0);
   const gaUsers = ga.reduce((s, p) => s + p.users, 0);
   // Average bounce rate weighted by sessions
@@ -123,6 +168,31 @@ function buildAppRow(
         .sort((a, b) => b.units - a.units)
         .slice(0, 5)
     : [];
+
+  // Top articles for this app, ranked by GSC clicks.
+  // GA pageviews matched by path so we can show pageviews per article too.
+  const gaByPath = new Map<string, number>();
+  for (const p of ga) gaByPath.set(p.page, (gaByPath.get(p.page) || 0) + p.sessions);
+
+  const mrr = ascSubs?.mrrEstimate ?? 0;
+  const topArticles: ArticleRow[] = sc
+    .map((r) => {
+      const path = r.keys[0].replace(/^https?:\/\/[^/]+/, '');
+      const articleShare = gscClicks > 0 ? r.clicks / gscClicks : 0;
+      return {
+        path,
+        gscClicks: r.clicks,
+        gscImpressions: r.impressions,
+        gscCtr: r.ctr,
+        gscAvgPosition: r.position,
+        gaSessions: gaByPath.get(path) || 0,
+        shareOfAppClicks: articleShare,
+        estimatedMrrContribution: articleShare * mrr,
+      };
+    })
+    .filter((a) => a.gscClicks > 0 || a.gscImpressions > 5)
+    .sort((a, b) => b.gscClicks - a.gscClicks || b.gscImpressions - a.gscImpressions)
+    .slice(0, 20);
 
   return {
     slug,
@@ -157,6 +227,7 @@ function buildAppRow(
       ascSubs?.activeSubscribers ?? 0,
       ascSummary?.units ?? 0,
     ),
+    topArticles,
   };
 }
 

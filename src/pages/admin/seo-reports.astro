@@ -389,16 +389,19 @@ import BaseLayout from '../../components/BaseLayout.astro';
           .join('') +
         '</tr></thead><tbody>' +
         apps
-          .map((a) => {
+          .map((a, appIdx) => {
             const mrrStr = a.ascMrr
               ? a.ascMrr.toFixed(0) + ' ' + a.ascMrrCurrency
               : '–';
             const convStr = a.ascUnits
               ? (a.installToSubConversion * 100).toFixed(2) + '%'
               : '–';
+            const hasArticles = a.topArticles && a.topArticles.length > 0;
+            const caret = hasArticles ? '▸' : '·';
+            const cls = hasArticles ? 'cursor-pointer expert-row' : 'expert-row';
             return (
-              '<tr>' +
-              `<td>${escapeHtml(a.name)}</td>` +
+              `<tr class="${cls}" data-app-idx="${appIdx}" title="${hasArticles ? 'Klicka för per-artikel breakdown' : ''}">` +
+              `<td><span class="caret">${caret}</span> ${escapeHtml(a.name)}</td>` +
               `<td class="num">${a.gscClicks}</td>` +
               `<td class="num">${a.gaSessions}</td>` +
               `<td class="num">${a.gaSessions ? (a.gaBounceRate * 100).toFixed(0) : '–'}</td>` +
@@ -407,7 +410,10 @@ import BaseLayout from '../../components/BaseLayout.astro';
               `<td class="num"><strong>${a.ascActiveSubs || '–'}</strong></td>` +
               `<td class="num"><strong>${mrrStr}</strong></td>` +
               `<td class="num">${convStr}</td>` +
-              '</tr>'
+              '</tr>' +
+              (hasArticles
+                ? `<tr class="article-detail hidden" data-app-idx="${appIdx}"><td colspan="${cols.length}">${renderArticleBreakdown(a)}</td></tr>`
+                : '')
             );
           })
           .join('') +
@@ -424,6 +430,80 @@ import BaseLayout from '../../components/BaseLayout.astro';
         `${totalInstalls} installs (28 dagar)` +
         '</div>';
       tableDiv.innerHTML = html + summary;
+      // Wire up drill-down toggle for app rows that have per-article data
+      tableDiv.querySelectorAll('tr.expert-row[title]').forEach((row) => {
+        row.addEventListener('click', () => {
+          const idx = row.getAttribute('data-app-idx');
+          const detail = tableDiv.querySelector(
+            `tr.article-detail[data-app-idx="${idx}"]`,
+          );
+          if (!detail) return;
+          const isOpen = !detail.classList.contains('hidden');
+          detail.classList.toggle('hidden', isOpen);
+          const caret = row.querySelector('.caret');
+          if (caret) caret.textContent = isOpen ? '▸' : '▾';
+        });
+      });
+      // Wire up "copy URL" on individual article rows in the drill-down
+      tableDiv.querySelectorAll('tr.article-row').forEach((row) => {
+        row.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const u = row.getAttribute('data-url');
+          if (!u) return;
+          navigator.clipboard?.writeText(u);
+          const cells = row.querySelectorAll('td');
+          cells.forEach((c) => (c.style.background = '#fef3c7'));
+          setTimeout(
+            () => cells.forEach((c) => (c.style.background = '')),
+            600,
+          );
+        });
+      });
+    }
+
+    function renderArticleBreakdown(app) {
+      const arts = app.topArticles || [];
+      if (!arts.length) return '<p class="text-sm text-gray-500">Ingen sökdata för denna app.</p>';
+      const mrrCurrency = app.ascMrrCurrency || 'USD';
+      const head = `
+        <div style="padding:12px;background:#fafafa;border-radius:8px;border:1px solid #e5e7eb">
+          <div style="font-size:12px;color:#666;margin-bottom:8px">
+            ${arts.length} artiklar med sökdata. Klick → kopiera URL.
+            <span style="margin-left:8px;color:#999">
+              Uppskattat MRR-bidrag = artikelns andel av appens sökklick × appens totala MRR
+              (${(app.ascMrr || 0).toFixed(0)} ${mrrCurrency}/mån)
+            </span>
+          </div>
+          <table style="font-size:12px">
+            <thead><tr>
+              <th>Artikel</th>
+              <th class="num">Klick</th>
+              <th class="num">Exp</th>
+              <th class="num">CTR %</th>
+              <th class="num">Pos</th>
+              <th class="num">GA sess.</th>
+              <th class="num">Andel</th>
+              <th class="num">~MRR-bidrag</th>
+            </tr></thead><tbody>
+            ${arts
+              .map(
+                (ar) => `
+              <tr class="article-row" data-url="https://alexanderbergqvist.com${escapeHtml(ar.path)}" style="cursor:pointer" title="Klicka för att kopiera URL">
+                <td>${escapeHtml(ar.path)}</td>
+                <td class="num">${ar.gscClicks}</td>
+                <td class="num">${ar.gscImpressions}</td>
+                <td class="num">${(ar.gscCtr * 100).toFixed(1)}</td>
+                <td class="num">${ar.gscAvgPosition.toFixed(1)}</td>
+                <td class="num">${ar.gaSessions}</td>
+                <td class="num">${(ar.shareOfAppClicks * 100).toFixed(0)}%</td>
+                <td class="num">${ar.estimatedMrrContribution > 0 ? ar.estimatedMrrContribution.toFixed(1) + ' ' + mrrCurrency : '–'}</td>
+              </tr>`,
+              )
+              .join('')}
+          </tbody></table>
+        </div>
+      `;
+      return head;
     }
 
     function renderInsights(insights) {
