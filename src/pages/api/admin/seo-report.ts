@@ -172,6 +172,88 @@ async function querySearchAnalytics(opts: {
   return data.rows || [];
 }
 
+// ─── URL Inspection ────────────────────────────────────────────────────
+
+interface InspectionResult {
+  url: string;
+  verdict: string | null;
+  coverageState: string | null;
+  lastCrawlTime: string | null;
+  indexingState: string | null;
+  robotsTxtState: string | null;
+  error?: string;
+}
+
+async function inspectUrl(inspectionUrl: string): Promise<InspectionResult> {
+  const token = await getAccessToken();
+  const siteUrl = await resolveSiteUrl();
+  const url = 'https://searchconsole.googleapis.com/v1/urlInspection/index:inspect';
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ inspectionUrl, siteUrl }),
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      return {
+        url: inspectionUrl,
+        verdict: null,
+        coverageState: null,
+        lastCrawlTime: null,
+        indexingState: null,
+        robotsTxtState: null,
+        error: `${res.status}: ${text.slice(0, 200)}`,
+      };
+    }
+    const data = (await res.json()) as {
+      inspectionResult?: {
+        indexStatusResult?: {
+          verdict?: string;
+          coverageState?: string;
+          lastCrawlTime?: string;
+          indexingState?: string;
+          robotsTxtState?: string;
+        };
+      };
+    };
+    const r = data.inspectionResult?.indexStatusResult || {};
+    return {
+      url: inspectionUrl,
+      verdict: r.verdict || null,
+      coverageState: r.coverageState || null,
+      lastCrawlTime: r.lastCrawlTime || null,
+      indexingState: r.indexingState || null,
+      robotsTxtState: r.robotsTxtState || null,
+    };
+  } catch (e) {
+    return {
+      url: inspectionUrl,
+      verdict: null,
+      coverageState: null,
+      lastCrawlTime: null,
+      indexingState: null,
+      robotsTxtState: null,
+      error: e instanceof Error ? e.message : String(e),
+    };
+  }
+}
+
+// Wrapper that runs inspections serially with a small delay so we don't
+// hit Google's per-minute rate limit on URL Inspection (~600/min, but
+// in practice ~1-2/sec is the safe sustained rate).
+async function inspectUrls(urls: string[]): Promise<InspectionResult[]> {
+  const results: InspectionResult[] = [];
+  for (const u of urls) {
+    results.push(await inspectUrl(u));
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+  return results;
+}
+
 // ─── GA4 ───────────────────────────────────────────────────────────────
 
 interface Ga4Row {
@@ -332,6 +414,7 @@ export const POST: APIRoute = async ({ request }) => {
     days?: number;
     page?: string;
     limit?: number;
+    urls?: string[];
   } = {};
   try {
     body = await request.json();
@@ -421,6 +504,19 @@ export const POST: APIRoute = async ({ request }) => {
             engagementRate: Number(r.metricValues[4].value),
           })),
         });
+      }
+
+      case 'index-status': {
+        // Inspects a batch of URLs against GSC URL Inspection API.
+        // Client splits the full sitemap into chunks so the UI can
+        // stream progress; this endpoint handles one chunk per call.
+        // Cap at 30 per request to keep response under ~10s.
+        if (!body.urls || !Array.isArray(body.urls) || body.urls.length === 0) {
+          return json({ error: 'urls[] is required for index-status' }, 400);
+        }
+        const batch = body.urls.slice(0, 30);
+        const results = await inspectUrls(batch);
+        return json({ type: 'index-status', results });
       }
 
       case 'ga-pages': {

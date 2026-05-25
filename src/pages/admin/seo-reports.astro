@@ -93,6 +93,9 @@ import BaseLayout from '../../components/BaseLayout.astro';
         <button data-type="ga-pages" class="report-btn">
           📈 GA: Toppsidor
         </button>
+        <button data-type="index-status" class="report-btn">
+          🔍 Indexerings-status
+        </button>
       </div>
 
       <div id="page-filter" class="hidden mb-4">
@@ -263,6 +266,9 @@ import BaseLayout from '../../components/BaseLayout.astro';
           insightsDiv.innerHTML = '';
           tableDiv.innerHTML = '';
           status.textContent = 'Skriv in en URL ovan och tryck Hämta.';
+        } else if (currentType === 'index-status') {
+          hide(pageFilter);
+          fetchIndexStatus();
         } else {
           hide(pageFilter);
           fetchReport();
@@ -498,6 +504,178 @@ import BaseLayout from '../../components/BaseLayout.astro';
           })
           .join('') +
         '</tbody></table>';
+    }
+
+    // ─── Index Status (URL Inspection batch) ──────────────────────────
+    // Fetches all URLs from sitemap, runs them in chunks of 30 against
+    // the GSC URL Inspection API, then renders a filterable table that
+    // makes it easy to see which pages aren't indexed yet (for "Request
+    // Indexing" workflow).
+    async function fetchIndexStatus() {
+      insightsDiv.innerHTML = '';
+      tableDiv.innerHTML = '';
+      status.textContent = 'Hämtar sitemap…';
+
+      let urls = [];
+      try {
+        const smRes = await fetch('/sitemap-0.xml');
+        const xml = await smRes.text();
+        urls = Array.from(xml.matchAll(/<loc>([^<]+)<\/loc>/g))
+          .map((m) => m[1])
+          .filter((u) => u.startsWith('https://alexanderbergqvist.com'));
+        urls = Array.from(new Set(urls));
+      } catch (e) {
+        status.textContent = 'Kunde inte hämta sitemap: ' + e.message;
+        return;
+      }
+
+      if (urls.length === 0) {
+        status.textContent = 'Inga URLs i sitemap.';
+        return;
+      }
+
+      const chunkSize = 30;
+      const chunks = [];
+      for (let i = 0; i < urls.length; i += chunkSize) {
+        chunks.push(urls.slice(i, i + chunkSize));
+      }
+
+      const results = [];
+      let done = 0;
+      // Render filter UI first so user can see incremental progress
+      renderIndexStatusShell();
+
+      for (const chunk of chunks) {
+        status.textContent =
+          `Inspekterar ${done}/${urls.length} URLs (Google rate-limit ~4 URLs/sek)…`;
+        try {
+          const res = await fetch('/api/admin/seo-report', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-admin-password': getPwd(),
+            },
+            body: JSON.stringify({ type: 'index-status', urls: chunk }),
+          });
+          if (res.status === 401) {
+            localStorage.removeItem(STORAGE_KEY);
+            showAuth();
+            return;
+          }
+          const data = await res.json();
+          if (!res.ok) {
+            status.textContent = `Fel: ${data.error || 'okänt'}`;
+            return;
+          }
+          results.push(...data.results);
+          done += chunk.length;
+          renderIndexStatusTable(results);
+        } catch (e) {
+          status.textContent = `Nätverksfel: ${e.message}`;
+          return;
+        }
+      }
+
+      const notIndexed = results.filter(
+        (r) => r.verdict !== 'PASS' && !r.error,
+      ).length;
+      const indexed = results.filter((r) => r.verdict === 'PASS').length;
+      const errors = results.filter((r) => r.error).length;
+      status.textContent =
+        `Klart. ${indexed} indexerade · ${notIndexed} ej indexerade · ` +
+        `${errors} fel · ${results.length} totalt`;
+    }
+
+    function renderIndexStatusShell() {
+      insightsDiv.innerHTML = `
+        <div class="flex gap-2 mb-3">
+          <button id="filter-all" class="report-btn active">Alla</button>
+          <button id="filter-not-indexed" class="report-btn">Ej indexerade</button>
+          <button id="filter-indexed" class="report-btn">Indexerade</button>
+        </div>
+        <p class="text-xs text-gray-500 mb-2">
+          Klick på rad kopierar URL till urklipp så du kan klistra in
+          i GSC URL Inspection och "Begär indexering".
+        </p>
+      `;
+      document.getElementById('filter-all').addEventListener('click', () => {
+        setIndexFilter('all');
+      });
+      document.getElementById('filter-not-indexed').addEventListener('click', () => {
+        setIndexFilter('not-indexed');
+      });
+      document.getElementById('filter-indexed').addEventListener('click', () => {
+        setIndexFilter('indexed');
+      });
+    }
+
+    let indexStatusResults = [];
+    let indexStatusFilter = 'all';
+
+    function setIndexFilter(f) {
+      indexStatusFilter = f;
+      ['all', 'not-indexed', 'indexed'].forEach((id) => {
+        document
+          .getElementById('filter-' + id)
+          ?.classList.toggle('active', id === f);
+      });
+      renderIndexStatusTable(indexStatusResults);
+    }
+
+    function renderIndexStatusTable(results) {
+      indexStatusResults = results;
+      let filtered = results;
+      if (indexStatusFilter === 'not-indexed') {
+        filtered = results.filter(
+          (r) => r.verdict !== 'PASS' && !r.error,
+        );
+      } else if (indexStatusFilter === 'indexed') {
+        filtered = results.filter((r) => r.verdict === 'PASS');
+      }
+      if (!filtered.length) {
+        tableDiv.innerHTML = '<p class="text-sm text-gray-500">Inga URLs i denna kategori.</p>';
+        return;
+      }
+      const html =
+        '<table><thead><tr>' +
+        '<th>Status</th><th>URL</th><th>Coverage</th><th>Senast crawlad</th>' +
+        '</tr></thead><tbody>' +
+        filtered
+          .map((r) => {
+            const path = r.url.replace('https://alexanderbergqvist.com', '');
+            const icon = r.error
+              ? '⚠️'
+              : r.verdict === 'PASS'
+                ? '🟢'
+                : r.verdict === 'PARTIAL'
+                  ? '🟡'
+                  : '🔴';
+            const crawl = r.lastCrawlTime
+              ? new Date(r.lastCrawlTime).toISOString().slice(0, 10)
+              : '–';
+            const cov = r.error
+              ? r.error.slice(0, 80)
+              : r.coverageState || '(ingen data)';
+            return (
+              `<tr style="cursor:pointer" data-url="${escapeHtml(r.url)}" title="Klicka för att kopiera URL">` +
+              `<td>${icon}</td>` +
+              `<td>${escapeHtml(path)}</td>` +
+              `<td>${escapeHtml(cov)}</td>` +
+              `<td>${crawl}</td>` +
+              '</tr>'
+            );
+          })
+          .join('') +
+        '</tbody></table>';
+      tableDiv.innerHTML = html;
+      tableDiv.querySelectorAll('tr[data-url]').forEach((row) => {
+        row.addEventListener('click', () => {
+          const u = row.getAttribute('data-url');
+          navigator.clipboard?.writeText(u);
+          row.style.background = '#fef3c7';
+          setTimeout(() => (row.style.background = ''), 600);
+        });
+      });
     }
 
     function escapeHtml(s) {
