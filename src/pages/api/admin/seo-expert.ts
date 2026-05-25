@@ -231,24 +231,31 @@ function buildAppRow(
   };
 }
 
+/**
+ * Wilson upper bound for a binomial proportion at 95% confidence.
+ * Gives us "the conversion rate is at most X% given the data".
+ * Used so we don't shout "BROKEN PAYWALL" on a 0/50 sample where the
+ * real rate could still be 5%.
+ */
+function wilsonUpper95(successes: number, n: number): number {
+  if (n === 0) return 1;
+  const z = 1.96;
+  const p = successes / n;
+  const denom = 1 + (z * z) / n;
+  const center = p + (z * z) / (2 * n);
+  const margin = z * Math.sqrt((p * (1 - p)) / n + (z * z) / (4 * n * n));
+  return (center + margin) / denom;
+}
+
 function buildInsights(rows: AppRow[]): Insight[] {
   const insights: Insight[] = [];
 
   for (const r of rows) {
-    // 1. App with strong SEO but weak conversion to install
-    if (r.gscClicks >= 30 && r.ascUnits > 0 && r.searchToInstall < 0.05) {
-      insights.push({
-        severity: 'high',
-        icon: '🔴',
-        app: r.name,
-        title: `${r.name}: ${r.gscClicks} sökklick → bara ${r.ascUnits} installs (${(r.searchToInstall * 100).toFixed(0)}% conversion)`,
-        detail: `Sidan rankar och drar trafik, men få konverterar till App Store-nedladdning. Antingen är intent fel (söker info, inte appen) eller CTA till App Store är otydlig.`,
-        action: `Granska /${r.slug}/-sidan: är "Ladda ner"-knappen above the fold? Adresserar texten direkt det användaren sökte efter?`,
-      });
-    }
+    // 1. Page-level CTR / bounce / SEO-conversion checks
+    //    Thresholds picked so we only fire at sample sizes where the
+    //    observation is statistically meaningful, not just sample noise.
 
-    // 2. App with traffic but high bounce
-    if (r.gaSessions >= 50 && r.gaBounceRate > 0.7) {
+    if (r.gaSessions >= 100 && r.gaBounceRate > 0.7) {
       insights.push({
         severity: 'med',
         icon: '🟠',
@@ -259,8 +266,7 @@ function buildInsights(rows: AppRow[]): Insight[] {
       });
     }
 
-    // 3. GSC → GA loss (most visitors don't load the page after clicking)
-    if (r.gscClicks >= 50 && r.searchToSession < 0.5) {
+    if (r.gscClicks >= 100 && r.searchToSession < 0.5) {
       insights.push({
         severity: 'high',
         icon: '🔴',
@@ -270,61 +276,30 @@ function buildInsights(rows: AppRow[]): Insight[] {
         action: `Testa /${r.slug}/-sidan i PageSpeed Insights. Verifiera GA-trackern fungerar (öppna sidan, kolla i GA Realtime).`,
       });
     }
-
-    // 4. ASC installs without proportional SEO
-    if (r.ascUnits >= 10 && r.gscClicks < r.ascUnits * 0.2) {
-      insights.push({
-        severity: 'med',
-        icon: '👻',
-        app: r.name,
-        title: `${r.name}: ${r.ascUnits} installs men bara ${r.gscClicks} sökklick`,
-        detail: `Installs kommer från icke-SEO-kanaler (App Store search, ASA-ads, word-of-mouth, in-app cross-promo). Stor SEO-uppside.`,
-        action: `Bygg fler SEO-artiklar för /${r.slug}/. Varje sökord du tar rank på kan multiplicera nuvarande icke-SEO-installs.`,
-      });
-    }
-
-    // 5. Winners — keep + scale
-    if (r.gscClicks >= 50 && r.searchToInstall > 0.15) {
-      insights.push({
-        severity: 'low',
-        icon: '🟢',
-        app: r.name,
-        title: `${r.name}: ${(r.searchToInstall * 100).toFixed(0)}% sök→install — guldlandning`,
-        detail: `${r.gscClicks} klick → ${r.ascUnits} installs. Sidan funkar.`,
-        action: `Använd /${r.slug}/ som mall för svagare app-sidor. Skriv mer content för samma sökord-cluster.`,
-      });
-    }
-
-    // 6. Geo-mismatch: high installs from country, no SEO traffic
-    const seOnly = r.ascTopCountries[0];
-    if (seOnly && seOnly.cc !== 'SE' && seOnly.units >= 5) {
-      // App is doing well in a non-Swedish country
-      insights.push({
-        severity: 'med',
-        icon: '🌍',
-        app: r.name,
-        title: `${r.name}: ${seOnly.units} installs från ${seOnly.cc} — kanske värt fler ${seOnly.cc}-artiklar?`,
-        detail: `App:n drar installs från ${seOnly.cc} utan att vi har särskild SEO där. Ranking-möjlighet om vi gör översatt content.`,
-        action: `Kolla om ${r.slug} har ASC-localisation för ${seOnly.cc}. Om ja — skriv 2-3 artiklar på det språket.`,
-      });
-    }
   }
 
-  // 7. Subscription conversion bleeders (CORE metric — this is revenue)
+  // 2. Subscription conversion bleeders — REQUIRE statistical confidence.
+  //    Use Wilson upper bound: if even the OPTIMISTIC interpretation of
+  //    the data is below 0.5%, then paywall is genuinely broken. With
+  //    0/54 (Plantera) the upper bound is 6.6% — too wide to conclude
+  //    anything. With 6/1958 (Födelsedagar) it's 0.66% — solid signal.
   for (const r of rows) {
-    // Many installs, very few subs → paywall problem
-    if (r.ascUnits >= 50 && r.installToSubConversion < 0.005 && r.ascActiveSubs >= 0) {
+    if (r.ascUnits < 100) continue; // need real sample before claiming
+    const upper = wilsonUpper95(r.ascActiveSubs, r.ascUnits);
+    const point = r.installToSubConversion;
+    if (upper < 0.01) {
+      // Even optimistic estimate is below 1% — paywall is genuinely broken
       insights.push({
         severity: 'high',
         icon: '💸',
         app: r.name,
-        title: `${r.name}: ${r.ascUnits} installs → bara ${r.ascActiveSubs} prenumeranter (${(r.installToSubConversion * 100).toFixed(2)}%)`,
-        detail: `Industry benchmark för B2C-iOS-utility-apps är 1-5% install→sub. Under 0.5% indikerar paywall-problem: timing, copy, pris eller value prop.`,
+        title: `${r.name}: ${r.ascUnits} installs → ${r.ascActiveSubs} subs (${(point * 100).toFixed(2)}%, max ${(upper * 100).toFixed(1)}% @ 95% conf)`,
+        detail: `Industry benchmark för B2C-iOS-utility-apps är 1-5% install→sub. Med ditt sample-size är vi 95% säkra på att verklig rate är under ${(upper * 100).toFixed(1)}%. Paywall-problem: timing, copy, pris eller value prop.`,
         action: `Granska /lib/screens/paywall_screen.dart för ${r.slug}. Vanliga fix: visa paywall efter "wow"-moment (inte vid app-start), framhäv free trial tydligt, social proof ("X+ användare"), Apple 3.1.2(c) compliance.`,
       });
     }
-    // Strong free trial uptake — focus on trial-to-paid conversion
-    if (r.ascFreeTrials >= 5 && r.ascFreeTrials > r.ascActiveSubs * 2) {
+
+    if (r.ascFreeTrials >= 10 && r.ascFreeTrials > r.ascActiveSubs * 2) {
       insights.push({
         severity: 'med',
         icon: '🎁',
@@ -336,8 +311,85 @@ function buildInsights(rows: AppRow[]): Insight[] {
     }
   }
 
-  // 8. Portfolio-level: MRR distribution
+  // 3. Channel attribution + growth opportunities — top priority since
+  //    the portfolio is overwhelmingly ASO/word-of-mouth driven, not SEO.
+  for (const r of rows) {
+    // Dead app: 0 installs AND no GSC traffic over the period
+    if (r.ascUnits === 0 && r.gscClicks === 0 && r.gscImpressions < 10) {
+      insights.push({
+        severity: 'high',
+        icon: '☠️',
+        app: r.name,
+        title: `${r.name}: 0 installs, ingen sök-synlighet på 28 dagar`,
+        detail: `App:n syns inte i App Store-search (ASO trasig) och rankar inte i Google. Antingen indexerings-problem, fel kategoriserad, eller låg keyword-konkurrens.`,
+        action: `Audit ASC: title, subtitle, keywords-fältet (100 char), screenshots-CTR. Om allt OK — kanske pivot eller ta bort.`,
+      });
+    }
+
+    // ASO-dominant with high install volume — ASA scaling opportunity
+    // (high installs, almost no SEO contribution)
+    if (
+      r.ascUnits >= 50 &&
+      r.gscClicks < r.ascUnits * 0.05 &&
+      r.gscImpressions < r.ascUnits * 2
+    ) {
+      insights.push({
+        severity: 'med',
+        icon: '📱',
+        app: r.name,
+        title: `${r.name}: ${r.ascUnits} installs nästan helt från App Store (ASO/ASA), inte SEO`,
+        detail: `${r.gscClicks} sökklick + ${r.gscImpressions} impressions på 28 dagar betyder Google inte ens visar oss. Antingen rankar artiklarna för fel keywords, eller målgruppen söker bara i App Store, inte Google.`,
+        action: `2 spår: (1) Skala det som funkar — testa Apple Search Ads för ${r.name} med 200 SEK/dag i 14 dagar och mät CAC. (2) Lägg om SEO-strategin: skriv "bästa X 2026"-jämförelser, inte info-artiklar. Buyer intent rankar.`,
+      });
+    }
+
+    // SEO articles getting impressions but no clicks → wrong keyword
+    // targeting, no ranking on page 1, OR wrong title/meta
+    if (r.gscImpressions >= 500 && r.gscCtr < 0.01) {
+      insights.push({
+        severity: 'high',
+        icon: '🎯',
+        app: r.name,
+        title: `${r.name}: ${r.gscImpressions} impressions, bara ${r.gscClicks} klick (${(r.gscCtr * 100).toFixed(2)}% CTR)`,
+        detail: `Du syns i sökresultaten men ingen klickar. Antingen rankar du på pos 11+ (sida 2), eller title/meta sticker inte ut.`,
+        action: `Drill-down per artikel: hitta de med >50 impressions men <2 klick → skriv om title med tydligt nyttovärde + årtal ("2026", "gratis", "snabb").`,
+      });
+    }
+
+    // Geo-mismatch: high installs from country, no SEO traffic
+    const top = r.ascTopCountries[0];
+    if (top && top.cc !== 'SE' && top.units >= 10) {
+      insights.push({
+        severity: 'med',
+        icon: '🌍',
+        app: r.name,
+        title: `${r.name}: ${top.units} installs från ${top.cc} — outforskad SEO-marknad`,
+        detail: `App:n drar installs från ${top.cc} via ASO/word-of-mouth. Bygg ${top.cc}-content och du kan dubbla.`,
+        action: `Verifiera ${r.slug} har ASC-localisation för ${top.cc}. Om ja — skriv 3-5 "bästa [app]-typen" + 2-3 problem-solving-artiklar på språket.`,
+      });
+    }
+  }
+
+  // 4. Portfolio-level diagnostics — the big picture story
+  const totalInstalls = rows.reduce((s, r) => s + r.ascUnits, 0);
+  const totalGscClicks = rows.reduce((s, r) => s + r.gscClicks, 0);
   const totalMrr = rows.reduce((s, r) => s + r.ascMrr, 0);
+
+  // If SEO drives < 5% of total installs, the 160-article strategy isn't
+  // paying back. This is the most important global insight.
+  if (totalInstalls >= 100) {
+    const seoShare = totalGscClicks / totalInstalls;
+    if (seoShare < 0.05) {
+      insights.push({
+        severity: 'high',
+        icon: '📉',
+        title: `SEO genererar < 5% av portfolio-installs (${totalGscClicks} sökklick vs ${totalInstalls} installs)`,
+        detail: `160+ artiklar producerar marginal install-volym. Antingen rankar de för info-keywords (folk vill veta, inte ladda ner), eller App Store-CTAs är osynliga ovan vikning.`,
+        action: `Sluta skriv nya info-artiklar. Fokusera 100% på (a) "bästa [X]-appen 2026"-jämförelser med stora App Store-CTAs ovan vikning, och (b) skala ASA på top-ASO-apparna istället.`,
+      });
+    }
+  }
+
   if (totalMrr > 0) {
     const topMrr = [...rows].sort((a, b) => b.ascMrr - a.ascMrr)[0];
     if (topMrr && topMrr.ascMrr > 0) {
@@ -346,17 +398,17 @@ function buildInsights(rows: AppRow[]): Insight[] {
         severity: 'low',
         icon: '💰',
         title: `${topMrr.name} står för ${pct}% av total MRR (${topMrr.ascMrr.toFixed(0)} ${topMrr.ascMrrCurrency})`,
-        detail: `Total MRR portfölj: ${totalMrr.toFixed(0)} ${topMrr.ascMrrCurrency}. ${topMrr.ascActiveSubs} betalande prenumeranter på ${topMrr.name}.`,
-        action: `Diversifiering: bygg en till app till MRR-paritet eller dubblera ner på ${topMrr.name}.`,
+        detail: `Total MRR portfölj: ${totalMrr.toFixed(0)} ${topMrr.ascMrrCurrency}. ${topMrr.ascActiveSubs} betalande prenumeranter på ${topMrr.name}. Single point of failure — om ${topMrr.name} har en dålig vecka tappar du nästan hela revenue.`,
+        action: `Två-spårsstrategi: (1) Fördubbla install→sub-rate på ${topMrr.name} (störst hävstång idag). (2) Bygg en till app till MRR-paritet för diversifiering.`,
       });
     }
-  } else {
+  } else if (totalInstalls > 0) {
     insights.push({
-      severity: 'med',
-      icon: '🤔',
-      title: 'Ingen MRR registrerad ännu',
-      detail: 'Antingen har du noll betalande prenumeranter, eller så har Apple inte hunnit publicera senaste Subscription-rapporten (1-2 dagars delay).',
-      action: 'Verifiera manuellt: ASC → Sales and Trends → Subscriptions. Om noll: granska paywalls (timing, free trial, prissättning).',
+      severity: 'high',
+      icon: '🚨',
+      title: `${totalInstalls} installs på 28 dagar men 0 SEK MRR`,
+      detail: `Hela portfolion drar trafik men ingen konverterar till betald. Antingen är paywall trasig på alla appar, eller IAP-konfiguration har problem.`,
+      action: `Börja med top-install-appen, granska paywall-flödet i sandbox-konto. Vanliga problem: paywall visas aldrig, IAP-products laddas inte, free-trial visas inte tydligt.`,
     });
   }
 
