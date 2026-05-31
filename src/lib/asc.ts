@@ -117,7 +117,22 @@ export interface SalesRow {
   units: number; // Downloads/installs for that row
   proceeds: number; // Developer share in `currency` (after Apple's cut)
   currency: string; // 3-letter, e.g. USD
+  /** Apple's "Product Type Identifier" — encodes whether the row is a
+   *  fresh install ("1", "1F"…), an update ("7", "7F"…), an IAP ("IA1",
+   *  "IA9"…), or a subscription renewal ("IAY", "IAC"). Critical for
+   *  the trends view — without filtering, "downloads" double-counts
+   *  app updates and a successful relaunch reads like 10× growth. */
+  pti: string;
 }
+
+/** PTIs starting with "1" = fresh app installs (paid or free). */
+export const PTI_DOWNLOAD = new Set(['1', '1F', '1T', '1E', '1EP', '1EU']);
+/** "7"-prefix = app updates (existing users). Excluded from download counts. */
+export const PTI_UPDATE = new Set(['7', '7F', '7T', '7E', '7EP', '7EU']);
+/** First-time IAP purchases (non-consumable, subscription first month). */
+export const PTI_IAP_NEW = new Set(['IA1', 'IA3', 'IA9']);
+/** Subscription renewals (recurring revenue). */
+export const PTI_IAP_RENEW = new Set(['IAY', 'IAC']);
 
 /**
  * Fetch daily sales report for a given UTC date. Apple has a ~2 day
@@ -169,6 +184,7 @@ function parseSalesTsv(tsv: string, fallbackDate: string): SalesRow[] {
   const countryIdx = idx('Country Code');
   const currencyIdx = idx('Currency of Proceeds');
   const beginIdx = idx('Begin Date');
+  const ptiIdx = idx('Product Type Identifier');
 
   const out: SalesRow[] = [];
   for (let i = 1; i < lines.length; i++) {
@@ -187,6 +203,7 @@ function parseSalesTsv(tsv: string, fallbackDate: string): SalesRow[] {
       units: Number(cells[unitsIdx] ?? 0) || 0,
       proceeds: Number(cells[proceedsIdx] ?? 0) || 0,
       currency: cells[currencyIdx]?.trim() ?? 'USD',
+      pti: ptiIdx >= 0 ? (cells[ptiIdx]?.trim() ?? '') : '',
     });
   }
   return out;
@@ -228,6 +245,94 @@ export async function fetchSalesRange(
   return { rows, daysFetched, daysSkipped, firstError };
 }
 
+/**
+ * Fetch the MONTHLY summary report for a given calendar month.
+ *
+ * Apple aggregates daily rows at month end; the report for month `M`
+ * isn't available until early month `M+1`. Returns [] if the report
+ * isn't ready yet (404) so callers can chain calls without try/catch.
+ *
+ * Why we want this separate from fetchDailySales: a 12-month trend
+ * requires 365 daily API calls (~15-30s + 365× more rate-limit risk)
+ * vs 12 monthly calls. For long history, monthly is the only sane
+ * granularity.
+ */
+export async function fetchMonthlySales(yearMonth: string): Promise<SalesRow[]> {
+  // yearMonth = "YYYY-MM"
+  const vendorNumber = process.env.ASC_VENDOR_NUMBER;
+  if (!vendorNumber) throw new Error('ASC_VENDOR_NUMBER not set');
+  const token = getJwt();
+
+  const params = new URLSearchParams({
+    'filter[frequency]': 'MONTHLY',
+    'filter[reportType]': 'SALES',
+    'filter[reportSubType]': 'SUMMARY',
+    'filter[vendorNumber]': vendorNumber,
+    'filter[reportDate]': yearMonth,
+    // Apple's monthly SALES report is pinned to v1_0 (the current month
+    // format hasn't been bumped). Daily reports work without filter[version].
+    'filter[version]': '1_0',
+  });
+  const url = `https://api.appstoreconnect.apple.com/v1/salesReports?${params}`;
+  const res = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/a-gzip, application/json',
+    },
+  });
+  if (res.status === 404) return [];
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`ASC salesReports MONTHLY ${yearMonth} ${res.status}: ${text}`);
+  }
+  const buf = Buffer.from(await res.arrayBuffer());
+  const tsv = gunzipSync(buf).toString('utf8');
+  // Re-use the daily parser — Apple's monthly TSV has the same columns
+  // (Begin Date marks the first day of the month). The fallbackDate is
+  // only used when parsing fails, so passing "yearMonth-01" is fine.
+  return parseSalesTsv(tsv, `${yearMonth}-01`);
+}
+
+/**
+ * Pull the last `months` calendar months of SALES SUMMARY data. Returns
+ * flat rows tagged with their month plus stats on which months had data.
+ *
+ * Months without data (because the app didn't exist yet) come back as 0
+ * fetched + 1 skipped. The caller decides how to render that ("·" cells
+ * in a trend table tells the story without confusing the reader).
+ */
+export async function fetchMonthlyRange(
+  months: number,
+): Promise<{ rows: SalesRow[]; monthsFetched: number; monthsSkipped: number; firstError: string | null }> {
+  const rows: SalesRow[] = [];
+  let monthsFetched = 0;
+  let monthsSkipped = 0;
+  let firstError: string | null = null;
+  const now = new Date();
+  // Walk back from PREVIOUS month — Apple usually doesn't release current
+  // month's monthly report until the 1st of next month.
+  for (let i = 1; i <= months; i++) {
+    const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 1));
+    const yyyy = d.getUTCFullYear();
+    const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+    const ym = `${yyyy}-${mm}`;
+    try {
+      const monthRows = await fetchMonthlySales(ym);
+      if (monthRows.length > 0) {
+        rows.push(...monthRows);
+        monthsFetched += 1;
+      } else {
+        monthsSkipped += 1;
+      }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      monthsSkipped += 1;
+      if (firstError === null) firstError = `${ym}: ${msg}`;
+    }
+  }
+  return { rows, monthsFetched, monthsSkipped, firstError };
+}
+
 // ─── Aggregations ──────────────────────────────────────────────────────
 
 export interface AppSalesSummary {
@@ -260,6 +365,129 @@ export function summarizeByApp(rows: SalesRow[]): AppSalesSummary[] {
     s.byCountry[r.countryCode] = (s.byCountry[r.countryCode] ?? 0) + r.units;
   }
   return Array.from(map.values()).sort((a, b) => b.units - a.units);
+}
+
+/**
+ * Per-app time series for the trends view: groups rows by SKU AND month
+ * so the UI can render a 12-cell row per app showing growth shape.
+ *
+ * The output's `months` array is the sorted unique set of months that
+ * actually had data — apps that didn't exist in earlier months get
+ * `undefined` for those cells.
+ *
+ * PTI awareness: we keep downloads (new installs) separate from IAP
+ * activity because mixing them obscures the funnel — high downloads +
+ * zero IAP revenue is a very different story from balanced downloads +
+ * IAP renewals. PTIs starting with "1" (1, 1F, 1T, 1E, 1EP, 1EU) are
+ * fresh installs; "7"-prefix are updates (ignored); "IA*" are IAPs.
+ *
+ * Apple's TSV gives us PTI via the "Product Type Identifier" column,
+ * but `parseSalesTsv` doesn't surface it. For the trends view we don't
+ * need per-row PTI — we treat each SKU's identity as the discriminator
+ * (app SKUs = downloads, IAP product IDs = revenue), which matches how
+ * the existing summarizeByApp groups things.
+ */
+export interface MonthlySeries {
+  sku: string;
+  appName: string;
+  /** New installs over the window (PTI 1*). Excludes updates. */
+  totalDownloads: number;
+  /** First-time IAP purchases (PTI IA1/IA3/IA9). */
+  totalIapNew: number;
+  /** Recurring subscription renewals (PTI IAY/IAC). */
+  totalIapRenew: number;
+  /** Sum of developer proceeds in the dominant currency. */
+  totalProceeds: number;
+  currency: string;
+  /** Per-month downloads only (matches totalDownloads). */
+  downloadsByMonth: Record<string, number>;
+  /** Per-month proceeds (all IAP types combined). */
+  proceedsByMonth: Record<string, number>;
+}
+
+/**
+ * Aggregate flat SALES rows into per-app monthly time series with PTI-
+ * awareness:
+ *   - downloads (fresh installs): only PTI 1*. EXCLUDES app updates,
+ *     which Apple counts as units but represent existing users.
+ *   - IAP first-buys vs renewals: separated so the UI can show whether
+ *     revenue comes from new buyers or from the existing sub base.
+ *
+ * Without this split, the "downloads" cell for an app post-relaunch
+ * inflates dramatically (~10× in our portfolio data) and the trend line
+ * is misleading.
+ */
+export function summarizeMonthlyTrend(rows: SalesRow[]): {
+  months: string[];
+  apps: MonthlySeries[];
+} {
+  const monthSet = new Set<string>();
+  const map = new Map<string, MonthlySeries>();
+  for (const r of rows) {
+    const month = r.date.slice(0, 7); // YYYY-MM
+    monthSet.add(month);
+    let s = map.get(r.sku);
+    if (!s) {
+      s = {
+        sku: r.sku,
+        appName: r.appName,
+        totalDownloads: 0,
+        totalIapNew: 0,
+        totalIapRenew: 0,
+        totalProceeds: 0,
+        currency: r.currency,
+        downloadsByMonth: {},
+        proceedsByMonth: {},
+      };
+      map.set(r.sku, s);
+    }
+    s.appName = r.appName; // last-write-wins (Apple sometimes changes display)
+    if (PTI_DOWNLOAD.has(r.pti)) {
+      s.totalDownloads += r.units;
+      s.downloadsByMonth[month] =
+        (s.downloadsByMonth[month] ?? 0) + r.units;
+    } else if (PTI_IAP_NEW.has(r.pti) || PTI_IAP_RENEW.has(r.pti)) {
+      // Apple's "Developer Proceeds" column is PER UNIT, not per row —
+      // so the right total for a multi-unit row is units × proceeds.
+      // The legacy summarizeByApp() doesn't multiply (pre-existing bug
+      // we're not touching here to avoid breaking the expert report).
+      const rowProceeds = r.units * r.proceeds;
+      if (PTI_IAP_NEW.has(r.pti)) s.totalIapNew += r.units;
+      else s.totalIapRenew += r.units;
+      s.totalProceeds += rowProceeds;
+      s.proceedsByMonth[month] =
+        (s.proceedsByMonth[month] ?? 0) + rowProceeds;
+      // Use the proceeds currency for display if no real-currency row
+      // has been seen yet ("USD" is asc.ts's default fallback).
+      if (rowProceeds > 0 && (!s.currency || s.currency === 'USD')) {
+        s.currency = r.currency;
+      }
+    }
+    // PTI_UPDATE intentionally ignored — updates don't add users or
+    // revenue, they'd just inflate the trend.
+  }
+  return {
+    months: Array.from(monthSet).sort(),
+    apps: Array.from(map.values()).sort(
+      (a, b) => b.totalDownloads - a.totalDownloads,
+    ),
+  };
+}
+
+/**
+ * Compute MoM growth rate over the trend. Returns the geometric mean
+ * MoM multiplier across the window (e.g. 1.15 = +15%/month average).
+ * Needs ≥ 2 months of data; returns null otherwise.
+ */
+export function growthRate(series: MonthlySeries, months: string[]): number | null {
+  const values = months
+    .map((m) => series.downloadsByMonth[m])
+    .filter((v): v is number => v != null && v > 0);
+  if (values.length < 2) return null;
+  const first = values[0];
+  const last = values[values.length - 1];
+  const steps = values.length - 1;
+  return Math.pow(last / first, 1 / steps);
 }
 
 // ─── Subscription Reports ──────────────────────────────────────────────

@@ -96,6 +96,9 @@ import BaseLayout from '../../components/BaseLayout.astro';
         <button data-type="index-status" class="report-btn">
           🔍 Indexerings-status
         </button>
+        <button data-type="trends" class="report-btn">
+          📈 ASC-historik (12 mån)
+        </button>
       </div>
 
       <div id="page-filter" class="hidden mb-4">
@@ -269,6 +272,9 @@ import BaseLayout from '../../components/BaseLayout.astro';
         } else if (currentType === 'index-status') {
           hide(pageFilter);
           fetchIndexStatus();
+        } else if (currentType === 'trends') {
+          hide(pageFilter);
+          fetchTrends();
         } else {
           hide(pageFilter);
           fetchReport();
@@ -756,6 +762,206 @@ import BaseLayout from '../../components/BaseLayout.astro';
           setTimeout(() => (row.style.background = ''), 600);
         });
       });
+    }
+
+    // ─── ASC Historik (trends) ──────────────────────────────────────────
+    async function fetchTrends() {
+      insightsDiv.innerHTML = '';
+      tableDiv.innerHTML = '';
+      status.textContent = 'Hämtar 12 månaders ASC-historik + senaste 30 dagar (kan ta 10-15 sek)…';
+      try {
+        const res = await fetch('/api/admin/asc-trends', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-password': getPwd(),
+          },
+          body: JSON.stringify({ months: 12, recentDays: 30 }),
+        });
+        if (res.status === 401) {
+          localStorage.removeItem(STORAGE_KEY);
+          showAuth();
+          return;
+        }
+        const data = await res.json();
+        if (!res.ok) {
+          status.textContent = `Fel: ${data.error || 'okänt'}`;
+          return;
+        }
+        renderTrendsStatus(data);
+        renderTrendsInsights(data);
+        renderTrendsTable(data);
+      } catch (e) {
+        status.textContent = `Nätverksfel: ${e.message}`;
+      }
+    }
+
+    function renderTrendsStatus(d) {
+      const procStr = Object.entries(d.totals.proceedsByCurrency)
+        .filter(([_, amt]) => amt > 0)
+        .map(([cur, amt]) => `${amt.toFixed(0)} ${cur}`)
+        .join(' + ') || '0';
+      status.innerHTML = [
+        `${d.apps.length} appar`,
+        `${d.monthsFetched}/${d.monthsFetched + d.monthsSkipped} mån med data`,
+        `${d.daysFetched}/${d.daysFetched + d.daysSkipped} dagar i 30d-fönstret`,
+        `12m proceeds: <strong>${procStr}</strong>`,
+        `12m downloads: ${d.totals.downloads12m.toLocaleString('sv-SE')}`,
+        `30d downloads: <strong>${d.totals.downloads30d.toLocaleString('sv-SE')}</strong>`,
+      ].join(' · ');
+    }
+
+    function renderTrendsInsights(d) {
+      const i = d.insights;
+      const cards = [];
+      if (i.topEarner) {
+        cards.push({
+          tier: 'low',
+          icon: '💰',
+          title: `Bästa intäktsapp (12m): ${i.topEarner.appName}`,
+          body: `${i.topEarner.proceeds.toFixed(0)} ${i.topEarner.currency} i developer proceeds.`,
+        });
+      }
+      if (i.fastestGrowing) {
+        const pct = ((i.fastestGrowing.growthMom - 1) * 100).toFixed(0);
+        cards.push({
+          tier: 'low',
+          icon: '🚀',
+          title: `Snabbast växande: ${i.fastestGrowing.appName}`,
+          body: `Geometriskt medel +${pct}%/månad över fönstret. Värt att dubbla på.`,
+        });
+      }
+      for (const g of i.growing) {
+        cards.push({
+          tier: 'low',
+          icon: '📈',
+          title: `${g.appName} accelererar`,
+          body: `${g.recent} DL senaste månaden vs ${g.priorAvg.toFixed(0)} avg innan (≥1.5×).`,
+        });
+      }
+      for (const dn of i.declining) {
+        cards.push({
+          tier: 'high',
+          icon: '⚠️',
+          title: `${dn.appName} tappar`,
+          body: `${dn.recent} DL senaste månaden vs ${dn.priorAvg.toFixed(0)} avg innan (≤0.5×). Undersök.`,
+        });
+      }
+      if (i.bestConversion && i.bestConversion.length) {
+        const lines = i.bestConversion
+          .map(
+            (b) =>
+              `${b.appName}: ${(b.rate * 100).toFixed(1)}% (${b.downloads} DL)`,
+          )
+          .join(' · ');
+        cards.push({
+          tier: 'low',
+          icon: '🎯',
+          title: 'Bäst konvertering (paywall funkar)',
+          body: lines + '. Dessa behöver mer trafik, inte bättre paywall.',
+        });
+      }
+      if (d.warnings.length) {
+        cards.push({
+          tier: 'med',
+          icon: '⚙️',
+          title: 'API-varningar',
+          body: d.warnings.join(' · '),
+        });
+      }
+      if (!cards.length) {
+        insightsDiv.innerHTML = '<p class="text-sm text-gray-500">Inga signaler att flagga.</p>';
+        return;
+      }
+      insightsDiv.innerHTML = cards
+        .map(
+          (c) => `
+            <div class="insight ${c.tier}">
+              <strong>${c.icon} ${escapeHtml(c.title)}</strong>
+              <div>${escapeHtml(c.body)}</div>
+            </div>
+          `,
+        )
+        .join('');
+    }
+
+    function renderTrendsTable(d) {
+      if (!d.apps.length) {
+        tableDiv.innerHTML = '<p>Ingen data.</p>';
+        return;
+      }
+      // Per-app heatmap of monthly downloads. Color intensity scaled per
+      // row so a small app's growth doesn't disappear next to Födelsedagar.
+      const monthHeaders = d.months
+        .map((m) => `<th class="num">${m.slice(5)}</th>`)
+        .join('');
+      const rows = d.apps
+        .map((a) => {
+          const max = Math.max(1, ...a.downloadsByMonth);
+          const cells = a.downloadsByMonth
+            .map((v) => {
+              if (v === 0) return '<td class="num" style="color:#bbb">·</td>';
+              const intensity = Math.min(1, v / max);
+              const bg = `rgba(37, 99, 235, ${0.08 + intensity * 0.42})`;
+              return `<td class="num" style="background:${bg}">${v}</td>`;
+            })
+            .join('');
+          const growthStr =
+            a.growthMom != null
+              ? `${a.growthMom >= 1 ? '+' : ''}${((a.growthMom - 1) * 100).toFixed(0)}%`
+              : '–';
+          const growthColor =
+            a.growthMom == null
+              ? '#999'
+              : a.growthMom >= 1.1
+                ? '#16a34a'
+                : a.growthMom <= 0.9
+                  ? '#dc2626'
+                  : '#666';
+          const procStr =
+            a.proceeds12m > 0
+              ? `${a.proceeds12m.toFixed(0)} ${a.currency}`
+              : a.proceeds30d > 0
+                ? `${a.proceeds30d.toFixed(0)} ${a.currency} (30d)`
+                : '–';
+          const convStr =
+            a.conversionRate != null
+              ? `${(a.conversionRate * 100).toFixed(1)}%`
+              : '–';
+          const convColor =
+            a.conversionRate == null
+              ? '#999'
+              : a.conversionRate >= 0.02
+                ? '#16a34a'
+                : a.conversionRate >= 0.005
+                  ? '#ca8a04'
+                  : '#dc2626';
+          return (
+            `<tr>` +
+            `<td><strong>${escapeHtml(a.appName)}</strong><div style="font-size:11px;color:#888">${escapeHtml(a.sku)}</div></td>` +
+            cells +
+            `<td class="num">${a.downloads30d}</td>` +
+            `<td class="num" style="color:${growthColor};font-weight:600">${growthStr}</td>` +
+            `<td class="num" style="color:${convColor};font-weight:600">${convStr}</td>` +
+            `<td class="num">${procStr}</td>` +
+            `</tr>`
+          );
+        })
+        .join('');
+      tableDiv.innerHTML =
+        `<table><thead><tr>` +
+        `<th>App</th>` +
+        monthHeaders +
+        `<th class="num">30d</th>` +
+        `<th class="num">MoM %</th>` +
+        `<th class="num">Konv %</th>` +
+        `<th class="num">12m proceeds</th>` +
+        `</tr></thead><tbody>${rows}</tbody></table>` +
+        `<p class="text-xs text-gray-500 mt-2">` +
+        `Downloads filtrerade till PTI 1/1F (nya installs) — app-updates exkluderas. ` +
+        `Heatmap-värmen är skalad per app — mörkast = bästa månaden för den appen. ` +
+        `"Konv %" = IAP first-buys / downloads över hela 12m+30d-fönstret. Färg: grön ≥2%, gul ≥0.5%, röd <0.5%.` +
+        `</p>`;
     }
 
     function escapeHtml(s) {
