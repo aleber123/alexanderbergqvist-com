@@ -2,9 +2,29 @@
 import { getEntry } from 'astro:content';
 import BaseLayout from '../../components/BaseLayout.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
+import FAQ from '../../components/FAQ.astro';
 
 const app = await getEntry('apps', 'snusfri-resa');
 const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
+
+const faq = [
+  {
+    q: 'Hur länge varar snus-abstinensen?',
+    a: 'Den fysiska abstinensen toppar mellan dag 1 och dag 4, börjar klinga av runt dag 7, och är i stort sett över efter 2–3 veckor. Då återstår vanan och beteendet snarare än nikotinsuget. Vanliga symtom är irritation, rastlöshet, koncentrationssvårigheter, ökad aptit och starka sug — men de avtar dag för dag.',
+  },
+  {
+    q: 'Hur länge sitter nikotinet kvar i kroppen?',
+    a: 'Nikotin har en halveringstid på cirka 2 timmar, så det mesta är borta inom ett dygn efter sista prillan. Nedbrytningsprodukten kotinin kan spåras i 1–4 dygn. Själva abstinensen handlar dock mindre om nikotinet i blodet och mer om hjärnans anpassning, vilket tar ett par veckor.',
+  },
+  {
+    q: 'Är det farligare att sluta snusa "kallt" eller trappa ner?',
+    a: 'Inget av sätten är farligt. Forskning antyder att kall-stop ger högre långsiktig framgångsfrekvens hos dem som lyckas — du behöver bara slå hål på abstinensen en gång. Att trappa ner ger högre kortsiktig komfort men förlänger kontakten med nikotinet.',
+  },
+  {
+    q: 'Vad händer med tandköttet när jag slutar?',
+    a: 'Ungefär en vecka efter snusstopp börjar tandköttet läka. Vita lesioner på munslemhinnan försvinner ofta inom 4–6 veckor. Tandköttsretraktion som redan skett kommer dock inte tillbaka — skäl nog att sluta tidigt.',
+  },
+];
 ---
 
 <BaseLayout
@@ -136,30 +156,36 @@ const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
         sparkonto eller mål — inte bara registrera siffran.
       </p>
 
-      <h2>Vanliga frågor om att sluta snusa</h2>
-      <h3>Hur länge varar abstinensen?</h3>
+      <h2>Snus-abstinens dag för dag</h2>
       <p>
-        Värsta abstinensen toppar mellan dag 1 och dag 4, och börjar klinga av
-        omkring dag 7. Efter 2–3 veckor är de fysiska abstinenssymptomen i stort
-        sett över — det är då vanan och beteendet som återstår.
+        Den vanligaste frågan är hur länge abstinensen håller i sig. Här är en
+        ungefärlig tidslinje för en snusare som slutar tvärt:
       </p>
-
-      <h3>Är det farligare att sluta snusa "kallt" eller trappa ner?</h3>
-      <p>
-        Inget av sätten är farligt. Forskning antyder dock att kall-stop ger
-        högre långsiktig framgångsfrekvens hos de som lyckas — eftersom du
-        bara behöver "slå hål på" abstinensen en gång. Trappa ner-strategin har
-        högre kortsiktig komfort men förlängd kontaktperiod med nikotinet.
-      </p>
-
-      <h3>Vad händer med tandköttet när jag slutar?</h3>
-      <p>
-        Ungefär 1 vecka efter snusstopp börjar tandköttet läka. Vita lesioner
-        på munslemhinnan (om du haft sådana) försvinner ofta inom 4–6 veckor.
-        Tandköttsretraktionen som redan skett kommer dock inte tillbaka —
-        skälet är att slå larm tidigt.
-      </p>
+      <ul>
+        <li>
+          <strong>Dygn 1–2:</strong> Suget är intensivt och kommer i vågor på
+          3–5 minuter. Irritation, rastlöshet och svårt att fokusera.
+        </li>
+        <li>
+          <strong>Dag 3–4:</strong> Toppen på den fysiska abstinensen. Många
+          ger upp just här — det är nu det lönar sig mest att hålla ut.
+        </li>
+        <li>
+          <strong>Dag 5–7:</strong> Suget avtar märkbart. Sömnen kan fortfarande
+          vara orolig och aptiten förhöjd.
+        </li>
+        <li>
+          <strong>Vecka 2–3:</strong> De fysiska symtomen är i stort sett borta
+          och tandköttet har börjat läka.
+        </li>
+        <li>
+          <strong>Efter ~3 veckor:</strong> Kvar är vanan och triggers (kaffe,
+          bilen, efter maten) snarare än nikotinet i sig.
+        </li>
+      </ul>
     </div>
+
+    <FAQ items={faq} />
   </section>
 </BaseLayout>
 
