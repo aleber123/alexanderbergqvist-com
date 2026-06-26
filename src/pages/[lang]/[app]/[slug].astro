@@ -39,20 +39,23 @@ const app = apps.find((a) => a.id === article.data.app);
 // Localized "Read more" headings + breadcrumb labels — keeps UI in the
 // same language as the article instead of leaking Swedish into an
 // otherwise English/German/French page.
-const ARTICLE_UI: Record<Locale, { home: string; readMore: string; updated: string }> = {
-  en: { home: 'Home', readMore: 'Read more', updated: 'Updated' },
-  de: { home: 'Start', readMore: 'Mehr lesen', updated: 'Aktualisiert' },
-  no: { home: 'Hjem', readMore: 'Les mer', updated: 'Oppdatert' },
-  da: { home: 'Hjem', readMore: 'Læs mere', updated: 'Opdateret' },
-  es: { home: 'Inicio', readMore: 'Leer más', updated: 'Actualizado' },
-  fr: { home: 'Accueil', readMore: 'Lire la suite', updated: 'Mis à jour' },
-  fi: { home: 'Etusivu', readMore: 'Lue lisää', updated: 'Päivitetty' },
-  is: { home: 'Heim', readMore: 'Lesa meira', updated: 'Uppfært' },
-  it: { home: 'Home', readMore: 'Leggi di più', updated: 'Aggiornato' },
-  el: { home: 'Αρχική', readMore: 'Διαβάστε περισσότερα', updated: 'Ενημερώθηκε' },
-  nl: { home: 'Home', readMore: 'Lees meer', updated: 'Bijgewerkt' },
-  pl: { home: 'Strona główna', readMore: 'Czytaj więcej', updated: 'Zaktualizowano' },
-  pt: { home: 'Início', readMore: 'Ler mais', updated: 'Atualizado' },
+const ARTICLE_UI: Record<
+  Locale,
+  { home: string; readMore: string; updated: string; inGuide: string; get: string }
+> = {
+  en: { home: 'Home', readMore: 'Read more', updated: 'Updated', inGuide: 'The app in this guide', get: 'Get' },
+  de: { home: 'Start', readMore: 'Mehr lesen', updated: 'Aktualisiert', inGuide: 'Die App in dieser Anleitung', get: 'Holen' },
+  no: { home: 'Hjem', readMore: 'Les mer', updated: 'Oppdatert', inGuide: 'Appen i denne guiden', get: 'Hent' },
+  da: { home: 'Hjem', readMore: 'Læs mere', updated: 'Opdateret', inGuide: 'Appen i denne guide', get: 'Hent' },
+  es: { home: 'Inicio', readMore: 'Leer más', updated: 'Actualizado', inGuide: 'La app de esta guía', get: 'Obtener' },
+  fr: { home: 'Accueil', readMore: 'Lire la suite', updated: 'Mis à jour', inGuide: 'L’app de ce guide', get: 'Obtenir' },
+  fi: { home: 'Etusivu', readMore: 'Lue lisää', updated: 'Päivitetty', inGuide: 'Tämän oppaan sovellus', get: 'Hae' },
+  is: { home: 'Heim', readMore: 'Lesa meira', updated: 'Uppfært', inGuide: 'Appið í þessari handbók', get: 'Sækja' },
+  it: { home: 'Home', readMore: 'Leggi di più', updated: 'Aggiornato', inGuide: 'L’app di questa guida', get: 'Scarica' },
+  el: { home: 'Αρχική', readMore: 'Διαβάστε περισσότερα', updated: 'Ενημερώθηκε', inGuide: 'Η εφαρμογή αυτού του οδηγού', get: 'Λήψη' },
+  nl: { home: 'Home', readMore: 'Lees meer', updated: 'Bijgewerkt', inGuide: 'De app in deze gids', get: 'Download' },
+  pl: { home: 'Strona główna', readMore: 'Czytaj więcej', updated: 'Zaktualizowano', inGuide: 'Aplikacja z tego poradnika', get: 'Pobierz' },
+  pt: { home: 'Início', readMore: 'Ler mais', updated: 'Atualizado', inGuide: 'O app deste guia', get: 'Obter' },
 };
 const ui = ARTICLE_UI[lang];
 
@@ -110,6 +113,37 @@ const appStoreId = app?.data.appStoreUrl
         </span>
       )}
     </div>
+
+    {app && app.data.status === 'live' && app.data.appStoreUrl && (
+      <a
+        href={app.data.appStoreUrl}
+        target="_blank"
+        rel="noopener"
+        class="mt-6 flex items-center gap-3 rounded-xl border border-slate-200 p-3 md:p-4 no-underline transition hover:shadow-md"
+        style={`background: linear-gradient(135deg, ${app.data.accent}14, #ffffff);`}
+      >
+        <img
+          src={app.data.icon}
+          alt={`${app.data.name} icon`}
+          class="w-12 h-12 rounded-xl flex-shrink-0"
+          style={`background: ${app.data.accent};`}
+          loading="lazy"
+        />
+        <div class="min-w-0">
+          <div class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            {ui.inGuide}
+          </div>
+          <div class="font-black leading-tight">{app.data.name}</div>
+          <div class="text-sm text-slate-600 truncate">{app.data.tagline}</div>
+        </div>
+        <span
+          class="ml-auto flex-shrink-0 rounded-full px-4 py-2 text-sm font-bold text-white"
+          style={`background: ${app.data.accent};`}
+        >
+          {ui.get}&nbsp;↗
+        </span>
+      </a>
+    )}
 
     <div class="prose mt-8">
       <Content />
