@@ -87,6 +87,37 @@ const appStoreId = app?.data.appStoreUrl
       )}
     </div>
 
+    {app && app.data.status === 'live' && app.data.appStoreUrl && (
+      <a
+        href={app.data.appStoreUrl}
+        target="_blank"
+        rel="noopener"
+        class="mt-6 flex items-center gap-3 rounded-xl border border-slate-200 p-3 md:p-4 no-underline transition hover:shadow-md"
+        style={`background: linear-gradient(135deg, ${app.data.accent}14, #ffffff);`}
+      >
+        <img
+          src={app.data.icon}
+          alt={`${app.data.name} ikon`}
+          class="w-12 h-12 rounded-xl flex-shrink-0"
+          style={`background: ${app.data.accent};`}
+          loading="lazy"
+        />
+        <div class="min-w-0">
+          <div class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Appen i den här guiden
+          </div>
+          <div class="font-black leading-tight">{app.data.name}</div>
+          <div class="text-sm text-slate-600 truncate">{app.data.tagline}</div>
+        </div>
+        <span
+          class="ml-auto flex-shrink-0 rounded-full px-4 py-2 text-sm font-bold text-white"
+          style={`background: ${app.data.accent};`}
+        >
+          Hämta&nbsp;↗
+        </span>
+      </a>
+    )}
+
     <div class="prose mt-8">
       <Content />
     </div>
