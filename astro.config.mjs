@@ -5,6 +5,9 @@ import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
 
 const SITE = 'https://alexanderbergqvist.com';
+// Build-cache bust 2026-06-26: force Astro to re-sync the content layer so
+// newly added article pages are emitted on Vercel (cached store was serving
+// stale getStaticPaths output — sitemap had the URL but the page 404'd).
 
 export default defineConfig({
   site: SITE,
