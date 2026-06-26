@@ -1,7 +1,7 @@
 {
   "name": "Rita & Färglägg",
   "tagline": "Färgläggningsapp för barn 3–8 år.",
-  "description": "Rita är iOS-appen där barn kan färglägga digitala målarbilder. Trygg utan inloggning, utan reklam för barn, och med ständigt nya bilder.",
+  "description": "Rita är iOS-appen där barn 3–8 år färglägger digitala målarbilder. Helt utan annonser och utan spårning, ingen inloggning, magiska pennor, foto-till-målarbild och 68 handritade bilder.",
   "icon": "/apps/rita.png",
   "accent": "#F06292",
   "accentDark": "#C2185B",
@@ -16,10 +16,11 @@
     "rita digitalt"
   ],
   "features": [
-    "Tiotals målarbilder för olika åldrar",
-    "Inga annonser för barn",
-    "Inget login krävs",
-    "Spara dina mästerverk i appen"
+    "68 handritade målarbilder (enhörningar, dinosaurier, djur, fordon m.m.)",
+    "Helt utan annonser och utan spårning",
+    "Magiska pennor: regnbåge, glitter och neon",
+    "Förvandla ett foto till en målarbild – direkt på enheten",
+    "Föräldraspärr på alla köp, ingen inloggning"
   ],
   "status": "live",
   "order": 4
