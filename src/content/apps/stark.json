@@ -5,6 +5,7 @@
   "icon": "/apps/stark.png",
   "accent": "#E85D34",
   "accentDark": "#B13A1D",
+  "appStoreUrl": "https://apps.apple.com/se/app/stark/id6769400874",
   "bundleId": "com.alexanderbergqvist.stark",
   "category": "Hälsa och träning",
   "keywords": [
@@ -26,6 +27,6 @@
     "4 multi-veckors program (Premium)",
     "Apple Hälsa-synk + vilopuls före/efter pass"
   ],
-  "status": "soon",
+  "status": "live",
   "order": 12
 }
