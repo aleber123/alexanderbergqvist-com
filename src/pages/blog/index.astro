@@ -135,7 +135,7 @@ const fmt = (d: Date) =>
                   {list.map((a) => (
                     <li>
                       <a
-                        href={`/${a.data.app}/${a.id.split('/').pop()}/`}
+                        href={articleUrl(a.id, a.data.app, a.data.lang)}
                         class="group flex items-baseline justify-between gap-4 py-4 hover:bg-slate-50 transition px-2 -mx-2"
                       >
                         <div class="flex-1 min-w-0">

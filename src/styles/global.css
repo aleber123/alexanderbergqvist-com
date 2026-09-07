@@ -84,26 +84,37 @@ body {
   display: block;
   overflow-x: auto;
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   margin: 1.5rem 0;
-  font-size: 0.9rem;
-  line-height: 1.45;
+  font-size: 0.875rem;
+  line-height: 1.4;
   border: 1px solid var(--color-border);
   border-radius: 12px;
+  /* Scroll affordance: a soft shadow appears at whichever edge still has
+     content off-screen. Without it a cut-off column just looks like a bug —
+     which is exactly how the comparison tables were reading. */
+  background:
+    linear-gradient(to right, #fff 30%, rgba(255, 255, 255, 0)) left / 40px 100% no-repeat local,
+    linear-gradient(to left, #fff 30%, rgba(255, 255, 255, 0)) right / 40px 100% no-repeat local,
+    linear-gradient(to right, rgba(15, 23, 42, 0.10), rgba(15, 23, 42, 0)) left / 14px 100% no-repeat scroll,
+    linear-gradient(to left, rgba(15, 23, 42, 0.10), rgba(15, 23, 42, 0)) right / 14px 100% no-repeat scroll;
 }
 .prose thead th {
-  background: #f8fafc;
+  background: #f1f5f9;
   font-weight: 700;
   text-align: left;
   vertical-align: bottom;
-  padding: 0.6rem 0.85rem;
+  padding: 0.7rem 0.9rem;
   border-bottom: 2px solid var(--color-border);
   white-space: nowrap;
 }
 .prose tbody td {
-  padding: 0.6rem 0.85rem;
+  padding: 0.7rem 0.9rem;
   border-bottom: 1px solid var(--color-border);
-  vertical-align: top;
+  /* Middle beats top here: the ✅/❌ marks are short and were floating above
+     the wrapped text next to them, which is what made rows look ragged. */
+  vertical-align: middle;
 }
 .prose tbody tr:nth-child(even) td {
   background: #fafafa;
@@ -111,10 +122,28 @@ body {
 .prose tbody tr:last-child td {
   border-bottom: none;
 }
-/* First column = the app/row name — make it stand out. */
-.prose tbody td:first-child {
+/* First column is the row's identity (the app being compared). Pin it so you
+   still know which row you're reading once the table is scrolled sideways. */
+.prose table :is(td, th):first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
   font-weight: 600;
   white-space: nowrap;
+  background: #fff;
+  border-right: 1px solid var(--color-border);
+}
+.prose thead th:first-child {
+  background: #f1f5f9;
+  z-index: 2;
+}
+.prose tbody tr:nth-child(even) td:first-child {
+  background: #fafafa;
+}
+/* Verdict columns are short phrases — let them breathe instead of wrapping
+   one word per line in a narrow column. */
+.prose tbody td:not(:first-child) {
+  min-width: 7.5rem;
 }
 /* Keep the ✅ / ❌ / ⚠️ marks from looking oversized next to small text. */
 .prose table :is(td, th) {
