@@ -8,6 +8,7 @@ import AppStoreBadge from '../../../components/AppStoreBadge.astro';
 import {
   LOCALES,
   LOCALE_BCP47,
+  localizeAppStoreUrl,
   type Locale,
 } from '../../../i18n/locales';
 
@@ -72,6 +73,12 @@ const related = allArticles
 const appStoreId = app?.data.appStoreUrl
   ? app.data.appStoreUrl.match(/\/id(\d+)/)?.[1]
   : undefined;
+
+// Point readers at THEIR storefront. Without this every translated article
+// sent German/English/Spanish readers to the Swedish App Store, where the
+// listing is in Swedish and the price is in SEK — the helper already exists
+// and [lang]/[app]/index.astro has always used it.
+const localizedAppStoreUrl = localizeAppStoreUrl(app?.data.appStoreUrl, lang);
 ---
 
 <BaseLayout
@@ -114,9 +121,9 @@ const appStoreId = app?.data.appStoreUrl
       )}
     </div>
 
-    {app && app.data.status === 'live' && app.data.appStoreUrl && (
+    {app && app.data.status === 'live' && localizedAppStoreUrl && (
       <a
-        href={app.data.appStoreUrl}
+        href={localizedAppStoreUrl}
         target="_blank"
         rel="noopener"
         class="mt-6 flex items-center gap-3 rounded-xl border border-slate-200 p-3 md:p-4 no-underline transition hover:shadow-md"
@@ -170,7 +177,7 @@ const appStoreId = app?.data.appStoreUrl
             <p class="text-slate-600 text-sm mt-1">{app.data.tagline}</p>
             <div class="mt-4">
               <AppStoreBadge
-                url={app.data.appStoreUrl}
+                url={localizedAppStoreUrl}
                 status={app.data.status}
               />
             </div>

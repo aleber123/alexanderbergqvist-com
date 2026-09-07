@@ -1,0 +1,160 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+
+// "Kom ihåg min födelsedag" — landing page for a link a Födelsedagar user sends
+// to a friend. Everything travels in the query string (?b=<base64url of
+// "Name|MM-DD">) and is decoded in the browser: nothing is stored, no server
+// call, no account, and the page works on static hosting.
+//
+// The point is the loop: a trusted person hands this to a friend, the friend
+// gets something genuinely useful (a recurring calendar entry, no app needed),
+// and the app is introduced as the thing that made it easy — rather than
+// hijacking a personal birthday greeting with promo text.
+const APP_STORE_URL =
+  'https://apps.apple.com/se/app/f%C3%B6delsedagar/id6758899294';
+---
+
+<BaseLayout
+  title="Kom ihåg min födelsedag"
+  description="Lägg till en födelsedag i din kalender med ett klick — påminnelse varje år, helt gratis."
+>
+  <section class="max-w-lg mx-auto px-6 py-20 text-center">
+    <div id="loading" class="text-slate-500">Laddar…</div>
+
+    <div id="card" class="hidden">
+      <p class="text-5xl mb-4">🎂</p>
+      <h1 class="text-3xl font-bold text-slate-900 mb-2">
+        <span id="who"></span> fyller år
+      </h1>
+      <p id="when" class="text-xl text-slate-600 mb-8"></p>
+
+      <button
+        id="add"
+        class="w-full rounded-xl bg-slate-900 text-white font-semibold px-6 py-4 text-lg hover:bg-slate-800 transition"
+      >
+        Lägg till i kalendern
+      </button>
+      <p class="text-sm text-slate-500 mt-3">
+        Återkommer varje år. Ingen app behövs.
+      </p>
+
+      <hr class="my-10 border-slate-200" />
+
+      <p class="text-slate-700 mb-4">
+        Vill du sluta glömma bort födelsedagar helt?
+      </p>
+      <a
+        href={APP_STORE_URL}
+        class="inline-block rounded-xl border-2 border-slate-900 px-6 py-3 font-semibold text-slate-900 hover:bg-slate-50 transition"
+      >
+        Ladda ner Födelsedagar — gratis
+      </a>
+      <p class="text-xs text-slate-400 mt-6">
+        Den här sidan sparar ingenting. Namnet och datumet finns bara i länken.
+      </p>
+    </div>
+
+    <div id="fallback" class="hidden">
+      <h1 class="text-2xl font-bold text-slate-900 mb-3">Länken är ofullständig</h1>
+      <p class="text-slate-600 mb-8">
+        Be personen som skickade den att dela länken igen.
+      </p>
+      <a
+        href={APP_STORE_URL}
+        class="inline-block rounded-xl bg-slate-900 text-white px-6 py-3 font-semibold"
+      >
+        Ladda ner Födelsedagar
+      </a>
+    </div>
+  </section>
+
+  <script is:inline define:vars={{ APP_STORE_URL }}>
+    (function () {
+      const MONTHS = [
+        'januari', 'februari', 'mars', 'april', 'maj', 'juni',
+        'juli', 'augusti', 'september', 'oktober', 'november', 'december',
+      ];
+
+      function decode(raw) {
+        // base64url -> utf8, tolerant of missing padding.
+        let s = raw.replace(/-/g, '+').replace(/_/g, '/');
+        while (s.length % 4) s += '=';
+        const bytes = Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+        return new TextDecoder().decode(bytes);
+      }
+
+      const show = (id) => document.getElementById(id).classList.remove('hidden');
+      const hide = (id) => document.getElementById(id).classList.add('hidden');
+
+      let name = '';
+      let month = 0;
+      let day = 0;
+      try {
+        const raw = new URLSearchParams(location.search).get('b');
+        if (!raw) throw new Error('no payload');
+        const [n, md] = decode(raw).split('|');
+        const [mm, dd] = (md || '').split('-').map(Number);
+        if (!n || !mm || !dd || mm < 1 || mm > 12 || dd < 1 || dd > 31) {
+          throw new Error('bad payload');
+        }
+        name = n;
+        month = mm;
+        day = dd;
+      } catch (_) {
+        hide('loading');
+        show('fallback');
+        return;
+      }
+
+      document.getElementById('who').textContent = name;
+      document.getElementById('when').textContent = `${day} ${MONTHS[month - 1]}`;
+      document.title = `${name} fyller år ${day} ${MONTHS[month - 1]}`;
+      hide('loading');
+      show('card');
+
+      document.getElementById('add').addEventListener('click', function () {
+        const pad = (n) => String(n).padStart(2, '0');
+        // Anchor on this year (or next, if the date has already passed) and
+        // repeat yearly. All-day event => DTEND is the following day.
+        const now = new Date();
+        let year = now.getFullYear();
+        const thisYear = new Date(year, month - 1, day);
+        if (thisYear < new Date(now.getFullYear(), now.getMonth(), now.getDate())) {
+          year += 1;
+        }
+        const start = new Date(year, month - 1, day);
+        const end = new Date(year, month - 1, day + 1);
+        const fmt = (d) => `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}`;
+        const ics = [
+          'BEGIN:VCALENDAR',
+          'VERSION:2.0',
+          'PRODID:-//alexanderbergqvist.com//Fodelsedagar//SV',
+          'CALSCALE:GREGORIAN',
+          'BEGIN:VEVENT',
+          `UID:${fmt(start)}-${encodeURIComponent(name)}@alexanderbergqvist.com`,
+          `DTSTAMP:${fmt(now)}T000000Z`,
+          `DTSTART;VALUE=DATE:${fmt(start)}`,
+          `DTEND;VALUE=DATE:${fmt(end)}`,
+          'RRULE:FREQ=YEARLY',
+          `SUMMARY:🎂 ${name} fyller år`,
+          'BEGIN:VALARM',
+          'TRIGGER:-P1D',
+          'ACTION:DISPLAY',
+          `DESCRIPTION:Imorgon fyller ${name} år`,
+          'END:VALARM',
+          'END:VEVENT',
+          'END:VCALENDAR',
+        ].join('\r\n');
+
+        const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `${name}-fodelsedag.ics`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+      });
+    })();
+  </script>
+</BaseLayout>

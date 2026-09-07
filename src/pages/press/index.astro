@@ -1,0 +1,114 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+// Press kit. Exists so a journalist on deadline never has to email and wait:
+// bio, portrait, icons, screenshots and contact are all one click away. That
+// "assets ready" difference is most of why a pitch gets used or dropped.
+const apps = (await getCollection('apps')).sort(
+  (a, b) => (a.data.order ?? 99) - (b.data.order ?? 99)
+);
+
+// TODO: paste the P4 clip URL here — the radio feature is the hardest-won
+// credential and it is currently used nowhere.
+const P4_CLIP_URL = '';
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Alexander Bergqvist',
+  url: 'https://alexanderbergqvist.com/press',
+  email: 'alexander.bergqvist@gmail.com',
+  jobTitle: 'Indie iOS-utvecklare',
+  description:
+    'Svensk indie iOS-utvecklare som bygger appar för konkreta vardagsproblem.',
+  sameAs: [
+    'https://apps.apple.com/se/developer/alexander-bergqvist/id1830340527',
+  ],
+};
+---
+
+<BaseLayout
+  title="Press & media — Alexander Bergqvist"
+  description="Presskit för Alexander Bergqvist, svensk indie iOS-utvecklare. Bio, bilder, appikoner och kontaktuppgifter — fritt att använda."
+>
+  <script
+    type="application/ld+json"
+    set:html={JSON.stringify(personSchema)}
+    is:inline
+  />
+
+  <section class="max-w-3xl mx-auto px-6 py-16 prose">
+    <h1>Press &amp; media</h1>
+    <p class="lead">
+      Allt du behöver för att skriva om mig eller apparna — fritt att använda,
+      ingen fråga behövs. Behöver du något som inte finns här, mejla så skickar
+      jag det samma dag.
+    </p>
+
+    <h2>Kort om mig</h2>
+    <p>
+      Alexander Bergqvist, indie iOS-utvecklare i Sverige. Jag bygger appar
+      ensam, vid sidan av vardagen — från idé till App Store. Fokus är konkreta
+      vardagsproblem: hålla reda på födelsedagar, mata surdegen, veta hur många
+      VAB-dagar man har kvar, komma ihåg att vattna.
+    </p>
+    <p>
+      Just nu finns {apps.length} appar ute. Ingen av dem har en
+      marknadsföringsbudget.
+    </p>
+
+    <h3>Ännu kortare (för en bildtext)</h3>
+    <blockquote>
+      Alexander Bergqvist är svensk indie-utvecklare och bygger iOS-appar för
+      vardagsproblem — helt på egen hand.
+    </blockquote>
+
+    {P4_CLIP_URL && (
+      <>
+        <h2>Tidigare medverkan</h2>
+        <p>
+          <a href={P4_CLIP_URL} target="_blank" rel="noopener">
+            Inslag i Sveriges Radio P4
+          </a>
+        </p>
+      </>
+    )}
+
+    <h2>Bilder</h2>
+    <p>
+      Appikoner i full upplösning finns direkt via länkarna nedan.
+      Skärmbilder och porträtt skickar jag på begäran — mejla bara.
+    </p>
+    <ul>
+      {apps.map((a) => (
+        <li>
+          <a href={a.data.icon}>{a.data.name}</a> — {a.data.tagline}
+          {a.data.appStoreUrl && (
+            <>
+              {' · '}
+              <a href={a.data.appStoreUrl} target="_blank" rel="noopener">
+                App Store
+              </a>
+            </>
+          )}
+        </li>
+      ))}
+    </ul>
+
+    <h2>Kontakt</h2>
+    <p>
+      <a href="mailto:alexander.bergqvist@gmail.com"
+        >alexander.bergqvist@gmail.com</a
+      ><br />
+      Jag svarar normalt samma dag och ställer gärna upp på intervju, även med
+      kort varsel.
+    </p>
+
+    <h2>Får jag använda materialet?</h2>
+    <p>
+      Ja. Appikoner, skärmbilder och texterna på den här sidan får användas fritt
+      i redaktionella sammanhang utan att fråga.
+    </p>
+  </section>
+</BaseLayout>
