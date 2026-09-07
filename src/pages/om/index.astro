@@ -1,4 +1,5 @@
 ---
+import { SAME_AS } from '../../data/identity';
 import BaseLayout from '../../components/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
@@ -22,9 +23,7 @@ const personSchema = {
     'App Store Optimization',
     'Indie App Business',
   ],
-  sameAs: [
-    'https://apps.apple.com/se/developer/alexander-bergqvist/id1830340527',
-  ],
+  sameAs: SAME_AS,
 };
 ---
 

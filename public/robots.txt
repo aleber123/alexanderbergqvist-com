@@ -3,9 +3,15 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-# Block AI training crawlers from harvesting content (we still allow
-# search-engine crawlers like Google + Bing). Comment these out if you
-# want to allow AI bots.
+# AI crawlers fall into two groups and are treated differently on purpose.
+#
+# TRAINING crawlers harvest content to train models. Blocking them costs no
+# traffic, so they stay blocked.
+#
+# ANSWER/SEARCH crawlers power live assistant answers — when someone asks
+# "best app for quitting snus", these are what decide whether these apps get
+# mentioned. Blocking them is blocking a discovery channel, which is the exact
+# opposite of what this site is for. They are allowed below.
 User-agent: GPTBot
 Disallow: /
 
@@ -21,8 +27,16 @@ Disallow: /
 User-agent: anthropic-ai
 Disallow: /
 
+# Answer engines — explicitly allowed. These surface pages in live assistant
+# answers rather than training on them; they are a distribution channel.
 User-agent: PerplexityBot
-Disallow: /
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
 
 # Sitemap — entry point for search engines to discover pages.
 Sitemap: https://alexanderbergqvist.com/sitemap-index.xml

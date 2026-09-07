@@ -1,4 +1,5 @@
 ---
+import { SAME_AS } from '../data/identity';
 /**
  * Centralized <head> meta. Every page should use this through BaseLayout.
  *
@@ -174,7 +175,7 @@ const articleLd = type === 'article' && publishedAt
         name: 'Alexander Bergqvist',
         url: new URL('/', Astro.site).href,
         jobTitle: 'Indie iOS-utvecklare',
-        sameAs: ['https://github.com/aleber123'],
+        sameAs: SAME_AS,
       },
     ],
   })}
