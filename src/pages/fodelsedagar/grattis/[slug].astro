@@ -1,0 +1,208 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../../components/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import FAQ from '../../../components/FAQ.astro';
+import AppStoreBadge from '../../../components/AppStoreBadge.astro';
+import {
+  RELATIONS,
+  MILESTONES,
+  MILESTONE_LINES,
+  TONES,
+} from '../../../data/grattis';
+
+// One template, two kinds of spoke: a relation (mamma, vän, kollega…) and a
+// milestone age (30 år, 50 år…). Both target long-tail "grattis"-queries that
+// already rank the site at 7-10 with no page pointed at them.
+export const getStaticPaths = (() => {
+  const relationPaths = RELATIONS.map((r) => ({
+    params: { slug: r.slug },
+    props: { kind: 'relation' as const, relation: r },
+  }));
+  const milestonePaths = MILESTONES.map((age) => ({
+    params: { slug: `${age}-ar` },
+    props: { kind: 'milestone' as const, age },
+  }));
+  return [...relationPaths, ...milestonePaths];
+}) satisfies GetStaticPaths;
+
+const props = Astro.props as
+  | { kind: 'relation'; relation: (typeof RELATIONS)[number] }
+  | { kind: 'milestone'; age: number };
+
+const app = await getEntry('apps', 'fodelsedagar');
+const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
+
+let heading: string;
+let lead: string;
+let metaTitle: string;
+let metaDesc: string;
+let crumb: string;
+let groups: { label: string; hint: string; items: string[] }[];
+let keywords: string[];
+
+if (props.kind === 'relation') {
+  const r = props.relation;
+  heading = `Grattis på födelsedagen — ${r.label.toLowerCase()}`;
+  lead = r.intro;
+  crumb = r.label;
+  metaTitle = `Grattis till ${r.name} — färdiga födelsedagshälsningar`;
+  metaDesc = `Födelsedagshälsningar till ${r.name}: varma, roliga och korta. Kopiera med ett klick — inget krångel.`;
+  groups = TONES.map((t) => ({
+    label: t.label,
+    hint: t.hint,
+    items: r.messages[t.key],
+  }));
+  keywords = [
+    `grattis ${r.slug}`,
+    `födelsedagshälsning ${r.slug}`,
+    `grattis på födelsedagen ${r.slug}`,
+    'vad skriva födelsedagskort',
+  ];
+} else {
+  const age = props.age;
+  heading = `Grattis på ${age}-årsdagen`;
+  lead = `Fyller någon ${age}? De här hälsningarna är skrivna för just den åldern — plus några som passar oavsett.`;
+  crumb = `${age} år`;
+  metaTitle = `Grattis på ${age}-årsdagen — hälsningar att kopiera`;
+  metaDesc = `Färdiga födelsedagshälsningar till en ${age}-åring. Varma, roliga och korta — kopiera direkt.`;
+  groups = [
+    {
+      label: `${age} år`,
+      hint: 'Skrivna för just den här åldern',
+      items: MILESTONE_LINES[age] ?? [],
+    },
+    {
+      label: 'Passar alltid',
+      hint: 'Fungerar oavsett ålder',
+      items: [
+        ...RELATIONS[2].messages.warm.slice(0, 3),
+        ...RELATIONS[2].messages.funny.slice(0, 2),
+        ...RELATIONS[2].messages.short.slice(0, 2),
+      ],
+    },
+  ];
+  keywords = [
+    `grattis ${age} år`,
+    `${age} årsdag text`,
+    `grattis på ${age}-årsdagen`,
+    'jämn födelsedag hälsning',
+  ];
+}
+
+const faq = [
+  {
+    q: 'Får jag använda hälsningarna som de är?',
+    a: 'Ja, kopiera fritt. De är skrivna för att kunna skickas utan att du behöver ändra något. Lägg gärna till en egen mening om något specifikt — det är det som gör skillnad.',
+  },
+  {
+    q: 'Vad gör jag om jag är sen?',
+    a: 'Säg det rakt ut istället för att bortförklara: "Jag är sen — grattis i efterskott, hoppas du hade en fin dag." De flesta bryr sig mer om att du hörde av dig alls.',
+  },
+];
+---
+
+<BaseLayout
+  title={metaTitle}
+  description={metaDesc}
+  keywords={keywords}
+  appStoreId={appStoreId}
+>
+  <section class="max-w-3xl mx-auto px-6 py-8">
+    <Breadcrumbs
+      trail={[
+        { name: 'Hem', url: '/' },
+        { name: 'Födelsedagar', url: '/fodelsedagar/' },
+        { name: 'Grattis-hälsningar', url: '/fodelsedagar/grattis/' },
+        { name: crumb },
+      ]}
+    />
+    <h1 class="mt-6 text-3xl md:text-5xl font-black tracking-tight">
+      {heading}
+    </h1>
+    <p class="mt-3 text-lg text-slate-600">{lead}</p>
+
+    {groups.map((g) => (
+      <div class="mt-10">
+        <h2 class="text-2xl font-black">{g.label}</h2>
+        <p class="text-sm text-slate-500 mt-0.5">{g.hint}</p>
+        <ul class="mt-4 space-y-3">
+          {g.items.map((msg) => (
+            <li class="rounded-xl border border-slate-200 bg-white p-4 flex gap-3 items-start">
+              <p class="flex-1 text-slate-800 leading-relaxed">{msg}</p>
+              <button
+                type="button"
+                class="copy shrink-0 rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-bold text-slate-700 hover:bg-slate-50 transition"
+                data-msg={msg}
+              >
+                Kopiera
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+
+    <div class="mt-12 rounded-2xl border border-slate-200 bg-slate-50 p-6 md:p-8">
+      <h2 class="text-xl font-black">Slipp glömma bort nästa gång</h2>
+      <p class="mt-2 text-slate-600">
+        Födelsedagar påminner dig en månad, en vecka och en dag innan. Importera
+        från kontakterna så är du klar på en minut. Gratis.
+      </p>
+      <div class="mt-5">
+        <AppStoreBadge url={app?.data.appStoreUrl} status={app?.data.status} />
+      </div>
+    </div>
+
+    <h2 class="mt-12 text-2xl font-black">Fler hälsningar</h2>
+    <div class="mt-4 flex flex-wrap gap-2">
+      {RELATIONS.filter(
+        (r) => props.kind !== 'relation' || r.slug !== props.relation.slug
+      ).map((r) => (
+        <a
+          href={`/fodelsedagar/grattis/${r.slug}/`}
+          class="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold hover:border-slate-400 transition"
+        >
+          {r.label}
+        </a>
+      ))}
+      {MILESTONES.filter(
+        (a) => props.kind !== 'milestone' || a !== props.age
+      ).map((age) => (
+        <a
+          href={`/fodelsedagar/grattis/${age}-ar/`}
+          class="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold hover:border-slate-400 transition"
+        >
+          {age} år
+        </a>
+      ))}
+    </div>
+
+    <FAQ items={faq} />
+  </section>
+
+  <script is:inline>
+    document.querySelectorAll('button.copy').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const msg = btn.getAttribute('data-msg') || '';
+        try {
+          await navigator.clipboard.writeText(msg);
+        } catch (_) {
+          // Clipboard API needs a secure context; fall back to a temp textarea.
+          const ta = document.createElement('textarea');
+          ta.value = msg;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); } catch (_) {}
+          document.body.removeChild(ta);
+        }
+        const original = btn.textContent;
+        btn.textContent = 'Kopierat!';
+        setTimeout(() => { btn.textContent = original; }, 1500);
+      });
+    });
+  </script>
+</BaseLayout>

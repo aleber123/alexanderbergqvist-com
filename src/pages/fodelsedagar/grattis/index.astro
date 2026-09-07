@@ -1,0 +1,140 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../../components/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import FAQ from '../../../components/FAQ.astro';
+import AppStoreBadge from '../../../components/AppStoreBadge.astro';
+import { RELATIONS, MILESTONES, TONES } from '../../../data/grattis';
+
+const app = await getEntry('apps', 'fodelsedagar');
+const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
+
+const faq = [
+  {
+    q: 'Vad skriver man på ett födelsedagskort?',
+    a: 'Börja med grattis, säg något specifikt om personen, och avsluta med en önskan. Det specifika är det viktigaste — "tack för att du alltid ställer upp" betyder mer än tre rader allmänna lyckönskningar. Håll det kort; ett kort meddelande som är personligt slår ett långt som är generiskt.',
+  },
+  {
+    q: 'Hur skriver man en rolig födelsedagshälsning utan att det blir taskigt?',
+    a: 'Skämta om åldern bara om personen själv brukar göra det. Säkrare humor riktar sig mot situationen eller mot dig själv istället — "jag hade skrivit något djupt men då hade du blivit misstänksam" retar ingen. Undvik skämt om utseende, hälsa och ekonomi.',
+  },
+  {
+    q: 'Är det okej att skicka grattis via sms?',
+    a: 'Ja. Ett sms på rätt dag är bättre än ett fint kort som kommer en vecka sent. Till nära familj och äldre släktingar uppskattas dock ofta ett samtal eller ett kort utöver — det tar två minuter och märks.',
+  },
+  {
+    q: 'Vad gör man om man glömt bort födelsedagen?',
+    a: 'Säg det rakt ut och skippa bortförklaringen: "Jag är sen — grattis i efterskott, hoppas du hade en fin dag." De flesta bryr sig mer om att du hörde av dig än om exakt vilket datum. Vill du slippa problemet helt påminner Födelsedagar-appen dig i god tid innan.',
+  },
+  {
+    q: 'Vad skriver man till någon man inte känner så väl?',
+    a: 'Håll det kort och vänligt: "Grattis på födelsedagen! Hoppas du får en fin dag." Ingen har någonsin blivit besviken över en enkel gratulation. Det personliga sparar du till dem du faktiskt känner.',
+  },
+];
+
+const totalMessages = RELATIONS.reduce(
+  (sum, r) =>
+    sum + r.messages.warm.length + r.messages.funny.length + r.messages.short.length,
+  0
+);
+---
+
+<BaseLayout
+  title="Grattis på födelsedagen — 100+ hälsningar att kopiera"
+  description="Färdiga födelsedagshälsningar till mamma, pappa, vän, kollega, partner och fler. Varma, roliga och korta — kopiera med ett klick."
+  keywords={[
+    'grattis på födelsedagen',
+    'födelsedagshälsning',
+    'grattis text',
+    'vad skriva födelsedagskort',
+    'rolig födelsedagshälsning',
+    'grattis mamma',
+    'grattis vän',
+  ]}
+  appStoreId={appStoreId}
+>
+  <section class="max-w-3xl mx-auto px-6 py-8">
+    <Breadcrumbs
+      trail={[
+        { name: 'Hem', url: '/' },
+        { name: 'Födelsedagar', url: '/fodelsedagar/' },
+        { name: 'Grattis-hälsningar' },
+      ]}
+    />
+    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-slate-500">
+      Färdiga hälsningar
+    </span>
+    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+      Grattis på födelsedagen
+    </h1>
+    <p class="mt-3 text-lg text-slate-600">
+      {totalMessages}+ hälsningar du kan kopiera rakt av — sorterade efter vem du
+      skriver till och vilken ton du vill ha. Ingen registrering, inget krångel.
+    </p>
+
+    <h2 class="mt-12 text-2xl font-black">Vem skriver du till?</h2>
+    <div class="mt-4 grid sm:grid-cols-2 gap-3">
+      {RELATIONS.map((r) => (
+        <a
+          href={`/fodelsedagar/grattis/${r.slug}/`}
+          class="rounded-xl border border-slate-200 bg-white px-5 py-4 hover:border-slate-400 hover:shadow-sm transition"
+        >
+          <span class="font-bold">{r.label}</span>
+          <span class="block text-sm text-slate-500 mt-0.5">
+            {r.messages.warm.length +
+              r.messages.funny.length +
+              r.messages.short.length} hälsningar
+          </span>
+        </a>
+      ))}
+    </div>
+
+    <h2 class="mt-12 text-2xl font-black">Jämna år</h2>
+    <p class="mt-2 text-slate-600">
+      Fyller någon jämnt? De här hälsningarna är skrivna för just den åldern.
+    </p>
+    <div class="mt-4 flex flex-wrap gap-2">
+      {MILESTONES.map((age) => (
+        <a
+          href={`/fodelsedagar/grattis/${age}-ar/`}
+          class="rounded-full border border-slate-200 bg-white px-5 py-2 font-bold hover:border-slate-400 transition"
+        >
+          {age} år
+        </a>
+      ))}
+    </div>
+
+    <h2 class="mt-12 text-2xl font-black">Tre saker som gör hälsningen bättre</h2>
+    <ol class="mt-4 space-y-3 text-slate-700">
+      <li>
+        <strong>Var specifik.</strong> "Tack för att du alltid svarar när jag
+        ringer" betyder mer än tre rader allmänna lyckönskningar. En konkret sak
+        visar att du faktiskt tänkt på personen.
+      </li>
+      <li>
+        <strong>Håll det kort.</strong> Ett kort personligt meddelande slår ett
+        långt generiskt. Två meningar räcker nästan alltid.
+      </li>
+      <li>
+        <strong>Skicka i tid.</strong> På dagen är bäst. Är du sen — säg det rakt
+        ut istället för att bortförklara.
+      </li>
+    </ol>
+
+    <div class="mt-12 rounded-2xl border border-slate-200 bg-slate-50 p-6 md:p-8">
+      <h2 class="text-xl font-black">Slipp glömma bort nästa gång</h2>
+      <p class="mt-2 text-slate-600">
+        Födelsedagar påminner dig i god tid — en månad, en vecka och en dag
+        innan. Importera från kontakterna och du är klar på en minut. Gratis.
+      </p>
+      <div class="mt-5">
+        <AppStoreBadge
+          url={app?.data.appStoreUrl}
+          status={app?.data.status}
+        />
+      </div>
+    </div>
+
+    <FAQ items={faq} />
+  </section>
+</BaseLayout>
