@@ -9,10 +9,6 @@ const apps = (await getCollection('apps')).sort(
   (a, b) => (a.data.order ?? 99) - (b.data.order ?? 99)
 );
 
-// TODO: paste the P4 clip URL here — the radio feature is the hardest-won
-// credential and it is currently used nowhere.
-const P4_CLIP_URL = '';
-
 const personSchema = {
   '@context': 'https://schema.org',
   '@type': 'Person',
@@ -63,17 +59,6 @@ const personSchema = {
       Alexander Bergqvist är svensk indie-utvecklare och bygger iOS-appar för
       vardagsproblem — helt på egen hand.
     </blockquote>
-
-    {P4_CLIP_URL && (
-      <>
-        <h2>Tidigare medverkan</h2>
-        <p>
-          <a href={P4_CLIP_URL} target="_blank" rel="noopener">
-            Inslag i Sveriges Radio P4
-          </a>
-        </p>
-      </>
-    )}
 
     <h2>Bilder</h2>
     <p>
