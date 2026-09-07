@@ -70,7 +70,14 @@ const fontFaces = `
         Latin-Ext and italic load on demand via unicode-range. */}
     <link rel="preload" href={latin} as="font" type="font/woff2" crossorigin />
     <style is:inline set:html={fontFaces}></style>
-    <SEO {...props} hreflangAlternates={hreflangAlternates} />
+    {/* htmlLang was destructured here and never forwarded, so SEO.astro
+        fell back to Swedish for og:locale, inLanguage and hreflang on
+        every translated page. */}
+    <SEO
+      {...props}
+      hreflangAlternates={hreflangAlternates}
+      locale={htmlLang.includes('-') ? htmlLang : 'sv-SE'}
+    />
     <Analytics />
   </head>
   <body class="min-h-screen flex flex-col">
