@@ -1,63 +1,200 @@
 @import "tailwindcss";
 
-/* Brand-tokens shared across the whole site. Each app section overrides
-   its accent via inline style on the section root. */
-@theme {
-  --color-bg: #ffffff;
-  --color-ink: #0f172a;
-  --color-muted: #64748b;
-  --color-border: #e2e8f0;
-  --color-accent: #2563eb;
+/* Metric-matched fallback so the hero doesn't reflow when the real face
+   swaps in. Uses local() only — no network cost. The overrides are
+   starting values: load the page with the woff2 blocked in DevTools and
+   nudge size-adjust in 2% steps until the heading stops shifting. */
+@font-face {
+  font-family: "Display Fallback";
+  src: local("Georgia"), local("Times New Roman"), local("Times");
+  size-adjust: 88%;
+  ascent-override: 95%;
+  descent-override: 24%;
+  line-gap-override: 0%;
+}
 
+/* ---------------------------------------------------------------------
+   Palette.
+
+   What was here before was literally `white / slate-900 / slate-500 /
+   slate-200 / blue-600` — the exact five values every Tailwind starter
+   emits. Slate is a blue-tinted grey, so sitting it next to blue-600 is
+   precisely why the site read as "default". Rotating the neutral warm
+   costs 0 KB and is the highest-signal change available.
+
+   Two accents, deliberately:
+     - Blue survives protanopia, deuteranopia and tritanopia intact, so
+       it carries links.
+     - Warm ochre stays separable from blue under every CVD simulation
+       and never sits adjacent to red, so it carries CTAs and marks.
+   The twelve app accents contain green/green, brown/brown and
+   purple/blue collisions; no thirteenth brand colour can harmonise with
+   that set. So app accents are demoted to identity only — icon tile and
+   a 4px left rule — and stop being asked to carry contrast.
+
+   Structured as `@theme inline` over a `:root` var layer. Plain
+   `@theme` inlines literal hex into the generated utilities, so no
+   cascade can ever reach them. Getting that wrong fails silently:
+   everything compiles and nothing changes colour.
+   --------------------------------------------------------------------- */
+:root {
+  --surface: #fffcf8;      /* warm paper, not #ffffff */
+  --surface-2: #f6f2ec;    /* replaces every bg-slate-50 */
+  --ink: #17150f;          /* warm near-black — 17.9:1 on surface */
+  --ink-2: #4a4640;        /* body copy — 9.8:1 */
+  --ink-3: #6e675c;        /* labels/meta — 5.3:1, passes at 14px */
+  --line: #e6e0d6;
+  --line-strong: #cfc7b9;
+  --accent: #1a56db;       /* inline links only — 7.8:1 */
+  --signal: #a8541b;       /* CTA underline + section marks — 5.6:1 */
+
+  /* For the deliberately dark bands. We compose with dark rather than
+     shipping a dark *mode*: 522 hardcoded utilities, 15 inline accent
+     bindings and 163 MDX files flowing through a hand-rolled .prose make
+     a real retrofit a two-day job that buys zero SEO, zero conversion
+     and zero benefit to a colour-blind owner. Two designed dark moments
+     beat a mode nobody toggles. */
+  --on-ink: #f6f2ec;       /* 16.7:1 on --ink */
+  --on-ink-2: #b3aa9c;     /* muted on dark — 8.1:1 on --ink */
+
+  /* One number tunes the whole page's vertical density. Same weight at
+     both endpoints, no jump at the 768px breakpoint. */
+  --space-section: clamp(4.5rem, 8vw, 7.5rem);
+}
+
+@theme inline {
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-signal: var(--signal);
+  --color-on-ink: var(--on-ink);
+  --color-on-ink-2: var(--on-ink-2);
+
+  /* Kept as aliases so any stray old utility still resolves to
+     something sane rather than to nothing. */
+  --color-bg: var(--surface);
+  --color-muted: var(--ink-3);
+  --color-border: var(--line);
+}
+
+@theme {
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
-  --font-display: var(--font-sans);
+  /* Was `var(--font-sans)` — a token that promised an identity and
+     delivered nothing, so the 88px font-black hero silently degraded to
+     Segoe UI Semibold on Windows and Roboto Bold on Android. Now points
+     at the real face, injected by Astro's Fonts API.
+
+     Instrument Serif has Regular + Italic and NO bold. That constraint
+     is the point: authority has to come from size rather than weight,
+     which is what stops the hero reading like a startup landing page.
+     The @font-face rules are inlined in BaseLayout so Vite can hash the
+     files into /_astro/ (see the comment there). */
+  --font-display: "Instrument Serif", "Display Fallback", Georgia,
+    "Times New Roman", serif;
+  /* Used 16 times as a deliberate device and previously undefined, so it
+     rendered as three different personalities depending on OS. 0 bytes. */
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "Segoe UI Mono",
+    "Roboto Mono", Menlo, monospace;
 }
 
 html {
   font-family: var(--font-sans);
-  scroll-behavior: smooth;
-  text-rendering: optimizeLegibility;
+  /* `text-rendering: optimizeLegibility` was here. Removed: it forces
+     kerning/ligature resolution on every text node, measurably slows
+     layout on long documents, has a history of dropping glyphs in
+     WebKit, and buys nothing over the font's own kern/liga tables. */
+}
+
+/* Smooth scrolling is a motion effect — respect the OS setting. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
-  background: var(--color-bg);
-  color: var(--color-ink);
+  background: var(--surface);
+  color: var(--ink);
 }
 
-/* Prose styling for MDX article bodies. Astro doesn't ship typography by
-   default — we keep it simple and readable. */
+/* No CTA on the site had a focus style, and one calculator used
+   `focus:outline-none` with only a border-colour change — a colour-only
+   affordance, which is exactly the thing that must never carry meaning
+   alone here. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------------------------------------------------------------------
+   Prose — 163 MDX article bodies, styled from ~15 lines. Highest
+   leverage-per-line CSS on the site.
+   --------------------------------------------------------------------- */
 .prose {
-  max-width: 68ch;
-  font-size: 17px;
-  line-height: 1.7;
-  color: var(--color-ink);
+  max-width: 66ch;
+  /* rem, not px: the audience is parents, bakers and gardeners, not
+     developers — their browser font-size setting should be respected. */
+  font-size: 1.125rem;
+  line-height: 1.65;
+  color: var(--ink-2);
 }
 .prose h2 {
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin-top: 2rem;
-  margin-bottom: 0.75rem;
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  /* The load-bearing numbers. Previously 2rem/0.75rem — a 2.7:1 ratio,
+     not enough to signal "new section" inside a 2000-word comparison
+     article, so the page read as an undifferentiated wall. 3.5:1 makes
+     the heading visibly own the block beneath it. */
+  margin-top: 3.5rem;
+  margin-bottom: 1rem;
 }
 .prose h3 {
+  /* Stays system sans on purpose. Two headings differing only in size
+     (1.5rem/800 vs 1.2rem/700) were too subtle to read peripherally;
+     serif-vs-sans is legible at a glance. */
   font-size: 1.2rem;
   font-weight: 700;
-  margin-top: 1.5rem;
+  color: var(--ink);
+  margin-top: 2rem;
   margin-bottom: 0.5rem;
 }
+/* Nav.astro is `sticky top-0` at h-16, so every anchor jump — from our
+   own FAQ links or a Google "jump to section" result — parked the
+   heading underneath it. */
+.prose :is(h2, h3) {
+  scroll-margin-top: 5.5rem;
+}
 .prose p {
-  margin-bottom: 1rem;
+  margin-bottom: 1.15rem;
 }
 .prose ul,
 .prose ol {
-  margin-bottom: 1rem;
+  margin-bottom: 1.15rem;
   padding-left: 1.5rem;
 }
 .prose li {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.35rem;
+}
+.prose strong {
+  color: var(--ink);
+  font-weight: 700;
 }
 .prose a {
-  color: var(--color-accent);
+  color: var(--accent);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -65,14 +202,15 @@ body {
   text-decoration-thickness: 2px;
 }
 .prose blockquote {
-  border-left: 3px solid var(--color-border);
+  border-left: 3px solid var(--line-strong);
   padding-left: 1rem;
   font-style: italic;
-  color: var(--color-muted);
-  margin: 1.25rem 0;
+  color: var(--ink-3);
+  margin: 1.5rem 0;
 }
 .prose code {
-  background: #f1f5f9;
+  background: var(--surface-2);
+  font-family: var(--font-mono);
   padding: 1px 6px;
   border-radius: 4px;
   font-size: 0.92em;
@@ -89,35 +227,38 @@ body {
   margin: 1.5rem 0;
   font-size: 0.875rem;
   line-height: 1.4;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--line);
   border-radius: 12px;
   /* Scroll affordance: a soft shadow appears at whichever edge still has
      content off-screen. Without it a cut-off column just looks like a bug —
-     which is exactly how the comparison tables were reading. */
+     which is exactly how the comparison tables were reading.
+     These use var(--surface), not #fff: with a warm page background a
+     hardcoded white gradient leaves a visible cold seam. */
   background:
-    linear-gradient(to right, #fff 30%, rgba(255, 255, 255, 0)) left / 40px 100% no-repeat local,
-    linear-gradient(to left, #fff 30%, rgba(255, 255, 255, 0)) right / 40px 100% no-repeat local,
-    linear-gradient(to right, rgba(15, 23, 42, 0.10), rgba(15, 23, 42, 0)) left / 14px 100% no-repeat scroll,
-    linear-gradient(to left, rgba(15, 23, 42, 0.10), rgba(15, 23, 42, 0)) right / 14px 100% no-repeat scroll;
+    linear-gradient(to right, var(--surface) 30%, rgba(255, 252, 248, 0)) left / 40px 100% no-repeat local,
+    linear-gradient(to left, var(--surface) 30%, rgba(255, 252, 248, 0)) right / 40px 100% no-repeat local,
+    linear-gradient(to right, rgba(23, 21, 15, 0.1), rgba(23, 21, 15, 0)) left / 14px 100% no-repeat scroll,
+    linear-gradient(to left, rgba(23, 21, 15, 0.1), rgba(23, 21, 15, 0)) right / 14px 100% no-repeat scroll;
 }
 .prose thead th {
-  background: #f1f5f9;
+  background: var(--surface-2);
   font-weight: 700;
+  color: var(--ink);
   text-align: left;
   vertical-align: bottom;
   padding: 0.7rem 0.9rem;
-  border-bottom: 2px solid var(--color-border);
+  border-bottom: 2px solid var(--line-strong);
   white-space: nowrap;
 }
 .prose tbody td {
   padding: 0.7rem 0.9rem;
-  border-bottom: 1px solid var(--color-border);
-  /* Middle beats top here: the ✅/❌ marks are short and were floating above
-     the wrapped text next to them, which is what made rows look ragged. */
+  border-bottom: 1px solid var(--line);
+  /* Middle beats top here: the verdict marks are short and were floating
+     above the wrapped text next to them, which made rows look ragged. */
   vertical-align: middle;
 }
 .prose tbody tr:nth-child(even) td {
-  background: #fafafa;
+  background: var(--surface-2);
 }
 .prose tbody tr:last-child td {
   border-bottom: none;
@@ -129,23 +270,25 @@ body {
   left: 0;
   z-index: 1;
   font-weight: 600;
+  color: var(--ink);
   white-space: nowrap;
-  background: #fff;
-  border-right: 1px solid var(--color-border);
+  background: var(--surface);
+  border-right: 1px solid var(--line);
 }
 .prose thead th:first-child {
-  background: #f1f5f9;
+  background: var(--surface-2);
   z-index: 2;
 }
 .prose tbody tr:nth-child(even) td:first-child {
-  background: #fafafa;
+  background: var(--surface-2);
 }
 /* Verdict columns are short phrases — let them breathe instead of wrapping
    one word per line in a narrow column. */
 .prose tbody td:not(:first-child) {
   min-width: 7.5rem;
 }
-/* Keep the ✅ / ❌ / ⚠️ marks from looking oversized next to small text. */
-.prose table :is(td, th) {
-  font-variant-emoji: text;
+/* Mark the recommended row by structure, not by tint: the row is already
+   bolded in MDX, so this needs no content changes and survives greyscale. */
+.prose tbody tr:has(td:first-child strong) td:first-child {
+  border-left: 3px solid var(--ink);
 }

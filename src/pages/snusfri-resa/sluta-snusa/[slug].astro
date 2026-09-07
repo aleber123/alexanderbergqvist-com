@@ -47,24 +47,24 @@ const next = idx < DAYS.length - 1 ? DAYS[idx + 1] : null;
     </h1>
 
     <h2 class="mt-10 text-2xl font-black">Vad som händer i kroppen</h2>
-    <p class="mt-3 text-slate-700 leading-relaxed">{day.body}</p>
+    <p class="mt-3 text-ink-2 leading-relaxed">{day.body}</p>
 
     <h2 class="mt-10 text-2xl font-black">Hur det brukar kännas</h2>
-    <p class="mt-3 text-slate-700 leading-relaxed">{day.feels}</p>
+    <p class="mt-3 text-ink-2 leading-relaxed">{day.feels}</p>
 
     <h2 class="mt-10 text-2xl font-black">Vad som hjälper</h2>
     <ul class="mt-4 space-y-2.5">
       {day.tips.map((t) => (
         <li class="flex gap-3">
-          <span class="text-slate-400 shrink-0">→</span>
-          <span class="text-slate-700">{t}</span>
+          <span class="text-ink-3 shrink-0">→</span>
+          <span class="text-ink-2">{t}</span>
         </li>
       ))}
     </ul>
 
-    <div class="mt-12 rounded-2xl border border-slate-200 bg-slate-50 p-6 md:p-8">
+    <div class="mt-12 rounded-2xl border border-line bg-surface-2 p-6 md:p-8">
       <h2 class="text-xl font-black">Håll räkningen — det hjälper mer än man tror</h2>
-      <p class="mt-2 text-slate-600">
+      <p class="mt-2 text-ink-2">
         Snusfri Resa visar snusfri tid och sparade kronor i realtid, plus en
         hälsotimeline som gäller snus — inte rökning. Gratis.
       </p>
@@ -75,12 +75,12 @@ const next = idx < DAYS.length - 1 ? DAYS[idx + 1] : null;
 
     <nav class="mt-10 flex justify-between gap-4 text-sm font-bold">
       {prev ? (
-        <a href={`/snusfri-resa/sluta-snusa/${prev.slug}/`} class="underline text-slate-700">
+        <a href={`/snusfri-resa/sluta-snusa/${prev.slug}/`} class="underline text-ink-2">
           ← {prev.label}
         </a>
       ) : <span />}
       {next ? (
-        <a href={`/snusfri-resa/sluta-snusa/${next.slug}/`} class="underline text-slate-700">
+        <a href={`/snusfri-resa/sluta-snusa/${next.slug}/`} class="underline text-ink-2">
           {next.label} →
         </a>
       ) : <span />}
@@ -91,7 +91,7 @@ const next = idx < DAYS.length - 1 ? DAYS[idx + 1] : null;
       {DAYS.filter((d) => d.slug !== day.slug).map((d) => (
         <a
           href={`/snusfri-resa/sluta-snusa/${d.slug}/`}
-          class="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold hover:border-slate-400 transition"
+          class="rounded-full border border-line bg-surface px-4 py-2 text-sm font-bold hover:border-line-strong transition"
         >
           {d.label}
         </a>
@@ -100,7 +100,7 @@ const next = idx < DAYS.length - 1 ? DAYS[idx + 1] : null;
 
     <FAQ items={FAQ_COMMON} />
 
-    <p class="mt-10 text-sm text-slate-500">
+    <p class="mt-10 text-sm text-ink-3">
       Informationen här är allmän och ersätter inte medicinsk rådgivning. Mår du
       dåligt, eller läker inte tandköttet, kontakta vårdcentral eller tandläkare.
     </p>

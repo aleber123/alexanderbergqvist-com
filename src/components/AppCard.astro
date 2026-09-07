@@ -11,7 +11,7 @@ const { name, tagline, icon, accent, status } = app.data;
 
 <a
   href={`/${app.id}/`}
-  class="group block rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-slate-300 hover:shadow-lg"
+  class="group block rounded-2xl border border-line bg-surface p-5 transition hover:border-line-strong hover:shadow-lg"
 >
   <div class="flex items-start gap-4">
     <div
@@ -28,7 +28,7 @@ const { name, tagline, icon, accent, status } = app.data;
     </div>
     <div class="flex-1 min-w-0">
       <div class="flex items-center gap-2">
-        <h3 class="font-bold text-lg text-slate-900 group-hover:text-slate-700">
+        <h3 class="font-bold text-lg text-ink group-hover:text-ink-2">
           {name}
         </h3>
         {status === 'soon' && (
@@ -37,7 +37,7 @@ const { name, tagline, icon, accent, status } = app.data;
           </span>
         )}
       </div>
-      <p class="text-sm text-slate-600 mt-1 line-clamp-2">{tagline}</p>
+      <p class="text-sm text-ink-2 mt-1 line-clamp-2">{tagline}</p>
     </div>
   </div>
 </a>

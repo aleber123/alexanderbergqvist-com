@@ -53,16 +53,29 @@ const tools = [
   ]}
 >
   <!-- ─────────── HERO ─────────── -->
-  <section class="border-b border-slate-200">
+  <section class="border-b border-line">
     <div class="max-w-6xl mx-auto px-6 pt-20 md:pt-32 pb-16 md:pb-24">
-      <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-8">
+      <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-ink-3 mb-8">
         Indie iOS · Sverige · Sedan 2024
       </div>
-      <h1 class="text-[44px] md:text-[88px] font-black tracking-[-0.04em] leading-[0.95]">
-        Bygger appar.<br />
-        <span class="text-slate-400">Som löser konkreta vardagsproblem.</span>
+      {/* font-normal, not font-black: Instrument Serif has no bold, and
+          that constraint is the point — authority comes from size.
+          tracking-[-0.015em], NOT the old -0.04em: that value is tuned
+          for a geometric sans; on a high-contrast serif at this size the
+          thin strokes collide and it reads as broken rendering.
+          max-w-[16ch] replaces a hardcoded <br /> that was Swedish-
+          specific and broke nonsensically in German. */}
+      <h1
+        class="font-display font-normal text-[clamp(2.75rem,7vw,5.25rem)] leading-[1.02] tracking-[-0.015em] max-w-[16ch]"
+      >
+        Bygger appar.{' '}
+        {/* Was text-slate-400 — #94a3b8 at 2.3:1, below the 3:1 floor for
+            large text, on the line carrying the entire value proposition.
+            De-emphasis now comes from form (italic), not from fading out
+            the sentence that explains what you do. */}
+        <span class="italic">Som löser konkreta vardagsproblem.</span>
       </h1>
-      <p class="mt-10 text-lg md:text-xl text-slate-600 max-w-2xl leading-relaxed">
+      <p class="mt-7 text-lg md:text-xl text-ink-2 max-w-[46ch] leading-relaxed">
         Tolv iOS-appar för konkreta vardagsproblem — surdeg, andning, födelsedagar,
         VAB, snusfri-räkning. Allt sparas lokalt. Inga konton. Premium kostar
         mindre än en kaffe i månaden eller är helt gratis.
@@ -70,14 +83,14 @@ const tools = [
       <div class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3">
         <a
           href="/appar/"
-          class="inline-flex items-center gap-2 bg-slate-900 text-white px-5 py-3 text-sm font-bold tracking-tight hover:bg-slate-700 transition"
+          class="inline-flex items-center gap-2 bg-ink text-on-ink px-5 py-3 text-sm font-bold tracking-tight hover:bg-ink-2 transition"
         >
           Se alla appar
           <span aria-hidden>→</span>
         </a>
         <a
           href="/om/"
-          class="text-sm font-bold text-slate-600 hover:text-slate-900 transition underline-offset-4 hover:underline"
+          class="text-sm font-bold text-ink border-b-2 border-signal pb-0.5 hover:border-ink transition"
         >
           Om mig
         </a>
@@ -86,7 +99,7 @@ const tools = [
   </section>
 
   <!-- ─────────── STATS STRIP ─────────── -->
-  <section class="border-b border-slate-200 bg-slate-50">
+  <section class="border-b border-line bg-surface-2">
     <div class="max-w-6xl mx-auto px-6 py-10">
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12 font-mono">
         <Stat n={apps.length.toString()} label="appar publicerade" />
@@ -98,29 +111,29 @@ const tools = [
   </section>
 
   <!-- ─────────── WORK ─────────── -->
-  <section class="border-b border-slate-200">
-    <div class="max-w-6xl mx-auto px-6 py-20 md:py-28">
+  <section class="border-b border-line">
+    <div class="max-w-6xl mx-auto px-6 py-(--space-section)">
       <div class="flex items-end justify-between mb-10">
         <div>
-          <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-2">
+          <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-ink-3 mb-2">
             01 / Work
           </div>
-          <h2 class="text-3xl md:text-5xl font-black tracking-tight">
+          <h2 class="font-display font-normal text-[clamp(2rem,4.5vw,3rem)] tracking-[-0.012em] leading-[1.05]">
             Apparna.
           </h2>
         </div>
         <a
           href="/appar/"
-          class="hidden md:inline text-sm font-bold text-slate-600 hover:text-slate-900 transition"
+          class="hidden md:inline text-sm font-bold text-ink-2 hover:text-ink transition"
         >
           Alla {apps.length} →
         </a>
       </div>
-      <div class="border-t border-slate-200">
+      <div class="border-t border-line">
         {apps.slice(0, 8).map((app) => (
           <a
             href={`/${app.id}/`}
-            class="group flex items-center gap-5 border-b border-slate-200 py-5 hover:bg-slate-50 transition px-2 -mx-2"
+            class="group flex items-center gap-5 border-b border-line py-5 hover:bg-surface-2 transition px-2 -mx-2"
           >
             <div
               class="w-12 h-12 rounded-xl flex-shrink-0 overflow-hidden flex items-center justify-center text-white font-black text-xl"
@@ -136,25 +149,25 @@ const tools = [
             </div>
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-3">
-                <h3 class="text-lg md:text-xl font-bold tracking-tight text-slate-900 group-hover:text-slate-600 transition">
+                <h3 class="text-lg md:text-xl font-bold tracking-tight text-ink group-hover:text-ink-2 transition">
                   {app.data.name}
                 </h3>
                 {wip.includes(app.id) && (
-                  <span class="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 border border-slate-900 text-slate-900">
+                  <span class="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 border border-ink text-ink">
                     Pågår nu
                   </span>
                 )}
                 {app.data.status === 'soon' && (
-                  <span class="text-[10px] font-mono uppercase tracking-wider text-slate-500">
+                  <span class="text-[10px] font-mono uppercase tracking-wider text-ink-3">
                     Snart
                   </span>
                 )}
               </div>
-              <p class="text-sm text-slate-600 mt-1 truncate">
+              <p class="text-sm text-ink-2 mt-1 truncate">
                 {app.data.tagline}
               </p>
             </div>
-            <span class="text-slate-300 group-hover:text-slate-900 transition text-xl pr-2">
+            <span class="text-line-strong group-hover:text-ink transition text-xl pr-2">
               →
             </span>
           </a>
@@ -163,7 +176,7 @@ const tools = [
       <div class="mt-8 md:hidden">
         <a
           href="/appar/"
-          class="text-sm font-bold text-slate-600 hover:text-slate-900 transition"
+          class="text-sm font-bold text-ink-2 hover:text-ink transition"
         >
           Alla {apps.length} appar →
         </a>
@@ -172,22 +185,22 @@ const tools = [
   </section>
 
   <!-- ─────────── NOW ─────────── -->
-  <section class="border-b border-slate-200 bg-slate-900 text-white">
-    <div class="max-w-6xl mx-auto px-6 py-20 md:py-28">
-      <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-slate-400 mb-2">
+  <section class="border-b border-line bg-ink text-white">
+    <div class="max-w-6xl mx-auto px-6 py-(--space-section)">
+      <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-on-ink-2 mb-2">
         02 / Now
       </div>
-      <h2 class="text-3xl md:text-5xl font-black tracking-tight mb-4">
+      <h2 class="font-display font-normal text-[clamp(2rem,4.5vw,3rem)] tracking-[-0.012em] leading-[1.05] mb-4">
         Just nu: Andas.
       </h2>
-      <p class="text-lg md:text-xl text-slate-300 max-w-2xl leading-relaxed">
+      <p class="text-lg md:text-xl text-on-ink-2 max-w-2xl leading-relaxed">
         Guidad andning — Wim Hof, box-andning, 4-7-8. Bygg egna övningar
         med exakt antal andetag, in/ut-tider, och retention. Allt loggas
         lokalt och skickas som Mindful Minutes till Hälsa.
       </p>
       <a
         href="/andas/"
-        class="mt-8 inline-flex items-center gap-2 bg-white text-slate-900 px-5 py-3 text-sm font-bold tracking-tight hover:bg-slate-200 transition"
+        class="mt-8 inline-flex items-center gap-2 bg-surface text-ink px-5 py-3 text-sm font-bold tracking-tight hover:bg-surface-2 transition"
       >
         Läs mer
         <span aria-hidden>→</span>
@@ -196,32 +209,32 @@ const tools = [
   </section>
 
   <!-- ─────────── TOOLS ─────────── -->
-  <section class="border-b border-slate-200">
-    <div class="max-w-6xl mx-auto px-6 py-20 md:py-28">
-      <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-2">
+  <section class="border-b border-line">
+    <div class="max-w-6xl mx-auto px-6 py-(--space-section)">
+      <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-ink-3 mb-2">
         03 / Tools
       </div>
-      <h2 class="text-3xl md:text-5xl font-black tracking-tight">
+      <h2 class="font-display font-normal text-[clamp(2rem,4.5vw,3rem)] tracking-[-0.012em] leading-[1.05]">
         Räknare i webbläsaren.
       </h2>
-      <p class="mt-4 text-lg text-slate-600 max-w-2xl">
+      <p class="mt-4 text-lg text-ink-2 max-w-2xl">
         Inget login, ingen install — bara skriv in siffrorna och få svaret.
       </p>
-      <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-px bg-slate-200 border border-slate-200">
+      <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-px bg-surface-2 border border-line">
         {tools.map((t) => (
           <a
             href={t.href}
-            class="group bg-white hover:bg-slate-50 transition p-6 md:p-8"
+            class="group bg-surface hover:bg-surface-2 transition p-6 md:p-8"
           >
             <div class="flex items-center justify-between">
-              <h3 class="text-lg md:text-xl font-bold tracking-tight text-slate-900">
+              <h3 class="text-lg md:text-xl font-bold tracking-tight text-ink">
                 {t.title}
               </h3>
-              <span class="text-slate-300 group-hover:text-slate-900 transition text-xl">
+              <span class="text-line-strong group-hover:text-ink transition text-xl">
                 →
               </span>
             </div>
-            <p class="text-sm text-slate-600 mt-2">
+            <p class="text-sm text-ink-2 mt-2">
               {t.description}
             </p>
           </a>
@@ -232,40 +245,40 @@ const tools = [
 
   <!-- ─────────── WRITING ─────────── -->
   {recentArticles.length > 0 && (
-    <section class="border-b border-slate-200">
-      <div class="max-w-6xl mx-auto px-6 py-20 md:py-28">
+    <section class="border-b border-line">
+      <div class="max-w-6xl mx-auto px-6 py-(--space-section)">
         <div class="flex items-end justify-between mb-10">
           <div>
-            <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-2">
+            <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-ink-3 mb-2">
               04 / Writing
             </div>
-            <h2 class="text-3xl md:text-5xl font-black tracking-tight">
+            <h2 class="font-display font-normal text-[clamp(2rem,4.5vw,3rem)] tracking-[-0.012em] leading-[1.05]">
               Senaste artiklarna.
             </h2>
           </div>
           <a
             href="/blog/"
-            class="hidden md:inline text-sm font-bold text-slate-600 hover:text-slate-900 transition"
+            class="hidden md:inline text-sm font-bold text-ink-2 hover:text-ink transition"
           >
             Alla artiklar →
           </a>
         </div>
-        <ul class="divide-y divide-slate-200 border-y border-slate-200">
+        <ul class="divide-y divide-line border-y border-line">
           {recentArticles.map((a) => (
             <li>
               <a
                 href={articleUrl(a.id, a.data.app, a.data.lang)}
-                class="group flex items-baseline justify-between gap-4 py-5 hover:bg-slate-50 transition px-2 -mx-2"
+                class="group flex items-baseline justify-between gap-4 py-5 hover:bg-surface-2 transition px-2 -mx-2"
               >
                 <div class="flex-1 min-w-0">
-                  <div class="text-[10px] font-mono uppercase tracking-wider text-slate-500 mb-1">
+                  <div class="text-[10px] font-mono uppercase tracking-wider text-ink-3 mb-1">
                     {a.data.app} · {a.data.publishedAt.toISOString().slice(0, 10)}
                   </div>
-                  <h3 class="text-lg md:text-xl font-bold tracking-tight text-slate-900 group-hover:text-slate-600 transition">
+                  <h3 class="text-lg md:text-xl font-bold tracking-tight text-ink group-hover:text-ink-2 transition">
                     {a.data.title}
                   </h3>
                 </div>
-                <span class="text-slate-300 group-hover:text-slate-900 transition text-xl">
+                <span class="text-line-strong group-hover:text-ink transition text-xl">
                   →
                 </span>
               </a>
@@ -277,37 +290,37 @@ const tools = [
   )}
 
   <!-- ─────────── ABOUT ─────────── -->
-  <section class="border-b border-slate-200">
-    <div class="max-w-6xl mx-auto px-6 py-20 md:py-28">
+  <section class="border-b border-line">
+    <div class="max-w-6xl mx-auto px-6 py-(--space-section)">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
         <div class="md:col-span-1">
-          <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-slate-500 mb-2">
+          <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-ink-3 mb-2">
             05 / About
           </div>
-          <h2 class="text-3xl md:text-5xl font-black tracking-tight">
+          <h2 class="font-display font-normal text-[clamp(2rem,4.5vw,3rem)] tracking-[-0.012em] leading-[1.05]">
             Hej.
           </h2>
         </div>
         <div class="md:col-span-2 max-w-xl">
-          <p class="text-lg md:text-xl text-slate-700 leading-relaxed">
+          <p class="text-lg md:text-xl text-ink-2 leading-relaxed">
             Jag heter Alexander. Bygger iOS-appar i Flutter från Sverige.
             Princip: lokala data, inga konton, ingen onödig spårning.
             Premium ska kännas som ett bra köp, inte en lurad prenumeration.
           </p>
-          <p class="mt-4 text-base md:text-lg text-slate-600 leading-relaxed">
+          <p class="mt-4 text-base md:text-lg text-ink-2 leading-relaxed">
             Hör av dig om något i en app inte fungerar, eller om du har en
             idé du vill bygga.
           </p>
           <div class="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm font-bold">
             <a
               href="mailto:alexander.bergqvist@gmail.com"
-              class="text-slate-900 hover:text-slate-600 transition underline-offset-4 hover:underline"
+              class="text-ink hover:text-ink-2 transition underline-offset-4 hover:underline"
             >
               alexander.bergqvist@gmail.com
             </a>
             <a
               href="/om/"
-              class="text-slate-600 hover:text-slate-900 transition underline-offset-4 hover:underline"
+              class="text-ink-2 hover:text-ink transition underline-offset-4 hover:underline"
             >
               Mer om mig →
             </a>

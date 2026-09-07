@@ -73,6 +73,15 @@ export default defineConfig({
   // Tags the ~152 raw apps.apple.com links written inline in MDX bodies
   // with pt/ct, so ASC stops reporting only the bottom-of-page badge.
   markdown: { rehypePlugins: [rehypeAppStoreAttribution] },
+  // NOTE on the display font: Astro 5.18's experimental.fonts only
+  // accepts remote providers (its fontFamilySchema has no `variants`
+  // key), so local woff2 files can't go through it yet. The faces are
+  // therefore imported in BaseLayout.astro with `?url`, which makes Vite
+  // hash them into /_astro/ — the only path Vercel serves `immutable`
+  // (verified in .vercel/output/config.json; unhashed public/ assets get
+  // max-age=0, must-revalidate). Same caching outcome, no experimental
+  // flag, and no build-time fetch to gstatic that a cold Vercel cache
+  // could fail on.
   vite: { plugins: [tailwindcss()] },
   build: { inlineStylesheets: 'auto' },
 });

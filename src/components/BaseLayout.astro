@@ -27,6 +27,36 @@ interface Props {
 }
 
 const { htmlLang = 'sv', hreflangAlternates, ...props } = Astro.props;
+
+/* Display face — Instrument Serif (SIL OFL), headings only. Body copy
+   stays in the system stack, so all 163 MDX articles keep rendering
+   instantly and there is no FOIT on the content that carries the SEO.
+
+   `?url` makes Vite emit each woff2 to /_astro/<name>.<hash>.woff2, the
+   only path Vercel serves `immutable`. Self-hosted rather than
+   fonts.googleapis.com: that is a render-blocking request to a third
+   origin returning CSS that requests a fourth origin, and Chrome has
+   partitioned the HTTP cache by top-level site since 2020 — "someone
+   else already downloaded it" has been false for six years.
+
+   unicode-range splits mean the Latin-Ext file is fetched only for
+   Polish and the italic only where italic display type is used (the
+   homepage hero). Latin is the one preloaded file. */
+const latin = (await import('../fonts/instrument-serif-latin.woff2?url')).default;
+const latinExt = (await import('../fonts/instrument-serif-latin-ext.woff2?url')).default;
+const italic = (await import('../fonts/instrument-serif-italic-latin.woff2?url')).default;
+
+// font-display: swap, never `block` (or the default `auto`, which is
+// block in Chrome): LCP is a text node on every page archetype here and
+// LCP cannot fire on text that hasn't painted. Never `optional` either —
+// on a cold cache the browser abandons the face for that page load, so
+// first-time search visitors would see the unbranded version while a
+// warm local cache shows the branded one.
+const fontFaces = `
+@font-face{font-family:"Instrument Serif";font-style:normal;font-weight:400;font-display:swap;src:url(${latin}) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Instrument Serif";font-style:normal;font-weight:400;font-display:swap;src:url(${latinExt}) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Instrument Serif";font-style:italic;font-weight:400;font-display:swap;src:url(${italic}) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+`.trim();
 ---
 
 <!doctype html>
@@ -34,6 +64,12 @@ const { htmlLang = 'sv', hreflangAlternates, ...props } = Astro.props;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/* Above <Analytics /> on purpose: gtag is ~130 KB async in head, and
+        while the preload is Highest priority the parser still discovers
+        in document order. Font first. Only the Latin roman is preloaded;
+        Latin-Ext and italic load on demand via unicode-range. */}
+    <link rel="preload" href={latin} as="font" type="font/woff2" crossorigin />
+    <style is:inline set:html={fontFaces}></style>
     <SEO {...props} hreflangAlternates={hreflangAlternates} />
     <Analytics />
   </head>

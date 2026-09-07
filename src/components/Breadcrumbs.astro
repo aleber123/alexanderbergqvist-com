@@ -27,16 +27,16 @@ const ldJson = {
 };
 ---
 
-<nav aria-label="Brödsmulor" class="text-sm text-slate-500">
+<nav aria-label="Brödsmulor" class="text-sm text-ink-3">
   <ol class="flex flex-wrap gap-1.5 items-center">
     {trail.map((c, i) => (
       <li class="flex items-center gap-1.5">
         {c.url ? (
-          <a href={c.url} class="hover:text-slate-700">{c.name}</a>
+          <a href={c.url} class="hover:text-ink-2">{c.name}</a>
         ) : (
-          <span class="text-slate-700 font-semibold">{c.name}</span>
+          <span class="text-ink-2 font-semibold">{c.name}</span>
         )}
-        {i < trail.length - 1 && <span class="text-slate-300">/</span>}
+        {i < trail.length - 1 && <span class="text-line-strong">/</span>}
       </li>
     ))}
   </ol>

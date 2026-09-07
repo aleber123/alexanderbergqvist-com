@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { resolveOgImage } from '../../lib/og';
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../components/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
@@ -227,7 +228,7 @@ const appStoreId = appStoreUrl
   title={seoTitle ?? name}
   description={tagline}
   keywords={keywords}
-  image={`/og/${app.id}.png`}
+  image={resolveOgImage(app.id, '')}
   appStoreId={appStoreId}
 >
   <script
@@ -279,13 +280,13 @@ const appStoreId = appStoreUrl
   </div>
 
   <section class="max-w-3xl mx-auto px-6 py-12">
-    <p class="text-lg text-slate-700 leading-relaxed">{description}</p>
+    <p class="text-lg text-ink-2 leading-relaxed">{description}</p>
   </section>
 
   {app.id === 'fodelsedagar' && (
     <section class="max-w-3xl mx-auto px-6 pb-12">
       <figure
-        class="rounded-3xl overflow-hidden border border-slate-200 shadow-xl"
+        class="rounded-3xl overflow-hidden border border-line shadow-xl"
       >
         <img
           src="/apps/fodelsedagar-mascot.png"
@@ -300,19 +301,19 @@ const appStoreId = appStoreUrl
   )}
 
   {features.length > 0 && (
-    <section class="bg-slate-50 border-y border-slate-200 py-16">
+    <section class="bg-surface-2 border-y border-line py-16">
       <div class="max-w-6xl mx-auto px-6">
         <h2 class="text-2xl md:text-3xl font-black mb-8">Vad kan {name}?</h2>
         <ul class="grid md:grid-cols-2 gap-4">
           {features.map((f) => (
-            <li class="flex items-start gap-3 bg-white rounded-xl p-5 border border-slate-200">
+            <li class="flex items-start gap-3 bg-surface rounded-xl p-5 border border-line">
               <span
                 class="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-white font-black text-sm"
                 style={`background: ${accent};`}
               >
                 ✓
               </span>
-              <span class="text-slate-700 font-medium">{f}</span>
+              <span class="text-ink-2 font-medium">{f}</span>
             </li>
           ))}
         </ul>
@@ -323,7 +324,7 @@ const appStoreId = appStoreUrl
   {tools.length > 0 && (
     <section class="max-w-6xl mx-auto px-6 py-16">
       <h2 class="text-2xl md:text-3xl font-black mb-3">Fria verktyg</h2>
-      <p class="text-slate-600 mb-8 max-w-2xl">
+      <p class="text-ink-2 mb-8 max-w-2xl">
         Räknare och kalkylatorer du kan använda direkt i webbläsaren —
         utan inloggning eller installation.
       </p>
@@ -331,12 +332,12 @@ const appStoreId = appStoreUrl
         {tools.map((t) => (
           <a
             href={`/${app.id}/${t.slug}/`}
-            class="group block rounded-2xl border border-slate-200 p-6 hover:border-slate-300 hover:shadow-md transition"
+            class="group block rounded-2xl border border-line p-6 hover:border-line-strong hover:shadow-md transition"
           >
-            <div class="font-bold text-lg text-slate-900 group-hover:text-slate-700">
+            <div class="font-bold text-lg text-ink group-hover:text-ink-2">
               {t.title}
             </div>
-            <p class="text-slate-600 mt-1">{t.description}</p>
+            <p class="text-ink-2 mt-1">{t.description}</p>
             <span class="inline-block mt-4 text-sm font-bold" style={`color: ${accent};`}>
               Öppna verktyget →
             </span>
@@ -347,11 +348,11 @@ const appStoreId = appStoreUrl
   )}
 
   {recipeLinks.length > 0 && (
-    <section class="max-w-6xl mx-auto px-6 py-16 border-t border-slate-200">
+    <section class="max-w-6xl mx-auto px-6 py-16 border-t border-line">
       <h2 class="text-2xl md:text-3xl font-black mb-3">
         Alla {recipeLinks.length} surdegsrecept
       </h2>
-      <p class="text-slate-600 mb-8 max-w-2xl">
+      <p class="text-ink-2 mb-8 max-w-2xl">
         Klassiska bröd, söta bullar, knäckebröd, pizza och tunnbröd —
         steg-för-steg med hydration, jäsningstider och temperaturer.
       </p>
@@ -360,10 +361,10 @@ const appStoreId = appStoreUrl
           <li>
             <a
               href={`/surdeg/recept/${r.id}/`}
-              class="block py-2 text-slate-900 hover:text-slate-600 hover:underline"
+              class="block py-2 text-ink hover:text-ink-2 hover:underline"
             >
               <span class="font-semibold">{r.title}</span>
-              <span class="text-slate-500"> — {r.subtitle}</span>
+              <span class="text-ink-3"> — {r.subtitle}</span>
             </a>
           </li>
         ))}
@@ -372,7 +373,7 @@ const appStoreId = appStoreUrl
   )}
 
   {appArticles.length > 0 && (
-    <section class="bg-slate-50 border-t border-slate-200 py-16">
+    <section class="bg-surface-2 border-t border-line py-16">
       <div class="max-w-6xl mx-auto px-6">
         <h2 class="text-2xl md:text-3xl font-black mb-8">Läs mer</h2>
         <div class="grid md:grid-cols-2 gap-4">
@@ -381,10 +382,10 @@ const appStoreId = appStoreUrl
             return (
               <a
                 href={`/${app.id}/${slug}/`}
-                class="block bg-white rounded-xl border border-slate-200 p-5 hover:border-slate-300 hover:shadow-md transition"
+                class="block bg-surface rounded-xl border border-line p-5 hover:border-line-strong hover:shadow-md transition"
               >
-                <div class="font-bold text-slate-900">{a.data.title}</div>
-                <p class="text-sm text-slate-600 mt-1 line-clamp-2">
+                <div class="font-bold text-ink">{a.data.title}</div>
+                <p class="text-sm text-ink-2 mt-1 line-clamp-2">
                   {a.data.description}
                 </p>
               </a>
@@ -397,7 +398,7 @@ const appStoreId = appStoreUrl
 
   <section class="max-w-3xl mx-auto px-6 py-20 text-center">
     <h2 class="text-2xl md:text-3xl font-black">Redo att testa {name}?</h2>
-    <p class="mt-3 text-slate-600">Gratis att ladda ner. Premium är valfri.</p>
+    <p class="mt-3 text-ink-2">Gratis att ladda ner. Premium är valfri.</p>
     <div class="mt-6 inline-flex">
       <AppStoreBadge url={appStoreUrl} status={status} />
     </div>

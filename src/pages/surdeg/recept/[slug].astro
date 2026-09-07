@@ -1,5 +1,6 @@
 ---
 import type { GetStaticPaths } from 'astro';
+import { resolveOgImage } from '../../../lib/og';
 import BaseLayout from '../../../components/BaseLayout.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import AppStoreBadge from '../../../components/AppStoreBadge.astro';
@@ -105,7 +106,7 @@ const related = (all as Recipe[])
     'surdegsrecept',
     'surdeg från grunden',
   ]}
-  image={`/og/surdeg-recept-${recipe.id}.png`}
+  image={resolveOgImage('surdeg', `recept-${recipe.id}`)}
 >
   <script
     type="application/ld+json"
@@ -125,7 +126,7 @@ const related = (all as Recipe[])
     <h1 class="mt-6 text-3xl md:text-5xl font-black tracking-tight">
       {recipe.title}
     </h1>
-    <p class="mt-3 text-lg text-slate-600">{recipe.subtitle}</p>
+    <p class="mt-3 text-lg text-ink-2">{recipe.subtitle}</p>
 
     <div class="mt-6 flex flex-wrap gap-3 text-sm">
       <span
@@ -134,12 +135,12 @@ const related = (all as Recipe[])
         🥖 {difficultyLabel}
       </span>
       <span
-        class="px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-bold"
+        class="px-3 py-1 rounded-full bg-surface-2 text-ink-2 font-bold"
       >
         ⏱️ {totalLabel}
       </span>
       <span
-        class="px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-bold"
+        class="px-3 py-1 rounded-full bg-surface-2 text-ink-2 font-bold"
       >
         🍞 {recipe.yields_loaves} bröd
       </span>
@@ -152,19 +153,19 @@ const related = (all as Recipe[])
       )}
     </div>
 
-    <p class="mt-6 text-slate-700 leading-relaxed">{recipe.description}</p>
+    <p class="mt-6 text-ink-2 leading-relaxed">{recipe.description}</p>
 
     <h2 class="mt-10 text-2xl font-black">Ingredienser</h2>
-    <p class="text-sm text-slate-500 mt-1">
+    <p class="text-sm text-ink-3 mt-1">
       För {recipe.yields_loaves} {recipe.yields_loaves === 1 ? 'bröd' : 'bröd'}
     </p>
-    <ul class="mt-4 space-y-2 bg-slate-50 rounded-2xl p-5 border border-slate-200">
+    <ul class="mt-4 space-y-2 bg-surface-2 rounded-2xl p-5 border border-line">
       {recipe.ingredients.map((i) => (
         <li class="flex items-start gap-3">
-          <span class="font-mono text-sm font-bold text-slate-700 min-w-[60px]">
+          <span class="font-mono text-sm font-bold text-ink-2 min-w-[60px]">
             {i.grams}g
           </span>
-          <span class="text-slate-700">{i.name}</span>
+          <span class="text-ink-2">{i.name}</span>
         </li>
       ))}
     </ul>
@@ -178,16 +179,16 @@ const related = (all as Recipe[])
           >
             {idx + 1}
           </div>
-          <p class="pt-1 text-slate-700 leading-relaxed">{step}</p>
+          <p class="pt-1 text-ink-2 leading-relaxed">{step}</p>
         </li>
       ))}
     </ol>
 
     <aside
-      class="mt-12 rounded-2xl border border-slate-200 p-6 md:p-8 bg-gradient-to-br from-amber-50 to-white"
+      class="mt-12 rounded-2xl border border-line p-6 md:p-8 bg-gradient-to-br from-amber-50 to-surface"
     >
       <h3 class="font-black text-lg">Tips för bättre resultat</h3>
-      <p class="mt-2 text-slate-700 text-sm leading-relaxed">
+      <p class="mt-2 text-ink-2 text-sm leading-relaxed">
         Använd Surdeg-appen för att hålla koll på matningar, jäsning och
         bakdagboken — den pingar dig när det är dags för nästa steg och
         sparar dina anteckningar för varje bak.
@@ -204,10 +205,10 @@ const related = (all as Recipe[])
           {related.map((r) => (
             <a
               href={`/surdeg/recept/${r.id}/`}
-              class="block rounded-xl border border-slate-200 p-4 hover:border-slate-300 hover:shadow-md transition"
+              class="block rounded-xl border border-line p-4 hover:border-line-strong hover:shadow-md transition"
             >
-              <div class="font-bold text-slate-900 line-clamp-2">{r.title}</div>
-              <div class="text-xs text-slate-500 mt-1">
+              <div class="font-bold text-ink line-clamp-2">{r.title}</div>
+              <div class="text-xs text-ink-3 mt-1">
                 {r.total_minutes >= 60
                   ? `${Math.floor(r.total_minutes / 60)}h`
                   : `${r.total_minutes}m`}

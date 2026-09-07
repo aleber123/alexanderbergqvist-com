@@ -61,13 +61,13 @@ const totalMessages = RELATIONS.reduce(
         { name: 'Grattis-hälsningar' },
       ]}
     />
-    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-slate-500">
+    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-ink-3">
       Färdiga hälsningar
     </span>
     <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
       Grattis på födelsedagen
     </h1>
-    <p class="mt-3 text-lg text-slate-600">
+    <p class="mt-3 text-lg text-ink-2">
       {totalMessages}+ hälsningar du kan kopiera rakt av — sorterade efter vem du
       skriver till och vilken ton du vill ha. Ingen registrering, inget krångel.
     </p>
@@ -77,10 +77,10 @@ const totalMessages = RELATIONS.reduce(
       {RELATIONS.map((r) => (
         <a
           href={`/fodelsedagar/grattis/${r.slug}/`}
-          class="rounded-xl border border-slate-200 bg-white px-5 py-4 hover:border-slate-400 hover:shadow-sm transition"
+          class="rounded-xl border border-line bg-surface px-5 py-4 hover:border-line-strong hover:shadow-sm transition"
         >
           <span class="font-bold">{r.label}</span>
-          <span class="block text-sm text-slate-500 mt-0.5">
+          <span class="block text-sm text-ink-3 mt-0.5">
             {r.messages.warm.length +
               r.messages.funny.length +
               r.messages.short.length} hälsningar
@@ -90,14 +90,14 @@ const totalMessages = RELATIONS.reduce(
     </div>
 
     <h2 class="mt-12 text-2xl font-black">Jämna år</h2>
-    <p class="mt-2 text-slate-600">
+    <p class="mt-2 text-ink-2">
       Fyller någon jämnt? De här hälsningarna är skrivna för just den åldern.
     </p>
     <div class="mt-4 flex flex-wrap gap-2">
       {MILESTONES.map((age) => (
         <a
           href={`/fodelsedagar/grattis/${age}-ar/`}
-          class="rounded-full border border-slate-200 bg-white px-5 py-2 font-bold hover:border-slate-400 transition"
+          class="rounded-full border border-line bg-surface px-5 py-2 font-bold hover:border-line-strong transition"
         >
           {age} år
         </a>
@@ -105,7 +105,7 @@ const totalMessages = RELATIONS.reduce(
     </div>
 
     <h2 class="mt-12 text-2xl font-black">Tre saker som gör hälsningen bättre</h2>
-    <ol class="mt-4 space-y-3 text-slate-700">
+    <ol class="mt-4 space-y-3 text-ink-2">
       <li>
         <strong>Var specifik.</strong> "Tack för att du alltid svarar när jag
         ringer" betyder mer än tre rader allmänna lyckönskningar. En konkret sak
@@ -121,9 +121,9 @@ const totalMessages = RELATIONS.reduce(
       </li>
     </ol>
 
-    <div class="mt-12 rounded-2xl border border-slate-200 bg-slate-50 p-6 md:p-8">
+    <div class="mt-12 rounded-2xl border border-line bg-surface-2 p-6 md:p-8">
       <h2 class="text-xl font-black">Slipp glömma bort nästa gång</h2>
-      <p class="mt-2 text-slate-600">
+      <p class="mt-2 text-ink-2">
         Födelsedagar påminner dig i god tid — en månad, en vecka och en dag
         innan. Importera från kontakterna och du är klar på en minut. Gratis.
       </p>

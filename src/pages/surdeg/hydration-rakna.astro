@@ -52,19 +52,19 @@ const faq = [
         { name: 'Hydration-räknare' },
       ]}
     />
-    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-slate-500">
+    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-ink-3">
       Fri kalkylator
     </span>
     <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
       Räkna ut hydration i din surdeg
     </h1>
-    <p class="mt-3 text-lg text-slate-600">
+    <p class="mt-3 text-lg text-ink-2">
       Skriv in mjöl, vatten och eventuell surdeg så ser du exakt
       hydration. Räknaren tar med surdegen som 50% mjöl + 50% vatten,
       enligt baker's percentage-standard.
     </p>
 
-    <div class="mt-10 rounded-2xl border border-slate-200 bg-white p-6 md:p-8">
+    <div class="mt-10 rounded-2xl border border-line bg-surface p-6 md:p-8">
       <div class="grid md:grid-cols-3 gap-4">
         <div>
           <label class="block text-sm font-bold mb-2" for="mjol">Mjöl (g)</label>
@@ -74,7 +74,7 @@ const faq = [
             min="0"
             step="10"
             value="500"
-            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-amber-500 focus:outline-none"
+            class="w-full rounded-xl border border-line-strong px-4 py-3 text-lg font-bold focus:border-amber-500 focus:outline-none"
           />
         </div>
         <div>
@@ -85,7 +85,7 @@ const faq = [
             min="0"
             step="10"
             value="350"
-            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-amber-500 focus:outline-none"
+            class="w-full rounded-xl border border-line-strong px-4 py-3 text-lg font-bold focus:border-amber-500 focus:outline-none"
           />
         </div>
         <div>
@@ -96,7 +96,7 @@ const faq = [
             min="0"
             step="10"
             value="100"
-            class="w-full rounded-xl border border-slate-300 px-4 py-3 text-lg font-bold focus:border-amber-500 focus:outline-none"
+            class="w-full rounded-xl border border-line-strong px-4 py-3 text-lg font-bold focus:border-amber-500 focus:outline-none"
           />
         </div>
       </div>
@@ -107,13 +107,13 @@ const faq = [
         <div class="text-xs font-black uppercase tracking-widest text-amber-700">Hydration</div>
         <div class="mt-1 text-3xl font-black text-amber-900" data-out="hydration">–</div>
       </div>
-      <div class="rounded-2xl bg-slate-50 border border-slate-200 p-5">
-        <div class="text-xs font-black uppercase tracking-widest text-slate-600">Mjöl totalt</div>
-        <div class="mt-1 text-2xl font-black text-slate-900" data-out="totalFlour">–</div>
+      <div class="rounded-2xl bg-surface-2 border border-line p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-ink-2">Mjöl totalt</div>
+        <div class="mt-1 text-2xl font-black text-ink" data-out="totalFlour">–</div>
       </div>
-      <div class="rounded-2xl bg-slate-50 border border-slate-200 p-5">
-        <div class="text-xs font-black uppercase tracking-widest text-slate-600">Vatten totalt</div>
-        <div class="mt-1 text-2xl font-black text-slate-900" data-out="totalWater">–</div>
+      <div class="rounded-2xl bg-surface-2 border border-line p-5">
+        <div class="text-xs font-black uppercase tracking-widest text-ink-2">Vatten totalt</div>
+        <div class="mt-1 text-2xl font-black text-ink" data-out="totalWater">–</div>
       </div>
       <div class="rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 p-5 text-white">
         <div class="text-xs font-black uppercase tracking-widest opacity-80">Bedömning</div>
@@ -121,7 +121,7 @@ const faq = [
       </div>
     </div>
 
-    <div class="mt-10 rounded-2xl border border-slate-200 bg-white overflow-hidden">
+    <div class="mt-10 rounded-2xl border border-line bg-surface overflow-hidden">
       <table class="w-full text-sm">
         <thead class="bg-amber-50 text-left">
           <tr>
@@ -130,22 +130,22 @@ const faq = [
             <th class="p-3 font-bold hidden md:table-cell">Karaktär</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100">
-          <tr><td class="p-3 font-bold">Vit limpa</td><td class="p-3">70-72%</td><td class="p-3 hidden md:table-cell text-slate-600">Klassisk, lätt fast smula</td></tr>
-          <tr><td class="p-3 font-bold">Råglimpa</td><td class="p-3">70-75%</td><td class="p-3 hidden md:table-cell text-slate-600">Tät, syrlig</td></tr>
-          <tr><td class="p-3 font-bold">Lantbröd</td><td class="p-3">75-78%</td><td class="p-3 hidden md:table-cell text-slate-600">Öppen kärna, klassisk yta</td></tr>
-          <tr><td class="p-3 font-bold">Ciabatta</td><td class="p-3">78-82%</td><td class="p-3 hidden md:table-cell text-slate-600">Stora hål, knaprig skorpa</td></tr>
-          <tr><td class="p-3 font-bold">Focaccia</td><td class="p-3">75-80%</td><td class="p-3 hidden md:table-cell text-slate-600">Saftig, hög</td></tr>
-          <tr><td class="p-3 font-bold">Surdegspizza</td><td class="p-3">70-75%</td><td class="p-3 hidden md:table-cell text-slate-600">Tunn botten, kant med hål</td></tr>
-          <tr><td class="p-3 font-bold">Brioche</td><td class="p-3">50-55%</td><td class="p-3 hidden md:table-cell text-slate-600">Smörig, fluffig</td></tr>
-          <tr><td class="p-3 font-bold">Bagels</td><td class="p-3">55-60%</td><td class="p-3 hidden md:table-cell text-slate-600">Tät, tugga</td></tr>
+        <tbody class="divide-y divide-line">
+          <tr><td class="p-3 font-bold">Vit limpa</td><td class="p-3">70-72%</td><td class="p-3 hidden md:table-cell text-ink-2">Klassisk, lätt fast smula</td></tr>
+          <tr><td class="p-3 font-bold">Råglimpa</td><td class="p-3">70-75%</td><td class="p-3 hidden md:table-cell text-ink-2">Tät, syrlig</td></tr>
+          <tr><td class="p-3 font-bold">Lantbröd</td><td class="p-3">75-78%</td><td class="p-3 hidden md:table-cell text-ink-2">Öppen kärna, klassisk yta</td></tr>
+          <tr><td class="p-3 font-bold">Ciabatta</td><td class="p-3">78-82%</td><td class="p-3 hidden md:table-cell text-ink-2">Stora hål, knaprig skorpa</td></tr>
+          <tr><td class="p-3 font-bold">Focaccia</td><td class="p-3">75-80%</td><td class="p-3 hidden md:table-cell text-ink-2">Saftig, hög</td></tr>
+          <tr><td class="p-3 font-bold">Surdegspizza</td><td class="p-3">70-75%</td><td class="p-3 hidden md:table-cell text-ink-2">Tunn botten, kant med hål</td></tr>
+          <tr><td class="p-3 font-bold">Brioche</td><td class="p-3">50-55%</td><td class="p-3 hidden md:table-cell text-ink-2">Smörig, fluffig</td></tr>
+          <tr><td class="p-3 font-bold">Bagels</td><td class="p-3">55-60%</td><td class="p-3 hidden md:table-cell text-ink-2">Tät, tugga</td></tr>
         </tbody>
       </table>
     </div>
 
-    <div class="mt-10 rounded-2xl border border-slate-200 bg-gradient-to-br from-amber-50 to-white p-6 md:p-8">
+    <div class="mt-10 rounded-2xl border border-line bg-gradient-to-br from-amber-50 to-surface p-6 md:p-8">
       <h2 class="text-xl font-black">Räkna automatiskt i Surdeg-appen</h2>
-      <p class="mt-2 text-slate-700">
+      <p class="mt-2 text-ink-2">
         Surdeg-appen har 33 färdiga recept med exakt hydration uträknad,
         plus en hydration-räknare för dina egna recept. Plus mat-
         påminnelser, bakdagbok och affiliate-tips för verktyg.

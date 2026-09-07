@@ -119,13 +119,13 @@ const zoneInfo = [
         { name: 'Odlingszon-räknare' },
       ]}
     />
-    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-slate-500">
+    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-ink-3">
       Fri zonöversikt
     </span>
     <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
       Hitta din odlingszon i Sverige
     </h1>
-    <p class="mt-3 text-lg text-slate-600">
+    <p class="mt-3 text-lg text-ink-2">
       Sveriges 8 odlingszoner från SLU — vad du kan odla, växt­period
       och lägsta vintertemperatur. Hitta din region i tabellen.
     </p>
@@ -133,7 +133,7 @@ const zoneInfo = [
     <div class="mt-10 space-y-3">
       {zoneInfo.map((z) => (
         <div
-          class="rounded-2xl border bg-white p-5"
+          class="rounded-2xl border bg-surface p-5"
           style={`border-color: ${z.color}40;`}
         >
           <div class="flex items-start gap-4">
@@ -144,16 +144,16 @@ const zoneInfo = [
               {z.zone}
             </div>
             <div class="flex-1">
-              <h2 class="font-black text-lg text-slate-900">Zon {z.zone}</h2>
-              <p class="text-sm text-slate-600 mt-1">{z.region}</p>
+              <h2 class="font-black text-lg text-ink">Zon {z.zone}</h2>
+              <p class="text-sm text-ink-2 mt-1">{z.region}</p>
               <div class="mt-3 grid grid-cols-2 gap-2 text-xs">
-                <div class="bg-slate-50 rounded p-2">
-                  <div class="text-slate-500 font-bold uppercase">Växtsäsong</div>
-                  <div class="font-bold text-slate-900">{z.growSeason}</div>
+                <div class="bg-surface-2 rounded p-2">
+                  <div class="text-ink-3 font-bold uppercase">Växtsäsong</div>
+                  <div class="font-bold text-ink">{z.growSeason}</div>
                 </div>
-                <div class="bg-slate-50 rounded p-2">
-                  <div class="text-slate-500 font-bold uppercase">Lägsta normalt</div>
-                  <div class="font-bold text-slate-900">{z.minTemp}</div>
+                <div class="bg-surface-2 rounded p-2">
+                  <div class="text-ink-3 font-bold uppercase">Lägsta normalt</div>
+                  <div class="font-bold text-ink">{z.minTemp}</div>
                 </div>
               </div>
               <p class="mt-3 text-sm">
@@ -168,9 +168,9 @@ const zoneInfo = [
       ))}
     </div>
 
-    <div class="mt-10 rounded-2xl border border-slate-200 bg-gradient-to-br from-emerald-50 to-white p-6 md:p-8">
+    <div class="mt-10 rounded-2xl border border-line bg-gradient-to-br from-emerald-50 to-surface p-6 md:p-8">
       <h2 class="text-xl font-black">Få zonen automatiskt</h2>
-      <p class="mt-2 text-slate-700">
+      <p class="mt-2 text-ink-2">
         Plantera-appen läser din position och vet din exakta zon
         automatiskt. Du får sådd-kalender, frostvarningar och tips
         anpassade till din specifika zon.

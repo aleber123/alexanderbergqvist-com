@@ -139,7 +139,10 @@ const articleLd = type === 'article' && publishedAt
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={imageUrl} />
 
-<meta name="theme-color" content="#0f172a" />
+{/* Split light/dark. A single dark theme-color made iOS Safari paint a
+    dark toolbar above a white page on every device in light mode. */}
+<meta name="theme-color" content="#FFFCF8" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#17150F" media="(prefers-color-scheme: dark)" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 

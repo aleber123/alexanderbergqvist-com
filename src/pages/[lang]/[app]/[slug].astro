@@ -6,6 +6,7 @@ import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import FAQ from '../../../components/FAQ.astro';
 import AppStoreBadge from '../../../components/AppStoreBadge.astro';
 import { tagAppStoreUrl } from '../../../lib/appstore';
+import { resolveOgImage } from '../../../lib/og';
 import {
   LOCALES,
   LOCALE_BCP47,
@@ -97,7 +98,7 @@ const heroAppStoreUrl = tagAppStoreUrl(localizedAppStoreUrl, Astro.url.pathname,
   publishedAt={article.data.publishedAt}
   updatedAt={article.data.updatedAt}
   keywords={article.data.keywords}
-  image={`/og/${article.data.app}-${article.id.split('/').pop()}.png`}
+  image={resolveOgImage(article.data.app, articleSlug)}
   appStoreId={appStoreId}
   htmlLang={LOCALE_BCP47[lang]}
 >
@@ -111,11 +112,11 @@ const heroAppStoreUrl = tagAppStoreUrl(localizedAppStoreUrl, Astro.url.pathname,
         ]}
       />
     )}
-    <h1 class="mt-6 text-3xl md:text-5xl font-black tracking-tight leading-tight">
+    <h1 class="mt-6 font-display font-normal text-[clamp(2rem,5vw,3.25rem)] tracking-[-0.012em] leading-[1.08]">
       {article.data.title}
     </h1>
-    <p class="mt-3 text-lg text-slate-600">{article.data.description}</p>
-    <div class="mt-4 flex items-center gap-3 text-sm text-slate-500">
+    <p class="mt-3 text-lg text-ink-2">{article.data.description}</p>
+    <div class="mt-4 flex items-center gap-3 text-sm text-ink-3">
       <time datetime={article.data.publishedAt.toISOString()}>
         {article.data.publishedAt.toLocaleDateString(LOCALE_BCP47[lang], {
           year: 'numeric',
@@ -124,7 +125,7 @@ const heroAppStoreUrl = tagAppStoreUrl(localizedAppStoreUrl, Astro.url.pathname,
         })}
       </time>
       {article.data.updatedAt && (
-        <span class="text-slate-400">
+        <span class="text-ink-3">
           · {ui.updated} {article.data.updatedAt.toLocaleDateString(LOCALE_BCP47[lang])}
         </span>
       )}
@@ -136,8 +137,8 @@ const heroAppStoreUrl = tagAppStoreUrl(localizedAppStoreUrl, Astro.url.pathname,
         data-cta-position="hero"
         target="_blank"
         rel="noopener"
-        class="mt-6 flex items-center gap-3 rounded-xl border border-slate-200 p-3 md:p-4 no-underline transition hover:shadow-md"
-        style={`background: linear-gradient(135deg, ${app.data.accent}14, #ffffff);`}
+        class="mt-6 flex items-center gap-3 rounded-xl border border-line p-3 md:p-4 no-underline transition hover:shadow-md"
+        style={`background: linear-gradient(135deg, ${app.data.accent}14, var(--surface)); border-left: 4px solid ${app.data.accent};`}
       >
         <img
           src={app.data.icon}
@@ -147,15 +148,16 @@ const heroAppStoreUrl = tagAppStoreUrl(localizedAppStoreUrl, Astro.url.pathname,
           loading="lazy"
         />
         <div class="min-w-0">
-          <div class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <div class="text-xs font-semibold uppercase tracking-wide text-ink-3">
             {ui.inGuide}
           </div>
           <div class="font-black leading-tight">{app.data.name}</div>
-          <div class="text-sm text-slate-600 truncate">{app.data.tagline}</div>
+          <div class="text-sm text-ink-2 truncate">{app.data.tagline}</div>
         </div>
+        {/* See the Swedish twin: white-on-raw-accent measured 2.0–3.0:1
+            for four of the twelve apps. */}
         <span
-          class="ml-auto flex-shrink-0 rounded-full px-4 py-2 text-sm font-bold text-white"
-          style={`background: ${app.data.accent};`}
+          class="ml-auto flex-shrink-0 rounded-full bg-ink px-4 py-2 text-sm font-bold text-on-ink"
         >
           {ui.get}&nbsp;↗
         </span>
@@ -172,7 +174,7 @@ const heroAppStoreUrl = tagAppStoreUrl(localizedAppStoreUrl, Astro.url.pathname,
 
     {app && (
       <aside
-        class="mt-12 rounded-2xl border border-slate-200 p-6 md:p-8 bg-gradient-to-br from-white to-slate-50"
+        class="mt-12 rounded-2xl border border-line p-6 md:p-8 bg-gradient-to-br from-surface to-surface-2"
       >
         <div class="flex items-start gap-4">
           <img
@@ -184,7 +186,7 @@ const heroAppStoreUrl = tagAppStoreUrl(localizedAppStoreUrl, Astro.url.pathname,
           />
           <div class="flex-1">
             <div class="font-black text-lg">{app.data.name}</div>
-            <p class="text-slate-600 text-sm mt-1">{app.data.tagline}</p>
+            <p class="text-ink-2 text-sm mt-1">{app.data.tagline}</p>
             <div class="mt-4">
               <AppStoreBadge
                 url={localizedAppStoreUrl}
@@ -205,10 +207,10 @@ const heroAppStoreUrl = tagAppStoreUrl(localizedAppStoreUrl, Astro.url.pathname,
             return (
               <a
                 href={`/${lang}/${r.data.app}/${slug}/`}
-                class="block rounded-xl border border-slate-200 p-4 hover:border-slate-300 hover:shadow-md transition"
+                class="block rounded-xl border border-line p-4 hover:border-line-strong hover:shadow-md transition"
               >
-                <div class="font-bold text-slate-900">{r.data.title}</div>
-                <p class="text-sm text-slate-600 mt-1 line-clamp-2">
+                <div class="font-bold text-ink">{r.data.title}</div>
+                <p class="text-sm text-ink-2 mt-1 line-clamp-2">
                   {r.data.description}
                 </p>
               </a>

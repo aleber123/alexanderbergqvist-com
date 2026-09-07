@@ -31,19 +31,19 @@ const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
         { name: 'Sluta snusa — dag för dag' },
       ]}
     />
-    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-slate-500">
+    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-ink-3">
       Guide
     </span>
     <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
       Sluta snusa — dag för dag
     </h1>
-    <p class="mt-3 text-lg text-slate-600">
+    <p class="mt-3 text-lg text-ink-2">
       Vad som faktiskt händer i kroppen, hur det brukar kännas, och vad som
       hjälper — från första dygnet till tre månader.
     </p>
 
-    <div class="mt-8 rounded-xl border border-slate-200 bg-slate-50 p-5">
-      <p class="text-sm text-slate-700">
+    <div class="mt-8 rounded-xl border border-line bg-surface-2 p-5">
+      <p class="text-sm text-ink-2">
         <strong>Om snus och rökning:</strong> den här guiden handlar om snus.
         Hälsoeffekterna skiljer sig från rökning — snus påverkar framför allt
         nikotinberoende, tandkött, munslemhinna, smak och blodtryck, inte lungor
@@ -56,16 +56,16 @@ const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
       {DAYS.map((d) => (
         <a
           href={`/snusfri-resa/sluta-snusa/${d.slug}/`}
-          class="rounded-xl border border-slate-200 bg-white px-5 py-4 hover:border-slate-400 hover:shadow-sm transition"
+          class="rounded-xl border border-line bg-surface px-5 py-4 hover:border-line-strong hover:shadow-sm transition"
         >
           <span class="font-bold">{d.label}</span>
-          <span class="block text-sm text-slate-500 mt-0.5">{d.title}</span>
+          <span class="block text-sm text-ink-3 mt-0.5">{d.title}</span>
         </a>
       ))}
     </div>
 
     <h2 class="mt-12 text-2xl font-black">Det viktigaste att veta</h2>
-    <ul class="mt-4 space-y-3 text-slate-700">
+    <ul class="mt-4 space-y-3 text-ink-2">
       <li>
         <strong>Suget kommer i vågor, inte konstant.</strong> En craving toppar
         och klingar av på 3–5 minuter. Du behöver inte stå emot i timmar — bara
@@ -86,9 +86,9 @@ const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
       </li>
     </ul>
 
-    <div class="mt-12 rounded-2xl border border-slate-200 bg-slate-50 p-6 md:p-8">
+    <div class="mt-12 rounded-2xl border border-line bg-surface-2 p-6 md:p-8">
       <h2 class="text-xl font-black">Se timmarna och kronorna växa</h2>
-      <p class="mt-2 text-slate-600">
+      <p class="mt-2 text-ink-2">
         Snusfri Resa räknar snusfri tid och sparade pengar i realtid, med en
         hälsotimeline som är specifik för snus — inte rökning. Gratis.
       </p>
@@ -96,7 +96,7 @@ const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
         <AppStoreBadge url={app?.data.appStoreUrl} status={app?.data.status} />
       </div>
       <p class="mt-4 text-sm">
-        <a href="/snusfri-resa/kalkylator/" class="underline text-slate-700">
+        <a href="/snusfri-resa/kalkylator/" class="underline text-ink-2">
           Räkna ut vad du sparar →
         </a>
       </p>
@@ -104,7 +104,7 @@ const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
 
     <FAQ items={FAQ_COMMON} />
 
-    <p class="mt-10 text-sm text-slate-500">
+    <p class="mt-10 text-sm text-ink-3">
       Informationen här är allmän och ersätter inte medicinsk rådgivning. Mår du
       dåligt, eller läker inte tandköttet, kontakta vårdcentral eller tandläkare.
     </p>

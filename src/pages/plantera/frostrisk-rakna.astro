@@ -59,21 +59,21 @@ const zones = [
         { name: 'Frostrisk-räknare' },
       ]}
     />
-    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-slate-500">
+    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-ink-3">
       Fri kalkylator
     </span>
     <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
       När är det säkert att plantera ut?
     </h1>
-    <p class="mt-3 text-lg text-slate-600">
+    <p class="mt-3 text-lg text-ink-2">
       Hitta din odlingszon nedan. Datumen är genomsnitt för sista
       vårfrostnatten — kolla alltid 10-dagarsprognosen för säkerhets
       skull.
     </p>
 
-    <div class="mt-10 rounded-2xl border border-slate-200 bg-white overflow-hidden">
+    <div class="mt-10 rounded-2xl border border-line bg-surface overflow-hidden">
       <table class="w-full text-sm">
-        <thead class="bg-slate-50 text-left">
+        <thead class="bg-surface-2 text-left">
           <tr>
             <th class="p-3 font-bold">Zon</th>
             <th class="p-3 font-bold">Region</th>
@@ -83,20 +83,20 @@ const zones = [
         </thead>
         <tbody>
           {zones.map((z) => (
-            <tr class="border-t border-slate-100">
+            <tr class="border-t border-line">
               <td class="p-3 font-black text-emerald-700">{z.zone}</td>
-              <td class="p-3 text-slate-700">{z.region}</td>
-              <td class="p-3 font-bold text-slate-900">{z.date}</td>
-              <td class="p-3 text-slate-500 hidden md:table-cell">{z.range}</td>
+              <td class="p-3 text-ink-2">{z.region}</td>
+              <td class="p-3 font-bold text-ink">{z.date}</td>
+              <td class="p-3 text-ink-3 hidden md:table-cell">{z.range}</td>
             </tr>
           ))}
         </tbody>
       </table>
     </div>
 
-    <div class="mt-10 rounded-2xl border border-slate-200 bg-gradient-to-br from-emerald-50 to-white p-6 md:p-8">
+    <div class="mt-10 rounded-2xl border border-line bg-gradient-to-br from-emerald-50 to-surface p-6 md:p-8">
       <h2 class="text-xl font-black">Få frostvarningar i mobilen</h2>
-      <p class="mt-2 text-slate-700">
+      <p class="mt-2 text-ink-2">
         Plantera-appen läser SMHI's prognos och pingar dig om fros­t­
         risk på natten — så du hinner täcka dina pelargoner eller
         plantera in dina tomater. Helt gratis.

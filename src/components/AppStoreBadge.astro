@@ -41,7 +41,7 @@ const taggedUrl = tagAppStoreUrl(url, Astro.url.pathname, { campaign, position }
       class={`inline-flex items-center gap-2 rounded-xl px-4 py-3 font-bold text-sm cursor-not-allowed ${
         isLight
           ? 'bg-white/20 text-white/80'
-          : 'bg-slate-200 text-slate-500'
+          : 'bg-surface-2 text-ink-3'
       }`}
     >
       <svg viewBox="0 0 384 512" class="w-4 h-4 fill-current">
@@ -55,8 +55,8 @@ const taggedUrl = tagAppStoreUrl(url, Astro.url.pathname, { campaign, position }
       data-cta-position={position}
       class={`inline-flex items-center gap-3 rounded-xl px-5 py-3 font-bold text-sm transition hover:scale-[1.02] ${
         isLight
-          ? 'bg-white text-slate-900 hover:bg-slate-100'
-          : 'bg-slate-900 text-white hover:bg-slate-800'
+          ? 'bg-surface text-ink hover:bg-surface-2'
+          : 'bg-ink text-white hover:bg-ink-2'
       }`}
     >
       <svg viewBox="0 0 384 512" class="w-5 h-5 fill-current">
