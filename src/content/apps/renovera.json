@@ -2,7 +2,7 @@
   "name": "Renovera",
   "tagline": "31 kalkylatorer för dig som renoverar hemma.",
   "description": "Renovera är iOS-appen med 31 kalkylatorer för hemmarenovering — kakel, färg, betong, isolering, solpaneler, värmepump och mycket mer. Räkna ut exakt vad du behöver utan att googla formler. Spara projekt och inköpslistor.",
-  "icon": "/apps/renovera.png",
+  "icon": "/apps/renovera.webp",
   "accent": "#795548",
   "accentDark": "#3E2723",
   "appStoreUrl": "https://apps.apple.com/se/app/renovera/id6763392279",

@@ -4,6 +4,7 @@ import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
 import { rehypeAppStoreAttribution } from './src/lib/rehype-appstore-attribution';
+import { rehypeVerdictMarks } from './src/lib/rehype-verdict-marks';
 
 const SITE = 'https://alexanderbergqvist.com';
 // Build-cache bust 2026-06-26: force Astro to re-sync the content layer so
@@ -72,7 +73,9 @@ export default defineConfig({
   ],
   // Tags the ~152 raw apps.apple.com links written inline in MDX bodies
   // with pt/ct, so ASC stops reporting only the bottom-of-page badge.
-  markdown: { rehypePlugins: [rehypeAppStoreAttribution] },
+  markdown: {
+    rehypePlugins: [rehypeAppStoreAttribution, rehypeVerdictMarks],
+  },
   // NOTE on the display font: Astro 5.18's experimental.fonts only
   // accepts remote providers (its fontFamilySchema has no `variants`
   // key), so local woff2 files can't go through it yet. The faces are

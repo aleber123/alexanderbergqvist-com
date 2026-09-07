@@ -130,7 +130,7 @@ const tools = [
         </a>
       </div>
       <div class="border-t border-line">
-        {apps.slice(0, 8).map((app) => (
+        {apps.slice(0, 8).map((app, i) => (
           <a
             href={`/${app.id}/`}
             class="group flex items-center gap-5 border-b border-line py-5 hover:bg-surface-2 transition px-2 -mx-2"
@@ -139,11 +139,17 @@ const tools = [
               class="w-12 h-12 rounded-xl flex-shrink-0 overflow-hidden flex items-center justify-center text-white font-black text-xl"
               style={`background: ${app.data.accent};`}
             >
+              {/* The first item is above the fold; lazy deferred its
+                  fetch. width/height on all of them so the row reserves
+                  space before the image arrives. */}
               <img
                 src={app.data.icon}
                 alt={`${app.data.name} ikon`}
+                width="48"
+                height="48"
                 class="w-full h-full object-cover"
-                loading="lazy"
+                loading={i === 0 ? 'eager' : 'lazy'}
+                fetchpriority={i === 0 ? 'high' : undefined}
                 onerror="this.style.display='none'; this.parentElement.textContent=this.alt[0];"
               />
             </div>

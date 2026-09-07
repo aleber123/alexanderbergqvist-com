@@ -49,22 +49,33 @@ const switcherAlternates = {
   htmlLang={LOCALE_BCP47[lang]}
   hreflangAlternates={alternates}
 >
-  <section class="bg-gradient-to-b from-surface-2 to-surface border-b border-line">
-    <div class="max-w-6xl mx-auto px-6 py-10 md:py-14">
-      <div class="flex justify-end mb-6">
-        <LangSwitcher current={lang} alternates={switcherAlternates} />
-      </div>
-      <h1 class="text-3xl md:text-5xl font-black tracking-tight max-w-3xl">
+  {/* This page is what every non-Swedish visitor lands on, and it used
+      to be a different, weaker site than the Swedish root: a
+      from-slate-50 gradient band (the most dated thing here), a
+      text-3xl heading against the Swedish hero's 88px, and half the
+      vertical padding. Same identity now — the strings already existed,
+      so this is markup only. The stats strip is deliberately NOT
+      ported; its copy is Sweden-specific. */}
+  <section class="border-b border-line">
+    <div class="max-w-6xl mx-auto px-6 pt-16 md:pt-24 pb-12 md:pb-20">
+      <h1
+        class="font-display font-normal text-[clamp(2.5rem,6vw,4.5rem)] leading-[1.03] tracking-[-0.015em] max-w-[18ch]"
+      >
         {strings.ui.homeHero}
       </h1>
-      <p class="mt-4 text-lg text-ink-2 max-w-2xl">
+      <p class="mt-7 text-lg md:text-xl text-ink-2 max-w-[48ch] leading-relaxed">
         {strings.ui.homeSubhero}
       </p>
+      {/* Moved out of `flex justify-end mb-6`, where it was the first
+          element on the page — above the author's own name. */}
+      <div class="mt-8">
+        <LangSwitcher current={lang} alternates={switcherAlternates} />
+      </div>
     </div>
   </section>
 
   <section class="max-w-6xl mx-auto px-6 py-16">
-    <h2 class="text-2xl md:text-3xl font-black mb-2">
+    <h2 class="font-display font-normal text-[clamp(1.75rem,4vw,2.5rem)] tracking-[-0.012em] leading-[1.08] mb-2">
       {strings.ui.appsTitle}
     </h2>
     <p class="text-ink-2 mb-8">{strings.ui.appsSubtitle}</p>

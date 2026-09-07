@@ -292,3 +292,28 @@ select:focus-visible,
 .prose tbody tr:has(td:first-child strong) td:first-child {
   border-left: 3px solid var(--ink);
 }
+
+/* Verdict marks (rehype-verdict-marks.ts turns ✅/❌/⚠️ into these).
+   The SHAPE carries the meaning — filled / hollow / half — and the word
+   next to it carries it again. Colour here is decorative: delete every
+   colour rule below and the table still reads correctly. That is the
+   point, and it is why this replaced a green/red emoji pair. */
+.prose .v {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.3em;
+  white-space: nowrap;
+}
+.prose .v-mark {
+  font-size: 1.05em;
+  line-height: 1;
+}
+.prose .v[data-v='yes'] .v-mark {
+  color: #1a6b3c;
+}
+.prose .v[data-v='no'] .v-mark {
+  color: var(--ink-3);
+}
+.prose .v[data-v='partial'] .v-mark {
+  color: var(--signal);
+}

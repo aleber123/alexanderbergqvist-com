@@ -16,7 +16,7 @@ const apps = defineCollection({
     seoTitle: z.string().optional(),
     tagline: z.string(),
     description: z.string(),
-    icon: z.string(), // path under /public, e.g. "/apps/snusfri-resa.png"
+    icon: z.string(), // path under /public, e.g. "/apps/snusfri-resa.webp"
     accent: z.string(), // hex color used on landing/CTAs
     accentDark: z.string().optional(),
     appStoreUrl: z.string().url().optional(),

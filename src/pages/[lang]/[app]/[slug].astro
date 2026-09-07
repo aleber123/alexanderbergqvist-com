@@ -143,6 +143,7 @@ const heroAppStoreUrl = tagAppStoreUrl(localizedAppStoreUrl, Astro.url.pathname,
         <img
           src={app.data.icon}
           alt={`${app.data.name} icon`}
+          width="48" height="48"
           class="w-12 h-12 rounded-xl flex-shrink-0"
           style={`background: ${app.data.accent};`}
           loading="lazy"
@@ -180,6 +181,7 @@ const heroAppStoreUrl = tagAppStoreUrl(localizedAppStoreUrl, Astro.url.pathname,
           <img
             src={app.data.icon}
             alt={`${app.data.name}`}
+            width="64" height="64"
             class="w-16 h-16 rounded-xl flex-shrink-0"
             style={`background: ${app.data.accent};`}
             loading="lazy"

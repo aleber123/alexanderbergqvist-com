@@ -2,7 +2,7 @@
   "name": "Sömnkoll",
   "tagline": "Trackar din sömn — utan att behöva en klocka.",
   "description": "Sömnkoll är iOS-appen för dig som vill förstå din sömn på ett enkelt sätt. Logga sänggåendetid, uppvaknande och kvalitet — se mönster över tid.",
-  "icon": "/apps/somnkoll.png",
+  "icon": "/apps/somnkoll.webp",
   "accent": "#5E35B1",
   "accentDark": "#311B92",
   "bundleId": "com.alexanderbergqvist.somnkoll",

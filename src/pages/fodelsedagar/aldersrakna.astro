@@ -68,7 +68,7 @@ const faq = [
       <input
         id="bdate"
         type="date"
-        class="w-full rounded-xl border border-line-strong px-4 py-3 text-lg font-bold focus:border-pink-500 focus:outline-none"
+        class="w-full rounded-xl border border-line-strong px-4 py-3 text-lg font-bold focus:border-pink-500"
       />
     </div>
 
@@ -101,19 +101,40 @@ const faq = [
       </div>
     </div>
 
-    <div class="mt-10 rounded-2xl border border-line bg-gradient-to-br from-pink-50 to-surface p-6 md:p-8">
-      <h2 class="text-xl font-black">Glöm aldrig en födelsedag igen</h2>
+    {/* The page computes "Tills nästa födelsedag: 143 dagar" and then
+        pivoted to an unrelated generic pitch — it calculated the user's
+        personal reason to install and threw it away.
+
+        This page burned 29 405 visningar for 10 klick (0,034 %) because
+        Google answers "hur gammal är jag" in its own SERP widget. The
+        people who still click through want the thing the widget cannot
+        give them, and days-until-next-birthday IS that thing.
+
+        Solid ink border rather than a pink gradient, so it reads as part
+        of the tool instead of an ad slot. */}
+    <div class="mt-10 rounded-2xl border-2 border-ink bg-surface p-6 md:p-8">
+      <p class="text-lg font-bold" data-cta-line>
+        Din nästa födelsedag är snart.
+      </p>
       <p class="mt-2 text-ink-2">
-        Födelsedagar-appen samlar alla viktiga personers födelsedagar och
-        påminner dig i god tid. Importera direkt från Kontakter, lägg till
-        foton, få aviseringar.
+        Födelsedagar samlar alla viktiga personers datum och påminner dig i
+        god tid. Importera från Kontakter — inget konto, allt sparas på din
+        telefon.
       </p>
       <div class="mt-6">
         <AppStoreBadge
           url="https://apps.apple.com/se/app/f%C3%B6delsedagar/id6758899294"
           status="live"
+          campaign="aldersrakna"
+          position="inline"
         />
       </div>
+      {/* State the paywall here rather than letting them find it after
+          installing. A surprise gate produces an install, a discovery
+          and a 1-star review that costs more than the install was worth. */}
+      <p class="mt-4 text-sm text-ink-3">
+        Gratis för 5 personer. Premium om du vill ha fler.
+      </p>
     </div>
 
     <div class="prose mt-12">
@@ -277,6 +298,19 @@ const faq = [
       daysUntilNext === 0
         ? '🎉 Idag!'
         : `${daysUntilNext} ${daysUntilNext === 1 ? 'dag' : 'dagar'}`;
+
+    // Make the CTA the natural next sentence after the answer they came
+    // for, instead of a generic pitch sitting beside it.
+    const ctaLine = document.querySelector('[data-cta-line]');
+    if (ctaLine) {
+      const weekday = next.toLocaleDateString('sv-SE', { weekday: 'long' });
+      ctaLine.textContent =
+        daysUntilNext === 0
+          ? 'Din födelsedag är idag. Vem mer fyller år den här månaden?'
+          : `Din nästa födelsedag är om ${nf.format(daysUntilNext)} ${
+              daysUntilNext === 1 ? 'dag' : 'dagar'
+            } — en ${weekday}.`;
+    }
   }
 
   inp.addEventListener('input', compute);
