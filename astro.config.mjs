@@ -3,6 +3,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
+import { rehypeAppStoreAttribution } from './src/lib/rehype-appstore-attribution';
 
 const SITE = 'https://alexanderbergqvist.com';
 // Build-cache bust 2026-06-26: force Astro to re-sync the content layer so
@@ -69,6 +70,9 @@ export default defineConfig({
       },
     }),
   ],
+  // Tags the ~152 raw apps.apple.com links written inline in MDX bodies
+  // with pt/ct, so ASC stops reporting only the bottom-of-page badge.
+  markdown: { rehypePlugins: [rehypeAppStoreAttribution] },
   vite: { plugins: [tailwindcss()] },
   build: { inlineStylesheets: 'auto' },
 });

@@ -5,6 +5,7 @@ import BaseLayout from '../../../components/BaseLayout.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import FAQ from '../../../components/FAQ.astro';
 import AppStoreBadge from '../../../components/AppStoreBadge.astro';
+import { tagAppStoreUrl } from '../../../lib/appstore';
 import {
   LOCALES,
   LOCALE_BCP47,
@@ -79,6 +80,14 @@ const appStoreId = app?.data.appStoreUrl
 // listing is in Swedish and the price is in SEK — the helper already exists
 // and [lang]/[app]/index.astro has always used it.
 const localizedAppStoreUrl = localizeAppStoreUrl(app?.data.appStoreUrl, lang);
+
+// Highest-position CTA on the page — was linking raw, so ASC never saw it.
+// Campaign carries the locale so the storefronts stay separable in ASC.
+const articleSlug = article.id.split('/').pop()!;
+const heroAppStoreUrl = tagAppStoreUrl(localizedAppStoreUrl, Astro.url.pathname, {
+  campaign: `${lang}_${articleSlug}`,
+  position: 'hero',
+});
 ---
 
 <BaseLayout
@@ -123,7 +132,8 @@ const localizedAppStoreUrl = localizeAppStoreUrl(app?.data.appStoreUrl, lang);
 
     {app && app.data.status === 'live' && localizedAppStoreUrl && (
       <a
-        href={localizedAppStoreUrl}
+        href={heroAppStoreUrl}
+        data-cta-position="hero"
         target="_blank"
         rel="noopener"
         class="mt-6 flex items-center gap-3 rounded-xl border border-slate-200 p-3 md:p-4 no-underline transition hover:shadow-md"

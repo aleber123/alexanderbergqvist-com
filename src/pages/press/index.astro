@@ -2,6 +2,7 @@
 import { SAME_AS } from '../../data/identity';
 import BaseLayout from '../../components/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import { tagAppStoreUrl } from '../../lib/appstore';
 
 // Press kit. Exists so a journalist on deadline never has to email and wait:
 // bio, portrait, icons, screenshots and contact are all one click away. That
@@ -71,7 +72,15 @@ const personSchema = {
           {a.data.appStoreUrl && (
             <>
               {' · '}
-              <a href={a.data.appStoreUrl} target="_blank" rel="noopener">
+              <a
+                href={tagAppStoreUrl(a.data.appStoreUrl, '/press/', {
+                  campaign: `press_${a.id}`,
+                  position: 'inline',
+                })}
+                data-cta-position="inline"
+                target="_blank"
+                rel="noopener"
+              >
                 App Store
               </a>
             </>

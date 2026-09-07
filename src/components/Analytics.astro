@@ -81,12 +81,25 @@ const enabled = GA_ID && isProd;
           // Dedicated App Store event — easier to set up as a GA4
           // Conversion in the dashboard, and easier to slice per-app.
           if (appInfo) {
+            // Where on the page the click happened. Read from the
+            // explicit attribute, falling back to the `ct` prefix that
+            // src/lib/appstore.ts stamps (hero_/inline_/body_/footer_).
+            // Gives a GA4 position breakdown that mirrors what ASC
+            // reports, so the two can be reconciled.
+            const ctPrefix = (url.searchParams.get('ct') || '').split('_')[0];
+            const position =
+              target.dataset.ctaPosition ||
+              (['hero', 'inline', 'body', 'footer'].includes(ctPrefix)
+                ? ctPrefix
+                : 'unknown');
+
             gtag('event', 'app_store_click', {
               app_slug: appInfo.app_slug,
               app_id: appInfo.app_id,
               country: appInfo.country,
               source_path: window.location.pathname,
               link_text: linkText,
+              cta_position: position,
             });
           }
         } catch {}

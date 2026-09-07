@@ -5,6 +5,7 @@ import BaseLayout from '../../components/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
+import { tagAppStoreUrl } from '../../lib/appstore';
 
 export const getStaticPaths = (async () => {
   // Only Swedish articles live at the root /<app>/<slug>/.
@@ -46,6 +47,14 @@ const related = allArticles
 const appStoreId = app?.data.appStoreUrl
   ? app.data.appStoreUrl.match(/\/id(\d+)/)?.[1]
   : undefined;
+
+// The app strip under the H1 is the highest-position CTA on the page and
+// used to link to app.data.appStoreUrl raw — so ASC never saw it.
+const articleSlug = article.id.split('/').pop()!;
+const heroAppStoreUrl = tagAppStoreUrl(app?.data.appStoreUrl, Astro.url.pathname, {
+  campaign: articleSlug,
+  position: 'hero',
+});
 ---
 
 <BaseLayout
@@ -89,7 +98,8 @@ const appStoreId = app?.data.appStoreUrl
 
     {app && app.data.status === 'live' && app.data.appStoreUrl && (
       <a
-        href={app.data.appStoreUrl}
+        href={heroAppStoreUrl}
+        data-cta-position="hero"
         target="_blank"
         rel="noopener"
         class="mt-6 flex items-center gap-3 rounded-xl border border-slate-200 p-3 md:p-4 no-underline transition hover:shadow-md"

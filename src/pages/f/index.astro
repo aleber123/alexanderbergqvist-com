@@ -10,8 +10,17 @@ import BaseLayout from '../../components/BaseLayout.astro';
 // gets something genuinely useful (a recurring calendar entry, no app needed),
 // and the app is introduced as the thing that made it easy — rather than
 // hijacking a personal birthday greeting with promo text.
-const APP_STORE_URL =
-  'https://apps.apple.com/se/app/f%C3%B6delsedagar/id6758899294';
+//
+// Tagged `ct=share_f` so ASC can separate installs that came from the
+// friend-to-friend share loop from ordinary SEO traffic — they are
+// different acquisition channels and should never be read as one number.
+import { tagAppStoreUrl } from '../../lib/appstore';
+
+const APP_STORE_URL = tagAppStoreUrl(
+  'https://apps.apple.com/se/app/f%C3%B6delsedagar/id6758899294',
+  '/f/',
+  { campaign: 'share_f', position: 'inline' },
+)!;
 ---
 
 <BaseLayout
