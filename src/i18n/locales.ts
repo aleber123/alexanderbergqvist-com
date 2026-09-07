@@ -217,3 +217,22 @@ const data: Record<Locale, LocaleStrings> = {
 export function t(locale: Locale): LocaleStrings {
   return data[locale];
 }
+
+/**
+ * Canonical URL for an article, matching the actual route structure:
+ * Swedish articles render at /<app>/<slug>/ via src/pages/[app]/[slug].astro,
+ * every other language at /<lang>/<app>/<slug>/ via [lang]/[app]/[slug].astro.
+ *
+ * This exists because both the homepage and the blog index hand-built article
+ * URLs and both got it wrong — the homepage emitted /blog/<app>/<slug>/ (a
+ * route that does not exist at all) and the blog index emitted the Swedish
+ * shape for every article, while in practice there are no Swedish articles.
+ * The result was that every article link on the site 404'd, which also meant
+ * search engines followed internal links straight into dead ends.
+ *
+ * `id` is the content-collection id, e.g. "rita/best-coloring-app-for-kids-2026".
+ */
+export function articleUrl(id: string, app: string, lang: string): string {
+  const slug = id.split('/').pop()!;
+  return lang === 'sv' ? `/${app}/${slug}/` : `/${lang}/${app}/${slug}/`;
+}
