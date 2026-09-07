@@ -5,6 +5,7 @@ import BaseLayout from '../../components/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
+import AuthorBox from '../../components/AuthorBox.astro';
 import { tagAppStoreUrl } from '../../lib/appstore';
 import { resolveOgImage } from '../../lib/og';
 
@@ -33,6 +34,12 @@ const app = apps.find((a) => a.id === article.data.app);
 // Other articles for the same app — surface as related links at the
 // bottom. Boosts internal linking + topical authority.
 const allArticles = await getCollection('articles', (a) => !a.data.draft);
+// Was `.slice(0, 3)` straight off raw collection order — effectively
+// random, so 163 internal links pointed wherever the loader happened to
+// list things. Sort commercial-intent articles first: those are the
+// pages that can both rank AND convert, so that is where this page's
+// link equity should drain.
+const COMMERCIAL = /(basta|best|bester|meilleur|mejor|migliore|vs-|jamfor|compare|vergleich)/i;
 const related = allArticles
   .filter(
     (a) =>
@@ -40,6 +47,12 @@ const related = allArticles
       a.data.lang === article.data.lang &&
       a.id !== article.id,
   )
+  .sort((a, b) => {
+    const ca = COMMERCIAL.test(a.id) ? 0 : 1;
+    const cb = COMMERCIAL.test(b.id) ? 0 : 1;
+    if (ca !== cb) return ca - cb;
+    return b.data.publishedAt.getTime() - a.data.publishedAt.getTime();
+  })
   .slice(0, 3);
 
 // Smart App Banner — let iOS Safari show install banner above the
@@ -82,7 +95,13 @@ const heroAppStoreUrl = tagAppStoreUrl(app?.data.appStoreUrl, Astro.url.pathname
       {article.data.title}
     </h1>
     <p class="mt-3 text-lg text-ink-2">{article.data.description}</p>
-    <div class="mt-4 flex items-center gap-3 text-sm text-ink-3">
+    {/* Named authorship. Previously this row went straight from the
+        description to a bare date — no human anywhere on 89 articles
+        about childcare payments, nicotine and gardening. */}
+    <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-3">
+      <span class="font-semibold text-ink">Alexander Bergqvist</span>
+      {app && <span>· bygger {app.data.name}-appen</span>}
+      <span aria-hidden>·</span>
       <time datetime={article.data.publishedAt.toISOString()}>
         {article.data.publishedAt.toLocaleDateString('sv-SE', {
           year: 'numeric',
@@ -140,6 +159,8 @@ const heroAppStoreUrl = tagAppStoreUrl(app?.data.appStoreUrl, Astro.url.pathname
     {article.data.faq && article.data.faq.length > 0 && (
       <FAQ items={article.data.faq} />
     )}
+
+    <AuthorBox appName={app?.data.name} lang="sv" />
 
     {app && (
       <aside

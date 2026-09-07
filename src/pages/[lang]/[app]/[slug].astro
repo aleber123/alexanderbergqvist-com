@@ -5,6 +5,7 @@ import BaseLayout from '../../../components/BaseLayout.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import FAQ from '../../../components/FAQ.astro';
 import AppStoreBadge from '../../../components/AppStoreBadge.astro';
+import AuthorBox from '../../../components/AuthorBox.astro';
 import { tagAppStoreUrl } from '../../../lib/appstore';
 import { resolveOgImage } from '../../../lib/og';
 import {
@@ -63,6 +64,9 @@ const ARTICLE_UI: Record<
 const ui = ARTICLE_UI[lang];
 
 const allArticles = await getCollection('articles', (a) => !a.data.draft);
+// See the Swedish twin: was raw collection order, i.e. effectively
+// random internal linking.
+const COMMERCIAL = /(basta|best|bester|meilleur|mejor|migliore|vs-|jamfor|compare|vergleich)/i;
 const related = allArticles
   .filter(
     (a) =>
@@ -70,6 +74,12 @@ const related = allArticles
       a.data.lang === lang &&
       a.id !== article.id,
   )
+  .sort((a, b) => {
+    const ca = COMMERCIAL.test(a.id) ? 0 : 1;
+    const cb = COMMERCIAL.test(b.id) ? 0 : 1;
+    if (ca !== cb) return ca - cb;
+    return b.data.publishedAt.getTime() - a.data.publishedAt.getTime();
+  })
   .slice(0, 3);
 
 const appStoreId = app?.data.appStoreUrl
@@ -116,7 +126,10 @@ const heroAppStoreUrl = tagAppStoreUrl(localizedAppStoreUrl, Astro.url.pathname,
       {article.data.title}
     </h1>
     <p class="mt-3 text-lg text-ink-2">{article.data.description}</p>
-    <div class="mt-4 flex items-center gap-3 text-sm text-ink-3">
+    {/* See the Swedish twin — named authorship, previously absent. */}
+    <div class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-3">
+      <span class="font-semibold text-ink">Alexander Bergqvist</span>
+      <span aria-hidden>·</span>
       <time datetime={article.data.publishedAt.toISOString()}>
         {article.data.publishedAt.toLocaleDateString(LOCALE_BCP47[lang], {
           year: 'numeric',
@@ -172,6 +185,8 @@ const heroAppStoreUrl = tagAppStoreUrl(localizedAppStoreUrl, Astro.url.pathname,
     {article.data.faq && article.data.faq.length > 0 && (
       <FAQ items={article.data.faq} />
     )}
+
+    <AuthorBox appName={app?.data.name} lang={lang} />
 
     {app && (
       <aside

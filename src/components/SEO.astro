@@ -73,7 +73,18 @@ const {
 const ogLocale = locale.replace('-', '_');
 
 const siteName = 'Alexander Bergqvist';
-const fullTitle = title === siteName ? title : `${title} – ${siteName}`;
+// ' – Alexander Bergqvist' is 22 characters. Appending it to every page
+// pushed 161 of 163 article titles past Google's ~60-char display
+// budget with boilerplate we control — and long brand-suffixed titles
+// are a top trigger for Google rewriting the title entirely. Keep the
+// brand only where it fits, and never on articles (which have their own
+// keyword-shaped titles and a visible byline now).
+const BRAND_SUFFIX = ` – ${siteName}`;
+const wantsBrand =
+  title !== siteName &&
+  type !== 'article' &&
+  title.length + BRAND_SUFFIX.length <= 60;
+const fullTitle = wantsBrand ? title + BRAND_SUFFIX : title;
 const url = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
 const imageUrl = new URL(image, Astro.site).href;
 

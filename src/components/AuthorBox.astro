@@ -1,0 +1,70 @@
+---
+/**
+ * Author box for article pages.
+ *
+ * 89 articles about childcare payments, quitting nicotine and gardening
+ * had zero visible human behind them — the page went straight from the
+ * description to a bare <time>. That is exactly the shape both Google's
+ * helpful-content system and a cautious parent discount.
+ *
+ * The site asserts a person's name in schema markup on every page and
+ * never shows him.
+ *
+ * NOTE: the portrait is intentionally absent until a real photo exists.
+ * A placeholder avatar or a generated face would be worse than none —
+ * the whole point of this block is that a real person stands behind the
+ * text. Drop a square photo at public/press/alexander.webp and set
+ * `portrait` below; the markup already reserves the space.
+ */
+import { PERSON_NAME } from '../data/identity';
+
+interface Props {
+  /** App the article belongs to, e.g. "surdeg" — used in the byline. */
+  appName?: string;
+  lang?: string;
+}
+
+const { appName, lang = 'sv' } = Astro.props;
+
+const COPY: Record<
+  string,
+  { builds: (a: string) => string; bio: string; correction: string }
+> = {
+  sv: {
+    builds: (a) => `bygger ${a}-appen`,
+    bio: 'Jag bygger små iOS-appar för konkreta vardagsproblem, ensam och på fritiden. Texterna här skriver jag själv, oftast för att jag behövde svaret först och inte hittade det någonstans.',
+    correction:
+      'Hittar du fel i den här texten — mejla mig, jag rättar samma dag.',
+  },
+  en: {
+    builds: (a) => `builds the ${a} app`,
+    bio: 'I build small iOS apps for concrete everyday problems, alone and in my spare time. I write these articles myself, usually because I needed the answer first and could not find it anywhere.',
+    correction: 'Found an error here? Email me and I will fix it the same day.',
+  },
+  de: {
+    builds: (a) => `entwickelt die ${a}-App`,
+    bio: 'Ich baue kleine iOS-Apps für konkrete Alltagsprobleme, allein und in meiner Freizeit. Diese Texte schreibe ich selbst — meistens, weil ich die Antwort zuerst selbst brauchte und nirgends fand.',
+    correction:
+      'Fehler gefunden? Schreib mir eine E-Mail, ich korrigiere ihn noch am selben Tag.',
+  },
+};
+
+const c = COPY[lang] ?? COPY.en;
+---
+
+<aside class="mt-12 rounded-2xl border border-line bg-surface-2 p-6">
+  <div class="font-bold text-ink">{PERSON_NAME}</div>
+  {appName && (
+    <div class="mt-0.5 text-sm text-ink-3">{c.builds(appName)}</div>
+  )}
+  <p class="mt-3 text-sm text-ink-2 leading-relaxed">{c.bio}</p>
+  <p class="mt-3 text-sm text-ink-3">
+    {c.correction}{' '}
+    <a
+      href="mailto:alexander.bergqvist@gmail.com"
+      class="underline text-ink-2 hover:text-ink"
+    >
+      alexander.bergqvist@gmail.com
+    </a>
+  </p>
+</aside>
