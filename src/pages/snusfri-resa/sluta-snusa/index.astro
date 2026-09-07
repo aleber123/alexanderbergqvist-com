@@ -1,0 +1,112 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../../components/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import FAQ from '../../../components/FAQ.astro';
+import AppStoreBadge from '../../../components/AppStoreBadge.astro';
+import { DAYS, FAQ_COMMON } from '../../../data/slutasnusa';
+
+const app = await getEntry('apps', 'snusfri-resa');
+const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
+---
+
+<BaseLayout
+  title="Sluta snusa — dag för dag: vad händer i kroppen?"
+  description="Vad händer när du slutar snusa, dag för dag. Abstinens, sug, tandkött och smak — från första dygnet till tre månader. Ärligt och snusspecifikt."
+  keywords={[
+    'sluta snusa',
+    'sluta snusa abstinens',
+    'sluta snusa dag för dag',
+    'snusabstinens hur länge',
+    'vad händer när man slutar snusa',
+    'snusfri',
+  ]}
+  appStoreId={appStoreId}
+>
+  <section class="max-w-3xl mx-auto px-6 py-8">
+    <Breadcrumbs
+      trail={[
+        { name: 'Hem', url: '/' },
+        { name: 'Snusfri Resa', url: '/snusfri-resa/' },
+        { name: 'Sluta snusa — dag för dag' },
+      ]}
+    />
+    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-slate-500">
+      Guide
+    </span>
+    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+      Sluta snusa — dag för dag
+    </h1>
+    <p class="mt-3 text-lg text-slate-600">
+      Vad som faktiskt händer i kroppen, hur det brukar kännas, och vad som
+      hjälper — från första dygnet till tre månader.
+    </p>
+
+    <div class="mt-8 rounded-xl border border-slate-200 bg-slate-50 p-5">
+      <p class="text-sm text-slate-700">
+        <strong>Om snus och rökning:</strong> den här guiden handlar om snus.
+        Hälsoeffekterna skiljer sig från rökning — snus påverkar framför allt
+        nikotinberoende, tandkött, munslemhinna, smak och blodtryck, inte lungor
+        eller andning. Du hittar inga rökningsclaims här.
+      </p>
+    </div>
+
+    <h2 class="mt-12 text-2xl font-black">Välj var du är</h2>
+    <div class="mt-4 grid sm:grid-cols-2 gap-3">
+      {DAYS.map((d) => (
+        <a
+          href={`/snusfri-resa/sluta-snusa/${d.slug}/`}
+          class="rounded-xl border border-slate-200 bg-white px-5 py-4 hover:border-slate-400 hover:shadow-sm transition"
+        >
+          <span class="font-bold">{d.label}</span>
+          <span class="block text-sm text-slate-500 mt-0.5">{d.title}</span>
+        </a>
+      ))}
+    </div>
+
+    <h2 class="mt-12 text-2xl font-black">Det viktigaste att veta</h2>
+    <ul class="mt-4 space-y-3 text-slate-700">
+      <li>
+        <strong>Suget kommer i vågor, inte konstant.</strong> En craving toppar
+        och klingar av på 3–5 minuter. Du behöver inte stå emot i timmar — bara
+        i några minuter, om och om igen.
+      </li>
+      <li>
+        <strong>Dag 2–3 är svårast.</strong> Nikotinet är utrensat och
+        receptorerna reagerar som mest. Vet du om det i förväg blir det lättare
+        att ta — och det är just då de flesta återfaller.
+      </li>
+      <li>
+        <strong>"Bara en" fungerar inte.</strong> En enda prilla återställer
+        nikotinreceptorerna, och du börjar i praktiken om.
+      </li>
+      <li>
+        <strong>Efter en vecka är det mest vana kvar.</strong> Då handlar det om
+        att byta ut situationerna, inte om att stå emot kemi.
+      </li>
+    </ul>
+
+    <div class="mt-12 rounded-2xl border border-slate-200 bg-slate-50 p-6 md:p-8">
+      <h2 class="text-xl font-black">Se timmarna och kronorna växa</h2>
+      <p class="mt-2 text-slate-600">
+        Snusfri Resa räknar snusfri tid och sparade pengar i realtid, med en
+        hälsotimeline som är specifik för snus — inte rökning. Gratis.
+      </p>
+      <div class="mt-5">
+        <AppStoreBadge url={app?.data.appStoreUrl} status={app?.data.status} />
+      </div>
+      <p class="mt-4 text-sm">
+        <a href="/snusfri-resa/kalkylator/" class="underline text-slate-700">
+          Räkna ut vad du sparar →
+        </a>
+      </p>
+    </div>
+
+    <FAQ items={FAQ_COMMON} />
+
+    <p class="mt-10 text-sm text-slate-500">
+      Informationen här är allmän och ersätter inte medicinsk rådgivning. Mår du
+      dåligt, eller läker inte tandköttet, kontakta vårdcentral eller tandläkare.
+    </p>
+  </section>
+</BaseLayout>

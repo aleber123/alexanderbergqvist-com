@@ -1,0 +1,108 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../../components/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import FAQ from '../../../components/FAQ.astro';
+import AppStoreBadge from '../../../components/AppStoreBadge.astro';
+import { DAYS, FAQ_COMMON } from '../../../data/slutasnusa';
+
+// One page per point on the quit timeline. These target "sluta snusa dag 3"-
+// style queries, where the searcher is in acute need at the exact moment they
+// search — the strongest install intent on the site.
+export const getStaticPaths = (() =>
+  DAYS.map((d) => ({ params: { slug: d.slug }, props: { day: d } }))) satisfies GetStaticPaths;
+
+const { day } = Astro.props as { day: (typeof DAYS)[number] };
+const app = await getEntry('apps', 'snusfri-resa');
+const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
+
+const idx = DAYS.findIndex((d) => d.slug === day.slug);
+const prev = idx > 0 ? DAYS[idx - 1] : null;
+const next = idx < DAYS.length - 1 ? DAYS[idx + 1] : null;
+---
+
+<BaseLayout
+  title={`${day.title} — vad händer i kroppen?`}
+  description={`${day.label} utan snus: vad som händer i kroppen, hur det brukar kännas och vad som hjälper. Snusspecifikt — inga rökningsclaims.`}
+  keywords={[
+    `sluta snusa ${day.label.toLowerCase()}`,
+    'snusabstinens',
+    'sluta snusa sug',
+    'vad händer när man slutar snusa',
+  ]}
+  appStoreId={appStoreId}
+>
+  <section class="max-w-3xl mx-auto px-6 py-8">
+    <Breadcrumbs
+      trail={[
+        { name: 'Hem', url: '/' },
+        { name: 'Snusfri Resa', url: '/snusfri-resa/' },
+        { name: 'Sluta snusa', url: '/snusfri-resa/sluta-snusa/' },
+        { name: day.label },
+      ]}
+    />
+    <h1 class="mt-6 text-3xl md:text-5xl font-black tracking-tight">
+      {day.title}
+    </h1>
+
+    <h2 class="mt-10 text-2xl font-black">Vad som händer i kroppen</h2>
+    <p class="mt-3 text-slate-700 leading-relaxed">{day.body}</p>
+
+    <h2 class="mt-10 text-2xl font-black">Hur det brukar kännas</h2>
+    <p class="mt-3 text-slate-700 leading-relaxed">{day.feels}</p>
+
+    <h2 class="mt-10 text-2xl font-black">Vad som hjälper</h2>
+    <ul class="mt-4 space-y-2.5">
+      {day.tips.map((t) => (
+        <li class="flex gap-3">
+          <span class="text-slate-400 shrink-0">→</span>
+          <span class="text-slate-700">{t}</span>
+        </li>
+      ))}
+    </ul>
+
+    <div class="mt-12 rounded-2xl border border-slate-200 bg-slate-50 p-6 md:p-8">
+      <h2 class="text-xl font-black">Håll räkningen — det hjälper mer än man tror</h2>
+      <p class="mt-2 text-slate-600">
+        Snusfri Resa visar snusfri tid och sparade kronor i realtid, plus en
+        hälsotimeline som gäller snus — inte rökning. Gratis.
+      </p>
+      <div class="mt-5">
+        <AppStoreBadge url={app?.data.appStoreUrl} status={app?.data.status} />
+      </div>
+    </div>
+
+    <nav class="mt-10 flex justify-between gap-4 text-sm font-bold">
+      {prev ? (
+        <a href={`/snusfri-resa/sluta-snusa/${prev.slug}/`} class="underline text-slate-700">
+          ← {prev.label}
+        </a>
+      ) : <span />}
+      {next ? (
+        <a href={`/snusfri-resa/sluta-snusa/${next.slug}/`} class="underline text-slate-700">
+          {next.label} →
+        </a>
+      ) : <span />}
+    </nav>
+
+    <h2 class="mt-12 text-2xl font-black">Hela tidslinjen</h2>
+    <div class="mt-4 flex flex-wrap gap-2">
+      {DAYS.filter((d) => d.slug !== day.slug).map((d) => (
+        <a
+          href={`/snusfri-resa/sluta-snusa/${d.slug}/`}
+          class="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold hover:border-slate-400 transition"
+        >
+          {d.label}
+        </a>
+      ))}
+    </div>
+
+    <FAQ items={FAQ_COMMON} />
+
+    <p class="mt-10 text-sm text-slate-500">
+      Informationen här är allmän och ersätter inte medicinsk rådgivning. Mår du
+      dåligt, eller läker inte tandköttet, kontakta vårdcentral eller tandläkare.
+    </p>
+  </section>
+</BaseLayout>
