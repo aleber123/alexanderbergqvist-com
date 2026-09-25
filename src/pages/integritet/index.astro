@@ -2,174 +2,233 @@
 import BaseLayout from '../../components/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 
-const updated = '6 maj 2026';
+const updated = '25 september 2026';
+const updatedEn = 'September 25, 2026';
 ---
 
 <BaseLayout
-  title="Integritetspolicy"
-  description="Hur vi hanterar din integritet i alla våra iOS-appar — Snusfri Resa, Surdeg, VAB-koll, Tidrapportera, Rita & Färglägg, Födelsedagar, Andas med flera."
+  title="Integritetspolicy / Privacy Policy"
+  description="Hur vi hanterar din integritet i alla våra iOS-appar — Födelsedagar, Plantera, Surdeg, Tidrapportera, Sov, Stark, Rita, Snusfri Resa, Andas med flera. / How we handle privacy in all our iOS apps."
 >
   <article class="max-w-3xl mx-auto px-6 py-8 md:py-12">
     <Breadcrumbs trail={[{ name: 'Hem', url: '/' }, { name: 'Integritetspolicy' }]} />
     <h1 class="mt-6 text-3xl md:text-4xl font-black tracking-tight">Integritetspolicy</h1>
-    <p class="mt-2 text-ink-3 text-sm">Senast uppdaterad: {updated}</p>
+    <p class="mt-2 text-ink-3 text-sm">
+      Senast uppdaterad: {updated} · <a href="#english">English version below ↓</a>
+    </p>
 
     <div class="prose mt-8">
       <p>
-        Den här integritetspolicyn beskriver hur Alexander Bergqvist
-        ("vi", "oss", "vår") behandlar uppgifter när du använder någon
-        av våra iOS-appar (samlat: "Apparna"). Apparna inkluderar bland
-        annat Snusfri Resa, Surdeg, VAB-koll, Tidrapportera, Rita &amp;
-        Färglägg, Födelsedagar, Sömnkoll, Plantera, Renovera och Andas.
+        Den här policyn beskriver hur Alexander Bergqvist ("vi") behandlar
+        uppgifter i våra iOS-appar (samlat "Apparna"): Födelsedagar, Plantera,
+        Surdeg, Tidrapportera, Sov (Sömnkoll), Stark, Rita &amp; Färglägg,
+        Snusfri Resa, Andas, VAB-koll, Renovera och Pomatic.
       </p>
 
       <h2>Sammanfattning</h2>
       <ul>
         <li>
-          <strong>Lokal data:</strong> Allt innehåll du skapar i Apparna
-          (anteckningar, foton, tider, listor) lagras endast lokalt på
-          din enhet eller i ditt iCloud-konto.
+          <strong>Din data stannar hos dig.</strong> Allt du skapar i Apparna
+          sparas lokalt på din enhet (eller i ditt eget iCloud-konto om du
+          slagit på synk). Vi har inga servrar som tar emot den och kan inte se den.
+        </li>
+        <li><strong>Inget konto eller login</strong> krävs.</li>
+        <li>
+          <strong>Ingen reklam och ingen spårning</strong> i Födelsedagar, Plantera,
+          Surdeg, Tidrapportera, Sov, Stark, Rita, Snusfri Resa och Andas. De
+          innehåller inga annons- eller analysverktyg som skickar data om dig.
         </li>
         <li>
-          <strong>Inget login:</strong> Apparna kräver inget konto eller
-          inloggning.
-        </li>
-        <li>
-          <strong>Tredjepartstjänster:</strong> Apparna kan visa
-          annonser via AdMob (Google) och samla anonym användardata via
-          Facebook App Events och Apple App Analytics. Du kan välja bort
-          spårning via iOS-systemets ATT-prompt.
-        </li>
-        <li>
-          <strong>Köp:</strong> Premium-prenumerationer hanteras av
-          Apple. Vi har aldrig tillgång till dina betalningsuppgifter.
+          <strong>Köp</strong> hanteras helt av Apple. Vi ser aldrig dina betaluppgifter.
         </li>
       </ul>
 
-      <h2>Vilken data samlas in?</h2>
-      <p>Vi behandlar tre typer av data:</p>
-
-      <h3>1. Data du skapar i Apparna</h3>
+      <h2>Data som stannar på din enhet</h2>
       <p>
-        Beroende på app: matningstider för surdegar, snusfria timmar
-        och kostnadsuppgifter, vab-dagar per barn, arbetade timmar,
-        växter, renoveringsprojekt eller andningssessioner med
-        retention-tider. <strong>Denna data lagras bara på din enhet</strong>
-        (eller i ditt iCloud-konto om iCloud Sync är på). Vi kan inte
-        se den, vi har inget centralt servrar som tar emot den.
+        Beroende på app: födelsedagar och kontakter du lagt till, växter och
+        odlingsanteckningar, surdegar och bak, arbetspass och lön, sömnnätter och
+        ljudklipp, träningspass, löprundor och kroppsmått, teckningar,
+        snusfria dagar, andningspass, vab-dagar och renoveringsprojekt. Allt
+        lagras bara lokalt och raderas om du tar bort appen.
       </p>
 
-      <h3>2. Anonyma analyser via tredjeparter</h3>
-      <p>För att förbättra Apparna använder vi:</p>
+      <h2>Behörigheter och Apple-tjänster</h2>
       <ul>
         <li>
-          <strong>Apple App Analytics</strong> (om du tillåtit det i
-          iOS-inställningarna) — anonymiserad användning, t.ex. hur
-          många öppnar appen per dag.
+          <strong>Apple Hälsa</strong> (Sov, Stark, Andas): läses och skrivs bara
+          med ditt tillstånd och lämnar aldrig enheten via oss.
         </li>
         <li>
-          <strong>Facebook App Events</strong> — anonyma händelser om
-          appens användning för att optimera potentiella framtida
-          marknadsföringskampanjer. Skickas bara om du inte avböjt
-          spårning via ATT-prompten.
+          <strong>Plats</strong> (Plantera, Stark): Plantera använder din ungefärliga
+          plats för att hämta väder och frostprognoser från en vädertjänst
+          (SMHI eller Open-Meteo). Platsen kopplas inte till dig. Stark använder
+          GPS under löprundor; rutten sparas bara lokalt.
         </li>
         <li>
-          <strong>Google AdMob</strong> — om du ser annonser i appen,
-          används din enhets reklam-ID (om tillåtet) för att visa
-          relevanta annonser. Du kan stänga av personlig annonsering
-          via iOS-inställningarna.
+          <strong>Mikrofon</strong> (Sov): analyseras på enheten för att hitta
+          snarkningar och sömnprat. Inget ljud laddas upp.
+        </li>
+        <li>
+          <strong>Kamera och bilder</strong> (Rita, Plantera, Surdeg, Stark, Födelsedagar):
+          bilder bearbetas och sparas bara på enheten. Ritas "foto till målarbild"
+          körs helt på telefonen.
+        </li>
+        <li>
+          <strong>Kontakter</strong> (Födelsedagar): läses bara när du själv
+          importerar, och sparas lokalt.
+        </li>
+        <li>
+          <strong>Notiser</strong> är lokala påminnelser som schemaläggs på enheten.
         </li>
       </ul>
 
-      <h3>3. Köp och betalningar</h3>
+      <h2>Appar som kan fråga om spårning</h2>
       <p>
-        Premium-prenumerationer och engångsköp i Apparna hanteras
-        helt av Apple via App Store. Vi tar emot från Apple bara
-        information om vilken nivå du har (Premium aktiv eller inte) —
-        aldrig kortuppgifter eller andra betaldata.
+        <strong>VAB-koll, Renovera och Pomatic</strong> kan visa Apples fråga om
+        spårning (App Tracking Transparency). Bara om du svarar "Tillåt" skickas
+        anonyma händelser om appanvändning (t.ex. appstart och köp) till Meta via
+        Facebook App Events för att mäta annonser. Svarar du nej skickas inget.
+        Du kan ändra ditt val när som helst i Inställningar → Integritet &amp;
+        säkerhet → Spårning.
+      </p>
+      <p>
+        Äldre versioner av vissa andra appar innehöll Google AdMob och Metas SDK,
+        som bara aktiverades med ditt tillstånd. Uppdatera till senaste versionen
+        för att helt slippa dem.
       </p>
 
-      <h2>Hur använder vi datan?</h2>
+      <h2>Köp och prenumerationer</h2>
       <p>
-        Lokal data används bara för att appens funktioner ska fungera
-        för dig. Anonyma analyser hjälper oss förstå vad som funkar i
-        Apparna och vad vi bör förbättra. Annonser hjälper oss att
-        finansiera utveckling och drift.
+        Premium, prenumerationer och engångsköp hanteras av Apple via App Store.
+        Appen kontrollerar bara med App Store om du har ett aktivt köp.
+        Prenumerationer förnyas automatiskt om de inte avslutas minst 24 timmar
+        före periodens slut och hanteras i ditt Apple-kontos inställningar.
       </p>
 
-      <h2>Datadelning med tredjeparter</h2>
-      <p>Vi delar bara data med:</p>
-      <ul>
-        <li>
-          Apple (för app-distribution, köp, och App Analytics om
-          aktiverat)
-        </li>
-        <li>
-          Google AdMob (för annonser, om visade)
-        </li>
-        <li>
-          Meta/Facebook (App Events, om ATT-tillstånd givet)
-        </li>
-      </ul>
+      <h2>Barn</h2>
       <p>
-        Vi <strong>säljer aldrig</strong> data och delar inte med oss
-        till andra parter än de tre ovan.
+        Rita &amp; Färglägg är gjord för barn 3–8 år. Den samlar ingen data, har
+        ingen reklam och ingen spårning, och alla köp och externa länkar skyddas
+        av en föräldraspärr. Övriga appar riktar sig inte till barn.
       </p>
 
       <h2>Dina rättigheter (GDPR)</h2>
       <p>
-        Som användare i EU/EES har du rätt att:
+        Eftersom vi inte samlar in personuppgifter har vi ingen data om dig att
+        lämna ut eller radera. Du raderar din data genom att ta bort poster i appen
+        eller avinstallera den. Du kan alltid klaga hos Integritetsskyddsmyndigheten
+        (IMY).
       </p>
+
+      <h2>Webbplatsen</h2>
+      <p>
+        alexanderbergqvist.com använder Google Analytics 4 med IP-anonymisering
+        för att förstå trafiken på webbplatsen. Det gäller inte Apparna.
+      </p>
+
+      <h2>Ändringar och kontakt</h2>
+      <p>
+        Ändringar publiceras här med nytt datum. Frågor om integritet:
+        <a href="mailto:alexander.bergqvist@gmail.com">alexander.bergqvist@gmail.com</a>
+      </p>
+
+      <hr />
+
+      <h2 id="english">Privacy Policy (English)</h2>
+      <p class="text-ink-3 text-sm">Last updated: {updatedEn}</p>
+      <p>
+        This policy describes how Alexander Bergqvist ("we") handles data in our
+        iOS apps (the "Apps"): Birthday Reminder (Födelsedagar), Plantera, Surdeg,
+        Tidrapportera (Timesheet), Sov (Sleep), Stark Workouts, Rita (Kids Coloring
+        Book), Snusfri Resa, Andas, VAB-koll, Renovera and Pomatic.
+      </p>
+
+      <h3>Summary</h3>
       <ul>
         <li>
-          Få insyn i den data vi har om dig (= ingen, eftersom data är
-          lokal)
+          <strong>Your data stays with you.</strong> Everything you create in the
+          Apps is stored locally on your device (or in your own iCloud account if you
+          turn on sync). We run no servers that receive it and cannot see it.
+        </li>
+        <li><strong>No account or login</strong> is required.</li>
+        <li>
+          <strong>No ads and no tracking</strong> in Birthday Reminder, Plantera,
+          Surdeg, Tidrapportera, Sov, Stark, Rita, Snusfri Resa and Andas. They
+          contain no advertising or analytics tools that send data about you.
         </li>
         <li>
-          Begära radering av all data — eftersom data är lokal,
-          avinstallera appen så raderas allt
-        </li>
-        <li>
-          Stänga av spårning via iOS-inställningar:
-          Inställningar &rarr; Sekretess &amp; säkerhet &rarr;
-          Tracking &rarr; stäng av spårning för respektive app
-        </li>
-        <li>
-          Klaga till Integritetsskyddsmyndigheten (IMY) om du
-          inte är nöjd med hur vi behandlar din data
+          <strong>Purchases</strong> are handled entirely by Apple. We never see your
+          payment details.
         </li>
       </ul>
 
-      <h2>Barn under 13</h2>
+      <h3>Permissions and Apple services</h3>
+      <ul>
+        <li>
+          <strong>Apple Health</strong> (Sov, Stark, Andas): read and written only
+          with your permission, never sent anywhere by us.
+        </li>
+        <li>
+          <strong>Location</strong> (Plantera, Stark): Plantera uses your approximate
+          location to fetch weather and frost forecasts from a weather service
+          (SMHI or Open-Meteo); it is not linked to you. Stark uses GPS during runs;
+          routes are stored only on your device.
+        </li>
+        <li>
+          <strong>Microphone</strong> (Sov): analysed on the device to detect snoring
+          and sleep talking. No audio is uploaded.
+        </li>
+        <li>
+          <strong>Camera and photos</strong> (Rita, Plantera, Surdeg, Stark, Birthday
+          Reminder): processed and stored only on the device. Rita's photo-to-coloring
+          feature runs entirely on the phone.
+        </li>
+        <li>
+          <strong>Contacts</strong> (Birthday Reminder): read only when you choose to
+          import, stored locally.
+        </li>
+        <li><strong>Notifications</strong> are local reminders scheduled on the device.</li>
+      </ul>
+
+      <h3>Apps that may ask to track</h3>
       <p>
-        Rita &amp; Färglägg är specifikt designad för barn 3–8 år och
-        följer Apples Kids Category-riktlinjer. Den samlar ingen
-        persondata, har inga annonser och kräver inget login.
+        <strong>VAB-koll, Renovera and Pomatic</strong> may show Apple's App Tracking
+        Transparency prompt. Only if you tap "Allow" are anonymous app events (such as
+        app opens and purchases) sent to Meta via Facebook App Events to measure ads.
+        If you decline, nothing is sent. You can change this at any time in Settings →
+        Privacy &amp; Security → Tracking.
       </p>
       <p>
-        Övriga appar är inte specifikt riktade mot barn under 13. Om
-        du är förälder och tror att ditt barn använt appen och du vill
-        radera data — avinstallera appen.
+        Older versions of some other Apps included Google AdMob and Meta's SDK, which
+        were only activated with your permission. Update to the latest version to
+        remove them entirely.
       </p>
 
-      <h2>Cookies och webbplatsen</h2>
+      <h3>Purchases and subscriptions</h3>
       <p>
-        Den här webbplatsen (alexanderbergqvist.com) använder Google
-        Analytics 4 med IP-anonymisering för att förstå trafik. Inga
-        cookies sätts om du använder en webbläsare med "Do Not Track"
-        eller blockerar tredjepartscookies.
+        Premium, subscriptions and one-time purchases are processed by Apple through
+        the App Store. The app only checks with the App Store whether you have an active
+        purchase. Subscriptions renew automatically unless cancelled at least 24 hours
+        before the end of the current period and can be managed in your Apple Account
+        settings.
       </p>
 
-      <h2>Ändringar i policyn</h2>
+      <h3>Children</h3>
       <p>
-        Större ändringar publiceras på den här sidan med ny
-        "Senast uppdaterad"-datum. Återkom här regelbundet om du vill
-        hålla dig uppdaterad.
+        Rita is made for children aged 3–8. It collects no data, shows no ads, does no
+        tracking, and every purchase and external link is protected by a parental gate.
+        The other Apps are not directed at children.
       </p>
 
-      <h2>Kontakt</h2>
+      <h3>Your rights (GDPR)</h3>
       <p>
-        Frågor om integritet?
+        Because we do not collect personal data, we hold no data about you to access or
+        delete. You delete your data by removing entries in the app or uninstalling it.
+      </p>
+
+      <h3>Changes and contact</h3>
+      <p>
+        Changes are published on this page with a new date. Privacy questions:
         <a href="mailto:alexander.bergqvist@gmail.com">alexander.bergqvist@gmail.com</a>
       </p>
     </div>
