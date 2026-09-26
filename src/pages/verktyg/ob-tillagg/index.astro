@@ -1,50 +1,70 @@
 ---
 import VerktygLayout from '../../../components/VerktygLayout.astro';
 
-/* Preset values are deliberately labelled as examples on the page.
-   OB rates differ by agreement, sector, employer and year, and several
-   agreements (HRF/Visita, Kommunal, Vårdförbundet) express OB as fixed
-   kronor per hour that are revised every avtalsrörelse. The kr figures
-   below are round, illustrative orders of magnitude — NOT copied from
-   any agreement — and the user is told to replace them. Handels
-   detaljhandel does use percent of hourly wage; the split here is a
-   simplification of its clock-time bands. */
+/* Presets.
+   Handels is the only preset tied to a real agreement, because its OB
+   structure and percentages are published by the union itself and were
+   verified (september 2026) at https://www.handels.se/fakta-och-rad/lon-ob/ob-tillagg/
+   — Detaljhandelsavtalet (butik), whose 2025–2027 agreement kept OB
+   unchanged (https://www.handels.se/avtalsrorelse/avtal-butik-lager-e-handel/).
+   The two other presets are deliberately NOT attributed to any union or
+   agreement: their numbers are invented examples and say so. Do not add
+   agreement-named presets without an authoritative source for the exact
+   amounts and their validity period. */
+const GENERIC_HINTS = {
+  kvall: 'vardag kväll',
+  natt: 'vardag natt',
+  helg: 'lördag/söndag',
+  storhelg: 't.ex. jul, midsommar',
+};
 const presets = {
   handels: {
-    label: 'Handels – detaljhandel (exempel)',
-    note: 'Detaljhandelsavtalet anger OB i procent av timlönen, med olika nivåer beroende på klockslag och veckodag. Procentsatserna här är förenklade exempel.',
+    label: 'Handels – Detaljhandelsavtalet, butik',
+    badge: 'Enligt Handels (Detaljhandelsavtalet 2025–2027, butik).',
+    note: 'OB räknas i procent av timlönen. Gäller butik; lager och andra avtal kan ha andra regler, och ditt företag kan ha lokala avvikelser.',
+    source: { label: 'Källa: handels.se – OB-tillägg', url: 'https://www.handels.se/fakta-och-rad/lon-ob/ob-tillagg/' },
+    hints: {
+      kvall: 'mån–fre 18.15–20.00',
+      natt: 'mån–fre efter 20.00',
+      helg: 'lördag efter 12.00, söndag',
+      storhelg: 'helgdagar; jul-, nyårs-, påsk- och midsommarafton efter 12.00',
+    },
     rows: { kvall: ['pct', 50], natt: ['pct', 70], helg: ['pct', 100], storhelg: ['pct', 100] },
   },
-  hrf: {
-    label: 'Hotell & restaurang, HRF/Visita (exempel)',
-    note: 'Avtalet anger OB som fasta kronor per timme som räknas upp varje avtalsperiod. Beloppen här är avrundade exempel, inte avtalets siffror – skriv in beloppen från ditt avtal eller lönebesked.',
-    rows: { kvall: ['kr', 25], natt: ['kr', 35], helg: ['kr', 30], storhelg: ['kr', 70] },
+  exempelProcent: {
+    label: 'Exempel: procent av timlön',
+    badge: 'Påhittade exempelvärden – inte från något avtal.',
+    note: 'Byt ut procentsatserna mot dem som står i ditt kollektivavtal eller anställningsavtal.',
+    source: null,
+    hints: GENERIC_HINTS,
+    rows: { kvall: ['pct', 25], natt: ['pct', 50], helg: ['pct', 75], storhelg: ['pct', 100] },
   },
-  kommunal: {
-    label: 'Kommunal – vård & omsorg (exempel)',
-    note: 'Kommunals avtal anger OB som fasta kronor per timme som räknas upp varje år. Beloppen här är avrundade exempel, inte avtalets siffror – skriv in beloppen från ditt avtal eller lönebesked.',
-    rows: { kvall: ['kr', 25], natt: ['kr', 55], helg: ['kr', 60], storhelg: ['kr', 125] },
-  },
-  vardforbundet: {
-    label: 'Vårdförbundet – region (exempel)',
-    note: 'Vårdförbundets avtal anger OB som fasta kronor per timme, och nivåerna kan skilja mellan regioner och år. Beloppen här är avrundade exempel, inte avtalets siffror – skriv in beloppen från ditt avtal eller lönebesked.',
-    rows: { kvall: ['kr', 35], natt: ['kr', 75], helg: ['kr', 65], storhelg: ['kr', 145] },
+  exempelKronor: {
+    label: 'Exempel: kronor per timme',
+    badge: 'Påhittade exempelvärden – inte från något avtal.',
+    note: 'Många avtal anger OB som fasta kronor per timme som räknas upp varje år. Byt ut beloppen mot dem i ditt avtal eller på ditt lönebesked.',
+    source: null,
+    hints: GENERIC_HINTS,
+    rows: { kvall: ['kr', 25], natt: ['kr', 50], helg: ['kr', 60], storhelg: ['kr', 120] },
   },
   eget: {
     label: 'Eget – fyll i själv',
+    badge: 'Dina egna värden.',
     note: 'Fyll i procent av timlönen eller kronor per timme för varje kategori, precis som det står i ditt avtal.',
+    source: null,
+    hints: GENERIC_HINTS,
     rows: null,
   },
 } as const;
 
 const categories = [
-  { id: 'kvall', name: 'Kväll', hint: 'vardag kväll', hours: '10' },
-  { id: 'natt', name: 'Natt', hint: 'vardag natt', hours: '0' },
-  { id: 'helg', name: 'Helg', hint: 'lördag/söndag', hours: '8' },
-  { id: 'storhelg', name: 'Storhelg', hint: 't.ex. jul, midsommar', hours: '0' },
-];
+  { id: 'kvall', name: 'Kväll', hours: '10' },
+  { id: 'natt', name: 'Natt', hours: '0' },
+  { id: 'helg', name: 'Helg', hours: '8' },
+  { id: 'storhelg', name: 'Storhelg', hours: '0' },
+] as const;
 
-const initial = presets.handels as { note: string; rows: Record<string, readonly [string, number]> };
+const initial = presets.handels;
 
 const faq = [
   {
@@ -72,8 +92,8 @@ const faq = [
 
 <VerktygLayout
   title="OB-tillägg räknare 2026 – räkna ut ditt OB"
-  description="Gratis OB-räknare: fyll i timlön och timmar på kväll, natt, helg och storhelg. Räkna OB i procent eller kr/timme – med exempel för Handels, HRF, Kommunal och Vårdförbundet."
-  keywords={['ob-tillägg räknare', 'räkna ob', 'ob tillägg 2026', 'ob handels', 'ob kommunal', 'ob hrf', 'storhelg ob']}
+  description="Gratis OB-räknare: fyll i timlön och timmar på kväll, natt, helg och storhelg. Räkna OB i procent eller kr/timme – med Handels OB-procent för butik förinställt."
+  keywords={['ob-tillägg räknare', 'räkna ob', 'ob tillägg 2026', 'ob handels', 'ob butik', 'storhelg ob']}
   h1="OB-tillägg räknare 2026"
   intro="Fyll i timlön och hur många timmar du jobbat på obekväm arbetstid – räknaren visar ditt OB direkt."
   crumb="OB-tillägg"
@@ -81,7 +101,7 @@ const faq = [
   app="tidrapport"
   ctaTitle="Logga dina OB-timmar i Tidrapportera"
   ctaText="Tidrapportera håller koll på dina arbetspass, så att du ser hur många kvälls-, natt- och helgtimmar du faktiskt jobbat innan lönebeskedet kommer. Export till PDF/CSV. Inget konto."
-  disclaimer="Räknaren ger en uppskattning. Förinställningarna är exempel – kontrollera ditt kollektivavtal. OB-nivåer skiljer sig mellan avtal, arbetsgivare och år, och resultatet ersätter inte ditt lönebesked."
+  disclaimer="Räknaren ger en uppskattning. Kontrollera alltid ditt kollektivavtal – OB-nivåer skiljer sig mellan avtal, arbetsgivare och år. Handels-förinställningen följer förbundets egna uppgifter för butik; exempel-förinställningarna är påhittade värden. Resultatet ersätter inte ditt lönebesked."
 >
   <form
     id="ob-form"
@@ -118,8 +138,14 @@ const faq = [
       </div>
     </div>
     <p id="preset-note" class="mt-3 text-sm text-ink-2">
-      <strong class="text-ink">Exempel – kontrollera ditt kollektivavtal.</strong>
+      <strong class="text-ink" data-preset-badge>{initial.badge}</strong>
       {' '}<span data-preset-note>{initial.note}</span>
+      {' '}<a
+        data-preset-source
+        href={initial.source.url}
+        class="text-accent underline underline-offset-4"
+        rel="noopener"
+      >{initial.source.label}</a>
     </p>
 
     <fieldset class="mt-6">
@@ -130,7 +156,7 @@ const faq = [
           return (
             <div class="rounded-xl border border-line p-3 sm:p-4">
               <div class="font-bold text-ink">
-                {c.name} <span class="font-normal text-sm text-ink-3">({c.hint})</span>
+                {c.name} <span class="font-normal text-sm text-ink-3">(<span data-hint={c.id}>{initial.hints[c.id]}</span>)</span>
               </div>
               <div class="mt-2 grid grid-cols-3 gap-2 sm:gap-3">
                 <div>
@@ -223,11 +249,23 @@ const faq = [
       </li>
     </ul>
     <p>
-      Handels detaljhandelsavtal använder procent av timlönen, medan till
-      exempel Kommunal, Vårdförbundet och HRF/Visita använder fasta
-      kronbelopp som räknas upp varje avtalsperiod. Därför är
-      förinställningarna ovan bara <strong>exempel</strong> – kontrollera
-      alltid siffrorna i ditt eget avtal eller på ditt lönebesked.
+      Många avtal använder i stället fasta kronbelopp som räknas upp
+      varje avtalsperiod. Välj då <em>Exempel: kronor per timme</em> och
+      skriv in beloppen från ditt eget avtal eller lönebesked – exempelvärdena
+      är påhittade och kommer inte från något avtal.
+    </p>
+    <h2>OB i butik enligt Handels</h2>
+    <p>
+      Enligt Handelsanställdas förbund ger Detaljhandelsavtalet för butik
+      <strong>50 %</strong> OB måndag–fredag 18.15–20.00,
+      <strong>70 %</strong> efter 20.00, och <strong>100 %</strong> på
+      lördagar efter 12.00, söndagar och helgdagar. På jul-, nyårs-,
+      påsk- och midsommarafton är det 100 % efter 12.00. OB-reglerna
+      behölls oförändrade i avtalet för 2025–2027. Källa:
+      <a href="https://www.handels.se/fakta-och-rad/lon-ob/ob-tillagg/" rel="noopener">handels.se – OB-tillägg</a>
+      och <a href="https://www.handels.se/avtalsrorelse/avtal-butik-lager-e-handel/" rel="noopener">handels.se – Avtal butik, lager, e-handel</a>
+      (hämtade september 2026). Lager, e-handel och andra avtal kan ha
+      andra regler.
     </p>
     <h2>Tips: dela upp timmarna efter klockslag</h2>
     <p>
@@ -246,7 +284,14 @@ const faq = [
   type Unit = 'pct' | 'kr';
   const form = document.getElementById('ob-form') as HTMLFormElement;
   // Single source: the frontmatter presets, serialised onto the form.
-  const PRESETS: Record<string, { note: string; rows: Record<string, [Unit, number]> | null }> =
+  type Preset = {
+    badge: string;
+    note: string;
+    source: { label: string; url: string } | null;
+    hints: Record<string, string>;
+    rows: Record<string, [Unit, number]> | null;
+  };
+  const PRESETS: Record<string, Preset> =
     JSON.parse(form.dataset.presets ?? '{}');
   const CATS = ['kvall', 'natt', 'helg', 'storhelg'];
   const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -254,16 +299,29 @@ const faq = [
   const timlonEl = $<HTMLInputElement>('timlon');
   const presetEl = $<HTMLSelectElement>('preset');
   const noteEl = document.querySelector('[data-preset-note]')!;
+  const badgeEl = document.querySelector('[data-preset-badge]')!;
+  const sourceEl = document.querySelector('[data-preset-source]') as HTMLAnchorElement;
+
+  function showInfo(p: Preset) {
+    badgeEl.textContent = p.badge;
+    noteEl.textContent = p.note;
+    sourceEl.hidden = !p.source;
+    if (p.source) {
+      sourceEl.href = p.source.url;
+      sourceEl.textContent = p.source.label;
+    }
+  }
   const out = (k: string) => document.querySelector(`[data-out="${k}"]`)!;
   const detail = (k: string) => document.querySelector(`[data-out-detail="${k}"]`)!;
 
   function applyPreset(key: string) {
     const p = PRESETS[key];
     if (!p) return;
-    noteEl.textContent = p.note;
+    showInfo(p);
     // "Eget" keeps whatever is in the fields — it's a starting point.
     if (!p.rows) return;
     for (const c of CATS) {
+      document.querySelector(`[data-hint="${c}"]`)!.textContent = p.hints[c];
       const [unit, value] = p.rows[c];
       $<HTMLSelectElement>(`u-${c}`).value = unit;
       $<HTMLInputElement>(`v-${c}`).value = String(value).replace('.', ',');
@@ -306,7 +364,7 @@ const faq = [
     const t = e.target as HTMLElement;
     if (t.id.startsWith('v-') && presetEl.value !== 'eget') {
       presetEl.value = 'eget';
-      noteEl.textContent = PRESETS.eget.note;
+      showInfo(PRESETS.eget);
     }
     compute();
   });
@@ -314,7 +372,7 @@ const faq = [
     const t = e.target as HTMLElement;
     if (t.id.startsWith('u-') && presetEl.value !== 'eget') {
       presetEl.value = 'eget';
-      noteEl.textContent = PRESETS.eget.note;
+      showInfo(PRESETS.eget);
     }
     compute();
   });
