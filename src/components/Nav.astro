@@ -14,7 +14,7 @@ const isActive = (prefix: string) =>
     >
       Alexander Bergqvist
     </a>
-    <nav class="flex items-center gap-8 text-sm font-bold tracking-tight">
+    <nav class="flex items-center gap-4 sm:gap-8 text-sm font-bold tracking-tight">
       <a
         href="/appar/"
         class={isActive('/appar')
@@ -22,6 +22,14 @@ const isActive = (prefix: string) =>
           : 'text-ink-3 hover:text-ink transition'}
       >
         Appar
+      </a>
+      <a
+        href="/verktyg/"
+        class={isActive('/verktyg')
+          ? 'text-ink'
+          : 'text-ink-3 hover:text-ink transition'}
+      >
+        Räknare
       </a>
       <a
         href="/blog/"

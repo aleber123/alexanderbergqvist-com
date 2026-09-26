@@ -1,0 +1,221 @@
+---
+import VerktygLayout from '../../../components/VerktygLayout.astro';
+
+/* Same constants as VAB-koll (vab_app/lib/utils/vab_calculations.dart):
+   SGI-tak 10 × prisbasbelopp 2026 = 592 000 kr, and
+   dagersättning = SGI × 0,97 × 0,80 / 365 (= SGI × 0,776 / 365). */
+const PBB_2026 = 59200;
+const SGI_TAK = PBB_2026 * 10;
+const MAX_PER_DAG = Math.round((SGI_TAK * 0.97 * 0.8) / 365);
+const fmt = (n: number) => new Intl.NumberFormat('sv-SE').format(n);
+
+const inputCls =
+  'w-full rounded-xl border border-line-strong bg-surface px-4 py-3 text-lg font-bold aria-[invalid=true]:border-ink aria-[invalid=true]:border-2';
+
+const andelar = [
+  { value: '1', label: 'Hel dag' },
+  { value: '0.75', label: '¾ dag' },
+  { value: '0.5', label: '½ dag' },
+  { value: '0.25', label: '¼ dag' },
+  { value: '0.125', label: '⅛ dag' },
+];
+
+const faq = [
+  {
+    q: 'Hur mycket får man i VAB-ersättning per dag 2026?',
+    a: `Ungefär 80 % av din lön, räknat på din sjukpenninggrundande inkomst (SGI). Formeln är SGI × 0,97 × 0,80 ÷ 365. Med 35 000 kr i månadslön blir det cirka 893 kr per hel dag före skatt. Högsta ersättningen 2026 är cirka ${fmt(MAX_PER_DAG)} kr per dag.`,
+  },
+  {
+    q: 'Vad är taket för VAB 2026?',
+    a: `SGI räknas som högst på 10 prisbasbelopp. Prisbasbeloppet 2026 är ${fmt(PBB_2026)} kr, så taket är ${fmt(SGI_TAK)} kr om året – ungefär ${fmt(Math.round(SGI_TAK / 12))} kr i månaden. Tjänar du mer än så får du inte mer i ersättning.`,
+  },
+  {
+    q: 'Dras det skatt på VAB-ersättningen?',
+    a: 'Ja. Tillfällig föräldrapenning är skattepliktig inkomst. Försäkringskassan drar preliminärskatt innan pengarna betalas ut, oftast enligt din skattetabell. Beloppen i räknaren är före skatt; nettobeloppet är en ungefärlig uppskattning.',
+  },
+  {
+    q: 'Kan man vabba en del av en dag?',
+    a: 'Ja. Du kan ta ut hel, tre fjärdedels, halv, en fjärdedels eller en åttondels dag. Ersättningen blir då motsvarande andel av en hel dags ersättning.',
+  },
+  {
+    q: 'Varför får jag mindre än räknaren visar?',
+    a: 'Räknaren utgår från månadslön × 12. Din SGI hos Försäkringskassan kan vara annorlunda, till exempel om du har tillägg, varierande timmar eller nyss bytt jobb. Kolla din SGI på Mina sidor hos Försäkringskassan. Tänk också på att arbetsgivaren gör ett löneavdrag för dagen du är hemma.',
+  },
+];
+---
+
+<VerktygLayout
+  title="Räkna ut VAB-ersättning 2026 – per dag och totalt"
+  description={`Räkna ut din VAB-ersättning 2026: från månadslön till SGI och ersättning per hel, ¾, ½ eller ¼ dag. Samma formel som Försäkringskassan. Max ca ${fmt(MAX_PER_DAG)} kr/dag.`}
+  keywords={['räkna ut vab ersättning', 'vab ersättning 2026', 'vab ersättning per dag', 'tillfällig föräldrapenning räkna', 'vab tak 2026', 'vab kalkylator']}
+  h1="Räkna ut VAB-ersättning 2026"
+  intro="Fyll i din månadslön och hur mycket du vabbar – så ser du ersättningen från Försäkringskassan."
+  crumb="VAB-ersättning"
+  faq={faq}
+  app="vab-koll"
+  ctaTitle="Håll koll på vabben med VAB-koll"
+  ctaText="VAB-koll loggar varje vab-dag per barn, räknar ut hur många av de 120 dagarna du har kvar och visar ungefär hur mycket du får från Försäkringskassan – med samma formel som den här räknaren. Inga konton."
+  disclaimer={`Ungefärlig uträkning. Försäkringskassan beslutar om din ersättning utifrån den SGI de har registrerat, som kan skilja sig från månadslön × 12. Beloppen gäller 2026 (prisbasbelopp ${fmt(PBB_2026)} kr). Skatten är en uppskattning.`}
+>
+  <form
+    id="vab-form"
+    class="mt-6 rounded-2xl border border-line bg-surface p-4 sm:p-6 md:p-8"
+    novalidate
+    onsubmit="return false"
+  >
+    <div class="grid grid-cols-2 gap-4">
+      <div class="col-span-2 sm:col-span-1">
+        <label class="block text-sm font-bold mb-2" for="manadslon">Månadslön (kr, brutto)</label>
+        <input id="manadslon" type="text" inputmode="decimal" autocomplete="off" value="35 000" aria-describedby="manadslon-fel" class={inputCls} />
+        <p id="manadslon-fel" hidden class="mt-1 text-sm font-bold text-ink">⚠ Skriv ett tal, t.ex. 35 000</p>
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-2" for="dagar">Antal dagar</label>
+        <input id="dagar" type="text" inputmode="decimal" autocomplete="off" value="1" aria-describedby="dagar-hint dagar-fel" class={inputCls} />
+        <p id="dagar-hint" class="mt-1 text-xs text-ink-3">Med vald omfattning, t.ex. 3 halvdagar</p>
+        <p id="dagar-fel" hidden class="mt-1 text-sm font-bold text-ink">⚠ Skriv ett tal, t.ex. 3</p>
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-2" for="skatt">Skattesats (%)</label>
+        <input id="skatt" type="text" inputmode="decimal" autocomplete="off" value="30" aria-describedby="skatt-hint skatt-fel" class={inputCls} />
+        <p id="skatt-hint" class="mt-1 text-xs text-ink-3">Ungefärlig, för nettobeloppet</p>
+        <p id="skatt-fel" hidden class="mt-1 text-sm font-bold text-ink">⚠ Skriv ett tal, t.ex. 30</p>
+      </div>
+    </div>
+    <fieldset class="mt-5">
+      <legend class="text-sm font-bold mb-2">Hur mycket av dagen vabbar du?</legend>
+      <div class="flex flex-wrap gap-2">
+        {andelar.map((a, i) => (
+          <label class="group cursor-pointer">
+            <input type="radio" name="andel" value={a.value} checked={i === 0} class="peer sr-only" />
+            <span class="inline-flex items-center gap-1.5 rounded-xl border-2 border-line-strong px-4 py-2 font-bold text-ink-2 peer-checked:border-ink peer-checked:bg-ink peer-checked:text-on-ink peer-focus-visible:outline-2 peer-focus-visible:outline-accent peer-focus-visible:outline-offset-2">
+              <span aria-hidden="true" class="hidden group-has-checked:inline">✓</span>
+              {a.label}
+            </span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  </form>
+
+  <section aria-labelledby="vab-resultat" class="mt-6">
+    <h2 id="vab-resultat" class="sr-only">Resultat</h2>
+    <div aria-live="polite" aria-atomic="true">
+      <dl class="grid grid-cols-2 gap-3">
+        <div class="rounded-2xl bg-surface-2 border border-line p-4">
+          <dt class="text-xs font-black uppercase tracking-widest text-ink-3">Din SGI (år)</dt>
+          <dd class="mt-1 text-xl font-black" data-out="sgi">–</dd>
+          <dd class="text-xs text-ink-3" data-out="sgidetail"></dd>
+        </div>
+        <div class="rounded-2xl bg-surface-2 border border-line p-4">
+          <dt class="text-xs font-black uppercase tracking-widest text-ink-3">Per hel dag</dt>
+          <dd class="mt-1 text-xl font-black" data-out="heldag">–</dd>
+          <dd class="text-xs text-ink-3">före skatt</dd>
+        </div>
+        <div class="rounded-2xl bg-surface-2 border border-line p-4">
+          <dt class="text-xs font-black uppercase tracking-widest text-ink-3">Per dag (vald del)</dt>
+          <dd class="mt-1 text-xl font-black" data-out="pertillfalle">–</dd>
+          <dd class="text-xs text-ink-3" data-out="andeldetail"></dd>
+        </div>
+        <div class="rounded-2xl bg-surface-2 border border-line p-4">
+          <dt class="text-xs font-black uppercase tracking-widest text-ink-3">Skatt (ca)</dt>
+          <dd class="mt-1 text-xl font-black" data-out="skatt">–</dd>
+          <dd class="text-xs text-ink-3">dras av Försäkringskassan</dd>
+        </div>
+        <div class="col-span-2 rounded-2xl bg-ink text-on-ink p-5">
+          <dt class="text-xs font-black uppercase tracking-widest text-on-ink-2">Total VAB-ersättning före skatt</dt>
+          <dd class="mt-1 text-3xl font-black" data-out="total">–</dd>
+          <dd class="text-sm text-on-ink-2" data-out="netto"></dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <Fragment slot="forklaring">
+    <h2>Så räknas VAB-ersättningen</h2>
+    <p>
+      VAB heter egentligen <em>tillfällig föräldrapenning</em>. Ersättningen
+      utgår från din sjukpenninggrundande inkomst (SGI) – i praktiken din
+      årslön – och beräknas så här:
+    </p>
+    <ol>
+      <li><strong>SGI</strong> = månadslön × 12, men högst {fmt(SGI_TAK)} kr (10 prisbasbelopp à {fmt(PBB_2026)} kr).</li>
+      <li><strong>Ersättning per hel dag</strong> = SGI × 0,97 × 0,80 ÷ 365.</li>
+      <li><strong>Del av dag</strong> ger motsvarande andel: ¾, ½, ¼ eller ⅛.</li>
+    </ol>
+    <p>
+      <strong>Exempel:</strong> 35 000 kr i månaden ger SGI 420 000 kr.
+      420 000 × 0,97 × 0,80 ÷ 365 ≈ <strong>893 kr</strong> per hel dag
+      före skatt. En halv dag ger ungefär 446 kr.
+    </p>
+    <p>
+      <strong>Taket:</strong> tjänar du {fmt(Math.round(SGI_TAK / 12))} kr
+      i månaden eller mer räknas SGI som {fmt(SGI_TAK)} kr, och
+      ersättningen blir högst cirka {fmt(MAX_PER_DAG)} kr per hel dag.
+    </p>
+    <h2>Vad förlorar du på att vabba?</h2>
+    <p>
+      Arbetsgivaren gör ett löneavdrag för tiden du är borta, och
+      Försäkringskassan ersätter ungefär 80 % av det. Har du en lön över
+      taket blir skillnaden större. Vissa kollektivavtal ger inget extra
+      vid VAB, till skillnad från föräldralön vid föräldraledighet.
+    </p>
+    <p>
+      Glöm inte att du har upp till 120 dagar per barn och år. Se hur
+      många du har kvar med <a href="/vab-koll/dagar-rakna/">vab-dagar-räknaren</a>.
+    </p>
+  </Fragment>
+</VerktygLayout>
+
+<script>
+  import { readInput, flagInvalid, kr, num } from '../../../lib/sv-number';
+
+  // Mirrors VabCalculations in the VAB-koll app.
+  const SGI_TAK = 592000; // 10 × prisbasbelopp 2026 (59 200 kr)
+  const RATE = 0.97 * 0.8; // = 0,776
+
+  const $ = (id: string) => document.getElementById(id) as HTMLInputElement;
+  const form = document.getElementById('vab-form') as HTMLFormElement;
+  const lonEl = $('manadslon');
+  const dagarEl = $('dagar');
+  const skattEl = $('skatt');
+  const out = (k: string) => document.querySelector(`[data-out="${k}"]`) as HTMLElement;
+  const ANDEL_NAMN: Record<string, string> = {
+    '1': 'hel dag',
+    '0.75': '¾ dag',
+    '0.5': '½ dag',
+    '0.25': '¼ dag',
+    '0.125': '⅛ dag',
+  };
+
+  function compute() {
+    [lonEl, dagarEl, skattEl].forEach(flagInvalid);
+    const lon = readInput(lonEl);
+    const dagar = readInput(dagarEl);
+    const skatt = Math.min(100, readInput(skattEl, 30)) / 100;
+    const andelStr =
+      (form.querySelector('input[name="andel"]:checked') as HTMLInputElement | null)?.value ?? '1';
+    const andel = Number(andelStr);
+
+    const arslon = lon * 12;
+    const sgi = Math.min(arslon, SGI_TAK);
+    const heldag = (sgi * RATE) / 365;
+    const perTillfalle = heldag * andel;
+    const total = perTillfalle * dagar;
+    const skattBelopp = total * skatt;
+
+    out('sgi').textContent = kr(sgi);
+    out('sgidetail').textContent =
+      arslon > SGI_TAK ? '⚠ Taket nått (10 prisbasbelopp)' : `${kr(lon)} × 12`;
+    out('heldag').textContent = kr(heldag);
+    out('pertillfalle').textContent = kr(perTillfalle);
+    out('andeldetail').textContent = ANDEL_NAMN[andelStr] ?? '';
+    out('skatt').textContent = `− ${kr(skattBelopp)}`;
+    out('total').textContent = kr(total);
+    out('netto').textContent = `${num(dagar)} × ${ANDEL_NAMN[andelStr]} · ungefär ${kr(total - skattBelopp)} efter skatt`;
+  }
+
+  form.addEventListener('input', compute);
+  form.addEventListener('change', compute);
+  compute();
+</script>

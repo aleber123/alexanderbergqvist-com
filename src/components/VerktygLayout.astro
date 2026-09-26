@@ -1,0 +1,123 @@
+---
+/**
+ * Shared shell for the /verktyg/ money calculators.
+ *
+ * Order is deliberate: breadcrumbs → H1 → one-line intro → calculator
+ * (default slot). Nothing else sits above the form, so it lands above
+ * the fold on a 375px phone. Explanation, disclaimer, app CTA, FAQ and
+ * cross-links all come after.
+ */
+import { getEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from './Breadcrumbs.astro';
+import FAQ from './FAQ.astro';
+import AppStoreBadge from './AppStoreBadge.astro';
+import { LON_VERKTYG } from '../data/verktyg';
+
+interface Props {
+  title: string;
+  description: string;
+  keywords: string[];
+  h1: string;
+  intro: string;
+  crumb: string;
+  faq: { q: string; a: string }[];
+  /** App slug for the CTA card: 'tidrapport' | 'vab-koll'. */
+  app: 'tidrapport' | 'vab-koll';
+  ctaTitle: string;
+  ctaText: string;
+  disclaimer: string;
+}
+
+const { title, description, keywords, h1, intro, crumb, faq, app, ctaTitle, ctaText, disclaimer } =
+  Astro.props;
+
+const appEntry = await getEntry('apps', app);
+const appStoreUrl = appEntry?.data.appStoreUrl;
+const appStoreId = appStoreUrl?.match(/\/id(\d+)/)?.[1];
+const appName = appEntry?.data.name ?? app;
+
+const path = Astro.url.pathname;
+const related = LON_VERKTYG.filter((v) => v.href !== path && v.href !== path + '/');
+---
+
+<BaseLayout title={title} description={description} keywords={keywords} appStoreId={appStoreId}>
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 py-6 md:py-8">
+    <Breadcrumbs
+      trail={[
+        { name: 'Hem', url: '/' },
+        { name: 'Gratis räknare', url: '/verktyg/' },
+        { name: crumb },
+      ]}
+    />
+    <h1 class="mt-4 text-3xl md:text-5xl font-black tracking-tight">{h1}</h1>
+    <p class="mt-2 text-base md:text-lg text-ink-2">{intro}</p>
+
+    <slot />
+
+    <p class="mt-6 text-sm text-ink-3">
+      Senast uppdaterad: <time datetime="2026-09">september 2026</time>
+    </p>
+
+    <div
+      role="note"
+      class="mt-4 rounded-xl border border-line-strong bg-surface-2 p-4 text-sm text-ink-2"
+    >
+      <strong class="text-ink">Observera:</strong>
+      {' '}{disclaimer}
+    </div>
+
+    <div class="mt-10 rounded-2xl border border-line bg-surface-2 p-6 md:p-8">
+      <div class="flex items-start gap-4">
+        {appEntry && (
+          <img
+            src={appEntry.data.icon}
+            alt=""
+            width="56"
+            height="56"
+            loading="lazy"
+            class="w-14 h-14 rounded-2xl border border-line flex-shrink-0"
+          />
+        )}
+        <div>
+          <h2 class="text-xl font-black">{ctaTitle}</h2>
+          <p class="mt-2 text-ink-2">{ctaText}</p>
+        </div>
+      </div>
+      <div class="mt-6 flex flex-wrap items-center gap-4">
+        <AppStoreBadge url={appStoreUrl} status="live" position="inline" />
+        <a href={`/${app}/`} class="text-sm font-bold text-accent underline underline-offset-4">
+          Läs mer om {appName}
+        </a>
+      </div>
+    </div>
+
+    <div class="prose mt-12">
+      <slot name="forklaring" />
+    </div>
+
+    <FAQ items={faq} />
+
+    <nav aria-labelledby="fler-raknare" class="mt-12">
+      <h2 id="fler-raknare" class="text-2xl font-black mb-4">Fler gratis räknare</h2>
+      <ul class="grid sm:grid-cols-2 gap-3">
+        {related.map((v) => (
+          <li>
+            <a
+              href={v.href}
+              class="group block h-full rounded-2xl border border-line p-5 hover:border-line-strong hover:bg-surface-2 transition"
+            >
+              <span class="font-bold text-ink">{v.title} →</span>
+              <span class="block mt-1 text-sm text-ink-2">{v.description}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p class="mt-4 text-sm">
+        <a href="/verktyg/" class="font-bold text-accent underline underline-offset-4">
+          Alla räknare
+        </a>
+      </p>
+    </nav>
+  </section>
+</BaseLayout>

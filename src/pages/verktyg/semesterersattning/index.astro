@@ -1,0 +1,162 @@
+---
+import VerktygLayout from '../../../components/VerktygLayout.astro';
+
+const inputCls =
+  'w-full rounded-xl border border-line-strong bg-surface px-4 py-3 text-lg font-bold aria-[invalid=true]:border-ink aria-[invalid=true]:border-2';
+
+const faq = [
+  {
+    q: 'Hur räknar man ut semesterersättning?',
+    a: 'Enligt semesterlagen är semesterersättningen minst 12 % av den semesterlönegrundande lönen du tjänat. Har du tjänat 250 000 kr blir semesterersättningen minst 30 000 kr. Många kollektivavtal ger mer, till exempel 13 % eller högre.',
+  },
+  {
+    q: 'Vem får semesterersättning?',
+    a: 'Främst timanställda och tillfälligt anställda som inte tar ut betald semester, och alla som slutar en anställning med sparade eller intjänade semesterdagar kvar. Den som har betald semester får i stället semesterlön när hen är ledig.',
+  },
+  {
+    q: 'Vad är skillnaden mellan semesterlön och semesterersättning?',
+    a: 'Semesterlön är lönen du får när du faktiskt är ledig på semester. Semesterersättning är pengar i stället för semester – för dagar du inte tar ut, till exempel när du är timanställd eller när anställningen tar slut.',
+  },
+  {
+    q: 'Dras det skatt på semesterersättning?',
+    a: 'Ja. Semesterersättning är lön och beskattas som vanlig inkomst. Beloppet i räknaren är före skatt. Vill du se ungefär vad du får ut kan du använda räknaren för timlön efter skatt.',
+  },
+  {
+    q: 'Vilken lön räknas in?',
+    a: 'Den semesterlönegrundande lönen: vanlig lön, OB-tillägg, övertid och andra rörliga tillägg. Viss frånvaro räknas också som semesterlönegrundande, till exempel de första 180 dagarna med sjukfrånvaro och en del föräldraledighet. Traktamenten och kostnadsersättningar räknas inte.',
+  },
+];
+---
+
+<VerktygLayout
+  title="Räkna semesterersättning – 12 % enligt semesterlagen"
+  description="Räkna ut din semesterersättning: minst 12 % av bruttolönen enligt semesterlagen, eller högre procent om ditt kollektivavtal säger det. Se belopp totalt och per timme."
+  keywords={['räkna semesterersättning', 'semesterersättning 12 procent', 'semesterersättning timanställd', 'semesterersättning räknare', 'hur mycket semesterersättning']}
+  h1="Räkna semesterersättning"
+  intro="Fyll i hur mycket du tjänat – räknaren visar semesterersättningen enligt semesterlagen eller ditt avtal."
+  crumb="Semesterersättning"
+  faq={faq}
+  app="tidrapport"
+  ctaTitle="Se hur mycket du tjänat med Tidrapportera"
+  ctaText="Semesterersättningen räknas på det du faktiskt jobbat. Tidrapportera loggar timmar per arbetsgivare eller projekt och summerar månaden, så du har underlaget redo när du vill kontrollera lönebeskedet."
+  disclaimer="Räknaren visar minsta nivån enligt semesterlagen (12 %) eller den procent du fyller i. Vad som är semesterlönegrundande, och om ditt avtal ger mer, står i ditt kollektiv- eller anställningsavtal. Beloppen är före skatt."
+>
+  <form
+    id="sem-form"
+    class="mt-6 rounded-2xl border border-line bg-surface p-4 sm:p-6 md:p-8"
+    novalidate
+    onsubmit="return false"
+  >
+    <div class="grid grid-cols-2 gap-4">
+      <div class="col-span-2 sm:col-span-1">
+        <label class="block text-sm font-bold mb-2" for="brutto">Intjänad bruttolön (kr)</label>
+        <input id="brutto" type="text" inputmode="decimal" autocomplete="off" value="250 000" aria-describedby="brutto-hint brutto-fel" class={inputCls} />
+        <p id="brutto-hint" class="mt-1 text-xs text-ink-3">Semesterlönegrundande lön under perioden</p>
+        <p id="brutto-fel" hidden class="mt-1 text-sm font-bold text-ink">⚠ Skriv ett tal, t.ex. 250 000</p>
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-2" for="procent">Procentsats (%)</label>
+        <input id="procent" type="text" inputmode="decimal" autocomplete="off" value="12" aria-describedby="procent-hint procent-fel" class={inputCls} />
+        <p id="procent-hint" class="mt-1 text-xs text-ink-3">Minst 12 % enligt lag</p>
+        <p id="procent-fel" hidden class="mt-1 text-sm font-bold text-ink">⚠ Skriv ett tal, t.ex. 13</p>
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-2" for="timlon">Timlön (valfritt)</label>
+        <input id="timlon" type="text" inputmode="decimal" autocomplete="off" value="" placeholder="t.ex. 180" aria-describedby="timlon-hint timlon-fel" class={inputCls} />
+        <p id="timlon-hint" class="mt-1 text-xs text-ink-3">Visar ersättning per timme</p>
+        <p id="timlon-fel" hidden class="mt-1 text-sm font-bold text-ink">⚠ Skriv ett tal, t.ex. 180</p>
+      </div>
+    </div>
+  </form>
+
+  <section aria-labelledby="sem-resultat" class="mt-6">
+    <h2 id="sem-resultat" class="sr-only">Resultat</h2>
+    <div aria-live="polite" aria-atomic="true">
+      <dl class="grid grid-cols-2 gap-3">
+        <div class="rounded-2xl bg-surface-2 border border-line p-4">
+          <dt class="text-xs font-black uppercase tracking-widest text-ink-3">Lön + semesterersättning</dt>
+          <dd class="mt-1 text-xl font-black" data-out="summa">–</dd>
+        </div>
+        <div class="rounded-2xl bg-surface-2 border border-line p-4">
+          <dt class="text-xs font-black uppercase tracking-widest text-ink-3">Per timme</dt>
+          <dd class="mt-1 text-xl font-black" data-out="pertimme">–</dd>
+          <dd class="text-xs text-ink-3" data-out="pertimmedetail"></dd>
+        </div>
+        <div class="col-span-2 rounded-2xl bg-ink text-on-ink p-5">
+          <dt class="text-xs font-black uppercase tracking-widest text-on-ink-2">Semesterersättning före skatt</dt>
+          <dd class="mt-1 text-3xl font-black" data-out="ersattning">–</dd>
+          <dd class="text-sm text-on-ink-2" data-out="detail"></dd>
+        </div>
+      </dl>
+      <p data-out="underlag" hidden class="mt-3 rounded-xl border border-line-strong p-3 text-sm text-ink-2">
+        <strong class="text-ink">⚠ Under lagens minimum:</strong> semesterlagen ger minst 12 %.
+        En lägre procentsats gäller bara om ett kollektivavtal uttryckligen säger det.
+      </p>
+    </div>
+  </section>
+
+  <Fragment slot="forklaring">
+    <h2>Så räknas semesterersättning</h2>
+    <p>
+      Semesterersättning = semesterlönegrundande lön × procentsats.
+      Semesterlagen säger <strong>minst 12 %</strong> (procentregeln).
+      Många kollektivavtal ger mer, till exempel 13 %.
+    </p>
+    <ul>
+      <li>250 000 kr × 12 % = <strong>30 000 kr</strong></li>
+      <li>250 000 kr × 13 % = <strong>32 500 kr</strong></li>
+      <li>Timlön 180 kr × 12 % = <strong>21,60 kr</strong> extra per timme</li>
+    </ul>
+    <h2>Timanställd eller månadsanställd?</h2>
+    <p>
+      Som <strong>timanställd</strong> får du oftast semesterersättningen
+      utbetald löpande med varje lön, eller när anställningen tar slut.
+      Den ska synas som en egen rad på lönebeskedet.
+    </p>
+    <p>
+      Som <strong>månadsanställd</strong> med fast lön får du normalt
+      vanlig lön under semestern plus ett semestertillägg
+      (sammalöneregeln). Semesterersättning blir aktuellt först när du
+      slutar och har semesterdagar kvar som inte tagits ut.
+    </p>
+    <p>
+      Vill du se vad du får kvar efter skatt? Prova
+      <a href="/verktyg/timlon-efter-skatt/">räknaren för timlön efter skatt</a>,
+      där semesterersättningen kan läggas till direkt.
+    </p>
+  </Fragment>
+</VerktygLayout>
+
+<script>
+  import { readInput, flagInvalid, kr, kr2, num } from '../../../lib/sv-number';
+
+  const $ = (id: string) => document.getElementById(id) as HTMLInputElement;
+  const form = document.getElementById('sem-form') as HTMLFormElement;
+  const bruttoEl = $('brutto');
+  const procentEl = $('procent');
+  const timlonEl = $('timlon');
+  const out = (k: string) => document.querySelector(`[data-out="${k}"]`) as HTMLElement;
+
+  function compute() {
+    [bruttoEl, procentEl, timlonEl].forEach(flagInvalid);
+    const brutto = readInput(bruttoEl);
+    const procent = readInput(procentEl, 12);
+    const timlon = readInput(timlonEl);
+    const ersattning = (brutto * procent) / 100;
+
+    out('ersattning').textContent = kr(ersattning);
+    out('detail').textContent = `${kr(brutto)} × ${num(procent)} %`;
+    out('summa').textContent = kr(brutto + ersattning);
+    if (timlon > 0) {
+      out('pertimme').textContent = kr2((timlon * procent) / 100);
+      out('pertimmedetail').textContent = `timlön inkl. ersättning ${kr2(timlon * (1 + procent / 100))}`;
+    } else {
+      out('pertimme').textContent = '–';
+      out('pertimmedetail').textContent = 'Fyll i timlön';
+    }
+    out('underlag').hidden = procent >= 12;
+  }
+
+  form.addEventListener('input', compute);
+  compute();
+</script>

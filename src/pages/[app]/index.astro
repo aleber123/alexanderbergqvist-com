@@ -42,7 +42,7 @@ const appArticles = allArticles
 // as a card on the landing page.
 const toolsByApp: Record<
   string,
-  { slug: string; title: string; description: string }[]
+  { slug?: string; href?: string; title: string; description: string }[]
 > = {
   'snusfri-resa': [
     {
@@ -97,12 +97,32 @@ const toolsByApp: Record<
   ],
   'vab-koll': [
     {
+      href: '/verktyg/vab-ersattning/',
+      title: 'VAB-ersättning 2026',
+      description: 'Räkna ut vad du får per vab-dag från Försäkringskassan.',
+    },
+    {
       slug: 'dagar-rakna',
       title: 'Vab-dagar-räknare',
       description: 'Räkna ut hur många vab-dagar du har kvar för året.',
     },
   ],
   tidrapport: [
+    {
+      href: '/verktyg/ob-tillagg/',
+      title: 'OB-tillägg räknare',
+      description: 'Räkna OB för kväll, natt, helg och storhelg.',
+    },
+    {
+      href: '/verktyg/timlon-efter-skatt/',
+      title: 'Timlön efter skatt',
+      description: 'Timlön × timmar, med semesterersättning och kommunalskatt.',
+    },
+    {
+      href: '/verktyg/semesterersattning/',
+      title: 'Semesterersättning',
+      description: 'Räkna 12 % enligt semesterlagen – eller mer enligt avtal.',
+    },
     {
       slug: 'timlone-rakna',
       title: 'Timlöne-räknare',
@@ -331,7 +351,7 @@ const appStoreId = appStoreUrl
       <div class="grid md:grid-cols-2 gap-4">
         {tools.map((t) => (
           <a
-            href={`/${app.id}/${t.slug}/`}
+            href={t.href ?? `/${app.id}/${t.slug}/`}
             class="group block rounded-2xl border border-line p-6 hover:border-line-strong hover:shadow-md transition"
           >
             <div class="font-bold text-lg text-ink group-hover:text-ink-2">

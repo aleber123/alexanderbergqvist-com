@@ -63,6 +63,7 @@ export default defineConfig({
           item.changefreq = 'daily';
         } else if (
           item.url.includes('/kalkylator') ||
+          item.url.includes('/verktyg/') ||
           item.url.includes('/rakna')
         ) {
           item.priority = 0.9;

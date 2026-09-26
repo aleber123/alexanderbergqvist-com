@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { VERKTYG } from '../../data/verktyg';
+
+const groups = [
+  {
+    id: 'lon',
+    title: 'Lön, OB och VAB',
+    text: 'Räknare för dig som jobbar timmar, obekväma tider eller är hemma med sjukt barn.',
+  },
+  {
+    id: 'ovrigt',
+    title: 'Övriga räknare',
+    text: 'Från snusfria besparingar till betong och surdeg.',
+  },
+] as const;
+
+const itemListLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Gratis räknare',
+  itemListElement: VERKTYG.map((v, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: v.title,
+    url: new URL(v.href, Astro.site).href,
+  })),
+};
+---
+
+<BaseLayout
+  title="Gratis räknare – OB, lön efter skatt, VAB och mer"
+  description="Gratis räknare på svenska: OB-tillägg, timlön efter skatt, VAB-ersättning 2026 och semesterersättning. Räknar direkt i webbläsaren – utan konto."
+  keywords={['gratis räknare', 'ob räknare', 'lön efter skatt räknare', 'vab räknare', 'semesterersättning räknare', 'kalkylator']}
+>
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 py-6 md:py-8">
+    <Breadcrumbs trail={[{ name: 'Hem', url: '/' }, { name: 'Gratis räknare' }]} />
+    <h1 class="mt-4 text-3xl md:text-5xl font-black tracking-tight">Gratis räknare</h1>
+    <p class="mt-3 text-lg text-ink-2">
+      Enkla räknare för vardagsekonomi. Allt räknas direkt i din
+      webbläsare – inget konto, inga uppgifter skickas någonstans.
+    </p>
+
+    {groups.map((g) => (
+      <section aria-labelledby={`grupp-${g.id}`} class="mt-10">
+        <h2 id={`grupp-${g.id}`} class="text-2xl font-black">{g.title}</h2>
+        <p class="mt-1 text-ink-2">{g.text}</p>
+        <ul class="mt-4 grid sm:grid-cols-2 gap-3">
+          {VERKTYG.filter((v) => v.group === g.id).map((v) => (
+            <li>
+              <a
+                href={v.href}
+                class="group block h-full rounded-2xl border border-line p-5 hover:border-line-strong hover:bg-surface-2 transition"
+              >
+                <span class="font-bold text-lg text-ink">{v.title} →</span>
+                <span class="block mt-1 text-sm text-ink-2">{v.description}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+
+    <p class="mt-10 text-sm text-ink-3">
+      Räknarna ger uppskattningar och ersätter inte besked från
+      Försäkringskassan, Skatteverket eller ditt lönebesked.
+      Senast uppdaterad: <time datetime="2026-09">september 2026</time>.
+    </p>
+  </section>
+  <script type="application/ld+json" set:html={JSON.stringify(itemListLd)} />
+</BaseLayout>

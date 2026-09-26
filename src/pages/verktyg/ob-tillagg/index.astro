@@ -1,0 +1,322 @@
+---
+import VerktygLayout from '../../../components/VerktygLayout.astro';
+
+/* Preset values are deliberately labelled as examples on the page.
+   OB rates differ by agreement, sector, employer and year, and several
+   agreements (HRF/Visita, Kommunal, Vårdförbundet) express OB as fixed
+   kronor per hour that are revised every avtalsrörelse. The kr figures
+   below are round, illustrative orders of magnitude — NOT copied from
+   any agreement — and the user is told to replace them. Handels
+   detaljhandel does use percent of hourly wage; the split here is a
+   simplification of its clock-time bands. */
+const presets = {
+  handels: {
+    label: 'Handels – detaljhandel (exempel)',
+    note: 'Detaljhandelsavtalet anger OB i procent av timlönen, med olika nivåer beroende på klockslag och veckodag. Procentsatserna här är förenklade exempel.',
+    rows: { kvall: ['pct', 50], natt: ['pct', 70], helg: ['pct', 100], storhelg: ['pct', 100] },
+  },
+  hrf: {
+    label: 'Hotell & restaurang, HRF/Visita (exempel)',
+    note: 'Avtalet anger OB som fasta kronor per timme som räknas upp varje avtalsperiod. Beloppen här är avrundade exempel, inte avtalets siffror – skriv in beloppen från ditt avtal eller lönebesked.',
+    rows: { kvall: ['kr', 25], natt: ['kr', 35], helg: ['kr', 30], storhelg: ['kr', 70] },
+  },
+  kommunal: {
+    label: 'Kommunal – vård & omsorg (exempel)',
+    note: 'Kommunals avtal anger OB som fasta kronor per timme som räknas upp varje år. Beloppen här är avrundade exempel, inte avtalets siffror – skriv in beloppen från ditt avtal eller lönebesked.',
+    rows: { kvall: ['kr', 25], natt: ['kr', 55], helg: ['kr', 60], storhelg: ['kr', 125] },
+  },
+  vardforbundet: {
+    label: 'Vårdförbundet – region (exempel)',
+    note: 'Vårdförbundets avtal anger OB som fasta kronor per timme, och nivåerna kan skilja mellan regioner och år. Beloppen här är avrundade exempel, inte avtalets siffror – skriv in beloppen från ditt avtal eller lönebesked.',
+    rows: { kvall: ['kr', 35], natt: ['kr', 75], helg: ['kr', 65], storhelg: ['kr', 145] },
+  },
+  eget: {
+    label: 'Eget – fyll i själv',
+    note: 'Fyll i procent av timlönen eller kronor per timme för varje kategori, precis som det står i ditt avtal.',
+    rows: null,
+  },
+} as const;
+
+const categories = [
+  { id: 'kvall', name: 'Kväll', hint: 'vardag kväll', hours: '10' },
+  { id: 'natt', name: 'Natt', hint: 'vardag natt', hours: '0' },
+  { id: 'helg', name: 'Helg', hint: 'lördag/söndag', hours: '8' },
+  { id: 'storhelg', name: 'Storhelg', hint: 't.ex. jul, midsommar', hours: '0' },
+];
+
+const initial = presets.handels as { note: string; rows: Record<string, readonly [string, number]> };
+
+const faq = [
+  {
+    q: 'Hur räknar man ut OB-tillägg?',
+    a: 'Antingen som procent av timlönen eller som ett fast belopp per timme – det beror på ditt kollektivavtal. Procent: timlön × procentsats × antal OB-timmar. Fast belopp: kronor per timme × antal OB-timmar. OB-tillägget betalas utöver din vanliga lön för de timmarna.',
+  },
+  {
+    q: 'Vad räknas som storhelg?',
+    a: 'Vanligtvis påsk, midsommar, jul och nyår, men exakt vilka dagar och klockslag som räknas som storhelg står i ditt kollektivavtal. Storhelg ger nästan alltid den högsta OB-nivån.',
+  },
+  {
+    q: 'Har jag rätt till OB om jag inte har kollektivavtal?',
+    a: 'Nej, inte automatiskt. OB-tillägg regleras i kollektivavtal eller i ditt anställningsavtal – det finns ingen lag som ger rätt till OB. Saknar arbetsplatsen kollektivavtal gäller det som står i ditt avtal med arbetsgivaren.',
+  },
+  {
+    q: 'Är OB-tillägget skattepliktigt?',
+    a: 'Ja. OB-tillägg är lön och beskattas som vanlig lön. Det är också semesterlönegrundande och räknas in i din sjukpenninggrundande inkomst (SGI).',
+  },
+  {
+    q: 'Varför stämmer inte räknaren med mitt lönebesked?',
+    a: 'Avtalen har ofta flera OB-nivåer inom samma kategori (t.ex. olika procent före och efter kl. 20), och beloppen räknas upp varje år. Dela upp timmarna efter de klockslag som gäller i ditt avtal och skriv in avtalets egna procentsatser eller belopp för bästa resultat.',
+  },
+];
+---
+
+<VerktygLayout
+  title="OB-tillägg räknare 2026 – räkna ut ditt OB"
+  description="Gratis OB-räknare: fyll i timlön och timmar på kväll, natt, helg och storhelg. Räkna OB i procent eller kr/timme – med exempel för Handels, HRF, Kommunal och Vårdförbundet."
+  keywords={['ob-tillägg räknare', 'räkna ob', 'ob tillägg 2026', 'ob handels', 'ob kommunal', 'ob hrf', 'storhelg ob']}
+  h1="OB-tillägg räknare 2026"
+  intro="Fyll i timlön och hur många timmar du jobbat på obekväm arbetstid – räknaren visar ditt OB direkt."
+  crumb="OB-tillägg"
+  faq={faq}
+  app="tidrapport"
+  ctaTitle="Logga dina OB-timmar i Tidrapportera"
+  ctaText="Tidrapportera håller koll på dina arbetspass, så att du ser hur många kvälls-, natt- och helgtimmar du faktiskt jobbat innan lönebeskedet kommer. Export till PDF/CSV. Inget konto."
+  disclaimer="Räknaren ger en uppskattning. Förinställningarna är exempel – kontrollera ditt kollektivavtal. OB-nivåer skiljer sig mellan avtal, arbetsgivare och år, och resultatet ersätter inte ditt lönebesked."
+>
+  <form
+    id="ob-form"
+    data-presets={JSON.stringify(presets)}
+    class="mt-6 rounded-2xl border border-line bg-surface p-4 sm:p-6 md:p-8"
+    novalidate
+    onsubmit="return false"
+  >
+    <div class="grid sm:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-bold mb-2" for="timlon">Timlön (kr)</label>
+        <input
+          id="timlon"
+          type="text"
+          inputmode="decimal"
+          autocomplete="off"
+          value="180"
+          aria-describedby="timlon-fel"
+          class="w-full rounded-xl border border-line-strong bg-surface px-4 py-3 text-lg font-bold aria-[invalid=true]:border-ink aria-[invalid=true]:border-2"
+        />
+        <p id="timlon-fel" hidden class="mt-1 text-sm font-bold text-ink">⚠ Skriv ett tal, t.ex. 185,50</p>
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-2" for="preset">Avtal (förinställning)</label>
+        <select
+          id="preset"
+          aria-describedby="preset-note"
+          class="w-full rounded-xl border border-line-strong bg-surface px-4 py-3 text-base font-bold"
+        >
+          {Object.entries(presets).map(([key, p]) => (
+            <option value={key} selected={key === 'handels'}>{p.label}</option>
+          ))}
+        </select>
+      </div>
+    </div>
+    <p id="preset-note" class="mt-3 text-sm text-ink-2">
+      <strong class="text-ink">Exempel – kontrollera ditt kollektivavtal.</strong>
+      {' '}<span data-preset-note>{initial.note}</span>
+    </p>
+
+    <fieldset class="mt-6">
+      <legend class="text-sm font-bold">Timmar och OB-nivå per kategori</legend>
+      <div class="mt-3 space-y-4">
+        {categories.map((c) => {
+          const [unit, value] = initial.rows[c.id];
+          return (
+            <div class="rounded-xl border border-line p-3 sm:p-4">
+              <div class="font-bold text-ink">
+                {c.name} <span class="font-normal text-sm text-ink-3">({c.hint})</span>
+              </div>
+              <div class="mt-2 grid grid-cols-3 gap-2 sm:gap-3">
+                <div>
+                  <label class="block text-xs font-bold text-ink-2 mb-1" for={`h-${c.id}`}>
+                    Timmar
+                  </label>
+                  <input
+                    id={`h-${c.id}`}
+                    type="text"
+                    inputmode="decimal"
+                    autocomplete="off"
+                    value={c.hours}
+                    aria-describedby={`h-${c.id}-fel`}
+                    class="w-full rounded-lg border border-line-strong bg-surface px-3 py-2 font-bold aria-[invalid=true]:border-ink aria-[invalid=true]:border-2"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-ink-2 mb-1" for={`v-${c.id}`}>
+                    OB-nivå
+                  </label>
+                  <input
+                    id={`v-${c.id}`}
+                    type="text"
+                    inputmode="decimal"
+                    autocomplete="off"
+                    value={String(value)}
+                    aria-describedby={`v-${c.id}-fel`}
+                    class="w-full rounded-lg border border-line-strong bg-surface px-3 py-2 font-bold aria-[invalid=true]:border-ink aria-[invalid=true]:border-2"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-ink-2 mb-1" for={`u-${c.id}`}>
+                    Enhet<span class="sr-only"> – procent av timlönen eller kronor per timme</span>
+                  </label>
+                  <select
+                    id={`u-${c.id}`}
+                    class="w-full rounded-lg border border-line-strong bg-surface px-2 py-2 font-bold"
+                  >
+                    <option value="pct" selected={unit === 'pct'}>%</option>
+                    <option value="kr" selected={unit === 'kr'}>kr/tim</option>
+                  </select>
+                </div>
+              </div>
+              <p id={`h-${c.id}-fel`} hidden class="mt-1 text-sm font-bold text-ink">⚠ Timmar måste vara ett tal</p>
+              <p id={`v-${c.id}-fel`} hidden class="mt-1 text-sm font-bold text-ink">⚠ OB-nivån måste vara ett tal</p>
+            </div>
+          );
+        })}
+      </div>
+    </fieldset>
+  </form>
+
+  <section aria-labelledby="ob-resultat" class="mt-6">
+    <h2 id="ob-resultat" class="sr-only">Resultat</h2>
+    <div aria-live="polite" aria-atomic="true">
+      <dl class="grid grid-cols-2 gap-3">
+        {categories.map((c) => (
+          <div class="rounded-2xl bg-surface-2 border border-line p-4">
+            <dt class="text-xs font-black uppercase tracking-widest text-ink-3">OB {c.name.toLowerCase()}</dt>
+            <dd class="mt-1 text-xl font-black text-ink" data-out={c.id}>–</dd>
+            <dd class="text-xs text-ink-3" data-out-detail={c.id}></dd>
+          </div>
+        ))}
+        <div class="col-span-2 rounded-2xl bg-ink text-on-ink p-5">
+          <dt class="text-xs font-black uppercase tracking-widest text-on-ink-2">Totalt OB-tillägg (före skatt)</dt>
+          <dd class="mt-1 text-3xl font-black" data-out="total">–</dd>
+          <dd class="text-sm text-on-ink-2" data-out="totaldetail"></dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <Fragment slot="forklaring">
+    <h2>Så räknas OB-tillägg</h2>
+    <p>
+      OB står för <em>obekväm arbetstid</em> – arbete på kvällar, nätter,
+      helger och storhelger. Ersättningen står i ditt kollektivavtal och
+      anges på ett av två sätt:
+    </p>
+    <ul>
+      <li>
+        <strong>Procent av timlönen.</strong> OB = timlön × procentsats ×
+        timmar. Med 180 kr i timlön och 50 % OB i 10 timmar blir det
+        180 × 0,50 × 10 = <strong>900 kr</strong>.
+      </li>
+      <li>
+        <strong>Fast belopp per timme.</strong> OB = kronor per timme ×
+        timmar. Med 55 kr/timme i 8 nattimmar blir det 55 × 8 =
+        <strong>440 kr</strong>.
+      </li>
+    </ul>
+    <p>
+      Handels detaljhandelsavtal använder procent av timlönen, medan till
+      exempel Kommunal, Vårdförbundet och HRF/Visita använder fasta
+      kronbelopp som räknas upp varje avtalsperiod. Därför är
+      förinställningarna ovan bara <strong>exempel</strong> – kontrollera
+      alltid siffrorna i ditt eget avtal eller på ditt lönebesked.
+    </p>
+    <h2>Tips: dela upp timmarna efter klockslag</h2>
+    <p>
+      Många avtal har flera nivåer inom samma kategori, till exempel en
+      lägre nivå tidig kväll och en högre sen kväll. Välj då
+      <em>Eget</em> och lägg in varje nivå för sig, eller räkna i två
+      omgångar. Ju närmare avtalets indelning du kommer, desto bättre
+      stämmer resultatet med lönebeskedet.
+    </p>
+  </Fragment>
+</VerktygLayout>
+
+<script>
+  import { readInput, flagInvalid, kr, kr2, num } from '../../../lib/sv-number';
+
+  type Unit = 'pct' | 'kr';
+  const form = document.getElementById('ob-form') as HTMLFormElement;
+  // Single source: the frontmatter presets, serialised onto the form.
+  const PRESETS: Record<string, { note: string; rows: Record<string, [Unit, number]> | null }> =
+    JSON.parse(form.dataset.presets ?? '{}');
+  const CATS = ['kvall', 'natt', 'helg', 'storhelg'];
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+
+  const timlonEl = $<HTMLInputElement>('timlon');
+  const presetEl = $<HTMLSelectElement>('preset');
+  const noteEl = document.querySelector('[data-preset-note]')!;
+  const out = (k: string) => document.querySelector(`[data-out="${k}"]`)!;
+  const detail = (k: string) => document.querySelector(`[data-out-detail="${k}"]`)!;
+
+  function applyPreset(key: string) {
+    const p = PRESETS[key];
+    if (!p) return;
+    noteEl.textContent = p.note;
+    // "Eget" keeps whatever is in the fields — it's a starting point.
+    if (!p.rows) return;
+    for (const c of CATS) {
+      const [unit, value] = p.rows[c];
+      $<HTMLSelectElement>(`u-${c}`).value = unit;
+      $<HTMLInputElement>(`v-${c}`).value = String(value).replace('.', ',');
+    }
+  }
+
+  function compute() {
+    flagInvalid(timlonEl);
+    const timlon = readInput(timlonEl);
+    let total = 0;
+    let totalHours = 0;
+    for (const c of CATS) {
+      const hEl = $<HTMLInputElement>(`h-${c}`);
+      const vEl = $<HTMLInputElement>(`v-${c}`);
+      flagInvalid(hEl);
+      flagInvalid(vEl);
+      const hours = readInput(hEl);
+      const level = readInput(vEl);
+      const unit = $<HTMLSelectElement>(`u-${c}`).value as Unit;
+      const perHour = unit === 'pct' ? (timlon * level) / 100 : level;
+      const ob = perHour * hours;
+      total += ob;
+      totalHours += hours;
+      out(c).textContent = kr(ob);
+      detail(c).textContent = `${num(hours)} h × ${kr2(perHour)}/h`;
+    }
+    out('total').textContent = kr(total);
+    out('totaldetail').textContent =
+      totalHours > 0
+        ? `${num(totalHours)} OB-timmar · i snitt ${kr2(total / totalHours)} extra per timme`
+        : 'Fyll i antal timmar ovan';
+  }
+
+  presetEl.addEventListener('change', () => {
+    applyPreset(presetEl.value);
+    compute();
+  });
+  form.addEventListener('input', (e) => {
+    // Editing a level by hand means it's no longer the preset.
+    const t = e.target as HTMLElement;
+    if (t.id.startsWith('v-') && presetEl.value !== 'eget') {
+      presetEl.value = 'eget';
+      noteEl.textContent = PRESETS.eget.note;
+    }
+    compute();
+  });
+  form.addEventListener('change', (e) => {
+    const t = e.target as HTMLElement;
+    if (t.id.startsWith('u-') && presetEl.value !== 'eget') {
+      presetEl.value = 'eget';
+      noteEl.textContent = PRESETS.eget.note;
+    }
+    compute();
+  });
+  compute();
+</script>

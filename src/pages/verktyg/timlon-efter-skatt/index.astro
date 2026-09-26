@@ -1,0 +1,208 @@
+---
+import VerktygLayout from '../../../components/VerktygLayout.astro';
+
+const inputCls =
+  'w-full rounded-xl border border-line-strong bg-surface px-4 py-3 text-lg font-bold aria-[invalid=true]:border-ink aria-[invalid=true]:border-2';
+
+const faq = [
+  {
+    q: 'Hur mycket får jag ut efter skatt på min timlön?',
+    a: 'Multiplicera timlönen med antal timmar per månad, lägg till eventuell semesterersättning (12 %) och dra av skatten. Med 180 kr i timmen och 160 timmar blir bruttolönen 28 800 kr. Räknaren visar en försiktig uppskattning av nettolönen – din verkliga skatt blir oftast något lägre tack vare jobbskatteavdraget.',
+  },
+  {
+    q: 'Varför är nettolönen här lägre än på mitt lönebesked?',
+    a: 'Räknaren tar med grundavdraget men inte jobbskatteavdraget, som sänker skatten för alla som arbetar – ofta med ett par tusen kronor i månaden. Arbetsgivaren drar skatt enligt Skatteverkets skattetabeller, där jobbskatteavdraget redan är inräknat. Se nettobeloppet här som ett golv.',
+  },
+  {
+    q: 'Vad är min kommunalskatt?',
+    a: 'Kommunalskatten (kommun + region) ligger mellan ungefär 29 och 35 procent beroende på var du är folkbokförd, med ett snitt runt 32 procent. Du hittar din exakta skattesats på ditt lönebesked eller hos Skatteverket.',
+  },
+  {
+    q: 'Ska semesterersättningen räknas med i timlönen?',
+    a: 'Om du är timanställd och inte tar ut betald semester får du oftast minst 12 % semesterersättning ovanpå lönen. Den beskattas som vanlig lön. Är du månadsanställd med betald semester ska du stänga av valet.',
+  },
+  {
+    q: 'Betalar jag statlig skatt?',
+    a: 'Bara om din beskattningsbara inkomst ligger över skiktgränsen – för de flesta motsvarar det en månadslön på drygt 50 000 kr. Då tillkommer 20 % statlig skatt på den del som ligger över gränsen. Den ingår inte i räknaren.',
+  },
+];
+---
+
+<VerktygLayout
+  title="Timlön efter skatt – räkna ut din nettolön per timme"
+  description="Räkna timlön efter skatt: timlön × timmar, med semesterersättning 12 % och din kommunalskatt. Se bruttolön, skatt och ungefärlig nettolön per månad och timme."
+  keywords={['timlön efter skatt', 'räkna timlön efter skatt', 'nettolön timlön', 'timlön netto', 'lön efter skatt timanställd']}
+  h1="Timlön efter skatt"
+  intro="Fyll i timlön, timmar per månad och kommunalskatt – så ser du ungefär vad du får ut."
+  crumb="Timlön efter skatt"
+  faq={faq}
+  app="tidrapport"
+  ctaTitle="Koll på varje timme med Tidrapportera"
+  ctaText="Som timanställd är lönen bara så rätt som dina timmar. Tidrapportera loggar arbetspass med ett tryck och summerar veckan och månaden – så att du kan jämföra med lönebeskedet. Inget konto."
+  disclaimer="Ungefärlig uträkning – jobbskatteavdrag och statlig skatt ingår inte, och skatten beräknas som om du tjänar lika mycket varje månad hela året. Din faktiska skatt dras enligt Skatteverkets skattetabeller och blir oftast lägre än här."
+>
+  <form
+    id="skatt-form"
+    class="mt-6 rounded-2xl border border-line bg-surface p-4 sm:p-6 md:p-8"
+    novalidate
+    onsubmit="return false"
+  >
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-bold mb-2" for="timlon">Timlön (kr, brutto)</label>
+        <input id="timlon" type="text" inputmode="decimal" autocomplete="off" value="180" aria-describedby="timlon-fel" class={inputCls} />
+        <p id="timlon-fel" hidden class="mt-1 text-sm font-bold text-ink">⚠ Skriv ett tal, t.ex. 185,50</p>
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-2" for="timmar">Timmar per månad</label>
+        <input id="timmar" type="text" inputmode="decimal" autocomplete="off" value="160" aria-describedby="timmar-fel" class={inputCls} />
+        <p id="timmar-fel" hidden class="mt-1 text-sm font-bold text-ink">⚠ Skriv ett tal, t.ex. 120</p>
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-2" for="skatt">Kommunalskatt (%)</label>
+        <input id="skatt" type="text" inputmode="decimal" autocomplete="off" value="32" aria-describedby="skatt-hint skatt-fel" class={inputCls} />
+        <p id="skatt-hint" class="mt-1 text-xs text-ink-3">Mellan ca 29 och 35 % beroende på kommun.</p>
+        <p id="skatt-fel" hidden class="mt-1 text-sm font-bold text-ink">⚠ Skriv ett tal, t.ex. 32,4</p>
+      </div>
+      <div class="flex items-start pt-7">
+        <label class="flex items-start gap-3 cursor-pointer" for="semester">
+          <input id="semester" type="checkbox" checked class="mt-1 w-5 h-5 flex-shrink-0 accent-ink" />
+          <span class="text-sm font-bold">
+            Lägg till semesterersättning 12 %
+            <span class="block font-normal text-xs text-ink-3">För timanställda utan betald semester</span>
+          </span>
+        </label>
+      </div>
+    </div>
+  </form>
+
+  <section aria-labelledby="skatt-resultat" class="mt-6">
+    <h2 id="skatt-resultat" class="sr-only">Resultat</h2>
+    <div aria-live="polite" aria-atomic="true">
+      <dl class="grid grid-cols-2 gap-3">
+        <div class="rounded-2xl bg-surface-2 border border-line p-4">
+          <dt class="text-xs font-black uppercase tracking-widest text-ink-3">Bruttolön</dt>
+          <dd class="mt-1 text-xl font-black" data-out="brutto">–</dd>
+        </div>
+        <div class="rounded-2xl bg-surface-2 border border-line p-4">
+          <dt class="text-xs font-black uppercase tracking-widest text-ink-3">Semesterersättning</dt>
+          <dd class="mt-1 text-xl font-black" data-out="semester">–</dd>
+        </div>
+        <div class="rounded-2xl bg-surface-2 border border-line p-4">
+          <dt class="text-xs font-black uppercase tracking-widest text-ink-3">Grundavdrag / mån</dt>
+          <dd class="mt-1 text-xl font-black" data-out="grundavdrag">–</dd>
+        </div>
+        <div class="rounded-2xl bg-surface-2 border border-line p-4">
+          <dt class="text-xs font-black uppercase tracking-widest text-ink-3">Skatt / mån (ca)</dt>
+          <dd class="mt-1 text-xl font-black" data-out="skatt">–</dd>
+        </div>
+        <div class="col-span-2 rounded-2xl bg-ink text-on-ink p-5">
+          <dt class="text-xs font-black uppercase tracking-widest text-on-ink-2">Ungefär efter skatt per månad</dt>
+          <dd class="mt-1 text-3xl font-black" data-out="netto">–</dd>
+          <dd class="text-sm text-on-ink-2" data-out="nettotimme"></dd>
+        </div>
+      </dl>
+      <p data-out="statlig" hidden class="mt-3 rounded-xl border border-line-strong p-3 text-sm text-ink-2">
+        <strong class="text-ink">⚠ Hög inkomst:</strong> du kan ligga över brytpunkten för statlig skatt.
+        Då tillkommer 20 % på inkomsten över gränsen – det ingår inte här.
+      </p>
+    </div>
+  </section>
+
+  <Fragment slot="forklaring">
+    <h2>Så räknar vi</h2>
+    <ol>
+      <li><strong>Bruttolön</strong> = timlön × timmar per månad.</li>
+      <li>
+        <strong>Semesterersättning</strong> = 12 % av bruttolönen (om du
+        kryssat i valet). Den är skattepliktig som vanlig lön.
+      </li>
+      <li>
+        <strong>Grundavdrag</strong> räknas fram på årsinkomsten (månaden
+        × 12) enligt Skatteverkets regler för 2026, med prisbasbelopp
+        59 200 kr, för dig under 66 år.
+      </li>
+      <li>
+        <strong>Skatt</strong> = kommunalskatt × (årsinkomst −
+        grundavdrag) ÷ 12.
+      </li>
+      <li><strong>Nettolön</strong> = bruttolön + semesterersättning − skatt.</li>
+    </ol>
+    <p>
+      <strong>Exempel:</strong> 180 kr × 160 timmar = 28 800 kr. Med 12 %
+      semesterersättning blir det 32 256 kr, alltså 387 072 kr om året.
+      Grundavdraget blir då 25 300 kr, och med 32 % kommunalskatt
+      landar skatten på cirka 9 650 kr i månaden. Kvar blir ungefär
+      22 610 kr.
+    </p>
+    <h2>Det här ingår inte</h2>
+    <p>
+      <strong>Jobbskatteavdraget</strong> ingår inte. Det sänker skatten
+      för alla som har arbetsinkomst, och beräkningen ändras nästan varje
+      år. Vi har valt att hellre visa en tydlig, försiktig siffra än en
+      siffra som ser exakt ut men kan vara fel. Din verkliga nettolön blir
+      därför oftast <em>högre</em> än den här räknaren visar. Vill du ha
+      exakt belopp: använd Skatteverkets skattetabell för din kommun.
+    </p>
+    <p>
+      Statlig skatt, kyrkoavgift, begravningsavgift och
+      public service-avgift är inte heller med – de två sista är små
+      belopp som ingår i skattetabellen.
+    </p>
+  </Fragment>
+</VerktygLayout>
+
+<script>
+  import { readInput, flagInvalid, kr, kr2 } from '../../../lib/sv-number';
+
+  // Prisbasbelopp 2026. Grundavdrag bands per Skatteverket (under 66 år).
+  const PBB = 59200;
+  function grundavdrag(ffi: number): number {
+    let ga: number;
+    if (ffi <= 0.99 * PBB) ga = 0.423 * PBB;
+    else if (ffi <= 2.72 * PBB) ga = 0.423 * PBB + 0.2 * (ffi - 0.99 * PBB);
+    else if (ffi <= 3.11 * PBB) ga = 0.77 * PBB;
+    else if (ffi <= 7.88 * PBB) ga = 0.77 * PBB - 0.1 * (ffi - 3.11 * PBB);
+    else ga = 0.293 * PBB;
+    // Rounded up to whole hundreds, never more than the income itself.
+    return Math.min(Math.ceil(ga / 100) * 100, Math.max(0, ffi));
+  }
+
+  const $ = (id: string) => document.getElementById(id) as HTMLInputElement;
+  const form = document.getElementById('skatt-form') as HTMLFormElement;
+  const timlonEl = $('timlon');
+  const timmarEl = $('timmar');
+  const skattEl = $('skatt');
+  const semEl = $('semester');
+  const out = (k: string) => document.querySelector(`[data-out="${k}"]`) as HTMLElement;
+
+  function compute() {
+    [timlonEl, timmarEl, skattEl].forEach(flagInvalid);
+    const timlon = readInput(timlonEl);
+    const timmar = readInput(timmarEl);
+    const skatt = Math.min(100, readInput(skattEl, 32)) / 100;
+    const brutto = timlon * timmar;
+    const semester = semEl.checked ? brutto * 0.12 : 0;
+    const total = brutto + semester;
+    const ars = total * 12;
+    const ga = grundavdrag(ars);
+    const skattManad = (Math.max(0, ars - ga) * skatt) / 12;
+    const netto = total - skattManad;
+
+    out('brutto').textContent = kr(brutto);
+    out('semester').textContent = semEl.checked ? kr(semester) : '0 kr (avstängd)';
+    out('grundavdrag').textContent = kr(ga / 12);
+    out('skatt').textContent = kr(skattManad);
+    out('netto').textContent = kr(netto);
+    out('nettotimme').textContent =
+      timmar > 0
+        ? `≈ ${kr2(netto / timmar)} per arbetad timme · jobbskatteavdrag ej inräknat`
+        : 'Fyll i antal timmar';
+    // Rough guard: statlig skatt starts a bit above 50 000 kr/mån.
+    out('statlig').hidden = total < 50000;
+  }
+
+  form.addEventListener('input', compute);
+  form.addEventListener('change', compute);
+  compute();
+</script>
