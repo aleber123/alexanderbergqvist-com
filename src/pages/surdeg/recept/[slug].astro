@@ -1,5 +1,6 @@
 ---
 import type { GetStaticPaths } from 'astro';
+import { getEntry } from 'astro:content';
 import { resolveOgImage } from '../../../lib/og';
 import BaseLayout from '../../../components/BaseLayout.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
@@ -34,6 +35,7 @@ export const getStaticPaths = (() => {
 }) satisfies GetStaticPaths;
 
 const { recipe, all } = Astro.props;
+const surdeg = await getEntry('apps', 'surdeg');
 
 const totalFlour = recipe.ingredients
   .filter((i) => i.is_flour)
@@ -187,14 +189,19 @@ const related = (all as Recipe[])
     <aside
       class="mt-12 rounded-2xl border border-line p-6 md:p-8 bg-gradient-to-br from-amber-50 to-surface"
     >
-      <h3 class="font-black text-lg">Tips för bättre resultat</h3>
+      <h3 class="font-black text-lg">Baka det här i Surdeg-appen</h3>
       <p class="mt-2 text-ink-2 text-sm leading-relaxed">
-        Använd Surdeg-appen för att hålla koll på matningar, jäsning och
-        bakdagboken — den pingar dig när det är dags för nästa steg och
-        sparar dina anteckningar för varje bak.
+        Surdeg-appen påminner när degen ska vikas och när det är dags att
+        grädda, håller koll på matningar och jäsning och sparar dina
+        anteckningar för varje bak. Gratis för iPhone.
       </p>
       <div class="mt-4">
-        <AppStoreBadge status="soon" />
+        <AppStoreBadge
+          url={surdeg?.data.appStoreUrl}
+          status={surdeg?.data.status ?? 'live'}
+          position="inline"
+          campaign={`recept_${recipe.id}`}
+        />
       </div>
     </aside>
 

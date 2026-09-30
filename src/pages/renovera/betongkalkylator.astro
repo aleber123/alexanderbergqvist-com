@@ -2,6 +2,7 @@
 import { getEntry } from 'astro:content';
 import BaseLayout from '../../components/BaseLayout.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
+import ResultCta from '../../components/ResultCta.astro';
 
 const app = await getEntry('apps', 'renovera');
 const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
@@ -79,6 +80,8 @@ const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
       </div>
     </div>
 
+    <ResultCta app="renovera" text="Renovera-appen har 31 kalkylatorer för bygg och renovering – spara projektet och få inköpslistan som PDF." />
+
     <div class="mt-8 rounded-2xl border border-line bg-surface-2 p-5 text-sm text-ink-2">
       <strong class="text-ink">Friskrivning:</strong>
       Beräkningarna är vägledande. Allt arbete bör utföras eller granskas av
@@ -136,6 +139,16 @@ const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
         $('[data-out="volume"]').textContent = m3.toFixed(2);
         $('[data-out="bags"]').textContent = bags.toString();
         $('[data-out="bag-label"]').textContent = 'av ' + bagSize + ' kg';
+        const cta = $('[data-result-cta]');
+        if (cta) {
+          if (bags > 0) {
+            cta.querySelector('[data-result-cta-text]').textContent =
+              'Du behöver ' + bags + ' säckar à ' + bagSize + ' kg – Renovera-appen sparar projektet och gör inköpslistan åt dig, med 31 kalkylatorer för bygg och renovering.';
+            cta.hidden = false;
+          } else {
+            cta.hidden = true;
+          }
+        }
       }
 
       $$('#laengd, #bredd, #djup').forEach((el) =>

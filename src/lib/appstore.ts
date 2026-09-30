@@ -14,16 +14,31 @@
  * plugin in astro.config.mjs applies the same function to MDX bodies.
  */
 
-/** Constant label for the whole web property. Apple groups installs by
- *  `pt`, so keeping it constant makes "web" visible as one channel.
- *  Max 40 chars per Apple. */
-export const PROVIDER_TOKEN = 'alexbergqvist-com';
+/** Apple provider token. MUST be the numeric provider id that App Store
+ *  Connect's campaign link generator emits (verified 2026-09-30:
+ *  apps.apple.com/app/apple-store/id6758899294?pt=127704372&ct=test&mt=8).
+ *  It is NOT the vendor number, and a free-text label like the old
+ *  'alexbergqvist-com' is silently ignored — with a wrong `pt`, no `ct`
+ *  campaign ever shows up under Sources → Campaigns. */
+export const PROVIDER_TOKEN = '127704372';
 
 /** Where on the page the link sat. Prefixed onto `ct` so ASC reports
  *  position-level, not just page-level — with only ~345 clicks/90d
  *  there is no A/B test available, so knowing which existing placement
  *  already works is the only path to improvement. */
-export type CtaPosition = 'hero' | 'inline' | 'body' | 'footer';
+export type CtaPosition =
+  | 'hero'
+  | 'inline'
+  | 'body'
+  | 'footer'
+  /** Fixed bottom bar on mobile (StickyAppCta). */
+  | 'sticky'
+  /** CTA box directly under a calculator's computed result. */
+  | 'result'
+  /** Desktop QR code next to the hero badge. */
+  | 'qr'
+  /** Reserved for Smart App Banner / banner-style placements. */
+  | 'banner';
 
 /** Sluggify a pathname into a campaign tag Apple accepts:
  *    /fodelsedagar/aldersrakna/ → fodelsedagar_aldersrakna

@@ -1,0 +1,46 @@
+---
+/**
+ * Desktop-only QR code pointing at the tagged App Store URL
+ * (`ct=qr_<page>`), so a desktop visitor can hand the page to their
+ * iPhone in one scan. Rendered at build time as inline SVG — no
+ * client JS, no third-party QR service.
+ *
+ * Shown from 1024px up only; on smaller screens the sticky bar and the
+ * badge already are one tap away.
+ */
+import QRCode from 'qrcode';
+import { tagAppStoreUrl } from '../lib/appstore';
+import { ctaStrings } from '../lib/cta-strings';
+
+interface Props {
+  url?: string;
+  /** Page locale ('sv', 'en', …) for the caption. */
+  lang?: string;
+  campaign?: string;
+}
+
+const { url, lang = 'sv', campaign } = Astro.props;
+const tagged = tagAppStoreUrl(url, Astro.url.pathname, { position: 'qr', campaign });
+const svg = tagged
+  ? await QRCode.toString(tagged, {
+      type: 'svg',
+      margin: 1,
+      errorCorrectionLevel: 'M',
+      color: { dark: '#17150f', light: '#ffffff' },
+    })
+  : '';
+const s = ctaStrings(lang);
+---
+
+{svg && (
+  <figure
+    class="hidden lg:flex items-center gap-3 rounded-xl bg-white p-2 pr-4 text-ink shadow-lg"
+    data-cta-position="qr"
+    data-qr-url={tagged}
+  >
+    <div class="w-24 h-24 [&>svg]:w-full [&>svg]:h-full" role="img" aria-label={s.scanQr} set:html={svg} />
+    <figcaption class="max-w-[9rem] text-sm font-bold leading-snug">
+      {s.scanQr}
+    </figcaption>
+  </figure>
+)}

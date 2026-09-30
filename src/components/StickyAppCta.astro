@@ -1,0 +1,230 @@
+---
+/**
+ * Sticky bottom bar for phones (<768px) on every page that belongs to
+ * an app. One tap from any Google landing page to the App Store — the
+ * Smart App Banner only exists in iOS Safari, not in the Google app or
+ * Chrome on iOS where most mobile search visitors actually land.
+ *
+ * Behaviour (inline script below):
+ *   - Android user agents: the bar is removed. The apps are iOS-only,
+ *     and an App Store button is a dead end there.
+ *   - Appears once the visitor has scrolled ~40% of a viewport.
+ *   - Dismissable; dismissal is remembered per app in localStorage
+ *     (wrapped in try/catch: private mode / blocked storage just means
+ *     it shows again next page).
+ *   - While visible, body gets padding-bottom so the footer is never
+ *     covered. Honours env(safe-area-inset-bottom).
+ *
+ * Colour is never the only signal: the button is a filled pill with a
+ * text label and an outline, the close button has an X glyph and an
+ * aria-label.
+ */
+import { tagAppStoreUrl } from '../lib/appstore';
+import { ctaStrings } from '../lib/cta-strings';
+import { localizeAppStoreUrl, t, type Locale } from '../i18n/locales';
+
+interface Props {
+  /** App slug, e.g. 'fodelsedagar'. */
+  app: string;
+  name: string;
+  tagline: string;
+  icon: string;
+  appStoreUrl: string;
+  /** Page locale: 'sv' or a /<lang>/ prefix. */
+  lang?: string;
+}
+
+const { app, name, tagline, icon, appStoreUrl, lang = 'sv' } = Astro.props;
+const s = ctaStrings(lang);
+
+let displayName = name;
+let pitch = tagline;
+if (lang !== 'sv') {
+  const tr = t(lang as Locale)?.apps?.[app];
+  displayName = tr?.name ?? name;
+  pitch = tr?.tagline ?? s.freeOnAppStore;
+}
+
+const href = tagAppStoreUrl(
+  lang === 'sv' ? appStoreUrl : localizeAppStoreUrl(appStoreUrl, lang as Locale),
+  Astro.url.pathname,
+  { position: 'sticky' },
+);
+---
+
+<aside
+  id="sticky-app-cta"
+  class="sticky-app-cta"
+  aria-label={`${s.region}: ${displayName}`}
+  data-app={app}
+  data-ios-only
+  hidden
+>
+  <div class="sticky-app-cta__inner">
+    <img src={icon} alt="" width="40" height="40" class="sticky-app-cta__icon" loading="lazy" />
+    <div class="sticky-app-cta__text">
+      <span class="sticky-app-cta__name">{displayName}</span>
+      <span class="sticky-app-cta__pitch">{pitch}</span>
+    </div>
+    <a
+      href={href}
+      class="sticky-app-cta__btn"
+      data-cta-position="sticky"
+      aria-label={`${s.getFree}: ${displayName} (App Store)`}
+    >
+      {s.getFree}
+    </a>
+    <button type="button" class="sticky-app-cta__close" aria-label={s.close} data-sticky-close>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+        <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none" />
+      </svg>
+    </button>
+  </div>
+</aside>
+
+<script is:inline>
+  (function () {
+    var bar = document.getElementById('sticky-app-cta');
+    if (!bar) return;
+    if (/Android/i.test(navigator.userAgent)) {
+      bar.remove();
+      return;
+    }
+    var key = 'stickyCtaDismissed:' + bar.getAttribute('data-app');
+    try {
+      if (localStorage.getItem(key)) {
+        bar.remove();
+        return;
+      }
+    } catch (e) {}
+    var mq = window.matchMedia('(max-width: 767.98px)');
+    var shown = false;
+    function show() {
+      if (shown) return;
+      shown = true;
+      bar.hidden = false;
+      document.body.classList.add('has-sticky-cta');
+      requestAnimationFrame(function () {
+        bar.classList.add('is-visible');
+      });
+      window.removeEventListener('scroll', onScroll);
+    }
+    function onScroll() {
+      if (mq.matches && window.scrollY > window.innerHeight * 0.4) show();
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    bar.querySelector('[data-sticky-close]').addEventListener('click', function () {
+      try {
+        localStorage.setItem(key, String(Date.now()));
+      } catch (e) {}
+      document.body.classList.remove('has-sticky-cta');
+      bar.remove();
+    });
+  })();
+</script>
+
+<style is:global>
+  .sticky-app-cta {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    padding: 0.5rem 0.75rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
+    background: var(--ink);
+    color: var(--on-ink);
+    border-top: 1px solid var(--line-strong);
+    box-shadow: 0 -6px 20px rgb(0 0 0 / 0.18);
+    transform: translateY(110%);
+    transition: transform 0.25s ease-out;
+  }
+  .sticky-app-cta.is-visible {
+    transform: translateY(0);
+  }
+  .sticky-app-cta[hidden] {
+    display: none;
+  }
+  @media (min-width: 768px) {
+    .sticky-app-cta {
+      display: none !important;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sticky-app-cta {
+      transition: none;
+    }
+  }
+  .sticky-app-cta__inner {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    max-width: 40rem;
+    margin: 0 auto;
+    min-height: 44px;
+  }
+  .sticky-app-cta__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    flex-shrink: 0;
+  }
+  .sticky-app-cta__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1 1 auto;
+    line-height: 1.2;
+  }
+  .sticky-app-cta__name {
+    font-weight: 900;
+    font-size: 0.9375rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sticky-app-cta__pitch {
+    font-size: 0.8125rem;
+    color: var(--on-ink-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sticky-app-cta__btn {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 0.875rem;
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--ink);
+    border: 2px solid var(--on-ink);
+    font-weight: 900;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  .sticky-app-cta__btn:focus-visible,
+  .sticky-app-cta__close:focus-visible {
+    outline: 3px solid var(--on-ink);
+    outline-offset: 2px;
+  }
+  .sticky-app-cta__close {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 44px;
+    margin-right: -0.375rem;
+    border-radius: 999px;
+    color: var(--on-ink);
+    background: transparent;
+  }
+  @media (max-width: 767.98px) {
+    body.has-sticky-cta {
+      padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    }
+  }
+</style>

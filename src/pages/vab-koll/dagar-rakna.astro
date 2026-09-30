@@ -3,6 +3,7 @@ import BaseLayout from '../../components/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
+import ResultCta from '../../components/ResultCta.astro';
 
 const faq = [
   {
@@ -110,6 +111,8 @@ const faq = [
       </div>
     </div>
 
+    <ResultCta app="vab-koll" text="VAB-koll håller koll på dina VAB-dagar och påminner dig att anmäla." />
+
     <div class="mt-10 rounded-2xl border border-line bg-gradient-to-br from-orange-50 to-surface p-6 md:p-8">
       <h2 class="text-xl font-black">Slipp räkna manuellt</h2>
       <p class="mt-2 text-ink-2">
@@ -160,6 +163,7 @@ const faq = [
 </BaseLayout>
 
 <script>
+  import { showResultCta } from '../../lib/result-cta';
   const barnEl = document.getElementById('barn') as HTMLInputElement;
   const anvandaEl = document.getElementById('anvanda') as HTMLInputElement;
   const out = {
@@ -183,6 +187,7 @@ const faq = [
       (nextYear.getTime() - now.getTime()) / 86400000,
     );
     out.aterstart.textContent = `Om ${days} dagar`;
+    showResultCta(`Du har ${kvarTot} VAB-dagar kvar i år – VAB-koll håller koll på dina VAB-dagar och påminner dig att anmäla.`);
   }
 
   barnEl.addEventListener('input', compute);

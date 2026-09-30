@@ -4,6 +4,7 @@ import BaseLayout from '../../components/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
+import ResultCta from '../../components/ResultCta.astro';
 
 const app = await getEntry('apps', 'fodelsedagar');
 const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
@@ -114,6 +115,8 @@ const faq = [
       </div>
     </div>
 
+    <ResultCta app="fodelsedagar" text="Glöm aldrig en födelsedag – Födelsedagar påminner dig i tid (gratis)." />
+
     <div class="mt-10 rounded-2xl border border-line bg-gradient-to-br from-pink-50 to-surface p-6 md:p-8">
       <h2 class="text-xl font-black">Vill du komma ihåg födelsedagar i appen?</h2>
       <p class="mt-2 text-ink-2">
@@ -183,6 +186,7 @@ const faq = [
 </BaseLayout>
 
 <script>
+  import { showResultCta, hideResultCta, nextBirthdaySentence, FODELSEDAGAR_PITCH } from '../../lib/result-cta';
   const inp = document.getElementById('pnr') as HTMLInputElement;
   const err = document.getElementById('err')!;
   const result = document.getElementById('result')!;
@@ -216,6 +220,7 @@ const faq = [
     err.textContent = msg;
     err.classList.remove('hidden');
     result.classList.add('hidden');
+    hideResultCta();
   }
   function clearErr() {
     err.classList.add('hidden');
@@ -273,6 +278,7 @@ const faq = [
     if (!inp.value.trim()) {
       clearErr();
       result.classList.add('hidden');
+    hideResultCta();
       return;
     }
     const parsed = parse(inp.value);
@@ -312,6 +318,7 @@ const faq = [
     out.weekday.textContent = weekdays[birth.getDay()];
     out.sex.textContent = sex;
     out.sign.textContent = zodiac(month, day);
+    showResultCta(`${nextBirthdaySentence(month, day)} ${FODELSEDAGAR_PITCH}`);
   }
 
   inp.addEventListener('input', compute);

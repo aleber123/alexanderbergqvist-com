@@ -1,5 +1,6 @@
 ---
 import VerktygLayout from '../../../components/VerktygLayout.astro';
+import ResultCta from '../../../components/ResultCta.astro';
 
 const inputCls =
   'w-full rounded-xl border border-line-strong bg-surface px-4 py-3 text-lg font-bold aria-[invalid=true]:border-ink aria-[invalid=true]:border-2';
@@ -93,6 +94,7 @@ const faq = [
         En lägre procentsats gäller bara om ett kollektivavtal uttryckligen säger det.
       </p>
     </div>
+    <ResultCta app="tidrapport" text="Tidrapportera summerar semesterersättningen på varje pass." />
   </section>
 
   <Fragment slot="forklaring">
@@ -129,6 +131,7 @@ const faq = [
 
 <script>
   import { readInput, flagInvalid, kr, kr2, num } from '../../../lib/sv-number';
+  import { showResultCta, hideResultCta } from '../../../lib/result-cta';
 
   const $ = (id: string) => document.getElementById(id) as HTMLInputElement;
   const form = document.getElementById('sem-form') as HTMLFormElement;
@@ -155,6 +158,8 @@ const faq = [
       out('pertimmedetail').textContent = 'Fyll i timlön';
     }
     out('underlag').hidden = procent >= 12;
+    if (ersattning > 0) showResultCta(`${num(procent)} % = ${kr(ersattning)} i semesterersättning – Tidrapportera summerar den automatiskt på varje pass.`);
+    else hideResultCta();
   }
 
   form.addEventListener('input', compute);

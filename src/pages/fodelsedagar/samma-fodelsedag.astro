@@ -4,6 +4,7 @@ import BaseLayout from '../../components/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
+import ResultCta from '../../components/ResultCta.astro';
 
 const app = await getEntry('apps', 'fodelsedagar');
 const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
@@ -94,6 +95,10 @@ const today = new Date();
             <div class="text-2xl md:text-3xl font-black" data-out="heroName">–</div>
             <div class="text-sm opacity-90 mt-1" data-out="heroDesc">–</div>
           </div>
+        </div>
+
+        <div class="mb-6">
+          <ResultCta app="fodelsedagar" text="Glöm aldrig en födelsedag – Födelsedagar påminner dig i tid (gratis)." />
         </div>
 
         <h2 class="text-xl font-black mb-3">🎂 Födda samma dag</h2>
@@ -266,6 +271,7 @@ const today = new Date();
 </BaseLayout>
 
 <script>
+  import { showResultCta } from '../../lib/result-cta';
   const inp = document.getElementById('bdate') as HTMLInputElement;
   const loading = document.getElementById('loading')!;
   const errorBox = document.getElementById('error')!;
@@ -602,6 +608,7 @@ const today = new Date();
       .join('');
 
     results.classList.remove('hidden');
+    showResultCta(`Du delar födelsedag med ${currentHero.name}. Glöm aldrig en födelsedag – Födelsedagar påminner dig i tid (gratis).`);
     loading.classList.add('hidden');
     errorBox.classList.add('hidden');
   }

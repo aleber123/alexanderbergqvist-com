@@ -4,6 +4,9 @@ import SEO from './SEO.astro';
 import Nav from './Nav.astro';
 import Footer from './Footer.astro';
 import Analytics from './Analytics.astro';
+import StickyAppCta from './StickyAppCta.astro';
+import { getCollection, getEntry } from 'astro:content';
+import { appSectionForPath, appStoreIdFromUrl } from '../lib/app-section';
 
 interface Props {
   title: string;
@@ -15,7 +18,13 @@ interface Props {
   updatedAt?: Date;
   keywords?: string[];
   noindex?: boolean;
+  /** Explicit Smart App Banner id. Optional: pages under an app section
+   *  (/<app>/…, /<lang>/<app>/…, mapped /verktyg/ calculators, /f/) get
+   *  it derived centrally from the pathname — see lib/app-section.ts. */
   appStoreId?: string;
+  /** Override the app this page belongs to (slug). Normally derived
+   *  from the pathname. */
+  app?: string;
   /** BCP-47 language code for the `<html lang>` attribute. Defaults to
    *  Swedish since most pages are sv. Localized pages pass 'en-US',
    *  'de-DE', etc. to keep screen readers + search engines aligned. */
@@ -26,7 +35,23 @@ interface Props {
   hreflangAlternates?: Record<string, string>;
 }
 
-const { htmlLang = 'sv', hreflangAlternates, ...props } = Astro.props;
+const { htmlLang = 'sv', hreflangAlternates, app: appOverride, ...props } = Astro.props;
+
+/* Which app does this page belong to? Derived centrally so the Smart
+   App Banner and the sticky mobile CTA appear on every app-section page
+   exactly once, without each page having to remember a prop. */
+const section = appSectionForPath(Astro.url.pathname);
+const appSlug = appOverride ?? section?.app;
+let appEntry = appSlug ? await getEntry('apps', appSlug) : undefined;
+if (!appEntry && props.appStoreId) {
+  appEntry = (await getCollection('apps')).find(
+    (a) => appStoreIdFromUrl(a.data.appStoreUrl) === props.appStoreId,
+  );
+}
+const appIsLive = appEntry?.data.status === 'live' && !!appEntry?.data.appStoreUrl;
+const smartBannerId =
+  props.appStoreId ?? (appIsLive ? appStoreIdFromUrl(appEntry!.data.appStoreUrl) : undefined);
+const pageLang = section?.lang ?? 'sv';
 
 /* Display face — Instrument Serif (SIL OFL), headings only. Body copy
    stays in the system stack, so all 163 MDX articles keep rendering
@@ -73,8 +98,13 @@ const fontFaces = `
     {/* htmlLang was destructured here and never forwarded, so SEO.astro
         fell back to Swedish for og:locale, inLanguage and hreflang on
         every translated page. */}
+    <script is:inline>
+      // Before first paint, so iOS-only CTAs never flash on Android.
+      if (/Android/i.test(navigator.userAgent)) document.documentElement.classList.add('is-android');
+    </script>
     <SEO
       {...props}
+      appStoreId={smartBannerId}
       hreflangAlternates={hreflangAlternates}
       locale={htmlLang.includes('-') ? htmlLang : 'sv-SE'}
     />
@@ -93,5 +123,15 @@ const fontFaces = `
       <slot />
     </main>
     <Footer />
+    {appIsLive && appEntry && (
+      <StickyAppCta
+        app={appEntry.id}
+        name={appEntry.data.name}
+        tagline={appEntry.data.tagline}
+        icon={appEntry.data.icon}
+        appStoreUrl={appEntry.data.appStoreUrl!}
+        lang={pageLang}
+      />
+    )}
   </body>
 </html>

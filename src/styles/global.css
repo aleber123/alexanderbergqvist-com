@@ -317,3 +317,17 @@ select:focus-visible,
 .prose .v[data-v='partial'] .v-mark {
   color: var(--signal);
 }
+
+/* iOS-only CTAs. BaseLayout adds `.is-android` to <html> from the user
+   agent before first paint. The apps are iPhone-only (no Play release
+   yet), so App Store buttons are dead ends on Android: hide them there
+   and show the `[data-android-only]` note instead. */
+[data-android-only] {
+  display: none;
+}
+.is-android [data-android-only] {
+  display: block;
+}
+.is-android [data-ios-only] {
+  display: none !important;
+}

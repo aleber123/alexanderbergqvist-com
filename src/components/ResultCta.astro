@@ -1,0 +1,60 @@
+---
+/**
+ * App CTA that sits directly under a calculator's computed result and
+ * is only revealed once there IS a result (see src/lib/result-cta.ts:
+ * the page script calls showResultCta(text) after computing). This is
+ * the moment of highest intent — the old CTA card sat after the
+ * disclaimer, roughly half a screen further down.
+ *
+ * Link is tagged `ct=result_<page>` so App Store Connect can compare
+ * it against the footer/inline badges.
+ *
+ * On Android the App Store badge is hidden (global `.is-android` rule
+ * in global.css) and a plain note says the app is iPhone-only for now.
+ */
+import { getEntry } from 'astro:content';
+import AppStoreBadge from './AppStoreBadge.astro';
+
+interface Props {
+  /** App slug, e.g. 'tidrapport'. */
+  app: string;
+  /** Fallback copy, used until the page script supplies result-based text. */
+  text: string;
+  campaign?: string;
+  /** Distinguishes several CTAs on one page (rare). */
+  id?: string;
+}
+
+const { app, text, campaign, id = 'default' } = Astro.props;
+const entry = await getEntry('apps', app);
+const url = entry?.data.appStoreUrl;
+---
+
+{entry && url && (
+  <div
+    data-result-cta={id}
+    hidden
+    class="mt-4 rounded-2xl border-2 border-ink bg-surface p-4 sm:p-5"
+    role="region"
+    aria-label={`${entry.data.name} – app`}
+  >
+    <div class="flex items-start gap-3">
+      <img
+        src={entry.data.icon}
+        alt=""
+        width="48"
+        height="48"
+        loading="lazy"
+        class="w-12 h-12 rounded-xl border border-line flex-shrink-0"
+      />
+      <p class="text-base font-semibold text-ink leading-snug" data-result-cta-text>{text}</p>
+    </div>
+    <div class="mt-4 flex flex-wrap items-center gap-3" data-ios-only>
+      <AppStoreBadge url={url} status="live" position="result" campaign={campaign} />
+      <span class="text-sm text-ink-3">Gratis · iPhone</span>
+    </div>
+    <p class="mt-3 text-sm text-ink-2" data-android-only>
+      {entry.data.name} finns just nu bara för iPhone.
+    </p>
+  </div>
+)}

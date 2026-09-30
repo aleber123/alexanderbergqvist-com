@@ -4,6 +4,7 @@ import BaseLayout from '../../components/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
+import ResultCta from '../../components/ResultCta.astro';
 
 const app = await getEntry('apps', 'surdeg');
 const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
@@ -150,6 +151,8 @@ const faq = [
       </div>
     </div>
 
+    <ResultCta app="surdeg" text="Surdeg-appen påminner dig när det är dags att mata." />
+
     <div class="mt-10 rounded-2xl border border-line bg-gradient-to-br from-amber-50 to-surface p-6 md:p-8">
       <h2 class="text-xl font-black">Slipp komma ihåg själv</h2>
       <p class="mt-2 text-ink-2">
@@ -235,6 +238,7 @@ const faq = [
 </BaseLayout>
 
 <script>
+  import { showResultCta } from '../../lib/result-cta';
   let storage: 'room' | 'fridge' = 'room';
   let ratio = 1;
 
@@ -305,6 +309,7 @@ const faq = [
     const water = mass * ratio;
     out.flour.textContent = `${Math.round(flour)} g`;
     out.water.textContent = `${Math.round(water)} g`;
+    showResultCta(`Nästa matning: ${label}. Surdeg-appen påminner dig när det är dags att mata – gratis för iPhone.`);
   }
 
   lastFedEl.addEventListener('input', compute);

@@ -4,6 +4,7 @@ import BaseLayout from '../../components/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
+import ResultCta from '../../components/ResultCta.astro';
 
 const app = await getEntry('apps', 'surdeg');
 const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
@@ -121,6 +122,8 @@ const faq = [
       </div>
     </div>
 
+    <ResultCta app="surdeg" text="Surdeg-appen räknar hydration automatiskt för dina egna recept." />
+
     <div class="mt-10 rounded-2xl border border-line bg-surface overflow-hidden">
       <table class="w-full text-sm">
         <thead class="bg-amber-50 text-left">
@@ -198,6 +201,7 @@ const faq = [
 </BaseLayout>
 
 <script>
+  import { showResultCta, hideResultCta } from '../../lib/result-cta';
   const mjolEl = document.getElementById('mjol') as HTMLInputElement;
   const vattenEl = document.getElementById('vatten') as HTMLInputElement;
   const surdegEl = document.getElementById('surdeg') as HTMLInputElement;
@@ -230,6 +234,8 @@ const faq = [
     else if (hydration < 83) verdict = 'Ciabatta-territorium';
     else verdict = 'Hög hydration — kräver teknik';
     out.verdict.textContent = verdict;
+    if (totalFlour > 0) showResultCta(`Din deg har ${hydration.toFixed(1).replace('.', ',')} % hydration – Surdeg-appen räknar ut det automatiskt för dina egna recept och påminner när degen ska vikas.`);
+    else hideResultCta();
   }
 
   [mjolEl, vattenEl, surdegEl].forEach((el) =>

@@ -1,5 +1,6 @@
 ---
 import VerktygLayout from '../../../components/VerktygLayout.astro';
+import ResultCta from '../../../components/ResultCta.astro';
 
 /* Same constants as VAB-koll (vab_app/lib/utils/vab_calculations.dart):
    SGI-tak 10 × prisbasbelopp 2026 = 592 000 kr, and
@@ -129,6 +130,7 @@ const faq = [
         </div>
       </dl>
     </div>
+    <ResultCta app="vab-koll" text="VAB-koll håller koll på dina VAB-dagar och påminner dig att anmäla." />
   </section>
 
   <Fragment slot="forklaring">
@@ -169,6 +171,7 @@ const faq = [
 
 <script>
   import { readInput, flagInvalid, kr, num } from '../../../lib/sv-number';
+  import { showResultCta, hideResultCta } from '../../../lib/result-cta';
 
   // Mirrors VabCalculations in the VAB-koll app.
   const SGI_TAK = 592000; // 10 × prisbasbelopp 2026 (59 200 kr)
@@ -213,6 +216,8 @@ const faq = [
     out('skatt').textContent = `− ${kr(skattBelopp)}`;
     out('total').textContent = kr(total);
     out('netto').textContent = `${num(dagar)} × ${ANDEL_NAMN[andelStr]} · ungefär ${kr(total - skattBelopp)} efter skatt`;
+    if (total > 0) showResultCta(`Du får ca ${kr(total)} i VAB-ersättning före skatt – VAB-koll håller koll på dina VAB-dagar och påminner dig att anmäla till Försäkringskassan i tid.`);
+    else hideResultCta();
   }
 
   form.addEventListener('input', compute);

@@ -2,6 +2,7 @@
 import { getEntry } from 'astro:content';
 import BaseLayout from '../../components/BaseLayout.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
+import ResultCta from '../../components/ResultCta.astro';
 import FAQ from '../../components/FAQ.astro';
 
 const app = await getEntry('apps', 'snusfri-resa');
@@ -111,6 +112,8 @@ const faq = [
       </div>
     </div>
 
+    <ResultCta app="snusfri-resa" text="Snusfri Resa räknar upp varje sparad krona live från dag 1." />
+
     <div class="mt-10 rounded-2xl border border-line bg-gradient-to-br from-emerald-50 to-surface p-6 md:p-8">
       <h2 class="text-xl font-black">Räkna mer än bara pengarna</h2>
       <p class="mt-2 text-ink-2">
@@ -121,8 +124,9 @@ const faq = [
       </p>
       <div class="mt-6">
         <AppStoreBadge
-          url="https://apps.apple.com/se/app/snusfri-resa/id6766103729"
-          status="soon"
+          url={app?.data.appStoreUrl}
+          status={app?.data.status ?? 'live'}
+          position="inline"
         />
       </div>
     </div>
@@ -190,6 +194,7 @@ const faq = [
 </BaseLayout>
 
 <script>
+  import { showResultCta, hideResultCta } from '../../lib/result-cta';
   // Live calculator — runs entirely client-side, no JS framework needed.
   const fmt = (n: number) =>
     new Intl.NumberFormat('sv-SE', {
@@ -215,6 +220,8 @@ const faq = [
     out.month.textContent = fmt(day * 30.4375);
     out.year.textContent = fmt(day * 365.25);
     out.decade.textContent = fmt(day * 3652.5);
+    if (day > 0) showResultCta(`Du sparar ca ${fmt(day * 365.25)} per år – Snusfri Resa räknar upp varje sparad krona live från dag 1.`);
+    else hideResultCta();
   }
 
   dosorEl.addEventListener('input', compute);

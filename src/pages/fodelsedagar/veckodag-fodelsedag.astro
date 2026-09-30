@@ -4,6 +4,7 @@ import BaseLayout from '../../components/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
+import ResultCta from '../../components/ResultCta.astro';
 
 const app = await getEntry('apps', 'fodelsedagar');
 const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
@@ -91,6 +92,8 @@ const faq = [
       </table>
     </div>
 
+    <ResultCta app="fodelsedagar" text="Glöm aldrig en födelsedag – Födelsedagar påminner dig i tid (gratis)." />
+
     <div class="mt-10 rounded-2xl border border-line bg-gradient-to-br from-pink-50 to-surface p-6 md:p-8">
       <h2 class="text-xl font-black">Få påminnelse i god tid</h2>
       <p class="mt-2 text-ink-2">
@@ -145,6 +148,7 @@ const faq = [
 </BaseLayout>
 
 <script>
+  import { showResultCta, nextBirthdaySentence, FODELSEDAGAR_PITCH } from '../../lib/result-cta';
   const inp = document.getElementById('bdate') as HTMLInputElement;
   const birthOut = document.querySelector('[data-out="birthWeekday"]')!;
   const tableBody = document.getElementById('yearTable')!;
@@ -196,6 +200,7 @@ const faq = [
       `);
     }
     tableBody.innerHTML = rows.join('');
+    showResultCta(`${nextBirthdaySentence(birth.getMonth(), birth.getDate())} ${FODELSEDAGAR_PITCH}`);
   }
 
   inp.addEventListener('input', compute);

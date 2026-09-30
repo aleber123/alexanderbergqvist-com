@@ -1,5 +1,6 @@
 ---
 import VerktygLayout from '../../../components/VerktygLayout.astro';
+import ResultCta from '../../../components/ResultCta.astro';
 
 /* Presets.
    Handels is the only preset tied to a real agreement, because its OB
@@ -227,6 +228,7 @@ const faq = [
         </div>
       </dl>
     </div>
+    <ResultCta app="tidrapport" text="Tidrapportera räknar ut ditt OB automatiskt för varje pass – gratis för iPhone." />
   </section>
 
   <Fragment slot="forklaring">
@@ -280,6 +282,7 @@ const faq = [
 
 <script>
   import { readInput, flagInvalid, kr, kr2, num } from '../../../lib/sv-number';
+  import { showResultCta, hideResultCta } from '../../../lib/result-cta';
 
   type Unit = 'pct' | 'kr';
   const form = document.getElementById('ob-form') as HTMLFormElement;
@@ -353,6 +356,8 @@ const faq = [
       totalHours > 0
         ? `${num(totalHours)} OB-timmar · i snitt ${kr2(total / totalHours)} extra per timme`
         : 'Fyll i antal timmar ovan';
+    if (total > 0) showResultCta(`Du får ca ${kr(total)} i OB för de här timmarna – Tidrapportera räknar ut det automatiskt för varje pass.`);
+    else hideResultCta();
   }
 
   presetEl.addEventListener('change', () => {

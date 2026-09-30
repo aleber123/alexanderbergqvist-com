@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import { resolveOgImage } from '../../../lib/og';
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../../components/BaseLayout.astro';
+import AppStoreQr from '../../../components/AppStoreQr.astro';
 import AppStoreBadge from '../../../components/AppStoreBadge.astro';
 import LangSwitcher from '../../../components/LangSwitcher.astro';
 import {
@@ -193,8 +194,9 @@ const articlesHeading = ARTICLES_HEADING[lang];
           <p class="mt-4 text-lg md:text-xl opacity-95 max-w-2xl">
             {tr.tagline}
           </p>
-          <div class="mt-8 flex flex-wrap gap-3 justify-center md:justify-start">
-            <AppStoreBadge url={appStoreUrl} status={status} variant="light" />
+          <div class="mt-8 flex flex-wrap items-center gap-3 lg:gap-5 justify-center md:justify-start">
+            <AppStoreBadge url={appStoreUrl} status={status} variant="light" position="hero" />
+            {status === 'live' && <AppStoreQr url={appStoreUrl} lang={lang} />}
           </div>
         </div>
       </div>
