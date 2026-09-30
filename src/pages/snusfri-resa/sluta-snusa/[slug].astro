@@ -23,7 +23,7 @@ const next = idx < DAYS.length - 1 ? DAYS[idx + 1] : null;
 ---
 
 <BaseLayout
-  title={`${day.title} — vad händer i kroppen?`}
+  title={day.seoTitle}
   description={`${day.label} utan snus: vad som händer i kroppen, hur det brukar kännas och vad som hjälper. Snusspecifikt — inga rökningsclaims.`}
   keywords={[
     `sluta snusa ${day.label.toLowerCase()}`,
@@ -87,6 +87,10 @@ const next = idx < DAYS.length - 1 ? DAYS[idx + 1] : null;
     </nav>
 
     <h2 class="mt-12 text-2xl font-black">Hela tidslinjen</h2>
+    <p class="mt-2 text-ink-2">
+      <a href="/snusfri-resa/sluta-snusa/" class="underline font-bold">Sluta snusa dag för dag – vad händer i kroppen?</a>
+      Hela förloppet från första timmen till ett år på en sida.
+    </p>
     <div class="mt-4 flex flex-wrap gap-2">
       {DAYS.filter((d) => d.slug !== day.slug).map((d) => (
         <a

@@ -1,0 +1,312 @@
+---
+/**
+ * /namnsdag/ — "Dagens namnsdag".
+ *
+ * Static HTML is rendered for the BUILD day so crawlers and no-JS
+ * visitors see real content; the inline script then recomputes today,
+ * tomorrow and the coming week in Europe/Stockholm, so the page is right
+ * on the day it is viewed, not the day it was deployed.
+ */
+import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FAQ from '../../components/FAQ.astro';
+import AppCta from '../../components/namnsdag/AppCta.astro';
+import Kalla from '../../components/namnsdag/Kalla.astro';
+import {
+  addDays,
+  formatDayMonth,
+  formatLong,
+  MANADER,
+  mdKey,
+  stockholmToday,
+  VECKODAGAR,
+  isoWeekday,
+} from '../../lib/datum';
+import {
+  NAMNLOSA_DAGAR,
+  TILLAGG_2027,
+  monthUrl,
+  nameUrl,
+  namesOn,
+} from '../../lib/namnsdag';
+
+const today = stockholmToday();
+const year = today.y;
+const tomorrow = addDays(today, 1);
+const week = Array.from({ length: 7 }, (_, i) => addDays(today, i + 2));
+
+const additions = Object.entries(TILLAGG_2027).flatMap(([key, names]) =>
+  names.map((name) => {
+    const [m, d] = key.split('-').map(Number);
+    return { name, m, d };
+  }),
+);
+
+const faq = [
+  {
+    q: 'Vad är en namnsdag?',
+    a: 'En namnsdag är den dag i almanackan som hör till ett visst förnamn. Har du ett namn som står i almanackan har du alltså en egen dag varje år, utöver födelsedagen. Traditionen kommer från helgonkalendern, där varje dag var tillägnad ett helgon, men i dag är de flesta namnen i den svenska almanackan vanliga förnamn utan religiös koppling.',
+  },
+  {
+    q: 'Vem bestämmer vilka namn som har namnsdag i Sverige?',
+    a: 'Svenska Akademien äger namnlängden, alltså listan över namn och datum i den svenska almanackan. Den ses över med jämna mellanrum. Enligt Institutet för språk och folkminnen (Isof) läggs sex nya namn till från 2027: Eira, Mio, Vilgot, Cassandra, Flora och Zackarias.',
+  },
+  {
+    q: 'Vilka dagar saknar namnsdag?',
+    a: 'Några dagar har inget namn i den svenska almanackan: nyårsdagen (1 januari), kyndelsmässodagen (2 februari), Marie bebådelsedag (25 mars), Johannes Döparens dag (24 juni), allhelgonadagen (1 november), juldagen (25 december) och skottdagen 29 februari.',
+  },
+  {
+    q: 'Hur firar man namnsdag?',
+    a: 'Oftast enkelt: ett grattis, en blomma, en tårtbit eller en kaka till fikat. På många arbetsplatser och i skolor uppmärksammas dagens namn med ett hurra. Det viktigaste är att någon kommer ihåg dagen – det är därför en påminnelse gör stor skillnad.',
+  },
+  {
+    q: 'Vad är skillnaden mellan namnsdag och födelsedag?',
+    a: 'Födelsedagen är personlig och firas större, ofta med kalas och presenter. Namnsdagen delar du med alla som heter samma sak och firas enklare. Den som inte har sitt namn i almanackan saknar namnsdag, men många väljer då att fira en dag med ett namn som liknar deras eget.',
+  },
+  {
+    q: 'Har mitt namn namnsdag om det stavas annorlunda?',
+    a: 'Almanackan tar bara upp vissa stavningar. Står ditt namn inte med kan du fira namnsdag den dag en närliggande stavning har, till exempel en kortform eller en variant av samma namn. Sök på namnet ovan så ser du om det finns med.',
+  },
+];
+---
+
+<BaseLayout
+  title={`Dagens namnsdag – vem har namnsdag idag? | Namnsdagar ${year}`}
+  description={`Se vem som har namnsdag idag och imorgon, sök när ett namn har namnsdag och bläddra bland alla namnsdagar ${year} månad för månad, enligt den svenska almanackan.`}
+  keywords={[
+    'dagens namnsdag',
+    'namnsdag idag',
+    'namnsdag imorgon',
+    `namnsdagar ${year}`,
+    'när har jag namnsdag',
+    'nya namnsdagar 2027',
+  ]}
+>
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 py-8">
+    <Breadcrumbs trail={[{ name: 'Hem', url: '/' }, { name: 'Namnsdagar' }]} />
+    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-ink-3">
+      Namnsdagar {year}
+    </span>
+    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+      Dagens namnsdag
+    </h1>
+
+    <div class="mt-6 rounded-2xl border border-pink-200 bg-pink-50 p-5 sm:p-6">
+      <div class="text-xs font-black uppercase tracking-widest text-pink-700">
+        Idag, <span data-nd="today-date">{formatLong(today)}</span>
+      </div>
+      <p class="mt-2 text-3xl sm:text-4xl font-black text-pink-900 break-words" data-nd="today-names">
+        {namesOn(today).length > 0
+          ? namesOn(today).map((n, i) => (
+              <Fragment>{i > 0 && ', '}<a href={nameUrl(n)} class="hover:underline">{n}</a></Fragment>
+            ))
+          : `Ingen namnsdag (${NAMNLOSA_DAGAR[mdKey(today)]})`}
+      </p>
+      <p class="mt-4 text-ink-2">
+        <strong>Imorgon</strong>, <span data-nd="tomorrow-date">{formatLong(tomorrow)}</span>:
+        <span class="font-bold" data-nd="tomorrow-names">
+          {namesOn(tomorrow).length > 0
+            ? namesOn(tomorrow).map((n, i) => (
+                <Fragment>{i > 0 && ', '}<a href={nameUrl(n)} class="underline">{n}</a></Fragment>
+              ))
+            : `ingen namnsdag (${NAMNLOSA_DAGAR[mdKey(tomorrow)]})`}
+        </span>
+      </p>
+    </div>
+
+    <h2 class="mt-10 text-2xl font-black">Namnsdagar den kommande veckan</h2>
+    <ul class="mt-4 divide-y divide-line rounded-2xl border border-line bg-surface" data-nd="week">
+      {week.map((dt) => (
+        <li class="flex flex-wrap gap-x-3 px-4 py-3">
+          <span class="w-40 shrink-0 text-ink-3">
+            {VECKODAGAR[isoWeekday(dt) - 1]} {formatDayMonth(dt)}
+          </span>
+          <span class="font-bold">
+            {namesOn(dt).length > 0
+              ? namesOn(dt).map((n, i) => (
+                  <Fragment>{i > 0 && ', '}<a href={nameUrl(n)} class="underline">{n}</a></Fragment>
+                ))
+              : `– (${NAMNLOSA_DAGAR[mdKey(dt)]})`}
+          </span>
+        </li>
+      ))}
+    </ul>
+
+    <h2 class="mt-10 text-2xl font-black" id="sok">När har … namnsdag?</h2>
+    <form class="mt-4 flex flex-col sm:flex-row gap-3" data-nd="search" role="search">
+      <label for="nd-namn" class="sr-only">Förnamn</label>
+      <input
+        id="nd-namn"
+        name="namn"
+        type="search"
+        list="nd-namnlista"
+        autocomplete="off"
+        placeholder="Skriv ett namn, t.ex. Anna"
+        class="w-full min-w-0 rounded-xl border border-line-strong px-4 py-3 text-lg font-bold"
+      />
+      <datalist id="nd-namnlista"></datalist>
+      <button
+        type="submit"
+        class="rounded-xl bg-ink text-white px-5 py-3 font-bold whitespace-nowrap"
+      >
+        Visa namnsdag
+      </button>
+    </form>
+    <div class="mt-3 text-ink-2" data-nd="search-result" aria-live="polite"></div>
+
+    <AppCta
+      heading="Få en påminnelse när dina vänner har namnsdag"
+      text="Födelsedagar (gratis) visar dagens namnsdagar och påminner dig i tid när någon du bryr dig om har namnsdag – eller fyller år."
+    />
+
+    <h2 class="mt-12 text-2xl font-black">Namnsdagar månad för månad</h2>
+    <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-2">
+      {MANADER.map((mn, i) => (
+        <a
+          href={monthUrl(i + 1)}
+          class="rounded-xl border border-line bg-surface px-4 py-3 font-bold capitalize hover:border-line-strong transition"
+        >
+          {mn}
+        </a>
+      ))}
+    </div>
+
+    <h2 class="mt-12 text-2xl font-black">Nya namnsdagar 2027</h2>
+    <p class="mt-3 text-ink-2">
+      Från och med 2027 får sex nya namn plats i den svenska almanackan. De
+      läggs till på dagar som redan har namn, så ingen förlorar sin namnsdag.
+    </p>
+    <ul class="mt-4 grid sm:grid-cols-2 gap-2">
+      {additions.map((a) => (
+        <li class="rounded-xl border border-line bg-surface px-4 py-3">
+          <a href={nameUrl(a.name)} class="font-bold underline">{a.name}</a>
+          <span class="text-ink-3"> – {formatDayMonth(a)}</span>
+        </li>
+      ))}
+    </ul>
+
+    <div class="prose mt-12">
+      <h2>Så fungerar den svenska namnlängden</h2>
+      <p>
+        Den svenska almanackan har ungefär 630 förnamn fördelade på årets
+        dagar, oftast ett eller två namn per dag. Listan kallas namnlängden
+        och ägs av Svenska Akademien. Den har ändrats flera gånger för att
+        spegla vilka namn svenskar faktiskt bär – gamla namn som knappt
+        används har fått lämna plats åt vanligare, och ibland har ett namn
+        flyttat till en annan dag.
+      </p>
+      <p>
+        Sidorna här följer namnlängden som den gäller i dag, med de nya namnen
+        från 2027 markerade. Samma lista används i appen Födelsedagar, så det
+        du ser här stämmer med påminnelserna i telefonen.
+      </p>
+      <h2>Kom ihåg namnsdagarna som betyder något</h2>
+      <p>
+        Det är lätt att komma ihåg sin egen namnsdag men svårare med
+        kollegans, svärmors eller barnbarnens. Ett grattis på rätt dag är en
+        liten sak som märks. Letar du efter fler datumverktyg finns
+        <a href="/vecka/">vilken vecka det är</a>,
+        <a href="/fodelsedagar/aldersrakna/">åldersräknaren</a> och
+        <a href="/fodelsedagar/veckodag-fodelsedag/">vilken veckodag du fyller år</a>.
+      </p>
+    </div>
+
+    <FAQ items={faq} />
+
+    <Kalla />
+  </section>
+</BaseLayout>
+
+<script>
+  import { addDays, formatDayMonth, formatLong, isoWeekday, mdKey, stockholmToday, VECKODAGAR, type YMD } from '../../lib/datum';
+  import { NAMES, NAMNLOSA_DAGAR, namesOn } from '../../lib/namnsdag';
+
+  const index: [string, string][] = NAMES.map((n) => [n.name, n.slug]);
+  const slugOf = new Map(index);
+
+  const $ = (k: string) => document.querySelector<HTMLElement>(`[data-nd="${k}"]`);
+
+  function namesInto(el: HTMLElement | null, date: YMD, cls: string, emptyPrefix: string) {
+    if (!el) return;
+    el.textContent = '';
+    const names = namesOn(date);
+    if (names.length === 0) {
+      el.textContent = `${emptyPrefix}${NAMNLOSA_DAGAR[mdKey(date)] ?? ''})`;
+      return;
+    }
+    names.forEach((n, i) => {
+      if (i > 0) el.append(', ');
+      const a = document.createElement('a');
+      a.href = `/namnsdag/namn/${slugOf.get(n)}/`;
+      a.className = cls;
+      a.textContent = n;
+      el.append(a);
+    });
+  }
+
+  const today = stockholmToday();
+  const tomorrow = addDays(today, 1);
+  $('today-date')!.textContent = formatLong(today);
+  namesInto($('today-names'), today, 'hover:underline', 'Ingen namnsdag (');
+  $('tomorrow-date')!.textContent = formatLong(tomorrow);
+  namesInto($('tomorrow-names'), tomorrow, 'underline', 'ingen namnsdag (');
+
+  const weekEl = $('week');
+  if (weekEl) {
+    weekEl.textContent = '';
+    for (let i = 2; i < 9; i++) {
+      const dt = addDays(today, i);
+      const li = document.createElement('li');
+      li.className = 'flex flex-wrap gap-x-3 px-4 py-3';
+      const d = document.createElement('span');
+      d.className = 'w-40 shrink-0 text-ink-3';
+      d.textContent = `${VECKODAGAR[isoWeekday(dt) - 1]} ${formatDayMonth(dt)}`;
+      const n = document.createElement('span');
+      n.className = 'font-bold';
+      namesInto(n, dt, 'underline', '– (');
+      li.append(d, n);
+      weekEl.append(li);
+    }
+  }
+
+  // Search: exact match jumps to the name page; otherwise suggest names
+  // that start with (or contain) what was typed.
+  const list = document.getElementById('nd-namnlista');
+  if (list) {
+    const frag = document.createDocumentFragment();
+    for (const [n] of index) {
+      const o = document.createElement('option');
+      o.value = n;
+      frag.append(o);
+    }
+    list.append(frag);
+  }
+  const form = $('search') as HTMLFormElement | null;
+  const out = $('search-result');
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const q = (form.elements.namedItem('namn') as HTMLInputElement).value.trim().toLocaleLowerCase('sv');
+    if (!q || !out) return;
+    const exact = index.find(([n]) => n.toLocaleLowerCase('sv') === q);
+    if (exact) {
+      location.href = `/namnsdag/namn/${exact[1]}/`;
+      return;
+    }
+    const starts = index.filter(([n]) => n.toLocaleLowerCase('sv').startsWith(q));
+    const hits = (starts.length ? starts : index.filter(([n]) => n.toLocaleLowerCase('sv').includes(q))).slice(0, 12);
+    out.textContent = '';
+    if (hits.length === 0) {
+      out.textContent = 'Namnet finns inte i den svenska almanackan. Prova en annan stavning eller en kortform av namnet.';
+      return;
+    }
+    out.append('Menade du: ');
+    hits.forEach(([n, s], i) => {
+      if (i > 0) out.append(', ');
+      const a = document.createElement('a');
+      a.href = `/namnsdag/namn/${s}/`;
+      a.className = 'underline font-bold';
+      a.textContent = n;
+      out.append(a);
+    });
+  });
+</script>

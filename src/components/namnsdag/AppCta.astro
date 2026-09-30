@@ -1,0 +1,43 @@
+---
+/**
+ * Födelsedagar CTA for /namnsdag/ and /vecka/. Inline card with the App
+ * Store badge (ct=inline_<page>). The sticky bar and Smart App Banner
+ * come from BaseLayout via lib/app-section.ts.
+ */
+import { getEntry } from 'astro:content';
+import AppStoreBadge from '../AppStoreBadge.astro';
+
+interface Props {
+  heading: string;
+  text: string;
+  position?: 'inline' | 'body' | 'footer';
+}
+const { heading, text, position = 'inline' } = Astro.props;
+const app = await getEntry('apps', 'fodelsedagar');
+---
+
+{app && (
+  <div class="mt-8 rounded-2xl border-2 border-ink bg-surface p-5 sm:p-6">
+    <div class="flex items-start gap-3">
+      <img
+        src={app.data.icon}
+        alt=""
+        width="48"
+        height="48"
+        loading="lazy"
+        class="w-12 h-12 rounded-xl border border-line flex-shrink-0"
+      />
+      <div>
+        <p class="font-black text-lg leading-snug">{heading}</p>
+        <p class="mt-1 text-ink-2">{text}</p>
+      </div>
+    </div>
+    <div class="mt-4 flex flex-wrap items-center gap-3" data-ios-only>
+      <AppStoreBadge url={app.data.appStoreUrl} status={app.data.status} position={position} />
+      <span class="text-sm text-ink-3">Gratis att ladda ner · iPhone</span>
+    </div>
+    <p class="mt-3 text-sm text-ink-2" data-android-only>
+      Födelsedagar finns just nu bara för iPhone.
+    </p>
+  </div>
+)}

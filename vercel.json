@@ -1036,6 +1036,16 @@
       "source": "/sov/:path+",
       "destination": "/somnkoll/:path+",
       "permanent": true
+    },
+    {
+      "source": "/snusfri-resa/abstinens-tidslinje",
+      "destination": "/snusfri-resa/sluta-snusa/",
+      "permanent": true
+    },
+    {
+      "source": "/snusfri-resa/abstinens-tidslinje/",
+      "destination": "/snusfri-resa/sluta-snusa/",
+      "permanent": true
     }
   ]
 }

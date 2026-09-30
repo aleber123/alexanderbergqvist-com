@@ -1,0 +1,187 @@
+---
+/**
+ * /namnsdag/namn/<slug>/ — "När har X namnsdag?", one page per name in
+ * the Swedish almanac. Kept deliberately compact: the date-specific facts
+ * (date, weekday, names sharing the day, neighbouring days, the rest of
+ * the month) are what differ between pages; the countdown is computed
+ * client-side in Europe/Stockholm.
+ */
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../components/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import ResultCta from '../../../components/ResultCta.astro';
+import Kalla from '../../../components/namnsdag/Kalla.astro';
+import {
+  addDays,
+  formatDayMonth,
+  isoWeekday,
+  MANADER,
+  mdKey,
+  stockholmToday,
+  VECKODAGAR,
+} from '../../../lib/datum';
+import {
+  NAMES,
+  NAMNLOSA_DAGAR,
+  TILLAGG_FRAN_AR,
+  monthUrl,
+  nameUrl,
+  namesForKey,
+  type NameEntry,
+} from '../../../lib/namnsdag';
+
+export const getStaticPaths = (() =>
+  NAMES.map((n) => ({ params: { slug: n.slug }, props: { entry: n } }))) satisfies GetStaticPaths;
+
+const { entry } = Astro.props as { entry: NameEntry };
+const { name, m, d, from2027 } = entry;
+const manad = MANADER[m - 1];
+const dateText = formatDayMonth(entry);
+
+// Next occurrence (build-time fallback; the script recomputes it).
+const today = stockholmToday();
+let nextYear = today.y;
+if (m < today.m || (m === today.m && d < today.d)) nextYear++;
+if (from2027 && nextYear < TILLAGG_FRAN_AR) nextYear = TILLAGG_FRAN_AR;
+const next = { y: nextYear, m, d };
+const nextWeekday = VECKODAGAR[isoWeekday(next) - 1];
+
+const sameDay = namesForKey(entry.key).filter((x) => x.name !== name);
+
+function neighbour(offset: number) {
+  // Walk in a common year so 28 feb → 1 mar (29 feb has no name anyway).
+  const dt = addDays({ y: 2025, m, d }, offset);
+  const key = mdKey(dt);
+  return { dt, names: namesForKey(key), reason: NAMNLOSA_DAGAR[key] };
+}
+const neighbours = [neighbour(-1), neighbour(1)];
+
+const sameMonth = NAMES.filter((n) => n.m === m && n.name !== name).sort((a, b) => a.d - b.d);
+
+const sharesText =
+  sameDay.length === 0
+    ? `${name} har dagen för sig själv – inget annat namn i almanackan delar den.`
+    : `${name} delar namnsdag med ${sameDay.map((x) => x.name).join(' och ')}.`;
+---
+
+<BaseLayout
+  title={`När har ${name} namnsdag? – ${dateText}`}
+  description={`${name} har namnsdag den ${dateText}${from2027 ? ' – ett nytt namn i almanackan från 2027' : ''}. ${sharesText} Se hur många dagar det är kvar och vilka andra som har namnsdag i ${manad}.`}
+  keywords={[`${name.toLowerCase()} namnsdag`, `när har ${name.toLowerCase()} namnsdag`, `namnsdag ${dateText}`]}
+>
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 py-8">
+    <Breadcrumbs
+      trail={[
+        { name: 'Hem', url: '/' },
+        { name: 'Namnsdagar', url: '/namnsdag/' },
+        { name: manad.charAt(0).toUpperCase() + manad.slice(1), url: monthUrl(m) },
+        { name },
+      ]}
+    />
+    <h1 class="mt-6 text-3xl md:text-5xl font-black tracking-tight break-words">
+      När har {name} namnsdag?
+    </h1>
+
+    <div class="mt-6 rounded-2xl border border-pink-200 bg-pink-50 p-5 sm:p-6">
+      <p class="text-2xl sm:text-3xl font-black text-pink-900">
+        {name} har namnsdag den {dateText}.
+      </p>
+      <p class="mt-2 text-ink-2" data-nd-next data-m={m} data-d={d} data-from-year={from2027 ? String(TILLAGG_FRAN_AR) : ''}>
+        Nästa gång är {nextWeekday} {dateText} {nextYear}.
+      </p>
+      {from2027 && (
+        <p class="mt-2 text-sm text-ink-2">
+          {name} är ett av sex namn som läggs till i den svenska almanackan från 2027.
+        </p>
+      )}
+    </div>
+
+    <ResultCta
+      app="fodelsedagar"
+      text={`Få en påminnelse när ${name} har namnsdag – Födelsedagar (gratis).`}
+    />
+
+    <h2 class="mt-10 text-xl font-black">Samma dag, {dateText}</h2>
+    <p class="mt-2 text-ink-2">
+      {sameDay.length === 0 ? (
+        sharesText
+      ) : (
+        <Fragment>
+          {name} delar namnsdag med{' '}
+          {sameDay.map((x, i) => (
+            <Fragment>
+              {i > 0 && (i === sameDay.length - 1 ? ' och ' : ', ')}
+              <a href={nameUrl(x.name)} class="font-bold underline">{x.name}</a>
+              {x.from2027 && ' (från 2027)'}
+            </Fragment>
+          ))}.
+        </Fragment>
+      )}
+    </p>
+
+    <h2 class="mt-8 text-xl font-black">Dagarna runt omkring</h2>
+    <ul class="mt-2 space-y-1 text-ink-2">
+      {neighbours.map((nb) => (
+        <li>
+          <span class="text-ink-3">{formatDayMonth(nb.dt)}:</span>{' '}
+          {nb.names.length > 0
+            ? nb.names.map((x, i) => (
+                <Fragment>{i > 0 && ', '}<a href={nameUrl(x.name)} class="font-bold underline">{x.name}</a></Fragment>
+              ))
+            : `ingen namnsdag (${nb.reason})`}
+        </li>
+      ))}
+    </ul>
+
+    <p class="mt-8 text-ink-2">
+      <strong>Fira {name}:</strong> en namnsdag firas oftast enkelt – ett
+      grattis på morgonen, en blomma eller något gott till fikat räcker långt.
+      Det som gör skillnad är att komma ihåg dagen.
+    </p>
+
+    <h2 class="mt-10 text-xl font-black">Fler namnsdagar i {manad}</h2>
+    <p class="mt-2 leading-relaxed text-ink-2">
+      {sameMonth.map((x, i) => (
+        <Fragment>
+          {i > 0 && ' · '}
+          <a href={nameUrl(x.name)} class="underline">{x.name}</a>
+          <span class="text-ink-3"> {x.d}/{x.m}</span>
+        </Fragment>
+      ))}
+    </p>
+
+    <p class="mt-8 font-bold">
+      <a href={monthUrl(m)} class="underline">Alla namnsdagar i {manad}</a>
+      <span class="text-ink-3"> · </span>
+      <a href="/namnsdag/" class="underline">Dagens namnsdag</a>
+    </p>
+
+    <Kalla />
+  </section>
+</BaseLayout>
+
+<script>
+  import { daysBetween, isoWeekday, MANADER, stockholmToday, VECKODAGAR } from '../../../lib/datum';
+  import { showResultCta } from '../../../lib/result-cta';
+
+  const el = document.querySelector<HTMLElement>('[data-nd-next]');
+  if (el) {
+    const m = Number(el.dataset.m);
+    const d = Number(el.dataset.d);
+    const today = stockholmToday();
+    let y = today.y;
+    if (m < today.m || (m === today.m && d < today.d)) y++;
+    const fromYear = Number(el.dataset.fromYear || 0);
+    if (y < fromYear) y = fromYear;
+    const next = { y, m, d };
+    const days = daysBetween(today, next);
+    const when = `${VECKODAGAR[isoWeekday(next) - 1]} ${d} ${MANADER[m - 1]} ${y}`;
+    el.textContent =
+      days === 0
+        ? 'Det är namnsdag idag – dags att gratulera!'
+        : days === 1
+          ? `Det är namnsdag imorgon, ${when}.`
+          : `Nästa namnsdag är om ${days} dagar, ${when}.`;
+    showResultCta();
+  }
+</script>

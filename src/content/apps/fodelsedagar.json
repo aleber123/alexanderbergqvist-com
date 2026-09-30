@@ -3,7 +3,7 @@
   "seoTitle": "Födelsedagsapp för iPhone – glöm aldrig födelsedagar",
   "metaDescription": "Födelsedagar påminner dig om födelsedagar och årsdagar i god tid. Importera från Kontakter, lägg till foton och se månaden i överblick. Gratis för 5 personer.",
   "tagline": "Glöm aldrig en födelsedag igen.",
-  "description": "Födelsedagar är iOS-appen som påminner dig om viktiga personers födelsedagar och årsdagar. Lägg till foton, importera från kontakter och få aviseringar i god tid.",
+  "description": "Födelsedagar är iOS-appen som påminner dig om viktiga personers födelsedagar, årsdagar och namnsdagar. Lägg till foton, importera från kontakter och få aviseringar i god tid – och se veckonumret direkt på hemskärmen med widgeten.",
   "icon": "/apps/fodelsedagar.webp",
   "accent": "#E91E63",
   "accentDark": "#AD1457",
@@ -20,7 +20,9 @@
     "Lägg till födelsedagar med foto",
     "Importera från Kontakter",
     "Påminnelser i god tid",
-    "Översikt månad för månad"
+    "Översikt månad för månad",
+    "Nyhet: namnsdagar – se dagens namn och få påminnelse om vänners namnsdagar",
+    "Nyhet: widget med veckonummer på hem- och låsskärmen"
   ],
   "status": "live",
   "order": 1

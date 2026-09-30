@@ -14,6 +14,7 @@
  *                                      semesterersättning → Tidrapportera;
  *                                      VAB → VAB-koll)
  *   /f/                              → fodelsedagar (share page)
+ *   /namnsdag/**, /vecka/            → fodelsedagar
  *   everything else                  → none
  */
 
@@ -35,7 +36,7 @@ export const APP_SLUGS = [
   'vab-koll',
 ] as const;
 
-const LANG_PREFIXES = new Set([
+export const LANG_PREFIXES = new Set([
   'en', 'de', 'no', 'da', 'es', 'fr', 'fi', 'is', 'it', 'el', 'nl', 'pl', 'pt',
 ]);
 
@@ -50,6 +51,10 @@ const VERKTYG_APP: Record<string, string> = {
 
 const OTHER_APP: Record<string, string> = {
   f: 'fodelsedagar',
+  // Name days + week number: Födelsedagar has name-day reminders and a
+  // week-number widget, so these date pages funnel there.
+  namnsdag: 'fodelsedagar',
+  vecka: 'fodelsedagar',
 };
 
 export interface AppSection {

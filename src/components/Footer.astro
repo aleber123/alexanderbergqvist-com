@@ -1,9 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
+import { LANG_PREFIXES } from '../lib/app-section';
 const apps = (await getCollection('apps')).sort(
   (a, b) => a.data.order - b.data.order
 );
 const year = new Date().getFullYear();
+// Swedish-only date pages: don't link them from the localized footers.
+const isSv = !LANG_PREFIXES.has(Astro.url.pathname.split('/').filter(Boolean)[0] ?? '');
 ---
 
 <footer class="border-t border-line bg-surface-2 mt-20">
@@ -29,6 +32,8 @@ const year = new Date().getFullYear();
       <div class="font-bold mb-3">Mer</div>
       <ul class="space-y-2 text-ink-2">
         <li><a href="/verktyg/" class="hover:text-ink">Gratis räknare</a></li>
+        {isSv && <li><a href="/namnsdag/" class="hover:text-ink">Dagens namnsdag</a></li>}
+        {isSv && <li><a href="/vecka/" class="hover:text-ink">Vilken vecka är det?</a></li>}
         <li><a href="/blog/" class="hover:text-ink">Blog</a></li>
         <li><a href="/om/" class="hover:text-ink">Om mig</a></li>
         <li>

@@ -1,4 +1,19 @@
 ---
+/**
+ * /snusfri-resa/sluta-snusa/ — THE page for "sluta snusa dag för dag /
+ * vad händer i kroppen / tidslinje".
+ *
+ * 2026-09-30: /snusfri-resa/abstinens-tidslinje/ competed for exactly the
+ * same queries (GSC page_query.csv: "sluta snusa dag för dag" 62 @28 here
+ * vs 107 @49 there; "sluta snusa dag 3" 43 @21 vs 98 @46; "…vad händer i
+ * kroppen" 48 @28 vs 88 @75). This page ranked better for every shared
+ * query, so it absorbed the timeline article (symptoms, "hur lång tid
+ * tar det", hour-by-hour start) and the article URL 301s here
+ * (vercel.json).
+ *
+ * ACCURACY: snus is not smoking — no lung/breathing/CO claims. See the
+ * rule at the top of src/data/slutasnusa.ts.
+ */
 import { getEntry } from 'astro:content';
 import BaseLayout from '../../../components/BaseLayout.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
@@ -7,55 +22,242 @@ import AppStoreBadge from '../../../components/AppStoreBadge.astro';
 import { DAYS, FAQ_COMMON } from '../../../data/slutasnusa';
 
 const app = await getEntry('apps', 'snusfri-resa');
-const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
+const dayUrl = (slug: string) => `/snusfri-resa/sluta-snusa/${slug}/`;
+const label = (slug: string) => DAYS.find((d) => d.slug === slug)?.label ?? slug;
+
+interface Step {
+  id: string;
+  when: string;
+  heading: string;
+  text: string;
+  links?: string[];
+}
+
+const TIMELINE: Step[] = [
+  {
+    id: 'timme-0-8',
+    when: 'Timme 0–8',
+    heading: 'Nikotinhalten sjunker',
+    text: 'Nikotinets halveringstid i blodet är ungefär två timmar. Snus avger nikotin långsamt genom munslemhinnan, så nivån sjunker lite senare än efter en cigarett – men inom några timmar är den tydligt lägre. Nikotin höjer puls och blodtryck tillfälligt, så de börjar gå ner. Det första suget kommer ofta redan samma dag.',
+  },
+  {
+    id: 'dag-1',
+    when: 'Dag 1',
+    heading: 'Nikotinet lämnar kroppen – suget kommer i vågor',
+    text: 'Efter ungefär ett dygn är nästan allt nikotin borta ur blodet (nedbrytningsprodukten kotinin går att mäta några dagar till). Rastlöshet och irritation är vanligt. Suget kommer i vågor som brukar toppa och klinga av inom några minuter.',
+    links: ['dag-1'],
+  },
+  {
+    id: 'dag-2-3',
+    when: 'Dag 2–3',
+    heading: 'Toppen på abstinensen',
+    text: 'För de flesta är det här de svåraste dagarna. Kort stubin, sämre koncentration, dålig sömn, huvudvärk och ökad aptit är vanligt. Symtomen är obehagliga men inte farliga – och de brukar vara som starkast just nu.',
+    links: ['dag-2', 'dag-3'],
+  },
+  {
+    id: 'dag-4-7',
+    when: 'Dag 4–7',
+    heading: 'Det börjar vända',
+    text: 'Suget kommer glesare men kan fortfarande vara starkt i vissa situationer: efter maten, till kaffet, i bilen eller med alkohol. Mer och mer handlar det om vanor än om nikotin. Efter en vecka har de flesta passerat det värsta.',
+    links: ['dag-4', 'dag-5', 'dag-6', 'dag-7'],
+  },
+  {
+    id: 'vecka-2',
+    when: 'Vecka 2',
+    heading: 'Humöret stabiliseras',
+    text: 'Sömn och humör brukar bli jämnare. Suget blir mer situationsbundet – många går hela dagar utan att tänka på snus och blir sedan överraskade av ett plötsligt sug. Här är "bara en" den vanligaste fällan.',
+    links: ['dag-14'],
+  },
+  {
+    id: 'vecka-3-4',
+    when: 'Vecka 3–4',
+    heading: 'De fysiska symtomen klingar av',
+    text: 'De flesta fysiska abstinenssymtomen har klingat av efter två till fyra veckor. Det som finns kvar är främst sug kopplat till vanor, stress och sociala situationer.',
+  },
+  {
+    id: 'manad-1',
+    when: 'Månad 1',
+    heading: 'Munslemhinnan återhämtar sig',
+    text: 'Snus ger ofta en vit, skrynklig förändring i slemhinnan där prillan brukar ligga. Den brukar gå tillbaka inom några veckor efter att man slutat. Finns en förändring kvar, eller ett sår som inte läker, ska du visa det för en tandläkare.',
+    links: ['dag-30'],
+  },
+  {
+    id: 'manad-3',
+    when: 'Månad 3',
+    heading: 'Snusfritt blir det normala',
+    text: 'Suget dyker sällan upp, och när det gör det är det ofta vid stress eller alkohol. Tandkött som dragit sig tillbaka växer inte ut igen, men det slutar påverkas av snuset.',
+    links: ['dag-90'],
+  },
+  {
+    id: 'ett-ar',
+    when: 'Ett år',
+    heading: 'Vanan är bruten – och plånboken märker det',
+    text: 'Med en dosa om dagen har du sparat i storleksordningen 18 000–24 000 kr. Långvarigt snusande kopplas bland annat till ökad risk för typ 2-diabetes. Hur snabbt riskerna minskar efter ett stopp är mindre studerat för snus än för rökning, men att sluta är det enda sättet att sluta bygga på dem.',
+  },
+];
+
+const faq = [
+  {
+    q: 'Vad händer i kroppen när man slutar snusa?',
+    a: 'Nikotinet lämnar blodet inom ungefär ett dygn och hjärnan reagerar med abstinens: sug, irritation, rastlöshet, sömnproblem och ökad aptit. Symtomen är starkast de första dagarna och de flesta klingar av inom två till fyra veckor. Samtidigt får munslemhinnan vila, och snusförändringar där prillan legat brukar gå tillbaka inom några veckor.',
+  },
+  {
+    q: 'Hur lång tid tar det att sluta snusa?',
+    a: 'Den fysiska abstinensen är värst dag 1–3 och de flesta fysiska symtomen har klingat av efter två till fyra veckor. Suget som hänger ihop med vanor – kaffet, bilen, fredagskvällen – kan dyka upp i flera månader, men blir glesare och svagare. Räkna med att den första månaden kräver en plan, sedan blir det gradvis lättare.',
+  },
+  {
+    q: 'Hur länge sitter nikotin kvar i kroppen?',
+    a: 'Nikotinets halveringstid i blodet är ungefär två timmar, så efter ungefär ett dygn är nästan allt nikotin borta. Nedbrytningsprodukten kotinin stannar längre och kan mätas i några dagar.',
+  },
+  {
+    q: 'Är det farligt att sluta snusa tvärt?',
+    a: 'Nej. Nikotinabstinens är obehaglig men inte farlig. Vill du lindra symtomen kan nikotinläkemedel som plåster, tuggummi eller sugtabletter hjälpa – fråga på apoteket. Får du besvär som oroar dig, som hjärtklappning eller kraftig nedstämdhet, kontakta vården via 1177.',
+  },
+  ...FAQ_COMMON.filter((f) => /vikt|pengar|nikotinfritt/i.test(f.q)),
+];
 ---
 
 <BaseLayout
-  title="Sluta snusa — dag för dag: vad händer i kroppen?"
-  description="Vad händer när du slutar snusa, dag för dag. Abstinens, sug, tandkött och smak — från första dygnet till tre månader. Ärligt och snusspecifikt."
+  title="Sluta snusa dag för dag – vad händer i kroppen? (tidslinje)"
+  description="Vad händer i kroppen när du slutar snusa? Tidslinje timme för timme, dag för dag och vecka för vecka: abstinens, sug, munslemhinna och hur lång tid det tar. Snusspecifikt."
   keywords={[
-    'sluta snusa',
-    'sluta snusa abstinens',
     'sluta snusa dag för dag',
-    'snusabstinens hur länge',
-    'vad händer när man slutar snusa',
-    'snusfri',
+    'sluta snusa vad händer i kroppen',
+    'sluta snusa tidslinje',
+    'sluta snusa vecka för vecka',
+    'hur lång tid tar det att sluta snusa',
+    'snus abstinens',
   ]}
-  appStoreId={appStoreId}
 >
-  <section class="max-w-3xl mx-auto px-6 py-8">
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 py-8">
     <Breadcrumbs
       trail={[
         { name: 'Hem', url: '/' },
         { name: 'Snusfri Resa', url: '/snusfri-resa/' },
-        { name: 'Sluta snusa — dag för dag' },
+        { name: 'Sluta snusa dag för dag' },
       ]}
     />
     <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-ink-3">
-      Guide
+      Tidslinje
     </span>
     <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
-      Sluta snusa — dag för dag
+      Sluta snusa dag för dag: vad händer i kroppen?
     </h1>
     <p class="mt-3 text-lg text-ink-2">
-      Vad som faktiskt händer i kroppen, hur det brukar kännas, och vad som
-      hjälper — från första dygnet till tre månader.
+      Det här händer när du slutar snusa – från första timmen till ett år. Vad
+      som sker i kroppen, hur det brukar kännas och hur lång tid det tar innan
+      det blir lättare.
     </p>
 
-    <div class="mt-8 rounded-xl border border-line bg-surface-2 p-5">
-      <p class="text-sm text-ink-2">
-        <strong>Om snus och rökning:</strong> den här guiden handlar om snus.
-        Hälsoeffekterna skiljer sig från rökning — snus påverkar framför allt
-        nikotinberoende, tandkött, munslemhinna, smak och blodtryck, inte lungor
-        eller andning. Du hittar inga rökningsclaims här.
+    <div class="mt-6 rounded-2xl border-2 border-ink bg-surface p-5 sm:p-6">
+      <p class="font-bold leading-snug">
+        Följ din egen tidslinje i appen – Snusfri Resa visar vilken milstolpe du
+        just passerat och hur mycket du sparat.
+      </p>
+      <div class="mt-4 flex flex-wrap items-center gap-3" data-ios-only>
+        <AppStoreBadge url={app?.data.appStoreUrl} status={app?.data.status} position="inline" />
+        <span class="text-sm text-ink-3">Gratis · iPhone</span>
+      </div>
+      <p class="mt-3 text-sm text-ink-2" data-android-only>Snusfri Resa finns just nu bara för iPhone.</p>
+    </div>
+
+    <nav class="mt-8 flex flex-wrap gap-2" aria-label="Hoppa i tidslinjen">
+      {TIMELINE.map((s) => (
+        <a
+          href={`#${s.id}`}
+          class="rounded-full border border-line bg-surface px-3 py-1.5 text-sm font-bold hover:border-line-strong"
+        >
+          {s.when}
+        </a>
+      ))}
+    </nav>
+
+    <h2 class="mt-10 text-2xl font-black">Tidslinjen: det här händer när du slutar snusa</h2>
+    <ol class="mt-6 space-y-6 border-l-2 border-line pl-5">
+      {TIMELINE.map((s) => (
+        <li id={s.id} class="scroll-mt-24">
+          <div class="text-xs font-black uppercase tracking-widest text-ink-3">{s.when}</div>
+          <h3 class="mt-1 text-lg font-black">{s.heading}</h3>
+          <p class="mt-1 text-ink-2 leading-relaxed">{s.text}</p>
+          {s.links && (
+            <p class="mt-2 text-sm font-bold">
+              {s.links.map((l, i) => (
+                <Fragment>
+                  {i > 0 && ' · '}
+                  <a href={dayUrl(l)} class="underline">Läs mer: {label(l)}</a>
+                </Fragment>
+              ))}
+            </p>
+          )}
+        </li>
+      ))}
+    </ol>
+
+    <div class="prose mt-12">
+      <h2>Vanliga abstinenssymtom</h2>
+      <ul>
+        <li>Starkt sug efter snus, som kommer i vågor</li>
+        <li>Irritation och kort stubin</li>
+        <li>Rastlöshet och svårt att koncentrera sig</li>
+        <li>Sömnproblem</li>
+        <li>Ökad aptit, ofta sötsug</li>
+        <li>Nedstämdhet eller oro</li>
+      </ul>
+      <p>
+        Symtomen är vanligast och starkast de första dagarna och de flesta
+        klingar av inom två till fyra veckor. Alla får inte alla symtom. Får du
+        besvär som oroar dig – till exempel hjärtklappning, kraftig
+        nedstämdhet eller något som inte går över – kontakta vården via
+        <a href="https://www.1177.se/" rel="noopener">1177</a>.
+      </p>
+
+      <h2>Hur lång tid tar det att sluta snusa?</h2>
+      <p>
+        Det finns två delar. <strong>Den fysiska abstinensen</strong> är värst
+        dag 1–3 och har för de flesta klingat av efter två till fyra veckor.
+        <strong>Vanan</strong> tar längre tid: suget som sitter ihop med kaffet,
+        bilen eller fredagskvällen kan dyka upp i månader, men blir glesare
+        och kortare för varje gång du låter bli. Därför lönar det sig att
+        planera för situationerna, inte bara för de första dagarna.
+      </p>
+
+      <h2>Det viktigaste att veta</h2>
+      <ul>
+        <li>
+          <strong>Suget går över.</strong> En sugattack brukar toppa och klinga av
+          inom några minuter. Du behöver inte stå emot i timmar – bara i några
+          minuter i taget.
+        </li>
+        <li>
+          <strong>Dag 2–3 är svårast.</strong> Vet du om det i förväg blir det
+          lättare att ta, och det är då många återfaller.
+        </li>
+        <li>
+          <strong>"Bara en" fungerar sällan.</strong> En prilla väcker suget igen
+          och gör det lätt att glida tillbaka.
+        </li>
+        <li>
+          <strong>Du behöver inte göra det ensam.</strong> Nikotinläkemedel kan
+          lindra abstinensen (läs om
+          <a href="/snusfri-resa/nikotinplaster-sluta-snusa/">nikotinplåster när man slutar snusa</a>),
+          och Sluta-röka-linjen hjälper även dig som snusar, gratis, på
+          <a href="https://www.slutarokalinjen.se/" rel="noopener">slutarokalinjen.se</a>
+          eller 020-84 00 00.
+        </li>
+      </ul>
+      <p>
+        Letar du efter konkreta knep för sug och triggers? Läs
+        <a href="/snusfri-resa/tips-sluta-snusa/">10 tips för att sluta snusa</a>
+        och räkna ut
+        <a href="/snusfri-resa/kalkylator/">vad du sparar på att sluta</a>.
       </p>
     </div>
 
-    <h2 class="mt-12 text-2xl font-black">Välj var du är</h2>
+    <h2 class="mt-12 text-2xl font-black">Dag för dag: välj var du är</h2>
     <div class="mt-4 grid sm:grid-cols-2 gap-3">
       {DAYS.map((d) => (
         <a
-          href={`/snusfri-resa/sluta-snusa/${d.slug}/`}
+          href={dayUrl(d.slug)}
           class="rounded-xl border border-line bg-surface px-5 py-4 hover:border-line-strong hover:shadow-sm transition"
         >
           <span class="font-bold">{d.label}</span>
@@ -64,49 +266,33 @@ const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
       ))}
     </div>
 
-    <h2 class="mt-12 text-2xl font-black">Det viktigaste att veta</h2>
-    <ul class="mt-4 space-y-3 text-ink-2">
-      <li>
-        <strong>Suget kommer i vågor, inte konstant.</strong> En craving toppar
-        och klingar av på 3–5 minuter. Du behöver inte stå emot i timmar — bara
-        i några minuter, om och om igen.
-      </li>
-      <li>
-        <strong>Dag 2–3 är svårast.</strong> Nikotinet är utrensat och
-        receptorerna reagerar som mest. Vet du om det i förväg blir det lättare
-        att ta — och det är just då de flesta återfaller.
-      </li>
-      <li>
-        <strong>"Bara en" fungerar inte.</strong> En enda prilla återställer
-        nikotinreceptorerna, och du börjar i praktiken om.
-      </li>
-      <li>
-        <strong>Efter en vecka är det mest vana kvar.</strong> Då handlar det om
-        att byta ut situationerna, inte om att stå emot kemi.
-      </li>
-    </ul>
-
     <div class="mt-12 rounded-2xl border border-line bg-surface-2 p-6 md:p-8">
       <h2 class="text-xl font-black">Se timmarna och kronorna växa</h2>
       <p class="mt-2 text-ink-2">
         Snusfri Resa räknar snusfri tid och sparade pengar i realtid, med en
-        hälsotimeline som är specifik för snus — inte rökning. Gratis.
+        hälsotidslinje som gäller snus – inte rökning. Gratis.
       </p>
-      <div class="mt-5">
-        <AppStoreBadge url={app?.data.appStoreUrl} status={app?.data.status} />
+      <div class="mt-5" data-ios-only>
+        <AppStoreBadge url={app?.data.appStoreUrl} status={app?.data.status} position="result" />
       </div>
-      <p class="mt-4 text-sm">
-        <a href="/snusfri-resa/kalkylator/" class="underline text-ink-2">
-          Räkna ut vad du sparar →
-        </a>
+      <p class="mt-3 text-sm text-ink-2" data-android-only>Snusfri Resa finns just nu bara för iPhone.</p>
+    </div>
+
+    <div class="mt-8 rounded-xl border border-line bg-surface-2 p-5">
+      <p class="text-sm text-ink-2">
+        <strong>Om snus och rökning:</strong> den här guiden handlar om snus.
+        Hälsoeffekterna skiljer sig från rökning – snus påverkar framför allt
+        nikotinberoendet, munslemhinnan, tandköttet och blodtrycket, inte
+        lungorna. Därför hittar du inga rökningsspecifika påståenden här.
       </p>
     </div>
 
-    <FAQ items={FAQ_COMMON} />
+    <FAQ items={faq} />
 
     <p class="mt-10 text-sm text-ink-3">
-      Informationen här är allmän och ersätter inte medicinsk rådgivning. Mår du
-      dåligt, eller läker inte tandköttet, kontakta vårdcentral eller tandläkare.
+      Informationen är allmän och ersätter inte medicinsk rådgivning. Mår du
+      dåligt, eller läker inte en förändring i munnen, kontakta vårdcentral
+      eller tandläkare.
     </p>
   </section>
 </BaseLayout>
