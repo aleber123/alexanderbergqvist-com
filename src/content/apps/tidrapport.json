@@ -1,7 +1,10 @@
 {
   "name": "Tidrapportera",
-  "tagline": "Snabb tidrapportering för konsulter och timanställda.",
-  "description": "Tidrapportera är iOS-appen som låter dig snabbt logga arbetstid per kund eller projekt. Exportera som PDF eller CSV i slutet av månaden.",
+  "seoTitle": "Tidrapportera – enkel tidrapport-app med OB, övertid & lön",
+  "h1": "Tidrapportera – enkel tidrapportering i mobilen",
+  "metaDescription": "Enkel tidrapportering i mobilen: stämpla in eller logga passet, se OB-tillägg, övertid och lön efter skatt direkt och skicka tidrapporten som PDF. Gratis start.",
+  "tagline": "Tidrapport-appen för timanställda och skiftarbetare: logga passet, se OB, övertid och lön direkt.",
+  "description": "Tidrapportera är en enkel tidrapport-app för iPhone. Stämpla in och ut eller skriv in passet i efterhand, så räknar appen ut arbetade timmar, OB-tillägg, övertid, semesterersättning och en uppskattad lön efter skatt – per arbetsgivare. Skicka tidrapporten som PDF eller CSV till chefen när månaden är slut.",
   "icon": "/apps/tidrapport.webp",
   "accent": "#1976D2",
   "accentDark": "#0D47A1",
@@ -10,15 +13,21 @@
   "category": "Affär",
   "keywords": [
     "tidrapport app",
-    "tidrapportering",
-    "tidsregistrering",
-    "konsulttid"
+    "tidrapportering app",
+    "app för tidrapportering",
+    "enkel tidrapportering app",
+    "tidrapport app iphone",
+    "ob-tillägg app"
   ],
   "features": [
-    "Snabblogg per projekt eller kund",
-    "Veckosammanfattning",
-    "Export till PDF/CSV",
-    "Påminnelser vid arbetstid slut"
+    "Stämpla in och ut med timer – eller logga passet i efterhand",
+    "OB-tillägg för kväll, natt, helg och röda dagar – egna regler per arbetsgivare",
+    "Övertid efter valfritt antal timmar per dag eller vecka",
+    "Lön före och efter skatt, med semesterersättning",
+    "Flera arbetsgivare med egen timlön, OB och löneperiod",
+    "Tidrapport som PDF (med signaturrader) eller CSV som öppnas i Excel",
+    "Påminnelser om att logga passet och skicka månadsrapporten",
+    "Inget konto – all data sparas i telefonen"
   ],
   "status": "live",
   "order": 3

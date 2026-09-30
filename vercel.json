@@ -1021,6 +1021,21 @@
       "source": "/surdeg/sourdough-storage-fridge/",
       "destination": "/en/surdeg/sourdough-storage-fridge/",
       "permanent": true
+    },
+    {
+      "source": "/sov",
+      "destination": "/somnkoll/",
+      "permanent": true
+    },
+    {
+      "source": "/sov/",
+      "destination": "/somnkoll/",
+      "permanent": true
+    },
+    {
+      "source": "/sov/:path+",
+      "destination": "/somnkoll/:path+",
+      "permanent": true
     }
   ]
 }

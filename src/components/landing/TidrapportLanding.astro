@@ -1,0 +1,135 @@
+---
+/**
+ * Extra landing content for /tidrapport/ — the page that should own
+ * "tidrapport app / tidrapportering app / app för tidrapportering".
+ *
+ * Every feature claim here is verified against the app source
+ * (~/Downloads/tidrapport, lib/), not against the old 1.0 submission
+ * text: there are NO projects/customers, NO geofencing, NO iCloud sync,
+ * NO widgets and NO XLSX export — only PDF and CSV. Turnus exists in
+ * code from 1.1.7 and is labelled as upcoming until that version is
+ * live in the App Store (update TURNUS_LIVE when it is).
+ */
+import FAQ from '../FAQ.astro';
+
+interface Props {
+  accent: string;
+}
+const { accent } = Astro.props;
+
+const TURNUS_LIVE = false;
+
+const faq = [
+  {
+    q: 'Vad kostar Tidrapportera?',
+    a: 'Appen är gratis att ladda ner och du kan logga hur många pass du vill utan att betala. Gratisversionen räcker för två arbetsgivare och visar lönen för innevarande och förra månaden. Premium (månad, år eller engångsköp) låser upp obegränsade PDF/CSV-exporter, fler arbetsgivare, äldre månader och bland annat lönespecifikationskontroll.',
+  },
+  {
+    q: 'Kan appen räkna OB-tillägg?',
+    a: 'Ja. Du lägger upp OB-regler per arbetsgivare: vilka veckodagar, vilken tid (även över midnatt), om regeln gäller röda dagar och om tillägget är en procentsats eller ett fast belopp per timme. Appen räknar minut för minut, och där två regler överlappar gäller den högsta. Svenska helgdagar som midsommarafton, julafton och nyårsafton är inlagda.',
+  },
+  {
+    q: 'Räknar Tidrapportera ut lön efter skatt?',
+    a: 'Ja, som en uppskattning. Du anger din skattesats i procent (kolla din skattetabell), och appen räknar bruttolön med OB, övertid och semesterersättning och drar sedan skatten. Löneväxling, fackavgift och milersättning kan också läggas in.',
+  },
+  {
+    q: 'Kan jag skicka tidrapporten till min chef?',
+    a: 'Ja. Exportera månaden som PDF med tabell över alla pass, lönesammanställning och signaturrader, eller som CSV som öppnas i Excel och Google Kalkylark. Du kan också mejla rapporten direkt till arbetsgivarens adress från appen.',
+  },
+  {
+    q: 'Fungerar appen för flera jobb samtidigt?',
+    a: 'Ja. Varje arbetsgivare har egen timlön, OB-regler, övertidsgräns, skatt och löneperiod. Två arbetsgivare ingår gratis. Appen har däremot inga projekt- eller kundkoder, så den passar timanställda och skiftarbetare bättre än konsulter som fakturerar per projekt.',
+  },
+  {
+    q: 'Behöver jag skapa ett konto?',
+    a: 'Nej. Allt sparas lokalt i telefonen, och appen samlar inte in några personuppgifter. Det betyder också att det inte finns någon synk mellan enheter – använd exporten om du vill spara en kopia.',
+  },
+  {
+    q: 'Stöder Tidrapportera turnus och schema?',
+    a: TURNUS_LIVE
+      ? 'Ja. Lägg upp ett roterande schema (t.ex. 2-2-3, 4 på/4 av eller 5-5-4) så syns planerade pass i kalendern och kan loggas med ett tryck.'
+      : 'Turnus kommer i version 1.1.7: roterande scheman som 2-2-3, 4 på/4 av och 5-5-4 i kalendern, där planerade pass loggas med ett tryck. Tills dess kan du spara vanliga pass som mallar och logga dem snabbt.',
+  },
+];
+---
+
+<section class="max-w-3xl mx-auto px-4 sm:px-6 py-12">
+  <div class="prose max-w-none">
+    <h2>Enkel tidrapportering för dig som jobbar pass</h2>
+    <p>
+      De flesta tidrapport-appar är byggda för företag som ska fakturera
+      kunder. Tidrapportera är byggd för dig som <strong>får lön per
+      timme</strong> – i butik, restaurang, vård, lager eller på flera jobb
+      samtidigt – och vill veta att lönen stämmer. Du loggar passet, och
+      appen visar direkt vad det är värt i kronor.
+    </p>
+
+    <h3>Så funkar det</h3>
+    <ol>
+      <li><strong>Lägg upp arbetsgivaren</strong> med timlön, OB-regler och löneperiod. Svenska standardvärden fylls i åt dig.</li>
+      <li><strong>Logga passet</strong> – starta timern när du börjar, eller skriv in tid och rast efteråt. Återkommande pass sparar du som mallar.</li>
+      <li><strong>Se lönen</strong> för månaden: ordinarie tid, OB, övertid, semesterersättning och ungefärlig lön efter skatt.</li>
+      <li><strong>Skicka tidrapporten</strong> som PDF eller CSV när månaden är slut. Appen påminner dig.</li>
+    </ol>
+
+    <h3>OB-tillägg utan att räkna själv</h3>
+    <p>
+      Appen föreslår fyra vanliga startvärden som du ändrar efter ditt avtal:
+      vardagkvällar 18–22 (+50 %), natt 22–06 (+70 %), lördag (+100 %) och
+      söndag/helgdag (+100 %). Stämmer inte ditt kollektivavtal? Skriv in
+      egna tider och procent eller kronor per timme. Vill du räkna på ett
+      enskilt pass först finns vår <a href="/verktyg/ob-tillagg/">OB-räknare</a>.
+    </p>
+
+    <h3>Turnus och schema {TURNUS_LIVE ? '' : '(kommer i 1.1.7)'}</h3>
+    <p>
+      Jobbar du rullande schema? I version 1.1.7 lägger du upp turnus – till
+      exempel 2-2-3, 4 på/4 av eller 5-5-4 – och ser planerade pass i
+      kalendern, med påminnelse före varje pass och en lönprognos för
+      månaden.
+    </p>
+
+    <h3>Tidrapportera eller en tidrapport-mall?</h3>
+    <p>
+      En mall i Excel fungerar om du har samma tider varje vecka. Så fort det
+      blir kvällar, helger och övertid blir det mycket att räkna för hand. Vill
+      du ändå använda papper eller Excel finns vår
+      <a href="/tidrapport/tidrapport-mall/">gratis tidrapport-mall i Excel och PDF</a>.
+      Letar du efter rätt verktyg för ett helt företag? Läs
+      <a href="/tidrapport/basta-tidrapporteringsappen-2026/">jämförelsen av tidrapporteringsappar 2026</a>
+      eller vår <a href="/tidrapport/tidrapportering-guide/">guide till tidrapportering</a>.
+    </p>
+  </div>
+
+  <div class="mt-8 grid sm:grid-cols-2 gap-3">
+    <div class="rounded-2xl border border-line bg-surface p-5">
+      <p class="font-black">Ingår gratis</p>
+      <ul class="mt-2 text-ink-2 text-sm space-y-1 list-disc pl-5">
+        <li>Obegränsat antal loggade pass</li>
+        <li>Timer, mallar och påminnelser</li>
+        <li>OB, övertid och lön för två arbetsgivare</li>
+        <li>Lön för denna och förra månaden</li>
+        <li>En rapport och en export att testa med</li>
+      </ul>
+    </div>
+    <div class="rounded-2xl border border-line bg-surface p-5">
+      <p class="font-black">Premium</p>
+      <ul class="mt-2 text-ink-2 text-sm space-y-1 list-disc pl-5">
+        <li>Obegränsade PDF- och CSV-exporter</li>
+        <li>Fler arbetsgivare och mallar</li>
+        <li>Lönehistorik för äldre månader</li>
+        <li>Kontroll mot lönespecifikationen</li>
+        <li>Traktamente för tjänsteresor</li>
+      </ul>
+    </div>
+  </div>
+  <p class="mt-3 text-sm text-ink-3">
+    Ingen reklam, inget konto, all data stannar i telefonen. Finns på
+    svenska, norska, danska, finska, isländska, engelska, tyska, italienska
+    och slovakiska.
+  </p>
+
+  <div style={`--accent:${accent}`}>
+    <FAQ title="Vanliga frågor om Tidrapportera" items={faq} />
+  </div>
+</section>

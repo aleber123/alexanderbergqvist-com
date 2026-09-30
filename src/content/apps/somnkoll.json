@@ -1,7 +1,9 @@
 {
-  "name": "Sömnkoll",
-  "tagline": "Trackar din sömn — utan att behöva en klocka.",
-  "description": "Sömnkoll är iOS-appen för dig som vill förstå din sömn på ett enkelt sätt. Logga sänggåendetid, uppvaknande och kvalitet — se mönster över tid.",
+  "name": "Sov",
+  "seoTitle": "Sov – sömnapp med smart väckning & snarkinspelning",
+  "metaDescription": "Sov är sömnappen som väcker dig i lätt sömn, spelar in snarkningar och visar dina sömnfaser – mer exakt med Apple Watch. Sömnljud, statistik och dagbok ingår.",
+  "tagline": "Vakna i lätt sömn – och se vad som händer medan du sover.",
+  "description": "Sov (tidigare Sömnkoll) är sömnappen för iPhone som väcker dig under lätt sömn inom ditt väckningsfönster, spelar in snarkningar och visar dina sömnfaser. Har du Apple Watch läses sömnfaserna därifrån för ännu bättre precision. Allt sparas i telefonen.",
   "icon": "/apps/somnkoll.webp",
   "accent": "#5E35B1",
   "accentDark": "#311B92",
@@ -14,13 +16,14 @@
     "förbättra sömn"
   ],
   "features": [
-    "Snabb logging av kvällens sömn",
-    "Statistik över genomsnittlig sömn per vecka/månad",
-    "Påminnelser inför sänggåendet",
-    "Inget extra hårdvara krävs"
+    "Smart väckning under lätt sömn inom ditt väckningsfönster",
+    "Spelar in och analyserar snarkningar",
+    "Sömnfaser och statistik per natt, vecka och månad",
+    "Sömnljud och vitt brus för att somna",
+    "Läser sömnfaser från Apple Watch via Apple Hälsa",
+    "Sömndagbok och sömnmål"
   ],
   "status": "live",
   "order": 7,
-  "appStoreUrl": "https://apps.apple.com/se/app/s%C3%B6mnkoll/id6763792588",
-  "seoTitle": "Sömnkoll-app – tracking och vanor för bättre sömn"
+  "appStoreUrl": "https://apps.apple.com/se/app/sov-s%C3%B6mnapp-v%C3%A4ckarklocka/id6763792588"
 }

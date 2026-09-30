@@ -8,40 +8,128 @@ import AppStoreBadge from '../../components/AppStoreBadge.astro';
 const app = await getEntry('apps', 'fodelsedagar');
 const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
 
+/* Everything year-dependent is derived from the BUILD date, so the
+   tables, the FAQ answers and the example sentences roll over on the
+   first deploy of a new year instead of silently going stale. The
+   client script still computes the live answer from the visitor's
+   own clock. */
+const now = new Date();
+const Y = now.getFullYear();
+/* Swedish school years start in mid/late August. Before July we are
+   still in the previous läsår. */
+const LY = now.getMonth() >= 6 ? Y : Y - 1;
+const läsår = `${LY}/${String(LY + 1).slice(2)}`;
+
+// 1940 … Y-1, newest first, grouped by decade for readability.
+const birthYears = Array.from({ length: Y - 1940 }, (_, i) => Y - 1 - i);
+const decades = [...new Set(birthYears.map((y) => Math.floor(y / 10) * 10))];
+
+// Skolplikt starts in förskoleklass the calendar year the child turns 6
+// (skollagen 7 kap., since 2018). Åk 1 = the year you turn 7, and so on.
+const grades = [
+  { label: 'Förskoleklass', turns: 6 },
+  { label: 'Årskurs 1 (1:an)', turns: 7 },
+  { label: 'Årskurs 2 (2:an)', turns: 8 },
+  { label: 'Årskurs 3 (3:an)', turns: 9 },
+  { label: 'Årskurs 4 (4:an)', turns: 10 },
+  { label: 'Årskurs 5 (5:an)', turns: 11 },
+  { label: 'Årskurs 6 (6:an)', turns: 12 },
+  { label: 'Årskurs 7 (7:an)', turns: 13 },
+  { label: 'Årskurs 8 (8:an)', turns: 14 },
+  { label: 'Årskurs 9 (9:an)', turns: 15 },
+  { label: 'Gymnasiet år 1', turns: 16 },
+  { label: 'Gymnasiet år 2', turns: 17 },
+  { label: 'Gymnasiet år 3', turns: 18 },
+];
+
+const monthRows = [6, 12, 18, 24, 30, 36, 48, 60, 72, 84, 96, 108, 120, 132, 144, 156, 168, 180, 192, 204, 216];
+const monthsLabel = (m: number) => {
+  const y = Math.floor(m / 12);
+  const r = m % 12;
+  if (y === 0) return `${r} månader`;
+  return r === 0 ? `${y} år` : `${y} år och ${r} månader`;
+};
+
+const monthNames = [
+  'januari', 'februari', 'mars', 'april', 'maj', 'juni',
+  'juli', 'augusti', 'september', 'oktober', 'november', 'december',
+];
+
 const faq = [
   {
-    q: 'Hur räknar man ut sin exakta ålder?',
-    a: 'Subtrahera födelsedatum från idag. Om dagens månad/dag är efter födelsemånaden/dagen är åldern fulla år. Annars dra ifrån ett år. Räknaren här ovan gör det automatiskt och visar även dagar och timmar.',
+    q: 'Hur räknar man ut hur gammal man är?',
+    a: `Ta årets årtal minus ditt födelseår. Har du redan fyllt år i år är det din ålder – annars drar du bort ett år. Född 1990 betyder alltså ${Y - 1990} år om du har fyllt år i år, annars ${Y - 1991}. Räknaren ovan gör det åt dig och visar också månader och dagar om du fyller i hela datumet.`,
   },
   {
-    q: 'När fyller jag X år?',
-    a: 'Räkna ut differensen mellan idag och födelsedatum. Om du fyller år "imorgon" eller senare i år visar räknaren "X år, Y dagar kvar".',
+    q: `Hur gammal är man om man är född 2008?`,
+    a: `Du fyller ${Y - 2008} år under ${Y}. Fram till födelsedagen är du ${Y - 2009} år, efter den ${Y - 2008}.`,
   },
   {
-    q: 'Hur många dagar lever en genomsnittlig svensk?',
-    a: 'En person född i Sverige idag har en förväntad medellivslängd på cirka 84 år (kvinnor) och 81 år (män), vilket motsvarar 30 660 respektive 29 565 dagar. Användbart att jämföra med "dagar levda hittills".',
+    q: `Hur gammal är man om man är född 2009?`,
+    a: `Du fyller ${Y - 2009} år under ${Y}. Före födelsedagen är du ${Y - 2010} år, efter den ${Y - 2009}.`,
+  },
+  {
+    q: 'Hur gammal är man i 6:an?',
+    a: `I årskurs 6 fyller man 12 år under hösten när läsåret börjar. På höstterminen är man alltså 11 eller 12 år, och på vårterminen 12 eller 13. Läsåret ${läsår} går de som är födda ${LY - 12} i 6:an.`,
+  },
+  {
+    q: 'Hur gammal är man i 4:an?',
+    a: `I årskurs 4 fyller man 10 år det kalenderår läsåret börjar – 9 eller 10 år på hösten, 10 eller 11 på våren. Läsåret ${läsår} går de som är födda ${LY - 10} i 4:an.`,
+  },
+  {
+    q: 'Hur många år är 84 månader?',
+    a: '84 månader är exakt 7 år (84 ÷ 12 = 7). 144 månader är 12 år och 18 månader är 1,5 år. Dela antalet månader med 12 – resten är månader utöver hela år.',
+  },
+  {
+    q: 'Hur många dagar gammal är jag?',
+    a: 'Fyll i år, månad och dag i räknaren så ser du exakt hur många dagar (och timmar) du har levt. Som tumregel är 18 år ungefär 6 575 dagar och 30 år ungefär 10 957 dagar, skottdagarna inräknade.',
   },
   {
     q: 'Räknas skottår med?',
-    a: 'Ja. Räknaren använder JavaScripts inbyggda datum-mattematik som hanterar skottår automatiskt. En person född 29 februari fyller dock bara år vart fjärde år enligt strikt definition.',
+    a: 'Ja. Räknaren utgår från riktiga kalenderdatum, så skottdagar räknas in automatiskt. Är du född den 29 februari räknar vi med att du fyller år den 1 mars de år som inte är skottår.',
   },
+];
+
+const webApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Åldersräknare – hur gammal är jag?',
+  url: new URL('/fodelsedagar/aldersrakna/', Astro.site).href,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Alla (körs i webbläsaren)',
+  inLanguage: 'sv-SE',
+  isAccessibleForFree: true,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
+  author: { '@type': 'Person', name: 'Alexander Bergqvist', url: 'https://alexanderbergqvist.com/' },
+};
+
+const related = [
+  { href: '/fodelsedagar/personnummer-alder/', title: 'Räkna ut ålder från personnummer', text: 'Klistra in 10 eller 12 siffror – ålder och födelsedatum direkt.' },
+  { href: '/fodelsedagar/veckodag-fodelsedag/', title: 'Vilken veckodag föddes jag?', text: 'Se veckodagen du föddes och dina kommande födelsedagar.' },
+  { href: '/fodelsedagar/samma-fodelsedag/', title: 'Vem delar födelsedag med dig?', text: 'Kändisar och historiska personer som fyller år samma dag.' },
+  { href: '/fodelsedagar/stjarntecken/', title: 'Vilket stjärntecken är jag?', text: 'Stjärntecken och datumintervall utifrån födelsedagen.' },
+  { href: '/fodelsedagar/kinesiskt-stjarntecken/', title: 'Kinesiskt stjärntecken', text: 'Ditt kinesiska djurtecken utifrån födelseåret.' },
+  { href: '/fodelsedagar/grattis/', title: 'Födelsedagshälsningar', text: 'Färdiga grattis att kopiera – till mamma, vän, kollega och fler.' },
+  { href: '/fodelsedagar/present-ideer/', title: 'Presenttips efter ålder', text: 'Idéer på födelsedagspresenter beroende på vem som fyller år.' },
+  { href: '/fodelsedagar/', title: 'Födelsedagar-appen', text: 'Påminnelser om alla födelsedagar och namnsdagar i iPhone.' },
 ];
 ---
 
 <BaseLayout
-  title="Hur gammal är jag? Räkna din exakta ålder i år, dagar & timmar"
-  description="Skriv in ditt födelsedatum → se din exakta ålder i år, månader, dagar, timmar och sekunder direkt. Gratis åldersräknare, inga uppgifter sparas. Se också hur många dagar tills nästa födelsedag."
+  title="Hur gammal är jag? Åldersräknare – räkna ut exakt ålder"
+  description={`Gratis åldersräknare: skriv bara ditt födelseår eller hela datumet och se direkt hur gammal du är i år, månader och dagar. Tabell för alla födda 1940–${Y - 1}.`}
   keywords={[
     'hur gammal är jag',
     'åldersräknare',
     'räkna ut ålder',
-    'när fyller jag år',
-    'min ålder i dagar',
-    'hur många dagar har jag levt',
+    'hur gammal är man om man är född',
+    'hur gammal är man i 6an',
+    'hur många dagar gammal är jag',
   ]}
   appStoreId={appStoreId}
 >
-  <section class="max-w-3xl mx-auto px-6 py-8">
+  <script type="application/ld+json" set:html={JSON.stringify(webApp)} />
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 py-8">
     <Breadcrumbs
       trail={[
         { name: 'Hem', url: '/' },
@@ -49,51 +137,79 @@ const faq = [
         { name: 'Åldersräknare' },
       ]}
     />
-    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-ink-3">
-      Fri kalkylator
-    </span>
-    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
-      Hur gammal är jag?
+    <h1 class="mt-6 text-3xl md:text-5xl font-black tracking-tight">
+      Hur gammal är jag? Åldersräknare
     </h1>
     <p class="mt-3 text-lg text-ink-2">
-      Skriv in ditt födelsedatum så räknar vi ut exakt ålder i år, månader,
-      dagar, timmar och sekunder. Du ser också hur många dagar tills nästa
-      födelsedag.
+      Skriv ditt födelseår så får du svaret direkt. Lägg till månad och dag
+      om du vill veta exakt ålder i år, månader och dagar – och hur länge
+      det är kvar till nästa födelsedag.
     </p>
 
-    <div class="mt-10 rounded-2xl border border-line bg-surface p-6 md:p-8">
-      <label class="block text-sm font-bold mb-2" for="bdate">
-        Ditt födelsedatum
-      </label>
-      <input
-        id="bdate"
-        type="date"
-        class="w-full rounded-xl border border-line-strong px-4 py-3 text-lg font-bold focus:border-pink-500"
-      />
-    </div>
+    <form class="mt-6 rounded-2xl border border-line bg-surface p-4 sm:p-6" id="age-form" onsubmit="return false">
+      <div class="grid grid-cols-3 gap-2 sm:gap-3">
+        <div>
+          <label class="block text-sm font-bold mb-1" for="by">Födelseår</label>
+          <input
+            id="by"
+            type="text"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            maxlength="4"
+            autocomplete="bday-year"
+            placeholder="ÅÅÅÅ"
+            class="w-full rounded-xl border border-line-strong px-3 py-3 text-lg font-bold focus:border-pink-500"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-1" for="bm">Månad <span class="font-normal text-ink-3">(valfri)</span></label>
+          <select id="bm" autocomplete="bday-month" class="w-full rounded-xl border border-line-strong bg-surface px-2 py-3 text-lg font-bold focus:border-pink-500">
+            <option value="">–</option>
+            {monthNames.map((m, i) => <option value={i + 1}>{m}</option>)}
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-bold mb-1" for="bd">Dag <span class="font-normal text-ink-3">(valfri)</span></label>
+          <select id="bd" autocomplete="bday-day" class="w-full rounded-xl border border-line-strong bg-surface px-2 py-3 text-lg font-bold focus:border-pink-500">
+            <option value="">–</option>
+            {Array.from({ length: 31 }, (_, i) => <option value={i + 1}>{i + 1}</option>)}
+          </select>
+        </div>
+      </div>
+      <details class="mt-3 text-sm">
+        <summary class="cursor-pointer text-ink-2 font-semibold">Räkna åldern vid ett annat datum</summary>
+        <label class="block mt-2 font-bold" for="ref">Hur gammal var/blir jag den</label>
+        <input id="ref" type="date" class="mt-1 w-full rounded-xl border border-line-strong px-3 py-2 font-bold focus:border-pink-500" />
+      </details>
 
-    <div class="mt-6 grid grid-cols-2 md:grid-cols-3 gap-3">
-      <div class="rounded-2xl bg-pink-50 border border-pink-200 p-5">
+      <p class="mt-4 text-lg font-bold text-ink" data-out="answer" aria-live="polite">
+        Exempel: född 2008 → du är {Y - 2009} år, eller {Y - 2008} om du redan har fyllt år i år.
+      </p>
+      <p class="mt-1 text-sm text-ink-2" data-out="sub"></p>
+    </form>
+
+    <div class="mt-4 grid grid-cols-2 md:grid-cols-3 gap-3" id="age-tiles" hidden>
+      <div class="rounded-2xl bg-pink-50 border border-pink-200 p-4">
         <div class="text-xs font-black uppercase tracking-widest text-pink-700">År</div>
         <div class="mt-1 text-2xl font-black text-pink-900" data-out="years">–</div>
       </div>
-      <div class="rounded-2xl bg-pink-50 border border-pink-200 p-5">
+      <div class="rounded-2xl bg-pink-50 border border-pink-200 p-4">
         <div class="text-xs font-black uppercase tracking-widest text-pink-700">Månader</div>
         <div class="mt-1 text-2xl font-black text-pink-900" data-out="months">–</div>
       </div>
-      <div class="rounded-2xl bg-pink-50 border border-pink-200 p-5">
+      <div class="rounded-2xl bg-pink-50 border border-pink-200 p-4">
         <div class="text-xs font-black uppercase tracking-widest text-pink-700">Dagar</div>
         <div class="mt-1 text-2xl font-black text-pink-900" data-out="days">–</div>
       </div>
-      <div class="rounded-2xl bg-pink-100 border border-pink-300 p-5">
+      <div class="rounded-2xl bg-pink-100 border border-pink-300 p-4">
         <div class="text-xs font-black uppercase tracking-widest text-pink-800">Timmar levda</div>
         <div class="mt-1 text-xl font-black text-pink-900" data-out="hours">–</div>
       </div>
-      <div class="rounded-2xl bg-pink-100 border border-pink-300 p-5">
+      <div class="rounded-2xl bg-pink-100 border border-pink-300 p-4">
         <div class="text-xs font-black uppercase tracking-widest text-pink-800">Dagar levda</div>
         <div class="mt-1 text-xl font-black text-pink-900" data-out="totalDays">–</div>
       </div>
-      <div class="rounded-2xl bg-gradient-to-br from-pink-500 to-pink-700 p-5 text-white">
+      <div class="rounded-2xl bg-gradient-to-br from-pink-500 to-pink-700 p-4 text-white">
         <div class="text-xs font-black uppercase tracking-widest opacity-80">
           Tills nästa födelsedag
         </div>
@@ -101,18 +217,11 @@ const faq = [
       </div>
     </div>
 
-    {/* The page computes "Tills nästa födelsedag: 143 dagar" and then
-        pivoted to an unrelated generic pitch — it calculated the user's
-        personal reason to install and threw it away.
-
-        This page burned 29 405 visningar for 10 klick (0,034 %) because
-        Google answers "hur gammal är jag" in its own SERP widget. The
-        people who still click through want the thing the widget cannot
-        give them, and days-until-next-birthday IS that thing.
-
-        Solid ink border rather than a pink gradient, so it reads as part
-        of the tool instead of an ad slot. */}
-    <div class="mt-10 rounded-2xl border-2 border-ink bg-surface p-6 md:p-8">
+    {/* Result CTA: the next sentence after the answer they came for
+        (days until next birthday is the one thing Google's own SERP
+        answer can't give them). Solid ink border so it reads as part of
+        the tool rather than an ad slot. Tagged ct=result_aldersrakna. */}
+    <div class="mt-8 rounded-2xl border-2 border-ink bg-surface p-5 md:p-8">
       <p class="text-lg font-bold" data-cta-line>
         Din nästa födelsedag är snart.
       </p>
@@ -133,193 +242,332 @@ const faq = [
         Födelsedagar finns just nu bara för iPhone.
       </p>
       {/* State the paywall here rather than letting them find it after
-          installing. A surprise gate produces an install, a discovery
-          and a 1-star review that costs more than the install was worth. */}
+          installing. */}
       <p class="mt-4 text-sm text-ink-3">
         Gratis för 5 personer. Premium om du vill ha fler.
       </p>
     </div>
 
-    <div class="prose mt-12">
-      <h2>Varför räkna ut sin exakta ålder?</h2>
-      <p>
-        Det är inte lika trivialt som det låter. Många svenskar vet sin ålder i
-        år men har ingen aning om hur många dagar de har levt — eller hur många
-        som är kvar tills nästa födelsedag. Räknaren här ovan visar allt på
-        sekunden.
-      </p>
+    <nav class="mt-8 text-sm" aria-label="Innehåll på sidan">
+      <p class="font-bold">På sidan:</p>
+      <ul class="mt-2 flex flex-wrap gap-2 list-none p-0">
+        <li><a class="inline-block rounded-full border border-line px-3 py-1 hover:border-pink-400" href="#fodd-ar">Född år X – hur gammal?</a></li>
+        <li><a class="inline-block rounded-full border border-line px-3 py-1 hover:border-pink-400" href="#skolan">Ålder i skolan</a></li>
+        <li><a class="inline-block rounded-full border border-line px-3 py-1 hover:border-pink-400" href="#manader">Månader till år</a></li>
+        <li><a class="inline-block rounded-full border border-line px-3 py-1 hover:border-pink-400" href="#fragor">Vanliga frågor</a></li>
+      </ul>
+    </nav>
 
-      <h2>Din ålder i månader och dagar</h2>
+    <div class="prose mt-10 max-w-none">
+      <h2 id="fodd-ar">Född år X – hur gammal är man {Y}?</h2>
       <p>
-        Ålder behöver inte mätas i bara år. Räknaren ovan visar din ålder i
-        månader, dagar, timmar och sekunder samtidigt. Det är praktiskt för
-        småbarnsföräldrar (en bebis ålder anges ofta i månader), och för den
-        som vill veta exakt hur många månader ett visst antal år motsvarar —
-        7 år är 84 månader, 12 år är 144 månader, och så vidare. Skriv in
-        datumet ovan så får du fram det på sekunden.
+        Under {Y} fyller du årets årtal minus ditt födelseår. Fram till
+        födelsedagen är du ett år yngre. Den som är född 2008 (en
+        ”08:a”) fyller alltså {Y - 2008} i år och är {Y - 2009} år fram till dess.
+        Samma sak om du söker på ”född 68”: då är du född 1968 och fyller {Y - 1968}.
       </p>
-      <p>
-        Vill du i stället räkna ut åldern från ett <strong>personnummer</strong>?
-        Använd vår
-        <a href="/fodelsedagar/personnummer-alder/">åldersräknare för personnummer</a>
-        — klistra in 10 eller 12 siffror så får du exakt ålder, födelsedatum
-        och kön, helt lokalt i din webbläsare.
-      </p>
+    </div>
 
-      <h2>Hur räkna ut ålder vid en specifik tidpunkt?</h2>
-      <p>
-        Behöver du veta hur gammal du var en specifik dag (t.ex. på din
-        körkortsdag, vid bröllopet, eller när första barnet föddes)? Ändra
-        datumformatet i din webbläsare och kör räknaren med det datumet — den
-        räknar lika bra historiskt.
-      </p>
+    <div class="mt-4 space-y-6">
+      {decades.map((d) => (
+        <div>
+          <h3 class="text-lg font-black">Född på {d}-talet</h3>
+          <div class="mt-2 overflow-x-auto rounded-xl border border-line">
+            <table class="w-full text-sm sm:text-base">
+              <thead class="bg-surface-2 text-left">
+                <tr>
+                  <th class="px-2 sm:px-3 py-2">Född</th>
+                  <th class="px-2 sm:px-3 py-2">Före födelsedagen</th>
+                  <th class="px-2 sm:px-3 py-2">Fyller i år ({Y})</th>
+                </tr>
+              </thead>
+              <tbody>
+                {birthYears.filter((y) => Math.floor(y / 10) * 10 === d).map((y) => (
+                  <tr id={`fodd-${y}`} class="border-t border-line">
+                    <th scope="row" class="px-2 sm:px-3 py-2 text-left font-bold">{y}</th>
+                    <td class="px-2 sm:px-3 py-2">{Y - y - 1 === 0 ? 'under 1 år' : `${Y - y - 1} år`}</td>
+                    <td class="px-2 sm:px-3 py-2 font-bold">{Y - y} år</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ))}
+    </div>
 
-      <h2>Räknat med skottår?</h2>
+    <div class="prose mt-12 max-w-none">
+      <h2 id="skolan">Hur gammal är man i 1:an–9:an och på gymnasiet?</h2>
       <p>
-        Ja, automatiskt. JavaScripts inbyggda datum-mattematik hanterar skottår
-        rätt. Specialfallet är personer födda 29 februari — de fyller år bara
-        de år som är skottår enligt strikt definition. I praktiken firar de
-        flesta antingen 28 februari eller 1 mars.
+        I Sverige går man i skolan efter födelseår, inte efter exakt ålder.
+        Skolplikten börjar i förskoleklass höstterminen det kalenderår barnet
+        fyller sex. I årskurs 1 fyller man 7 under hösten, i 6:an fyller man
+        12 och i 9:an 15. Beroende på när på året man har födelsedag är man
+        därför ett av två åldrar på hösten – och ett år äldre framåt våren.
+        Tabellen gäller läsåret {läsår}.
       </p>
+    </div>
+    <div class="mt-4 overflow-x-auto rounded-xl border border-line">
+      <table class="w-full text-sm sm:text-base">
+        <thead class="bg-surface-2 text-left">
+          <tr>
+            <th class="px-2 sm:px-3 py-2">Årskurs</th>
+            <th class="px-2 sm:px-3 py-2">Fyller under {LY}</th>
+            <th class="px-2 sm:px-3 py-2">Ålder hösten</th>
+            <th class="px-2 sm:px-3 py-2">Ålder våren</th>
+            <th class="px-2 sm:px-3 py-2">Född</th>
+          </tr>
+        </thead>
+        <tbody>
+          {grades.map((g) => (
+            <tr class="border-t border-line">
+              <th scope="row" class="px-2 sm:px-3 py-2 text-left font-bold">{g.label}</th>
+              <td class="px-2 sm:px-3 py-2 font-bold">{g.turns} år</td>
+              <td class="px-2 sm:px-3 py-2">{g.turns - 1}–{g.turns}</td>
+              <td class="px-2 sm:px-3 py-2">{g.turns}–{g.turns + 1}</td>
+              <td class="px-2 sm:px-3 py-2">{LY - g.turns}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-3 text-sm text-ink-3">
+      Undantag finns: barn kan börja skolan ett år tidigare eller skjuta upp
+      skolstarten, och gymnasiet är frivilligt. Tabellen visar det vanliga.
+    </p>
 
-      <h2>Andra tankar kring åldrar och födelsedagar</h2>
+    <div class="prose mt-12 max-w-none">
+      <h2 id="manader">Ålder i månader: hur många år är 84 månader?</h2>
       <p>
-        Vi i Sverige är ett av de länder som firar födelsedagar mest noggrant —
-        50-årskalas, 70-årskalas och 80-årskalas är fortfarande betydande
-        sociala händelser. Försäkringskassan, Pensionsmyndigheten och en del
-        försäkringsbolag har också åldersbaserade beslutspunkter (65, 67, 68
-        år).
+        Små barns ålder anges ofta i månader. För att räkna om delar du med
+        12: <strong>84 månader är 7 år</strong>, 144 månader är 12 år och 18
+        månader är ett och ett halvt år. Resten efter divisionen är månader
+        utöver hela år – 100 månader är till exempel 8 år och 4 månader.
+      </p>
+    </div>
+    <div class="mt-4 rounded-2xl border border-line bg-surface p-4 sm:p-5">
+      <label class="block text-sm font-bold mb-1" for="mconv">Räkna om månader till år</label>
+      <div class="flex flex-wrap items-center gap-3">
+        <input id="mconv" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="t.ex. 84" class="w-32 rounded-xl border border-line-strong px-3 py-2 text-lg font-bold focus:border-pink-500" />
+        <span class="text-lg font-bold" data-out="mconv" aria-live="polite">= 7 år</span>
+      </div>
+    </div>
+    <div class="mt-4 overflow-x-auto rounded-xl border border-line">
+      <table class="w-full text-sm sm:text-base">
+        <thead class="bg-surface-2 text-left">
+          <tr><th class="px-2 sm:px-3 py-2">Månader</th><th class="px-2 sm:px-3 py-2">I år</th></tr>
+        </thead>
+        <tbody>
+          {monthRows.map((m) => (
+            <tr class="border-t border-line">
+              <th scope="row" class="px-2 sm:px-3 py-2 text-left font-bold">{m} månader</th>
+              <td class="px-2 sm:px-3 py-2">{monthsLabel(m)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose mt-12 max-w-none">
+      <h2>Så räknar du ut din ålder själv</h2>
+      <ol>
+        <li>Ta årets årtal minus ditt födelseår.</li>
+        <li>Har du inte fyllt år ännu i år? Dra bort ett.</li>
+        <li>
+          För månader och dagar: räkna månader från senaste födelsedagen,
+          och dagar från samma datum i förra månaden.
+        </li>
+      </ol>
+      <p>
+        Vill du veta hur gammal någon var vid ett visst tillfälle – vid
+        bröllopet, körkortet eller när första barnet föddes – öppna ”Räkna
+        åldern vid ett annat datum” i räknaren ovan och välj datumet.
+      </p>
+      <p>
+        Har du bara ett <strong>personnummer</strong>? Använd
+        <a href="/fodelsedagar/personnummer-alder/">räkna ut ålder från personnummer</a>
+        i stället – det tolkar 10 eller 12 siffror och körs helt i din
+        webbläsare. Undrar du vilken dag du föddes på? Se
+        <a href="/fodelsedagar/veckodag-fodelsedag/">vilken veckodag du föddes</a>.
+      </p>
+      <p>
+        Ska någon annan fylla jämnt snart? Hitta en
+        <a href="/fodelsedagar/grattis/">födelsedagshälsning att kopiera</a>, och
+        låt <a href="/fodelsedagar/">Födelsedagar-appen</a> påminna dig nästa gång.
       </p>
     </div>
 
     <div class="mt-12">
       <h2 class="text-xl font-black">Fler gratis verktyg för födelsedagar</h2>
       <ul class="mt-4 grid sm:grid-cols-2 gap-3 list-none p-0">
-        <li>
-          <a class="block rounded-xl border border-line p-4 hover:border-pink-400" href="/fodelsedagar/stjarntecken/">
-            <span class="font-bold">Stjärntecken efter födelsedatum</span>
-            <span class="block text-sm text-ink-2">Vilket stjärntecken är jag — och vad säger det?</span>
-          </a>
-        </li>
-        <li>
-          <a class="block rounded-xl border border-line p-4 hover:border-pink-400" href="/fodelsedagar/kinesiskt-stjarntecken/">
-            <span class="font-bold">Kinesiskt stjärntecken</span>
-            <span class="block text-sm text-ink-2">Räkna ut ditt kinesiska djurtecken från födelseåret.</span>
-          </a>
-        </li>
-        <li>
-          <a class="block rounded-xl border border-line p-4 hover:border-pink-400" href="/fodelsedagar/veckodag-fodelsedag/">
-            <span class="font-bold">Vilken veckodag fyller jag år?</span>
-            <span class="block text-sm text-ink-2">Se veckodagen för dina kommande födelsedagar.</span>
-          </a>
-        </li>
-        <li>
-          <a class="block rounded-xl border border-line p-4 hover:border-pink-400" href="/fodelsedagar/present-ideer/">
-            <span class="font-bold">Presenttips efter ålder</span>
-            <span class="block text-sm text-ink-2">Idéer på födelsedagspresenter beroende på vem som fyller år.</span>
-          </a>
-        </li>
-        <li>
-          <a class="block rounded-xl border border-line p-4 hover:border-pink-400" href="/fodelsedagar/sms-grattis-fodelsedag/">
-            <span class="font-bold">Grattis-SMS till födelsedagen</span>
-            <span class="block text-sm text-ink-2">Färdiga grattishälsningar att skicka direkt.</span>
-          </a>
-        </li>
-        <li>
-          <a class="block rounded-xl border border-line p-4 hover:border-pink-400" href="/fodelsedagar/familjekalender-fodelsedagar/">
-            <span class="font-bold">Familjekalender för födelsedagar</span>
-            <span class="block text-sm text-ink-2">Håll koll på hela familjens födelsedagar på ett ställe.</span>
-          </a>
-        </li>
-        <li>
-          <a class="block rounded-xl border border-line p-4 hover:border-pink-400" href="/fodelsedagar/glomt-fodelsedag/">
-            <span class="font-bold">Glömt en födelsedag?</span>
-            <span class="block text-sm text-ink-2">Så räddar du läget — och slipper glömma igen.</span>
-          </a>
-        </li>
-        <li>
-          <a class="block rounded-xl border border-line p-4 hover:border-pink-400" href="/fodelsedagar/personnummer-alder/">
-            <span class="font-bold">Räkna ålder från personnummer</span>
-            <span class="block text-sm text-ink-2">Exakt ålder från 10 eller 12 siffror — körs lokalt.</span>
-          </a>
-        </li>
+        {related.map((r) => (
+          <li>
+            <a class="block rounded-xl border border-line p-4 hover:border-pink-400" href={r.href}>
+              <span class="font-bold">{r.title}</span>
+              <span class="block text-sm text-ink-2">{r.text}</span>
+            </a>
+          </li>
+        ))}
       </ul>
     </div>
 
-    <FAQ items={faq} />
+    <div id="fragor">
+      <FAQ items={faq} />
+    </div>
   </section>
 </BaseLayout>
 
 <script>
-  const inp = document.getElementById('bdate') as HTMLInputElement;
-  const out = {
-    years: document.querySelector('[data-out="years"]')!,
-    months: document.querySelector('[data-out="months"]')!,
-    days: document.querySelector('[data-out="days"]')!,
-    hours: document.querySelector('[data-out="hours"]')!,
-    totalDays: document.querySelector('[data-out="totalDays"]')!,
-    nextBirthday: document.querySelector('[data-out="nextBirthday"]')!,
-  };
+  const $ = <T extends Element>(s: string) => document.querySelector(s) as T;
+  const yIn = $<HTMLInputElement>('#by');
+  const mIn = $<HTMLSelectElement>('#bm');
+  const dIn = $<HTMLSelectElement>('#bd');
+  const refIn = $<HTMLInputElement>('#ref');
+  const tiles = $<HTMLElement>('#age-tiles');
+  const out = (k: string) => $<HTMLElement>(`[data-out="${k}"]`);
   const nf = new Intl.NumberFormat('sv-SE');
+  const plural = (n: number, one: string, many: string) => `${nf.format(n)} ${n === 1 ? one : many}`;
+
+  function today(): Date {
+    const n = new Date();
+    return new Date(n.getFullYear(), n.getMonth(), n.getDate());
+  }
+
+  function refDate(): Date {
+    if (refIn.value) {
+      const [y, m, d] = refIn.value.split('-').map(Number);
+      if (y && m && d) return new Date(y, m - 1, d);
+    }
+    return today();
+  }
+
+  /** Birthday in a given year; 29 Feb falls on 1 Mar in common years. */
+  function birthdayIn(year: number, m: number, d: number): Date {
+    const dt = new Date(year, m, d);
+    return dt.getMonth() === m ? dt : new Date(year, m + 1, 1);
+  }
+
+  function setCta(text: string) {
+    const el = document.querySelector('[data-cta-line]');
+    if (el) el.textContent = text;
+  }
 
   function compute() {
-    if (!inp.value) return;
-    const birth = new Date(inp.value);
-    const now = new Date();
-    if (isNaN(birth.getTime()) || birth > now) return;
+    const year = Number(yIn.value);
+    const ref = refDate();
+    const isToday = ref.getTime() === today().getTime();
+    const refYear = ref.getFullYear();
+    const answer = out('answer');
+    const sub = out('sub');
 
-    let years = now.getFullYear() - birth.getFullYear();
-    let months = now.getMonth() - birth.getMonth();
-    let days = now.getDate() - birth.getDate();
+    if (!/^\d{4}$/.test(yIn.value) || year < 1900 || year > refYear) {
+      tiles.hidden = true;
+      if (yIn.value.length === 4) {
+        answer.textContent = 'Skriv ett födelseår mellan 1900 och ' + refYear + '.';
+        sub.textContent = '';
+      }
+      return;
+    }
 
+    const m = mIn.value ? Number(mIn.value) - 1 : NaN;
+    const d = dIn.value ? Number(dIn.value) : NaN;
+    const verb = isToday ? 'är' : ref < today() ? 'var' : 'blir';
+
+    // Year only (or month without day): the quick answer.
+    if (isNaN(m) || isNaN(d)) {
+      tiles.hidden = true;
+      const turns = refYear - year;
+      if (turns === 0) {
+        answer.textContent = `Född ${year}: du ${verb} under 1 år${isToday ? ' – och fyller 1 år nästa år.' : '.'}`;
+      } else {
+        answer.textContent = `Född ${year}: du ${verb} ${turns - 1} år, eller ${turns} år om du redan har fyllt år ${refYear}.`;
+      }
+      sub.textContent = `Du fyller ${turns} år under ${refYear}. Välj månad och dag för exakt ålder och dagar till nästa födelsedag.`;
+      setCta('Vill du veta exakt hur många dagar det är kvar till din födelsedag? Välj månad och dag ovan.');
+      return;
+    }
+
+    const birth = new Date(year, m, d);
+    if (birth.getMonth() !== m) {
+      answer.textContent = `${monthName(m)} har inte ${d} dagar${m === 1 ? ' det året' : ''}.`;
+      sub.textContent = '';
+      tiles.hidden = true;
+      return;
+    }
+    if (birth > ref) {
+      answer.textContent = 'Födelsedatumet ligger efter datumet du räknar till.';
+      sub.textContent = '';
+      tiles.hidden = true;
+      return;
+    }
+
+    let years = ref.getFullYear() - birth.getFullYear();
+    let months = ref.getMonth() - birth.getMonth();
+    let days = ref.getDate() - birth.getDate();
     if (days < 0) {
       months -= 1;
-      const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-      days += prevMonth.getDate();
+      days += new Date(ref.getFullYear(), ref.getMonth(), 0).getDate();
     }
     if (months < 0) {
       years -= 1;
       months += 12;
     }
 
-    const diffMs = now.getTime() - birth.getTime();
-    const totalDays = Math.floor(diffMs / 86400000);
-    const totalHours = Math.floor(diffMs / 3600000);
+    // Calendar-day difference via UTC so DST shifts don't eat a day.
+    const utc = (x: Date) => Date.UTC(x.getFullYear(), x.getMonth(), x.getDate());
+    const totalDays = Math.round((utc(ref) - utc(birth)) / 86400000);
+    const totalHours = isToday
+      ? Math.floor((Date.now() - birth.getTime()) / 3600000)
+      : totalDays * 24;
 
-    let next = new Date(now.getFullYear(), birth.getMonth(), birth.getDate());
-    if (next < now) next.setFullYear(now.getFullYear() + 1);
-    const daysUntilNext = Math.ceil(
-      (next.getTime() - now.getTime()) / 86400000,
-    );
+    let next = birthdayIn(ref.getFullYear(), m, d);
+    if (next < ref) next = birthdayIn(ref.getFullYear() + 1, m, d);
+    const daysUntilNext = Math.round((utc(next) - utc(ref)) / 86400000);
+    const nextAge = next.getFullYear() - year;
 
-    out.years.textContent = String(years);
-    out.months.textContent = String(months);
-    out.days.textContent = String(days);
-    out.hours.textContent = nf.format(totalHours);
-    out.totalDays.textContent = nf.format(totalDays);
-    out.nextBirthday.textContent =
+    tiles.hidden = false;
+    out('years').textContent = String(years);
+    out('months').textContent = String(months);
+    out('days').textContent = String(days);
+    out('hours').textContent = nf.format(totalHours);
+    out('totalDays').textContent = nf.format(totalDays);
+    out('nextBirthday').textContent =
+      daysUntilNext === 0 ? 'Idag!' : plural(daysUntilNext, 'dag', 'dagar');
+
+    answer.textContent = `Du ${verb} ${plural(years, 'år', 'år')}, ${plural(months, 'månad', 'månader')} och ${plural(days, 'dag', 'dagar')}.`;
+    const weekday = next.toLocaleDateString('sv-SE', { weekday: 'long' });
+    sub.textContent =
       daysUntilNext === 0
-        ? '🎉 Idag!'
-        : `${daysUntilNext} ${daysUntilNext === 1 ? 'dag' : 'dagar'}`;
+        ? `Grattis – du fyller ${nextAge} idag!`
+        : `Du fyller ${nextAge} om ${plural(daysUntilNext, 'dag', 'dagar')}, en ${weekday}. Du har levt ${nf.format(totalDays)} dagar.`;
 
-    // Make the CTA the natural next sentence after the answer they came
-    // for, instead of a generic pitch sitting beside it.
-    const ctaLine = document.querySelector('[data-cta-line]');
-    if (ctaLine) {
-      const weekday = next.toLocaleDateString('sv-SE', { weekday: 'long' });
-      ctaLine.textContent =
+    if (isToday) {
+      setCta(
         daysUntilNext === 0
           ? 'Din födelsedag är idag. Vem mer fyller år den här månaden?'
-          : `Din nästa födelsedag är om ${nf.format(daysUntilNext)} ${
-              daysUntilNext === 1 ? 'dag' : 'dagar'
-            } — en ${weekday}.`;
+          : `Du fyller ${nextAge} om ${plural(daysUntilNext, 'dag', 'dagar')} — en ${weekday}. Vill du aldrig missa någon annans heller?`,
+      );
     }
   }
 
-  inp.addEventListener('input', compute);
-  // Default: 25 years ago, gives users a starting point.
-  const def = new Date();
-  def.setFullYear(def.getFullYear() - 25);
-  inp.value = def.toISOString().slice(0, 10);
-  compute();
+  function monthName(m: number) {
+    const s = new Date(2000, m, 1).toLocaleDateString('sv-SE', { month: 'long' });
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  [yIn, mIn, dIn, refIn].forEach((el) => {
+    el.addEventListener('input', compute);
+    el.addEventListener('change', compute);
+  });
+
+  // Months → years converter.
+  const mc = $<HTMLInputElement>('#mconv');
+  mc.addEventListener('input', () => {
+    const n = Number(mc.value);
+    const o = out('mconv');
+    if (!mc.value || isNaN(n)) { o.textContent = ''; return; }
+    const y = Math.floor(n / 12);
+    const r = n % 12;
+    o.textContent = '= ' + (y === 0 ? plural(r, 'månad', 'månader') : r === 0 ? `${y} år` : `${y} år och ${plural(r, 'månad', 'månader')}`);
+  });
 </script>

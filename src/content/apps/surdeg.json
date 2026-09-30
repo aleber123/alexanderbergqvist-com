@@ -1,5 +1,7 @@
 {
   "name": "Surdeg",
+  "seoTitle": "Surdegsapp – matningspåminnelser, recept och bakdagbok",
+  "metaDescription": "Surdeg påminner dig när surdegen ska matas, har 33 recept med hydration-räknare och en bakdagbok med foto och betyg. Stöd för flera surdegar samtidigt.",
   "tagline": "Mata, baka, njut — surdeg gjort enkelt.",
   "description": "Surdeg är iOS-appen för dig som bakar med surdeg. Schemalägg matningar per surdeg, bläddra bland 33 svenska och internationella recept, och logga dina bakar i bakdagboken.",
   "icon": "/apps/surdeg.webp",
@@ -24,6 +26,5 @@
   ],
   "status": "live",
   "order": 6,
-  "appStoreUrl": "https://apps.apple.com/se/app/surdeg/id6766092580",
-  "seoTitle": "Surdegsapp – matningspåminnelser, recept och bakdagbok"
+  "appStoreUrl": "https://apps.apple.com/se/app/surdeg/id6766092580"
 }

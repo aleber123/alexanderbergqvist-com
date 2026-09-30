@@ -14,6 +14,12 @@ const apps = defineCollection({
      *  instead of just `name`. Use for keyword-rich SERP click-bait,
      *  e.g. "Födelsedagsapp för iPhone – glöm aldrig födelsedagar". */
     seoTitle: z.string().optional(),
+    /** Meta description for the landing page (aim 140–160 chars).
+     *  Falls back to `tagline`, which is usually too short to sell
+     *  the click. */
+    metaDescription: z.string().optional(),
+    /** Visible H1 override for the landing page. Defaults to `name`. */
+    h1: z.string().optional(),
     tagline: z.string(),
     description: z.string(),
     icon: z.string(), // path under /public, e.g. "/apps/snusfri-resa.webp"

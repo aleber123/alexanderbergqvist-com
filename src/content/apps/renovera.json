@@ -1,5 +1,7 @@
 {
   "name": "Renovera",
+  "seoTitle": "Renoveringsapp – 31 kalkylatorer för kakel, färg & betong",
+  "metaDescription": "Renovera räknar ut materialet åt dig: 31 kalkylatorer för kakel, färg, betong, isolering, solpaneler och mer. Spara projekt och inköpslistor och exportera PDF.",
   "tagline": "31 kalkylatorer för dig som renoverar hemma.",
   "description": "Renovera är iOS-appen med 31 kalkylatorer för hemmarenovering — kakel, färg, betong, isolering, solpaneler, värmepump och mycket mer. Räkna ut exakt vad du behöver utan att googla formler. Spara projekt och inköpslistor.",
   "icon": "/apps/renovera.webp",
@@ -26,6 +28,5 @@
   ],
   "status": "live",
   "order": 4,
-  "seoTitle": "Renovera-app för iPhone – 31 kalkylatorer för hemmarenovering",
   "seoDescription": "Räkna ut färg, kakel, betong, trall, isolering, solpaneler och mer. 31 gratis kalkylatorer i en app — utan formler."
 }

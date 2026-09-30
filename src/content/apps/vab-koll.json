@@ -1,5 +1,7 @@
 {
   "name": "VAB-koll",
+  "seoTitle": "VAB-app – håll koll på dina VAB-dagar per barn",
+  "metaDescription": "VAB-koll håller koll på dina VAB-dagar: logga dagar per barn och se direkt hur många du har använt och hur många som är kvar. Stöd för flera barn. För iPhone.",
   "tagline": "Håll koll på dina VAB-dagar.",
   "description": "VAB-koll är iOS-appen för föräldrar som vabbar. Logga vab-dagar per barn, se hur många du har använt och hur många du har kvar.",
   "icon": "/apps/vab-koll.webp",

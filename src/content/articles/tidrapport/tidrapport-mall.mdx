@@ -1,149 +1,148 @@
 ---
-title: "Tidrapport mall: gratis Excel + PDF (svenska)"
-description: "Ladda ner svensk tidrapport-mall i Excel eller PDF. Här är vad en bra mall ska innehålla, plus tre olika varianter för konsulter, anställda och småföretagare."
+title: "Tidrapport mall: gratis Excel och PDF att ladda ner"
+description: "Ladda ner en gratis tidrapport-mall: veckomall i Excel som räknar timmar, OB och lön åt dig, och en månadsmall som PDF att skriva ut. Så fyller du i den."
 app: tidrapport
 publishedAt: 2026-05-04
+updatedAt: 2026-09-30
 keywords:
   - tidrapport mall
+  - mall tidrapport
+  - tidrapport mall pdf gratis
   - tidrapport excel
-  - tidrapport pdf
-  - mall tidrapportering
-  - tidrapport gratis
+  - tidrapport månad
+  - tidrapport mall timanställd
 faq:
-  - q: "Vilka kolumner ska en tidrapport ha?"
-    a: "Datum, kund/projekt, beskrivning av aktivitet, antal timmar och eventuell faktureringsbar/icke-faktureringsbar-flag. För konsulter ofta också hourly rate och totalbelopp."
-  - q: "Är Excel eller PDF bättre?"
-    a: "Excel för dig som rapporterar — du kan summera och redigera. PDF för dig som levererar till kund — låsta värden ger trovärdighet."
-  - q: "Måste man rapportera vecko- eller månadsvis?"
-    a: "Det beror på din kundkontrakt eller arbetsgivare. Vanligast är veckovis registrering med månadsvis fakturering."
-  - q: "Hur många timmar är en normal arbetsdag?"
-    a: "Heltid i Sverige är 40 h/vecka, dvs 8 h/dag. Konsulter fakturerar typiskt 6-7 h/dag eftersom raster, möten och administration tillkommer."
+  - q: "Finns det en gratis tidrapport-mall?"
+    a: "Ja. Här på sidan finns en veckomall i Excel (fungerar även i Google Kalkylark och Numbers) och en månadsmall som PDF att skriva ut. Båda är gratis och kräver ingen registrering."
+  - q: "Hur räknar man arbetade timmar i Excel?"
+    a: "Skriv start och slut som klockslag (07:30, 16:00) och rast i minuter. Formeln =MOD(slut-start;1)*24-rast/60 ger arbetade timmar som decimaltal. MOD gör att pass som slutar efter midnatt också räknas rätt. Formeln finns redan i Excel-mallen."
+  - q: "Räknas rasten som arbetstid?"
+    a: "Nej, rast är enligt arbetstidslagen ett avbrott då du får lämna arbetsplatsen, och den räknas inte som arbetstid. Kortare pauser där du står till arbetsgivarens förfogande räknas däremot som arbetstid. Dra därför bara av rasten, inte pauserna."
+  - q: "Hur fyller jag i tidrapporten för ett nattpass?"
+    a: "Skriv passet på den dag det började, till exempel start 22:00 och slut 06:30. Excel-mallen räknar ut 8,5 timmar minus rast. Timmarna som ligger inom nattens OB-tid skriver du i kolumnen OB-timmar."
+  - q: "Ska jag välja Excel eller PDF?"
+    a: "Excel om du vill att timmar och lön räknas ut automatiskt och ska mejla rapporten. PDF om du fyller i för hand och lämnar in på papper med underskrift."
 ---
 
-Du behöver en mall för tidrapport. Här är tre varianter — Excel,
-PDF och digital app — plus vad varje bra tidrapport ska innehålla.
+import AppStoreBadge from '../../../components/AppStoreBadge.astro';
+
+Här kan du ladda ner en **gratis tidrapport-mall** – en veckomall i
+Excel som räknar ut timmarna åt dig och en månadsmall som PDF som du
+skriver ut och fyller i för hand. Längre ner förklarar vi hur du fyller
+i dem, och hur du räknar OB-timmar.
+
+<div class="not-prose my-8 grid gap-3 sm:grid-cols-2">
+  <a href="/downloads/tidrapport-mall-vecka.xlsx" download class="block rounded-2xl border-2 border-ink bg-surface p-5 no-underline hover:bg-surface-2">
+    <span class="block text-lg font-black text-ink">Ladda ner Excel-mall (vecka)</span>
+    <span class="block mt-1 text-sm text-ink-2">.xlsx · räknar timmar, OB-tillägg och lön · Excel, Google Kalkylark, Numbers</span>
+  </a>
+  <a href="/downloads/tidrapport-mall-manad.pdf" download class="block rounded-2xl border-2 border-ink bg-surface p-5 no-underline hover:bg-surface-2">
+    <span class="block text-lg font-black text-ink">Ladda ner PDF-mall (månad)</span>
+    <span class="block mt-1 text-sm text-ink-2">.pdf · A4 att skriva ut · rader för dag 1–31 och underskrift</span>
+  </a>
+</div>
+
+## Vad finns i mallarna?
+
+**Excel-mallen (vecka)** har en rad per dag, måndag till söndag:
+
+| Kolumn | Vad du skriver |
+|---|---|
+| Datum | Fylls i automatiskt när du skrivit veckans måndag |
+| Start / Slut | Klockslag, t.ex. 07:30 och 16:00 |
+| Rast (min) | Obetald rast i minuter, t.ex. 30 |
+| Arbetade timmar | Räknas ut automatiskt |
+| varav OB-tim | Timmar som ligger inom OB-tid enligt ditt avtal |
+| Anteckning | Ort, avdelning, byte av pass eller liknande |
+
+Under tabellen summeras veckans timmar och OB-timmar. Fyller du i
+timlön och OB-procent räknar mallen också ut **grundlön, OB-tillägg
+och summa före skatt**.
+
+**PDF-mallen (månad)** har rader för dag 1–31 med kolumnerna start,
+slut, rast, arbetade timmar, OB-timmar, övertid och anteckning, plus
+rader för underskrift av dig och den som attesterar. Den passar
+arbetsplatser som vill ha tidrapporten på papper.
+
+## Så fyller du i Excel-mallen
+
+1. **Öppna filen** i Excel, Numbers eller Google Kalkylark (Arkiv →
+   Importera → Ladda upp).
+2. **Skriv ditt namn, arbetsgivare och veckans måndag.** Datum och
+   veckonummer fylls i av sig själva.
+3. **Fyll i timlön och OB-procent** om du vill se lönen. OB-procenten
+   står i ditt kollektivavtal – 50 % är bara ett exempel.
+4. **Skriv start, slut och rast för varje pass.** Arbetade timmar
+   räknas ut direkt. Slutar du efter midnatt (t.ex. 22:00–06:30) räknas
+   det ändå rätt.
+5. **Skriv OB-timmarna** i kolumnen *varav OB-tim* (se nästa avsnitt).
+6. **Spara som PDF eller mejla filen** till din chef när veckan är
+   slut. Kopiera fliken om du vill ha flera veckor i samma fil.
+
+## Så räknar du OB-timmar
+
+OB-tiderna står i ditt kollektivavtal och skiljer sig mellan
+branscher. Principen är ändå densamma: räkna hur många av passets
+timmar som ligger inom OB-fönstret.
+
+**Exempel:** Du jobbar 15:00–23:00 med 30 minuters rast. Ditt avtal
+ger kvälls-OB från 18:00 och natt-OB från 22:00. Då blir det:
+
+- 7,5 arbetade timmar (8 timmar minus rast)
+- 4 timmar kvälls-OB (18–22) och 1 timme natt-OB (22–23)
+
+Har kväll och natt olika procentsatser skriver du dem på varsin rad i
+anteckningen, eller räknar på vår [OB-räknare](/verktyg/ob-tillagg/)
+som hanterar flera OB-nivåer samtidigt.
 
 ## Vad ska en tidrapport innehålla?
 
-Minst:
+För en anställd räcker oftast:
 
-- **Datum** — dagen arbetet utfördes
-- **Kund eller projekt** — vem fakturerar du eller intern kategori
-- **Aktivitet** — kort beskrivning ("Möte", "Frontend-utveckling",
-  "Rapportering")
-- **Antal timmar** — decimaltal eller hh:mm
-- **Period-summering** — totalt för vecka/månad
+- **Datum** och **start- och sluttid** för varje pass
+- **Rast** som inte är betald
+- **Arbetade timmar**, gärna uppdelat i ordinarie tid, **OB** och
+  **övertid**
+- **Frånvaro** som sjukdom, vab eller semester, om arbetsgivaren vill
+  ha den i samma rapport
+- **Underskrift** eller attest om arbetsplatsen kräver det
 
-För konsulter, lägg till:
-
-- **Faktureringsbar/icke-faktureringsbar** — så du ser utility-rate
-- **Timpris** — och beräknat belopp
-- **Resor och utlägg** — separat kolumn
-- **Fakturanummer eller projektkod**
-
-För anställda med flexibla tider:
-
-- **Övertid** — separerat från ordinarie
-- **OB** — kvällsersättning, helgersättning
-- **Frånvaro** — sjukdom, vab, semester (för månadsöversikt)
-
-## Tidrapport mall — Excel-version
-
-Här är en grundstruktur du kan kopiera till Excel/Google Sheets:
+Konsulter och egenföretagare som fakturerar behöver dessutom
+**kund eller projekt**, en kort **beskrivning av arbetet** och om
+tiden är **fakturerbar**. Lägg då till de kolumnerna i Excel-mallen och
+summera per kund med:
 
 ```
-| Datum      | Kund/Projekt    | Aktivitet              | Timmar | Bookable | Belopp  |
-|------------|-----------------|------------------------|--------|----------|---------|
-| 2026-05-01 | ACME AB         | Frontend-utveckling    | 6.0    | Yes      | 6 600   |
-| 2026-05-01 | ACME AB         | Möte med produktägare  | 1.0    | Yes      | 1 100   |
-| 2026-05-02 | Internt         | Försäljningsmöten      | 2.0    | No       | -       |
-| 2026-05-02 | ACME AB         | Code review            | 4.0    | Yes      | 4 400   |
-| 2026-05-03 | TechCorp        | Onboarding-möte        | 3.0    | Yes      | 3 300   |
+=SUMIFS(F:F; I:I; "Kund AB")
 ```
 
-Med en `=SUMIF()`-formel summerar du fakturerbara timmar per kund i
-slutet av veckan/månaden.
+där kolumn F är arbetade timmar och kolumn I kundnamnet. (I engelska
+Excel och Google Kalkylark används komma i stället för semikolon.)
 
-### Standard-formel för Excel
+## Slipp mallen – Tidrapportera räknar timmar och OB automatiskt
 
-```
-=SUMIFS(D:D, B:B, "ACME AB", E:E, "Yes")
-```
+En mall fungerar bra när du har samma tider varje vecka. När det blir
+kvällar, helger, röda dagar och övertid blir det mycket att hålla reda
+på för hand. Det är därför jag byggde
+[tidrapport-appen Tidrapportera](/tidrapport/) för iPhone:
 
-Den här ger totala fakturerbara timmar för ACME AB.
+- **Stämpla in och ut** med en timer, eller skriv in passet i efterhand
+- **OB räknas ut automatiskt** efter dina egna regler för kväll, natt,
+  helg och röda dagar
+- **Övertid, semesterersättning och lön efter skatt** (uppskattning) direkt
+- **Samma tidrapport som PDF** med signaturrader, eller CSV som öppnas i Excel
+- **Inget konto** – allt sparas i telefonen
 
-## Tidrapport-mall — PDF-version
+Att logga pass är gratis. PDF- och CSV-export ingår en gång gratis så
+att du kan testa; obegränsad export kräver Premium.
 
-För leverans till kund. Skapa i Word, exportera som PDF. Innehåller:
+<div class="not-prose my-6">
+  <AppStoreBadge url="https://apps.apple.com/se/app/tidrapportera/id6762660992" status="live" position="inline" campaign="tidrapport-mall" />
+</div>
 
-- **Header:** Företagsinformation, fakturareferens, period
-- **Tabell:** Som ovan men med totalrad
-- **Footer:** Kontaktuppgifter, eventuell signatur
+## Läs mer
 
-### PDF-fördelar
-
-- Låsta värden = mer professionellt
-- Kunden kan inte ändra timmar
-- Bra som verifikationsunderlag i bokföring
-
-### PDF-nackdelar
-
-- Du måste göra en ny PDF varje månad
-- Inga formler, manuell beräkning krävs
-
-## Tre färdiga varianter
-
-### Variant 1: Veckorapport för konsult (Excel)
-
-Ger dig vecko-vy med kolumner per dag. Bra om du har enstaka kunder
-och samma timpris.
-
-### Variant 2: Månadsrapport för småföretagare
-
-Aggregerad vy per kund med månadssummering. Bra som
-faktureringsunderlag.
-
-### Variant 3: Detaljrapport för rapportkrav
-
-För kunder som kräver detaljerade tidsregistreringar (juridik,
-revision, IT-konsulting). En rad per aktivitet, inte per dag.
-
-## Excel + manuell rapportering = långsiktigt fel
-
-Excel funkar i början men friktionen leder till:
-
-1. **Glömt att fylla i** — minne sviktar efter 2-3 dagar
-2. **Inkonsekvent format** — datum skrivs annorlunda olika gånger
-3. **Missade timmar** — du förlorar 5-15% av faktureringsbar tid
-4. **Excel-fel** — formler bryter, värden överskriver
-
-För konsulter motsvarar det förmodligen 10-30 timmar/år i förlorad
-fakturering. Vid 1 000 kr/h = 10-30 000 kr/år borta.
-
-## Bättre alternativ: dedikerad app
-
-[Tidrapportera](/tidrapport/) är vår iOS-app som löser dessa
-problem:
-
-- **Snabb logging** — 3 sekunder per loggning
-- **Per-kund/projekt** — du ställer in en gång
-- **Auto-summering** — vecka/månad/år
-- **PDF + CSV-export** — direkt redo att maila
-
-Plus rim av detaljer som dagliga påminnelser, geo-fencing
-("automatiskt på klockan när du går in på kontoret"), och iCloud-
-sync mellan dina iOS-enheter.
-
-## Fri kalkylator: räkna om månadslön till timlön
-
-Om du behöver räkna ut din effektiva timlön (t.ex. inför att skapa
-en tidrapport) — använd vår [timlöne-räknare](/tidrapport/timlone-rakna/).
-
-## Sammanfattning
-
-- **Excel-mall:** flexibel men friktion
-- **PDF-mall:** professionell för leverans
-- **Mobil-app:** lägst friktion = mest data och pengar
-
-Välj baserat på var du är. Många börjar med Excel och byter när de
-inser att de tappar pengar.
+- [Tidrapportering: så gör du rätt – anställda och konsulter](/tidrapport/tidrapportering-guide/)
+- [Bästa tidrapporteringsappen 2026 – så väljer du rätt](/tidrapport/basta-tidrapporteringsappen-2026/)
+- [Excel eller app för tidrapportering?](/tidrapport/excel-vs-app-tidrapportering/)
+- [Räkna ut timlön efter skatt](/verktyg/timlon-efter-skatt/)

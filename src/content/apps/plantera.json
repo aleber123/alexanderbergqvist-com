@@ -1,5 +1,7 @@
 {
   "name": "Plantera",
+  "seoTitle": "Trädgårdsapp – såkalender, frostvarning & odlingszoner",
+  "metaDescription": "Plantera är trädgårdsappen för dig som odlar i Sverige: sådd- och skördekalender per odlingszon, frostvarningar från SMHI-data och påminnelser om vattning.",
   "tagline": "Sverige-anpassad trädgårdsapp med frostvarningar.",
   "description": "Plantera är iOS-appen för dig som odlar i Sverige. Få SMHI-baserade frostvarningar, kalender för sådd och skörd per zon, och affilieringstips för verktyg.",
   "icon": "/apps/plantera.webp",
