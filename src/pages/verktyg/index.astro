@@ -10,9 +10,14 @@ const groups = [
     text: 'Räknare för dig som jobbar timmar, obekväma tider eller är hemma med sjukt barn.',
   },
   {
+    id: 'kalender',
+    title: 'Röda dagar, lönedag och schema',
+    text: 'Planera ledigheten, se när lönen kommer och räkna timmar i ditt skiftschema.',
+  },
+  {
     id: 'ovrigt',
     title: 'Övriga räknare',
-    text: 'Från snusfria besparingar till betong och surdeg.',
+    text: 'Från sömncykler och snusfria besparingar till betong och surdeg.',
   },
 ] as const;
 
@@ -30,9 +35,9 @@ const itemListLd = {
 ---
 
 <BaseLayout
-  title="Gratis räknare – OB, lön efter skatt, VAB och mer"
-  description="Gratis räknare på svenska: OB-tillägg, timlön efter skatt, VAB-ersättning 2026 och semesterersättning. Räknar direkt i webbläsaren – utan konto."
-  keywords={['gratis räknare', 'ob räknare', 'lön efter skatt räknare', 'vab räknare', 'semesterersättning räknare', 'kalkylator']}
+  title="Gratis räknare – OB, lön efter skatt, röda dagar och mer"
+  description="Gratis räknare på svenska: OB-tillägg, timlön efter skatt, VAB-ersättning, röda dagar och klämdagar, lönedag och turnusschema. Räknar direkt i webbläsaren – utan konto."
+  keywords={['gratis räknare', 'ob räknare', 'lön efter skatt räknare', 'vab räknare', 'röda dagar', 'lönedag', 'turnusschema', 'kalkylator']}
 >
   <section class="max-w-3xl mx-auto px-4 sm:px-6 py-6 md:py-8">
     <Breadcrumbs trail={[{ name: 'Hem', url: '/' }, { name: 'Gratis räknare' }]} />

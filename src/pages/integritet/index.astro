@@ -2,8 +2,8 @@
 import BaseLayout from '../../components/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 
-const updated = '26 september 2026';
-const updatedEn = 'September 26, 2026';
+const updated = '30 september 2026';
+const updatedEn = 'September 30, 2026';
 ---
 
 <BaseLayout
@@ -113,8 +113,21 @@ const updatedEn = 'September 26, 2026';
 
       <h2>Webbplatsen</h2>
       <p>
-        alexanderbergqvist.com använder Google Analytics 4 med IP-anonymisering
-        för att förstå trafiken på webbplatsen. Det gäller inte Apparna.
+        alexanderbergqvist.com använder Vercel Web Analytics för att förstå
+        vilka sidor som besöks. Verktyget sätter inga kakor (cookies) och sparar
+        inga personuppgifter. Besök räknas med en anonym kod som byts ut varje
+        dygn, så att samma person inte kan följas mellan dagar eller mellan
+        webbplatser, och vi ser bara sammanställd statistik: antal besök per
+        sida, ungefärligt land, typ av enhet, webbläsare och vilken webbplats
+        besöket kom från. Vi räknar också hur många som trycker på en
+        App Store-länk, och från vilken sida. Uppgifterna säljs inte och
+        används inte för reklam. Det gäller inte Apparna.
+      </p>
+      <p>
+        Webbplatsen sparar en enda funktionell kaka, <code>preferred_lang</code>,
+        som kommer ihåg vilket språk du läser på. Den innehåller bara en
+        språkkod och används inte för spårning. Räknarna på webbplatsen räknar
+        i din webbläsare – det du skriver in skickas inte till oss.
       </p>
 
       <h2>Ändringar och kontakt</h2>
@@ -207,6 +220,19 @@ const updatedEn = 'September 26, 2026';
       <p>
         Because we do not collect personal data, we hold no data about you to access or
         delete. You delete your data by removing entries in the app or uninstalling it.
+      </p>
+
+      <h3>The website</h3>
+      <p>
+        alexanderbergqvist.com uses Vercel Web Analytics to see which pages are
+        visited. It sets no cookies and stores no personal data: visits are
+        counted with an anonymous hash that is replaced every day, and we only
+        see aggregated statistics (page views, approximate country, device
+        type, browser and referring site), plus how many visitors tap an
+        App Store link and from which page. The only cookie the site sets is a
+        functional <code>preferred_lang</code> cookie that remembers your
+        language. The calculators run in your browser; what you type is not
+        sent to us. This does not apply to the Apps.
       </p>
 
       <h3>Changes and contact</h3>

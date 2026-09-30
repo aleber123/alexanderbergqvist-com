@@ -4,8 +4,8 @@
  * so the app strip under the H1 and the 152 in-body MDX links get the
  * exact same treatment — see the comment there for why that matters.
  *
- * GA4 outbound-click tracking lives in Analytics.astro and fires
- * client-side — separate concern, doesn't depend on these tags.
+ * Click tracking (Vercel Web Analytics `app_store_click`) lives in
+ * Analytics.astro and reads data-cta-position — separate concern.
  */
 import { tagAppStoreUrl, type CtaPosition } from '../lib/appstore';
 

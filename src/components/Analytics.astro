@@ -1,109 +1,82 @@
 ---
 /**
- * Google Analytics 4 + outbound link tracking.
+ * Vercel Web Analytics (cookieless) + App Store click events.
  *
- * Reads measurement ID from PUBLIC_GA_ID environment variable.
- * Set it in Vercel: Settings → Environment Variables → PUBLIC_GA_ID = G-XXXXXXX
+ * Replaced Google Analytics 4 on 2026-09-30: GA set cookies and loaded
+ * without consent, which IMY has found non-compliant. Vercel Web
+ * Analytics sets no cookies and stores no personal data — visitors are
+ * counted with a hash of the request that rotates daily, and only
+ * aggregated numbers are shown — so no consent banner is needed.
  *
- * Locally: create .env with PUBLIC_GA_ID=G-XXXXXXX (or skip — analytics
- * only enables in production builds anyway).
+ * The script is served first-party from /_vercel/insights/script.js
+ * once Web Analytics is enabled for the project in the Vercel dashboard
+ * (Project → Analytics → Enable). Until then the request 404s and
+ * nothing is tracked; the page is unaffected.
+ *
+ * Page views are automatic. On top of that every click on an App Store
+ * link sends a custom event:
+ *
+ *   app_store_click { app, position, page }
+ *
+ *   app      — app slug (e.g. 'tidrapport'), from the numeric App Store id
+ *   position — data-cta-position on the link (hero/inline/body/footer/
+ *              sticky/result/qr/banner), falling back to the `ct` prefix
+ *              stamped by src/lib/appstore.ts
+ *   page     — location.pathname
+ *
+ * Custom events are only recorded on Vercel Pro/Enterprise. On Hobby the
+ * call is a harmless no-op and page views still work.
+ *
+ * Rollback note: the old GA4 property was read from PUBLIC_GA_ID; the
+ * previous implementation is in git history (commit 87e6fda).
  */
-const GA_ID = import.meta.env.PUBLIC_GA_ID;
-const isProd = import.meta.env.PROD;
+import { getCollection } from 'astro:content';
+import { appStoreIdFromUrl } from '../lib/app-section';
 
-// Don't load GA on dev or if no ID is set — keeps local DX clean and
-// avoids polluting analytics with developer pageviews.
-const enabled = GA_ID && isProd;
+const enabled = import.meta.env.PROD;
+
+// Numeric App Store id → app slug, so events carry a readable app name.
+const apps = await getCollection('apps');
+const appById: Record<string, string> = {};
+for (const a of apps) {
+  const id = appStoreIdFromUrl(a.data.appStoreUrl);
+  if (id) appById[id] = a.id;
+}
 ---
 
 {enabled && (
   <>
-    <script
-      is:inline
-      async
-      src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-    ></script>
-    <script is:inline define:vars={{ GA_ID }}>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() { dataLayer.push(arguments); }
-      gtag('js', new Date());
-      // anonymize_ip + restricted_data_processing for GDPR-friendliness.
-      // Plus consent-mode default to denied — flips to granted only if
-      // user opts in (we don't show a banner here, but you can add one).
-      gtag('config', GA_ID, {
-        anonymize_ip: true,
-        cookie_flags: 'SameSite=None;Secure',
-      });
-
-      // Auto-track outbound clicks (App Store, etc.) so we can measure
-      // conversion from web -> App Store install.
-      //
-      // App Store links get an extra `app_store_click` event with the
-      // numeric app_id + decoded slug parsed out of the URL. That lets
-      // us split downloads-per-app in GA4 without touching every
-      // <AppStoreBadge> call site. The Apple URL shape we rely on is
-      //   https://apps.apple.com/se/app/{slug}/id{numeric_id}
-      function parseAppStoreUrl(href) {
-        try {
-          const u = new URL(href);
-          if (!u.hostname.includes('apps.apple.com')) return null;
-          const match = u.pathname.match(/\/app\/([^/]+)\/id(\d+)/);
-          if (!match) return null;
-          return {
-            app_slug: decodeURIComponent(match[1]),
-            app_id: match[2],
-            country: u.pathname.match(/^\/([a-z]{2})\//)?.[1] || 'us',
-          };
-        } catch {
-          return null;
-        }
-      }
-
-      document.addEventListener('click', (e) => {
-        const target = e.target instanceof Element ? e.target.closest('a') : null;
-        if (!target || !target.href) return;
-        try {
-          const url = new URL(target.href);
-          if (!url.hostname || url.hostname === window.location.hostname) return;
-
-          const appInfo = parseAppStoreUrl(target.href);
-          const linkText = (target.textContent || '').trim().slice(0, 80);
-
-          // Generic outbound event (legacy, unchanged shape).
-          gtag('event', 'outbound_click', {
-            link_url: target.href,
-            link_domain: url.hostname,
-            link_text: linkText,
-            is_app_store: !!appInfo,
-            ...(appInfo || {}),
-          });
-
-          // Dedicated App Store event — easier to set up as a GA4
-          // Conversion in the dashboard, and easier to slice per-app.
-          if (appInfo) {
-            // Where on the page the click happened. Read from the
-            // explicit attribute, falling back to the `ct` prefix that
-            // src/lib/appstore.ts stamps (hero_/inline_/body_/footer_).
-            // Gives a GA4 position breakdown that mirrors what ASC
-            // reports, so the two can be reconciled.
-            const ctPrefix = (url.searchParams.get('ct') || '').split('_')[0];
-            const position =
-              target.dataset.ctaPosition ||
-              (['hero', 'inline', 'body', 'footer'].includes(ctPrefix)
-                ? ctPrefix
-                : 'unknown');
-
-            gtag('event', 'app_store_click', {
-              app_slug: appInfo.app_slug,
-              app_id: appInfo.app_id,
-              country: appInfo.country,
-              source_path: window.location.pathname,
-              link_text: linkText,
-              cta_position: position,
+    <script is:inline>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script is:inline defer src="/_vercel/insights/script.js"></script>
+    <script is:inline define:vars={{ appById }}>
+      var POSITIONS = ['hero', 'inline', 'body', 'footer', 'sticky', 'result', 'qr', 'banner'];
+      document.addEventListener(
+        'click',
+        function (e) {
+          var a = e.target instanceof Element ? e.target.closest('a[href]') : null;
+          if (!a) return;
+          try {
+            var url = new URL(a.href);
+            if (url.hostname.indexOf('apps.apple.com') === -1) return;
+            var id = (url.pathname.match(/\/id(\d+)/) || [])[1] || '';
+            var ctPrefix = (url.searchParams.get('ct') || '').split('_')[0];
+            var position =
+              a.getAttribute('data-cta-position') ||
+              (POSITIONS.indexOf(ctPrefix) !== -1 ? ctPrefix : 'unknown');
+            window.va('event', {
+              name: 'app_store_click',
+              data: {
+                app: appById[id] || id || 'unknown',
+                position: position,
+                page: window.location.pathname,
+              },
             });
-          }
-        } catch {}
-      }, { capture: true });
+          } catch (err) {}
+        },
+        { capture: true },
+      );
     </script>
   </>
 )}

@@ -1,0 +1,362 @@
+---
+/**
+ * /verktyg/turnusschema/ — rotation schedule generator. Presets and
+ * terms (Dag/Kväll/Natt/Ledig, "dag 1 i perioden", 2-2-3 (Panama),
+ * 4 på/4 av, 3-skift 5-5-4, 2 dag 2 natt 4 ledig) mirror Tidrapportera's
+ * turnus feature (lib/utils/rotation_logic.dart in the app), so what a
+ * visitor builds here is what they'll find in the app.
+ *
+ * CTA copy follows TURNUS_LIVE: until Tidrapportera 1.1.7 is in the
+ * App Store the feature is announced as coming.
+ */
+import VerktygLayout from '../../../components/VerktygLayout.astro';
+import ResultCta from '../../../components/ResultCta.astro';
+import { TURNUS_LIVE } from '../../../lib/feature-flags';
+import { VERKTYG, AKTUELLT_AR } from '../../../data/verktyg';
+
+const inputCls =
+  'w-full rounded-xl border border-line-strong bg-surface px-4 py-3 text-lg font-bold aria-[invalid=true]:border-ink aria-[invalid=true]:border-2';
+
+/** Presets. Hours = worked hours per shift after break, from the app's
+ *  defaults (e.g. Panama day 07–19 with 60 min break = 11 h). */
+const PRESETS = [
+  { id: 'panama', name: '2-2-3 (Panama)', pattern: 'DD--DDD--DD---', h: { D: 11, K: 7.5, N: 11 } },
+  { id: 'fyra', name: '4 på / 4 av', pattern: 'DDDD----', h: { D: 11, K: 7.5, N: 11 } },
+  { id: 'treskift', name: '3-skift 5-5-4', pattern: 'DDDDD--KKKKK--NNNN---', h: { D: 7.5, K: 7.5, N: 7.5 } },
+  { id: 'dagnatt', name: '2 dag, 2 natt, 4 ledig', pattern: 'DDNN----', h: { D: 11, K: 7.5, N: 11 } },
+  { id: 'eget', name: 'Eget mönster', pattern: 'DDDDD--', h: { D: 8, K: 8, N: 8 } },
+];
+
+const ctaText = TURNUS_LIVE
+  ? 'Lägg in ditt turnusschema i Tidrapportera – planerade pass syns i kalendern och loggas med ett tryck, med OB och lönprognos.'
+  : 'Turnus kommer i nästa version av Tidrapportera – ladda ner nu, så finns det hos dig när uppdateringen kommer. Redan idag loggar du pass och får OB uträknat.';
+
+const faq = [
+  {
+    q: 'Vad är ett turnusschema?',
+    a: 'Ett turnusschema är ett arbetsschema som upprepas i en fast cykel, till exempel var fjortonde dag. Det är vanligt i vård, industri, polis, räddningstjänst, bevakning och transport där arbetet pågår dygnet runt. Samma mönster av dag-, kvälls- och nattpass och lediga dagar går igen period efter period.',
+  },
+  {
+    q: 'Hur fungerar 2-2-3-schemat?',
+    a: '2-2-3, även kallat Panama-schemat, är en cykel på 14 dagar: 2 dagar jobb, 2 lediga, 3 jobb, 2 lediga, 2 jobb och 3 lediga. Du jobbar 7 av 14 dagar, oftast 12-timmarspass. Börjar perioden en måndag jobbar du varannan helg fredag–söndag och är ledig fredag–söndag helgen efter.',
+  },
+  {
+    q: 'Hur många timmar i veckan blir 4 på 4 av?',
+    a: 'Med 4 på / 4 av jobbar du hälften av alla dagar, i snitt 3,5 pass per vecka. Med 11 arbetade timmar per pass (12-timmarspass minus en timmes rast) blir det i snitt 38,5 timmar per vecka. Skriv in dina egna passlängder i generatorn så räknas det ut.',
+  },
+  {
+    q: 'Vad är 3-skift 5-5-4?',
+    a: '5-5-4 är ett vanligt treskiftsschema: fem förmiddagar, två lediga, fem kvällar, två lediga, fyra nätter och tre lediga – en cykel på 21 dagar. Generatorn använder bokstäverna D (dag), K (kväll) och N (natt).',
+  },
+  {
+    q: 'Hur skriver jag ett eget mönster?',
+    a: 'Skriv en bokstav per dag: D för dagpass, K för kvällspass, N för nattpass och - (eller L) för ledig. Mellanslag ignoreras, så "D D N N - - - -" och "DDNN----" betyder samma sak. Välj sedan vilket datum som är dag 1 i perioden.',
+  },
+  {
+    q: 'Räknas röda dagar i schemat?',
+    a: 'Generatorn markerar röda dagar och helgdagsaftnar i kalendern, så att du ser vilka pass som kan ge storhelgs-OB. Hur mycket OB du får beror på ditt kollektivavtal.',
+  },
+];
+
+const related = VERKTYG.filter(
+  (v) => v.group === 'kalender' || v.href === '/verktyg/ob-tillagg/',
+);
+---
+
+<VerktygLayout
+  title="Turnusschema-generator – 2-2-3, 4 på 4 av och 5-5-4"
+  description="Gratis turnusschema-generator: välj 2-2-3, 4 på/4 av, 3-skift 5-5-4 eller skriv ett eget mönster. Se åtta veckor i kalendern, röda dagar och timmar per vecka – och skriv ut."
+  keywords={['turnusschema', 'turnus schema', 'skiftschema', 'skiftschema generator', '2-2-3 schema', '4 på 4 av', '5-5-4 skift', 'treskift schema']}
+  h1="Turnusschema-generator"
+  intro="Välj ett mönster och startdatum – se de kommande åtta veckorna med timmar per vecka."
+  crumb="Turnusschema"
+  faq={faq}
+  app="tidrapport"
+  ctaTitle={TURNUS_LIVE ? 'Lägg in ditt turnusschema i Tidrapportera' : 'Turnus kommer i nästa version av Tidrapportera'}
+  ctaText={ctaText}
+  disclaimer="Generatorn visar ett planerat schema. Timmarna är de passlängder du fyller i (arbetad tid efter rast). Byten, sjukdagar och ändringar från arbetsgivaren syns inte här."
+  related={related}
+  relatedTitle="Fler verktyg för kalender och lön"
+>
+  <form id="turnus-form" class="mt-6 rounded-2xl border border-line bg-surface p-4 sm:p-6 md:p-8" novalidate onsubmit="return false" data-no-print>
+    <fieldset>
+      <legend class="block text-sm font-bold mb-2">Mönster</legend>
+      <div class="flex flex-wrap gap-2">
+        {PRESETS.map((p, i) => (
+          <label class="cursor-pointer">
+            <input type="radio" name="preset" value={p.id} class="peer sr-only" checked={i === 0} data-pattern={p.pattern} data-h={JSON.stringify(p.h)} />
+            <span class="inline-block rounded-full border border-line-strong px-3 py-2 text-sm font-bold peer-checked:bg-ink peer-checked:text-on-ink peer-focus-visible:ring-2">{p.name}</span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+
+    <div class="mt-4">
+      <label class="block text-sm font-bold mb-2" for="monster">Mönster, en bokstav per dag</label>
+      <input id="monster" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" value={PRESETS[0].pattern} aria-describedby="monster-hint monster-fel" class={`${inputCls} font-mono tracking-widest`} />
+      <p id="monster-hint" class="mt-1 text-xs text-ink-3">D = dag, K = kväll, N = natt, - eller L = ledig. Mellanslag ignoreras.</p>
+      <p id="monster-fel" hidden class="mt-1 text-sm font-bold text-ink">⚠ Använd bara D, K, N, - eller L – och minst en arbetsdag.</p>
+    </div>
+
+    <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="col-span-2 sm:col-span-1">
+        <label class="block text-sm font-bold mb-2" for="start">Dag 1 i perioden</label>
+        <input id="start" type="date" class={inputCls} />
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-2" for="h-D">Dag (h)</label>
+        <input id="h-D" type="text" inputmode="decimal" autocomplete="off" value="11" class={inputCls} />
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-2" for="h-K">Kväll (h)</label>
+        <input id="h-K" type="text" inputmode="decimal" autocomplete="off" value="7,5" class={inputCls} />
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-2" for="h-N">Natt (h)</label>
+        <input id="h-N" type="text" inputmode="decimal" autocomplete="off" value="11" class={inputCls} />
+      </div>
+    </div>
+    <p class="mt-2 text-xs text-ink-3">Arbetade timmar per pass, efter rast. Ett 12-timmarspass med en timmes rast = 11.</p>
+  </form>
+
+  <section id="schema" aria-labelledby="schema-rubrik" class="mt-6">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <h2 id="schema-rubrik" class="text-2xl font-black">Ditt schema, 8 veckor</h2>
+      <button type="button" id="skriv-ut" class="rounded-xl border border-line-strong px-4 py-2 text-sm font-bold hover:bg-surface-2" data-no-print>
+        Skriv ut
+      </button>
+    </div>
+    <p class="mt-1 text-sm text-ink-2" data-out="info"></p>
+
+    <div aria-live="polite">
+      <dl class="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="rounded-2xl bg-surface-2 border border-line p-3">
+          <dt class="text-xs font-black uppercase tracking-widest text-ink-3">Snitt/vecka</dt>
+          <dd class="mt-1 text-xl font-black" data-out="snitt">–</dd>
+        </div>
+        <div class="rounded-2xl bg-surface-2 border border-line p-3">
+          <dt class="text-xs font-black uppercase tracking-widest text-ink-3">8 veckor</dt>
+          <dd class="mt-1 text-xl font-black" data-out="totalt">–</dd>
+        </div>
+        <div class="rounded-2xl bg-surface-2 border border-line p-3">
+          <dt class="text-xs font-black uppercase tracking-widest text-ink-3">Pass</dt>
+          <dd class="mt-1 text-xl font-black" data-out="pass">–</dd>
+        </div>
+        <div class="rounded-2xl bg-surface-2 border border-line p-3">
+          <dt class="text-xs font-black uppercase tracking-widest text-ink-3">Röda dagar i jobb</dt>
+          <dd class="mt-1 text-xl font-black" data-out="roda">–</dd>
+        </div>
+      </dl>
+
+      <div class="mt-4 rounded-2xl border border-line">
+        <table class="turnus w-full table-fixed text-center text-sm">
+          <caption class="sr-only">Turnusschema åtta veckor framåt</caption>
+          <thead class="bg-surface-2">
+            <tr>
+              <th scope="col" class="py-2 w-10 text-xs">V.</th>
+              {['Mån', 'Tis', 'Ons', 'Tor', 'Fre', 'Lör', 'Sön'].map((d) => (
+                <th scope="col" class="py-2 text-xs">{d}</th>
+              ))}
+              <th scope="col" class="py-2 w-12 text-xs">Tim.</th>
+            </tr>
+          </thead>
+          <tbody id="kalender"></tbody>
+        </table>
+      </div>
+      <p class="mt-2 text-xs text-ink-2">
+        <span class="font-bold">D</span> dag · <span class="font-bold">K</span> kväll · <span class="font-bold">N</span> natt ·
+        <span class="font-bold">–</span> ledig · <span class="font-bold">★</span> röd dag eller helgdagsafton · understruken = idag
+      </p>
+    </div>
+    <div data-no-print>
+      <ResultCta app="tidrapport" text={ctaText} />
+    </div>
+  </section>
+
+  <Fragment slot="forklaring">
+    <h2>Vanliga turnusscheman i Sverige</h2>
+    <ul>
+      <li><strong>2-2-3 (Panama):</strong> 14 dagars cykel, 7 arbetsdagar, oftast 12-timmarspass. Varannan helg ledig från fredag.</li>
+      <li><strong>4 på / 4 av:</strong> 8 dagars cykel. Arbetsdagarna vandrar genom veckan, så helgerna varierar.</li>
+      <li><strong>3-skift 5-5-4:</strong> 21 dagars cykel med fem förmiddagar, fem kvällar och fyra nätter. Vanligt i industrin.</li>
+      <li><strong>2 dag, 2 natt, 4 ledig:</strong> 8 dagars cykel där dag- och nattpass kommer i block.</li>
+    </ul>
+    <p>
+      Snittet per vecka räknas på hela cykeln, inte bara de åtta veckorna
+      som visas. Därför stämmer det med hur arbetstid i turnus ofta räknas:
+      som ett genomsnitt över en längre period.
+    </p>
+    <h2>Från schema till lön</h2>
+    <p>
+      Kvälls-, natt- och helgpass ger ofta OB-tillägg. Räkna på ett pass med
+      <a href="/verktyg/ob-tillagg/">OB-räknaren</a>, se vilka pass som hamnar
+      på <a href={`/verktyg/roda-dagar-${AKTUELLT_AR}/`}>röda dagar {AKTUELLT_AR}</a> och när
+      lönen kommer på <a href={`/verktyg/lonedag-${AKTUELLT_AR}/`}>lönedag {AKTUELLT_AR}</a>.
+    </p>
+  </Fragment>
+</VerktygLayout>
+
+<style is:global>
+  .turnus td { border-top: 1px solid var(--line); padding: 0.35rem 0.1rem; }
+  .turnus .pass { display: inline-block; min-width: 1.9rem; border-radius: 0.5rem; padding: 0.15rem 0.2rem; font-weight: 800; }
+  .turnus .pass-D { background: var(--surface-2); border: 1px solid var(--line-strong); }
+  .turnus .pass-K { background: var(--ink-3); color: var(--on-ink); }
+  .turnus .pass-N { background: var(--ink); color: var(--on-ink); }
+  .turnus .pass-off { color: var(--ink-3); }
+  .turnus .dag { display: block; font-size: 0.7rem; color: var(--ink-3); }
+  .turnus .idag .dag { text-decoration: underline; font-weight: 800; color: var(--ink); }
+  .turnus .fore { opacity: 0.35; }
+  @media print {
+    header, footer, .sticky-app-cta, [data-no-print],
+    main > section > *:not(h1):not(#schema) { display: none !important; }
+    body { background: #fff !important; }
+    .turnus .pass-K, .turnus .pass-N { color: #000 !important; background: #ddd !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+
+<script>
+  import { showResultCta, hideResultCta } from '../../../lib/result-cta';
+  import { readInput, flagInvalid, num } from '../../../lib/sv-number';
+  import { helgdagPa } from '../../../lib/helgdagar';
+  import { stockholmToday, addDays, daysBetween, isoWeekday, isoWeek, type YMD } from '../../../lib/datum';
+
+  type Pass = 'D' | 'K' | 'N' | '-';
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+  const form = $<HTMLFormElement>('turnus-form');
+  const monster = $<HTMLInputElement>('monster');
+  const start = $<HTMLInputElement>('start');
+  const hours = { D: $<HTMLInputElement>('h-D'), K: $<HTMLInputElement>('h-K'), N: $<HTMLInputElement>('h-N') };
+  const out = (k: string) => document.querySelector(`[data-out="${k}"]`) as HTMLElement;
+  const fmtH = (h: number) => `${num(Math.round(h * 10) / 10)} h`;
+
+  const today = stockholmToday();
+  const iso = (d: YMD) => `${d.y}-${String(d.m).padStart(2, '0')}-${String(d.d).padStart(2, '0')}`;
+  if (!start.value) start.value = iso(today);
+
+  function parse(raw: string): Pass[] | null {
+    const cells: Pass[] = [];
+    for (const c of raw.toUpperCase().replace(/\s+/g, '')) {
+      if (c === 'D') cells.push('D');
+      else if (c === 'K' || c === 'E') cells.push('K');
+      else if (c === 'N') cells.push('N');
+      else if (c === '-' || c === 'L' || c === '–' || c === '0' || c === 'X') cells.push('-');
+      else return null;
+    }
+    if (!cells.length || cells.length > 84 || cells.every((c) => c === '-')) return null;
+    return cells;
+  }
+
+  function render() {
+    const cells = parse(monster.value);
+    monster.setAttribute('aria-invalid', cells ? 'false' : 'true');
+    $('monster-fel').hidden = !!cells;
+    Object.values(hours).forEach(flagInvalid);
+    const tbody = $('kalender');
+    if (!cells) {
+      tbody.innerHTML = '';
+      hideResultCta();
+      return;
+    }
+    const h = { D: readInput(hours.D), K: readInput(hours.K), N: readInput(hours.N) };
+    const [y, m, d] = (start.value || iso(today)).split('-').map(Number);
+    const day1: YMD = { y, m, d };
+    const L = cells.length;
+    const passAt = (date: YMD): Pass | null => {
+      const i = daysBetween(day1, date);
+      if (i < 0) return null;
+      return cells[i % L];
+    };
+
+    // Cycle average: hours over one full cycle, scaled to 7 days.
+    const cycleHours = cells.reduce((s, c) => s + (c === '-' ? 0 : h[c]), 0);
+    const perWeek = (cycleHours / L) * 7;
+
+    const monday = addDays(day1, 1 - isoWeekday(day1));
+    const frag = document.createDocumentFragment();
+    let total = 0;
+    let passCount = 0;
+    let rodaJobb = 0;
+    for (let w = 0; w < 8; w++) {
+      const tr = document.createElement('tr');
+      const wk = document.createElement('td');
+      wk.className = 'text-xs text-ink-3';
+      wk.textContent = String(isoWeek(addDays(monday, w * 7)).week);
+      tr.appendChild(wk);
+      let weekHours = 0;
+      for (let i = 0; i < 7; i++) {
+        const date = addDays(monday, w * 7 + i);
+        const p = passAt(date);
+        const td = document.createElement('td');
+        const helg = helgdagPa(date);
+        if (daysBetween(today, date) === 0) td.classList.add('idag');
+        const dag = document.createElement('span');
+        dag.className = 'dag';
+        dag.textContent = `${date.d}/${date.m}${helg ? ' ★' : ''}`;
+        if (helg) dag.title = helg.name;
+        td.appendChild(dag);
+        const span = document.createElement('span');
+        if (p === null) {
+          td.classList.add('fore');
+          span.textContent = '';
+        } else if (p === '-') {
+          span.className = 'pass pass-off';
+          span.textContent = '–';
+          span.setAttribute('aria-label', 'Ledig');
+        } else {
+          span.className = `pass pass-${p}`;
+          span.textContent = p;
+          span.setAttribute('aria-label', { D: 'Dag', K: 'Kväll', N: 'Natt' }[p]);
+          weekHours += h[p];
+          passCount++;
+          if (helg) rodaJobb++;
+        }
+        td.appendChild(span);
+        tr.appendChild(td);
+      }
+      total += weekHours;
+      const th = document.createElement('td');
+      th.className = 'text-xs font-bold';
+      th.textContent = num(Math.round(weekHours * 10) / 10);
+      tr.appendChild(th);
+      frag.appendChild(tr);
+    }
+    tbody.replaceChildren(frag);
+
+    const counts = { D: 0, K: 0, N: 0 };
+    cells.forEach((c) => c !== '-' && counts[c]++);
+    const work = counts.D + counts.K + counts.N;
+    const weeksToRepeat = (L * 7) / gcd(L, 7) / 7;
+    out('info').textContent =
+      `Cykel på ${L} dagar med ${work} pass (${[counts.D && `${counts.D} dagpass`, counts.K && `${counts.K} kvällspass`, counts.N && `${counts.N} nattpass`].filter(Boolean).join(', ')}). ` +
+      `Samma veckodagar kommer tillbaka efter ${weeksToRepeat} ${weeksToRepeat === 1 ? 'vecka' : 'veckor'}.`;
+    out('snitt').textContent = fmtH(perWeek);
+    out('totalt').textContent = fmtH(total);
+    out('pass').textContent = String(passCount);
+    out('roda').textContent = String(rodaJobb);
+    showResultCta();
+  }
+
+  function gcd(a: number, b: number): number {
+    return b ? gcd(b, a % b) : a;
+  }
+
+  form.addEventListener('change', (e) => {
+    const t = e.target as HTMLInputElement;
+    if (t.name === 'preset') {
+      if (t.value !== 'eget') monster.value = t.dataset.pattern ?? '';
+      const ph = JSON.parse(t.dataset.h ?? '{}') as Record<'D' | 'K' | 'N', number>;
+      (['D', 'K', 'N'] as const).forEach((k) => (hours[k].value = num(ph[k])));
+      if (t.value === 'eget') monster.focus();
+    }
+    render();
+  });
+  form.addEventListener('input', (e) => {
+    if ((e.target as HTMLElement).id === 'monster') {
+      const eget = form.querySelector<HTMLInputElement>('input[value="eget"]');
+      if (eget) eget.checked = true;
+    }
+    render();
+  });
+  $('skriv-ut').addEventListener('click', () => window.print());
+  render();
+</script>

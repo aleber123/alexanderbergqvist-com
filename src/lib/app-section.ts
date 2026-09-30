@@ -11,7 +11,8 @@
  *   /<lang>/<app>/...                → <app>   (lang prefix stripped)
  *   /<app>/...                       → <app>   (incl. /surdeg/recept/…)
  *   /verktyg/<calc>/                 → mapped below (OB, timlön,
- *                                      semesterersättning → Tidrapportera;
+ *                                      semesterersättning, röda dagar,
+ *                                      lönedag, turnusschema → Tidrapportera;
  *                                      VAB → VAB-koll)
  *   /f/                              → fodelsedagar (share page)
  *   /namnsdag/**, /vecka/            → fodelsedagar
@@ -47,7 +48,16 @@ const VERKTYG_APP: Record<string, string> = {
   'timlon-efter-skatt': 'tidrapport',
   semesterersattning: 'tidrapport',
   'vab-ersattning': 'vab-koll',
+  // Holidays → OB/storhelg pay, paydays and rotation schedules are all
+  // Tidrapportera jobs.
+  turnusschema: 'tidrapport',
 };
+
+/** Year-suffixed tool pages: /verktyg/roda-dagar-2026/, /verktyg/lonedag-2027/ … */
+const VERKTYG_APP_PREFIX: [RegExp, string][] = [
+  [/^roda-dagar-\d{4}$/, 'tidrapport'],
+  [/^lonedag-\d{4}$/, 'tidrapport'],
+];
 
 const OTHER_APP: Record<string, string> = {
   f: 'fodelsedagar',
@@ -73,8 +83,10 @@ export function appSectionForPath(pathname: string): AppSection | null {
   const [first, second] = segs;
   if (!first) return null;
   if ((APP_SLUGS as readonly string[]).includes(first)) return { app: first, lang };
-  if (first === 'verktyg' && second && VERKTYG_APP[second]) {
-    return { app: VERKTYG_APP[second], lang };
+  if (first === 'verktyg' && second) {
+    if (VERKTYG_APP[second]) return { app: VERKTYG_APP[second], lang };
+    const hit = VERKTYG_APP_PREFIX.find(([re]) => re.test(second));
+    if (hit) return { app: hit[1], lang };
   }
   if (OTHER_APP[first]) return { app: OTHER_APP[first], lang };
   return null;

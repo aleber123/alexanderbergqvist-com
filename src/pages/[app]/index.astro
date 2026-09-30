@@ -7,6 +7,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import AppStoreQr from '../../components/AppStoreQr.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
 import TidrapportLanding from '../../components/landing/TidrapportLanding.astro';
+import { AKTUELLT_AR } from '../../data/verktyg';
 
 export const getStaticPaths = (async () => {
   const apps = await getCollection('apps');
@@ -142,6 +143,28 @@ const toolsByApp: Record<
       slug: 'timlone-rakna',
       title: 'Timlöne-räknare',
       description: 'Räkna ut din effektiva timlön som konsult eller anställd.',
+    },
+    {
+      href: '/verktyg/turnusschema/',
+      title: 'Turnusschema-generator',
+      description: '2-2-3, 4 på/4 av eller 5-5-4 – se åtta veckor och timmar per vecka.',
+    },
+    {
+      href: `/verktyg/roda-dagar-${AKTUELLT_AR}/`,
+      title: `Röda dagar ${AKTUELLT_AR}`,
+      description: 'Alla helgdagar och klämdagar – och vilka pass som kan ge storhelgs-OB.',
+    },
+    {
+      href: `/verktyg/lonedag-${AKTUELLT_AR}/`,
+      title: `Lönedag ${AKTUELLT_AR}`,
+      description: 'När kommer lönen varje månad om lönedagen är den 25:e?',
+    },
+  ],
+  somnkoll: [
+    {
+      slug: 'somncykelkalkylator',
+      title: 'Sömncykelkalkylator',
+      description: 'När ska du gå och lägga dig för att vakna mellan två sömncykler?',
     },
   ],
   plantera: [

@@ -8,16 +8,16 @@
  * text: there are NO projects/customers, NO geofencing, NO iCloud sync,
  * NO widgets and NO XLSX export — only PDF and CSV. Turnus exists in
  * code from 1.1.7 and is labelled as upcoming until that version is
- * live in the App Store (update TURNUS_LIVE when it is).
+ * live in the App Store (update TURNUS_LIVE in src/lib/feature-flags.ts when it is).
  */
 import FAQ from '../FAQ.astro';
+import { TURNUS_LIVE } from '../../lib/feature-flags';
 
 interface Props {
   accent: string;
 }
 const { accent } = Astro.props;
 
-const TURNUS_LIVE = false;
 
 const faq = [
   {
@@ -86,7 +86,8 @@ const faq = [
       Jobbar du rullande schema? I version 1.1.7 lägger du upp turnus – till
       exempel 2-2-3, 4 på/4 av eller 5-5-4 – och ser planerade pass i
       kalendern, med påminnelse före varje pass och en lönprognos för
-      månaden.
+      månaden. Vill du se hur ditt schema faller ut redan nu? Prova vår
+      <a href="/verktyg/turnusschema/">turnusschema-generator</a>.
     </p>
 
     <h3>Tidrapportera eller en tidrapport-mall?</h3>

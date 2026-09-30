@@ -11,8 +11,19 @@ export interface Verktyg {
   /** App slug the calculator funnels into (src/content/apps/<slug>.json). */
   app: string;
   /** Grouping on the hub page. */
-  group: 'lon' | 'ovrigt';
+  group: 'lon' | 'kalender' | 'ovrigt';
 }
+
+/** First year with a /verktyg/roda-dagar-<år>/ and /verktyg/lonedag-<år>/
+ *  page. Older years stay built (they keep their links); each build adds
+ *  the next year, so in 2027 the 2028 pages appear automatically. */
+export const FORSTA_AR = 2026;
+/** The build year – "current" for hub links and cross-links. */
+export const AKTUELLT_AR = Math.max(FORSTA_AR, new Date().getFullYear());
+export const KALENDER_AR: number[] = Array.from(
+  { length: AKTUELLT_AR + 1 - FORSTA_AR + 1 },
+  (_, i) => FORSTA_AR + i,
+);
 
 export const VERKTYG: Verktyg[] = [
   {
@@ -44,6 +55,27 @@ export const VERKTYG: Verktyg[] = [
     group: 'lon',
   },
   {
+    href: `/verktyg/roda-dagar-${AKTUELLT_AR}/`,
+    title: `Röda dagar ${AKTUELLT_AR}`,
+    description: 'Alla helgdagar och klämdagar – och hur du får flest dagar ledigt på minst semester.',
+    app: 'tidrapport',
+    group: 'kalender',
+  },
+  {
+    href: `/verktyg/lonedag-${AKTUELLT_AR}/`,
+    title: `Lönedag ${AKTUELLT_AR}`,
+    description: 'Vilket datum kommer lönen varje månad när lönedagen är den 25:e?',
+    app: 'tidrapport',
+    group: 'kalender',
+  },
+  {
+    href: '/verktyg/turnusschema/',
+    title: 'Turnusschema-generator',
+    description: '2-2-3, 4 på/4 av, 5-5-4 eller eget mönster – se åtta veckor och timmar per vecka.',
+    app: 'tidrapport',
+    group: 'kalender',
+  },
+  {
     href: '/tidrapport/timlone-rakna/',
     title: 'Månadslön till timlön',
     description: 'Räkna om månadslön till timlön, dagslön och årslön.',
@@ -56,6 +88,13 @@ export const VERKTYG: Verktyg[] = [
     description: 'Hur många av de 120 vab-dagarna per barn har du kvar i år?',
     app: 'vab-koll',
     group: 'lon',
+  },
+  {
+    href: '/somnkoll/somncykelkalkylator/',
+    title: 'Sömncykelkalkylator',
+    description: 'När ska du gå och lägga dig för att vakna mellan två sömncykler?',
+    app: 'somnkoll',
+    group: 'ovrigt',
   },
   {
     href: '/snusfri-resa/kalkylator/',
@@ -94,5 +133,5 @@ export const VERKTYG: Verktyg[] = [
   },
 ];
 
-/** The four new money calculators, for cross-linking between them. */
+/** The /verktyg/ calculators (money + calendar), for cross-linking between them. */
 export const LON_VERKTYG = VERKTYG.filter((v) => v.href.startsWith('/verktyg/'));

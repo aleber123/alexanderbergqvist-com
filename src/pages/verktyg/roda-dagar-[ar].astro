@@ -1,0 +1,302 @@
+---
+/**
+ * /verktyg/roda-dagar-<år>/ — Swedish public holidays, klämdagar and
+ * "take X vacation days, get Y days off" tips, all computed in
+ * src/lib/helgdagar.ts (unit-checked against the published 2026/2027
+ * calendars). One page per year from FORSTA_AR to next year.
+ */
+import VerktygLayout from '../../components/VerktygLayout.astro';
+import ResultCta from '../../components/ResultCta.astro';
+import { KALENDER_AR, VERKTYG } from '../../data/verktyg';
+import {
+  helgdagar,
+  klamdagar,
+  ledighetsTips,
+  arbetsdagarPerManad,
+  lonedag,
+} from '../../lib/helgdagar';
+import { VECKODAGAR, MANADER, isoWeekday, isoWeek, formatDayMonth, type YMD } from '../../lib/datum';
+
+export function getStaticPaths() {
+  return KALENDER_AR.map((ar) => ({ params: { ar: String(ar) } }));
+}
+
+const ar = Number(Astro.params.ar);
+const dagar = helgdagar(ar);
+const klam = klamdagar(ar);
+const tips = ledighetsTips(ar);
+const arbetsdagar = arbetsdagarPerManad(ar);
+const arbetsdagarTotalt = arbetsdagar.reduce((a, b) => a + b, 0);
+
+const veckodag = (d: YMD) => VECKODAGAR[isoWeekday(d) - 1];
+const kort = (d: YMD) => `${d.d} ${MANADER[d.m - 1].slice(0, 3)}${d.y !== ar ? ` ${d.y}` : ''}`;
+const iso = (d: YMD) =>
+  `${d.y}-${String(d.m).padStart(2, '0')}-${String(d.d).padStart(2, '0')}`;
+
+const rodaDagar = dagar.filter((h) => h.typ === 'helgdag');
+const rodaPaVardag = rodaDagar.filter((h) => isoWeekday(h.date) <= 5);
+const aftnarPaVardag = dagar.filter((h) => h.typ === 'afton' && isoWeekday(h.date) <= 5);
+const rodaPaLordag = rodaDagar.filter((h) => isoWeekday(h.date) === 6);
+const get = (name: string) => dagar.find((h) => h.name === name)!;
+const midsommarafton = get('Midsommarafton');
+const julafton = get('Julafton');
+const langfredag = get('Långfredagen');
+const kristi = get('Kristi himmelsfärdsdag');
+
+const langsta = [...tips].sort(
+  (a, b) => b.lediga / b.semesterdagar.length - a.lediga / a.semesterdagar.length || b.lediga - a.lediga,
+)[0];
+
+const andraAr = KALENDER_AR.filter((y) => y !== ar);
+const lista = (xs: string[]) =>
+  xs.length <= 1 ? xs.join('') : `${xs.slice(0, -1).join(', ')} och ${xs[xs.length - 1]}`;
+const klamText = klam.length
+  ? `${ar} finns ${klam.length} ${klam.length === 1 ? 'klämdag' : 'klämdagar'}: ${lista(klam.map((k) => `${veckodag(k.date)} ${formatDayMonth(k.date)}`))}.`
+  : `${ar} finns inga klassiska klämdagar.`;
+
+const faq = [
+  {
+    q: `Vilka är de röda dagarna ${ar}?`,
+    a: `De röda dagarna (allmänna helgdagar) ${ar} är: ${rodaDagar
+      .map((h) => `${h.name.toLowerCase()} ${veckodag(h.date)} ${formatDayMonth(h.date)}`)
+      .join(', ')}. Dessutom är alla söndagar helgdagar.`,
+  },
+  {
+    q: `Hur många röda dagar infaller på en vardag ${ar}?`,
+    a: `${rodaPaVardag.length} av de ${rodaDagar.length} helgdagarna infaller på en vardag (måndag–fredag) ${ar}. Räknar du också midsommarafton, julafton och nyårsafton blir det ${rodaPaVardag.length + aftnarPaVardag.length} vardagar som de flesta är lediga.${rodaPaLordag.length ? ` ${lista(rodaPaLordag.map((h) => h.name))} infaller på en lördag.` : ''}`,
+  },
+  {
+    q: `Vilka klämdagar finns ${ar}?`,
+    a: `En klämdag är en enstaka arbetsdag mellan en röd dag och en helg. ${klamText} Många arbetsplatser har stängt eller låter de anställda ta ledigt, men det är inte en rättighet – det avgörs av ditt avtal och din arbetsgivare.`,
+  },
+  {
+    q: 'Är midsommarafton, julafton och nyårsafton röda dagar?',
+    a: `Nej, inte enligt lagen om allmänna helgdagar. De är helgdagsaftnar. I praktiken är de flesta lediga, eftersom många kollektivavtal jämställer dem med helgdagar, och de är inte bankdagar. ${ar} infaller midsommarafton ${veckodag(midsommarafton.date)} ${formatDayMonth(midsommarafton.date)} och julafton ${veckodag(julafton.date)} ${formatDayMonth(julafton.date)}.`,
+  },
+  {
+    q: 'Har man rätt att vara ledig på röda dagar?',
+    a: 'Ingen lag ger alla anställda rätt att vara lediga på helgdagar. Vad som gäller står i ditt kollektivavtal eller anställningsavtal. Jobbar du en röd dag får du ofta OB-tillägg, och för storhelger (till exempel jul, nyår, påsk och midsommar) är tillägget oftast högre. Hur mycket beror på avtalet.',
+  },
+  {
+    q: `När är påsk och Kristi himmelsfärd ${ar}?`,
+    a: `Långfredagen är ${formatDayMonth(langfredag.date)}, påskdagen ${formatDayMonth(get('Påskdagen').date)} och annandag påsk ${formatDayMonth(get('Annandag påsk').date)} ${ar}. Kristi himmelsfärdsdag är alltid en torsdag, 39 dagar efter påskdagen: ${formatDayMonth(kristi.date)} ${ar}. Pingstdagen infaller 49 dagar efter påskdagen: ${formatDayMonth(get('Pingstdagen').date)}.`,
+  },
+];
+
+const related = VERKTYG.filter(
+  (v) => v.group === 'kalender' || v.href === '/verktyg/ob-tillagg/',
+).map((v) =>
+  v.href.startsWith('/verktyg/lonedag-') ? { ...v, href: `/verktyg/lonedag-${ar}/`, title: `Lönedag ${ar}` } : v,
+);
+---
+
+<VerktygLayout
+  title={`Röda dagar ${ar} – helgdagar och klämdagar i Sverige`}
+  description={`Alla röda dagar ${ar} med datum och veckodag, klämdagarna och hur du får flest dagar ledigt på minst semester${langsta ? ` – t.ex. ${langsta.semesterdagar.length} semesterdagar ger ${langsta.lediga} dagar ledigt` : ''}.`}
+  keywords={[`röda dagar ${ar}`, `helgdagar ${ar}`, `klämdagar ${ar}`, `röda dagar ${ar} sverige`, `midsommar ${ar}`, `påsk ${ar}`, `arbetsdagar ${ar}`]}
+  h1={`Röda dagar ${ar}`}
+  intro={`Alla helgdagar och klämdagar i Sverige ${ar} – och hur du lägger semestern för att få flest dagar ledigt.`}
+  crumb={`Röda dagar ${ar}`}
+  faq={faq}
+  app="tidrapport"
+  ctaTitle="Jobbar du röda dagar?"
+  ctaText="Tidrapportera har den svenska helgdagskalendern inbyggd och räknar OB och storhelgstillägg automatiskt efter dina egna regler – så ser du direkt vad ett pass på en röd dag ger i lön."
+  disclaimer="Helgdagarna följer lagen om allmänna helgdagar. Midsommarafton, julafton och nyårsafton räknas här som lediga dagar, vilket gäller för de flesta men inte alla. Klämdagar och semestertips förutsätter att du jobbar måndag–fredag; om du får vara ledig avgör ditt avtal och din arbetsgivare."
+  related={related}
+  relatedTitle="Fler verktyg för kalender och lön"
+>
+  <div class="mt-4 flex flex-wrap gap-2 text-sm" aria-label="Andra år">
+    {KALENDER_AR.map((y) =>
+      y === ar ? (
+        <span class="rounded-full bg-ink text-on-ink px-3 py-1 font-bold" aria-current="page">{y}</span>
+      ) : (
+        <a href={`/verktyg/roda-dagar-${y}/`} class="rounded-full border border-line-strong px-3 py-1 font-bold hover:bg-surface-2">Röda dagar {y}</a>
+      ),
+    )}
+  </div>
+
+  <p class="mt-4 rounded-xl border border-line bg-surface-2 p-4 text-base" data-nasta hidden></p>
+
+  <section aria-labelledby="tabell" class="mt-6">
+    <h2 id="tabell" class="text-2xl font-black">Helgdagar {ar}</h2>
+    <p class="mt-1 text-sm text-ink-2">
+      <strong class="text-ink">Röd dag</strong> = allmän helgdag enligt lag.
+      <strong class="text-ink">Helgdagsafton</strong> = ledig för de flesta men inte en lagstadgad röd dag.
+    </p>
+    <div class="mt-3 overflow-x-auto rounded-2xl border border-line">
+      <table class="w-full text-left text-sm sm:text-base">
+        <thead class="bg-surface-2">
+          <tr>
+            <th scope="col" class="px-3 py-2">Datum</th>
+            <th scope="col" class="px-3 py-2">Dag</th>
+            <th scope="col" class="px-3 py-2">Helgdag</th>
+            <th scope="col" class="px-3 py-2 hidden sm:table-cell">Vecka</th>
+          </tr>
+        </thead>
+        <tbody>
+          {dagar.map((h) => (
+            <tr class="border-t border-line" data-datum={iso(h.date)} data-namn={h.name}>
+              <td class="px-3 py-2 font-bold whitespace-nowrap">{formatDayMonth(h.date)}</td>
+              <td class="px-3 py-2">{veckodag(h.date)}</td>
+              <td class="px-3 py-2">
+                {h.name}
+                <span class={`ml-1 inline-block rounded-full px-2 text-xs font-bold ${h.typ === 'helgdag' ? 'bg-ink text-on-ink' : 'border border-line-strong text-ink-2'}`}>
+                  {h.typ === 'helgdag' ? 'Röd dag' : 'Helgdagsafton'}
+                </span>
+              </td>
+              <td class="px-3 py-2 hidden sm:table-cell">{isoWeek(h.date).week}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-2 text-sm text-ink-3">Alla söndagar är också helgdagar. Påskafton och pingstafton infaller alltid på en lördag.</p>
+  </section>
+
+  <section aria-labelledby="klamdagar" class="mt-10">
+    <h2 id="klamdagar" class="text-2xl font-black">Klämdagar {ar}</h2>
+    <p class="mt-1 text-ink-2">En klämdag är en ensam arbetsdag mellan en röd dag (eller helgdagsafton) och en helg.</p>
+    {klam.length ? (
+      <ul class="mt-3 space-y-2">
+        {klam.map((k) => (
+          <li class="rounded-xl border border-line p-3">
+            <strong>{veckodag(k.date)} {formatDayMonth(k.date)}</strong>
+            <span class="text-ink-2"> – {k.mellan}</span>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="mt-3">{ar} finns inga klassiska klämdagar.</p>
+    )}
+  </section>
+
+  <section aria-labelledby="tips" class="mt-10">
+    <h2 id="tips" class="text-2xl font-black">Flest dagar ledigt {ar} – på minst semester</h2>
+    <p class="mt-1 text-ink-2">
+      Uträknat för dig som jobbar måndag–fredag. Bara förslag där helgdagarna
+      ger mer än en vanlig semestervecka (5 dagar = 9 dagar ledigt).
+    </p>
+    <ul class="mt-3 grid sm:grid-cols-2 gap-3">
+      {tips.map((t) => (
+        <li class="rounded-2xl border border-line p-4">
+          <p class="text-lg font-black">
+            Ta {t.semesterdagar.length} {t.semesterdagar.length === 1 ? 'semesterdag' : 'semesterdagar'} – få {t.lediga} dagar ledigt
+          </p>
+          <p class="mt-1 text-sm text-ink-2">
+            {[...new Set(t.helgdagar)].join(', ')}
+          </p>
+          <p class="mt-2 text-sm">
+            Ledig <strong>{kort(t.fran)} – {kort(t.till)}</strong>.
+            Semester: {t.semesterdagar.map((d) => kort(d)).join(', ')}.
+          </p>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <ResultCta
+    app="tidrapport"
+    text="Jobbar du röda dagar? Tidrapportera räknar OB och storhelgstillägg automatiskt."
+  />
+
+  <section aria-labelledby="arbetsdagar" class="mt-10">
+    <h2 id="arbetsdagar" class="text-2xl font-black">Arbetsdagar {ar} per månad</h2>
+    <p class="mt-1 text-ink-2">
+      Vardagar minus röda dagar, midsommarafton, julafton och nyårsafton:
+      <strong class="text-ink">{arbetsdagarTotalt} arbetsdagar</strong> totalt ({arbetsdagarTotalt * 8} timmar vid 8 timmar per dag).
+    </p>
+    <div class="mt-3 overflow-x-auto rounded-2xl border border-line">
+      <table class="w-full text-left text-sm sm:text-base">
+        <thead class="bg-surface-2">
+          <tr>
+            <th scope="col" class="px-3 py-2">Månad</th>
+            <th scope="col" class="px-3 py-2">Arbetsdagar</th>
+            <th scope="col" class="px-3 py-2">Timmar (8 h/dag)</th>
+            <th scope="col" class="px-3 py-2">Lönedag (25:e)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {arbetsdagar.map((n, i) => {
+            const ld = lonedag(ar, i + 1);
+            return (
+              <tr class="border-t border-line">
+                <td class="px-3 py-2 capitalize">{MANADER[i]}</td>
+                <td class="px-3 py-2 font-bold">{n}</td>
+                <td class="px-3 py-2">{n * 8}</td>
+                <td class="px-3 py-2 whitespace-nowrap">{veckodag(ld).slice(0, 3)} {ld.d}/{ld.m}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-2 text-sm">
+      Mer om när lönen kommer: <a class="font-bold text-accent underline underline-offset-4" href={`/verktyg/lonedag-${ar}/`}>Lönedag {ar}</a>.
+    </p>
+  </section>
+
+  <Fragment slot="forklaring">
+    <h2>Så räknas de röda dagarna fram</h2>
+    <p>
+      Lagen om allmänna helgdagar (1989:253) listar vilka dagar som är
+      helgdagar. En del har fast datum, till exempel nyårsdagen, trettondedag
+      jul, första maj, nationaldagen och juldagen. Resten flyttar sig:
+    </p>
+    <ul>
+      <li><strong>Påsk:</strong> påskdagen är söndagen närmast efter den fullmåne som infaller på eller närmast efter den 21 mars. Långfredagen är två dagar före och annandag påsk dagen efter.</li>
+      <li><strong>Kristi himmelsfärdsdag:</strong> torsdagen 39 dagar efter påskdagen. Pingstdagen kommer 10 dagar senare.</li>
+      <li><strong>Midsommardagen:</strong> lördagen mellan 20 och 26 juni. Midsommarafton är fredagen före.</li>
+      <li><strong>Alla helgons dag:</strong> lördagen mellan 31 oktober och 6 november.</li>
+    </ul>
+    <h2>Röda dagar och lön</h2>
+    <p>
+      Jobbar du en röd dag får du ofta OB-tillägg, och på storhelger som jul,
+      nyår, påsk och midsommar är tillägget oftast högst. När storhelgs-OB
+      börjar och slutar skiljer sig mellan avtalen, och i många avtal räknas
+      även delar av aftnarna (till exempel julafton och midsommarafton) som
+      storhelg. Räkna på ett pass i
+      <a href="/verktyg/ob-tillagg/">OB-räknaren</a>, eller se hur skiftet
+      fördelar sig med <a href="/verktyg/turnusschema/">turnusschema-generatorn</a>.
+    </p>
+    {andraAr.length > 0 && (
+      <p>
+        Se också {andraAr.map((y, i) => (
+          <>
+            {i > 0 && (i === andraAr.length - 1 ? ' och ' : ', ')}
+            <a href={`/verktyg/roda-dagar-${y}/`}>röda dagar {y}</a>
+          </>
+        ))}.
+      </p>
+    )}
+  </Fragment>
+</VerktygLayout>
+
+<script>
+  import { showResultCta } from '../../lib/result-cta';
+  import { stockholmToday, daysBetween, formatDayMonth, VECKODAGAR, isoWeekday } from '../../lib/datum';
+
+  // Show the CTA as soon as the table is on screen (there is no "result"
+  // to wait for on this page).
+  showResultCta();
+
+  // "Nästa röda dag" for visitors on the current year's page.
+  const today = stockholmToday();
+  const rows = [...document.querySelectorAll<HTMLElement>('tr[data-datum]')];
+  for (const r of rows) {
+    const [y, m, d] = (r.dataset.datum ?? '').split('-').map(Number);
+    const date = { y, m, d };
+    const diff = daysBetween(today, date);
+    if (diff < 0) {
+      r.classList.add('text-ink-3');
+      continue;
+    }
+    const el = document.querySelector<HTMLElement>('[data-nasta]');
+    if (el) {
+      const when = diff === 0 ? 'idag' : diff === 1 ? 'imorgon' : `om ${diff} dagar`;
+      el.textContent = `Nästa: ${r.dataset.namn} ${VECKODAGAR[isoWeekday(date) - 1]} ${formatDayMonth(date)} – ${when}.`;
+      el.hidden = false;
+      r.classList.add('font-bold', 'bg-surface-2');
+    }
+    break;
+  }
+</script>

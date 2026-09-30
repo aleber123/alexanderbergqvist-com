@@ -12,7 +12,7 @@ import BaseLayout from './BaseLayout.astro';
 import Breadcrumbs from './Breadcrumbs.astro';
 import FAQ from './FAQ.astro';
 import AppStoreBadge from './AppStoreBadge.astro';
-import { LON_VERKTYG } from '../data/verktyg';
+import { LON_VERKTYG, type Verktyg } from '../data/verktyg';
 
 interface Props {
   title: string;
@@ -22,15 +22,34 @@ interface Props {
   intro: string;
   crumb: string;
   faq: { q: string; a: string }[];
-  /** App slug for the CTA card: 'tidrapport' | 'vab-koll'. */
-  app: 'tidrapport' | 'vab-koll';
+  /** App slug for the CTA card, e.g. 'tidrapport' | 'vab-koll' | 'somnkoll'. */
+  app: string;
   ctaTitle: string;
   ctaText: string;
   disclaimer: string;
+  /** Middle breadcrumb. Defaults to the /verktyg/ hub. */
+  parentCrumb?: { name: string; url: string };
+  /** "Fler …" links under the FAQ. Defaults to the other /verktyg/ calculators. */
+  related?: Verktyg[];
+  relatedTitle?: string;
 }
 
-const { title, description, keywords, h1, intro, crumb, faq, app, ctaTitle, ctaText, disclaimer } =
-  Astro.props;
+const {
+  title,
+  description,
+  keywords,
+  h1,
+  intro,
+  crumb,
+  faq,
+  app,
+  ctaTitle,
+  ctaText,
+  disclaimer,
+  parentCrumb = { name: 'Gratis räknare', url: '/verktyg/' },
+  related: relatedProp,
+  relatedTitle = 'Fler gratis räknare',
+} = Astro.props;
 
 const appEntry = await getEntry('apps', app);
 const appStoreUrl = appEntry?.data.appStoreUrl;
@@ -38,7 +57,7 @@ const appStoreId = appStoreUrl?.match(/\/id(\d+)/)?.[1];
 const appName = appEntry?.data.name ?? app;
 
 const path = Astro.url.pathname;
-const related = LON_VERKTYG.filter((v) => v.href !== path && v.href !== path + '/');
+const related = (relatedProp ?? LON_VERKTYG).filter((v) => v.href !== path && v.href !== path + '/');
 ---
 
 <BaseLayout title={title} description={description} keywords={keywords} appStoreId={appStoreId}>
@@ -46,7 +65,7 @@ const related = LON_VERKTYG.filter((v) => v.href !== path && v.href !== path + '
     <Breadcrumbs
       trail={[
         { name: 'Hem', url: '/' },
-        { name: 'Gratis räknare', url: '/verktyg/' },
+        parentCrumb,
         { name: crumb },
       ]}
     />
@@ -99,7 +118,7 @@ const related = LON_VERKTYG.filter((v) => v.href !== path && v.href !== path + '
     <FAQ items={faq} />
 
     <nav aria-labelledby="fler-raknare" class="mt-12">
-      <h2 id="fler-raknare" class="text-2xl font-black mb-4">Fler gratis räknare</h2>
+      <h2 id="fler-raknare" class="text-2xl font-black mb-4">{relatedTitle}</h2>
       <ul class="grid sm:grid-cols-2 gap-3">
         {related.map((v) => (
           <li>

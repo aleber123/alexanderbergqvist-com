@@ -1,0 +1,221 @@
+---
+/**
+ * /verktyg/lonedag-<år>/ — when is salary paid each month if payday is
+ * the 25th (or another day the visitor picks)? Rule: a payday on a
+ * weekend, public holiday or midsommar-/jul-/nyårsafton moves back to
+ * the closest preceding banking day — the same rule Tidrapportera's
+ * payday reminder uses (lib/utils/payday.dart in the app).
+ */
+import VerktygLayout from '../../components/VerktygLayout.astro';
+import ResultCta from '../../components/ResultCta.astro';
+import { KALENDER_AR, VERKTYG } from '../../data/verktyg';
+import { lonedag, helgdagPa } from '../../lib/helgdagar';
+import { VECKODAGAR, MANADER, isoWeekday, formatDayMonth, type YMD } from '../../lib/datum';
+
+export function getStaticPaths() {
+  return KALENDER_AR.map((ar) => ({ params: { ar: String(ar) } }));
+}
+
+const ar = Number(Astro.params.ar);
+const veckodag = (d: YMD) => VECKODAGAR[isoWeekday(d) - 1];
+
+/** Why the 25th moved, e.g. "25:e är en lördag". */
+function orsak(y: number, m: number, dag: number): string {
+  const last = new Date(Date.UTC(y, m, 0)).getUTCDate();
+  const nominell: YMD = { y, m, d: Math.min(dag, last) };
+  const h = helgdagPa(nominell);
+  if (h) return `${nominell.d}:e är ${h.name.toLowerCase()}`;
+  const wd = isoWeekday(nominell);
+  return wd >= 6 ? `${nominell.d}:e är en ${VECKODAGAR[wd - 1]}` : '';
+}
+
+const rader = MANADER.map((namn, i) => {
+  const d = lonedag(ar, i + 1, 25);
+  const flyttad = d.d !== 25;
+  return { namn, d, flyttad, orsak: flyttad ? orsak(ar, i + 1, 25) : '' };
+});
+const flyttade = rader.filter((r) => r.flyttad);
+const dec = rader[11];
+const jun = rader[5];
+const jul = rader[6];
+
+const faq = [
+  {
+    q: `När kommer lönen i december ${ar}?`,
+    a: `Med lönedag den 25:e betalas decemberlönen ut ${veckodag(dec.d)} ${formatDayMonth(dec.d)} ${ar}. Den 25 december är juldagen och julafton är inte en bankdag, så lönen flyttas till närmaste bankdag före. En del arbetsgivare betalar ut decemberlönen ännu tidigare – kolla ditt lönebesked eller fråga lönekontoret.`,
+  },
+  {
+    q: 'Varför kommer lönen tidigare när den 25:e är en helg?',
+    a: 'Lön betalas bara ut på bankdagar. Den vanliga regeln är att lönen flyttas till närmaste bankdag före om lönedagen infaller på en lördag, söndag eller helgdag – då får du den oftast fredagen före. Midsommarafton, julafton och nyårsafton är inte heller bankdagar.',
+  },
+  {
+    q: `Vilka månader kommer lönen tidigare ${ar}?`,
+    a: flyttade.length
+      ? `Med lönedag den 25:e kommer lönen tidigare i ${flyttade.map((r) => `${r.namn} (${veckodag(r.d)} ${r.d.d}/${r.d.m})`).join(', ')}. Övriga månader betalas den ut den 25:e.`
+      : `Med lönedag den 25:e betalas lönen ut den 25:e varje månad ${ar}.`,
+  },
+  {
+    q: 'Är lönedagen alltid den 25:e?',
+    a: 'Nej. Den 25:e är vanligast i Sverige, men lönedagen bestäms av ditt kollektivavtal eller anställningsavtal. Vissa arbetsgivare betalar ut en annan dag, till exempel den 27:e, och en del flyttar lönen till bankdagen efter i stället för före. Välj din lönedag ovanför tabellen så räknas datumen om.',
+  },
+  {
+    q: `När kommer lönen i juni och juli ${ar}?`,
+    a: `Med lönedag den 25:e betalas junilönen ut ${veckodag(jun.d)} ${formatDayMonth(jun.d)} och julilönen ${veckodag(jul.d)} ${formatDayMonth(jul.d)} ${ar}. I juni kan midsommarafton flytta lönedagen de år den infaller den 25 juni.`,
+  },
+  {
+    q: 'Vilken tid på dagen kommer lönen in på kontot?',
+    a: 'Det beror på din bank och på när arbetsgivaren skickar betalningen. Oftast finns lönen på kontot tidigt på morgonen på lönedagen, men hos vissa banker syns den först senare under dagen.',
+  },
+];
+
+const related = VERKTYG.filter(
+  (v) => v.group === 'kalender' || v.href === '/verktyg/timlon-efter-skatt/',
+).map((v) =>
+  v.href.startsWith('/verktyg/roda-dagar-') ? { ...v, href: `/verktyg/roda-dagar-${ar}/`, title: `Röda dagar ${ar}` } : v,
+);
+---
+
+<VerktygLayout
+  title={`Lönedag ${ar} – när kommer lönen varje månad?`}
+  description={`Lönedagar ${ar} för alla månader: när lönen kommer om lönedagen är den 25:e och den flyttas vid helg och röda dagar. Välj egen lönedag, t.ex. den 27:e.`}
+  keywords={[`lönedag ${ar}`, `lönedagar ${ar}`, `löning ${ar}`, `när kommer lönen`, `löning december ${ar}`, `löning juli ${ar}`, 'lön den 25']}
+  h1={`Lönedag ${ar}`}
+  intro={`Datum för varje löneutbetalning ${ar} när lönedagen är den 25:e – eller den dag du själv väljer.`}
+  crumb={`Lönedag ${ar}`}
+  faq={faq}
+  app="tidrapport"
+  ctaTitle="Se vad du tjänar innan lönen kommer"
+  ctaText="Tidrapportera räknar ut månadens lön pass för pass – med OB, övertid och skatt – och påminner dig på lönedagen, så att du kan jämföra med lönebeskedet."
+  disclaimer="Tabellen använder den vanliga regeln att lönen flyttas till närmaste bankdag före när lönedagen infaller på en helg, en röd dag eller midsommar-, jul- eller nyårsafton. Din arbetsgivare eller ditt avtal kan ha en annan lönedag eller regel."
+  related={related}
+  relatedTitle="Fler verktyg för kalender och lön"
+>
+  <div class="mt-4 flex flex-wrap gap-2 text-sm" aria-label="Andra år">
+    {KALENDER_AR.map((y) =>
+      y === ar ? (
+        <span class="rounded-full bg-ink text-on-ink px-3 py-1 font-bold" aria-current="page">{y}</span>
+      ) : (
+        <a href={`/verktyg/lonedag-${y}/`} class="rounded-full border border-line-strong px-3 py-1 font-bold hover:bg-surface-2">Lönedag {y}</a>
+      ),
+    )}
+  </div>
+
+  <form id="lon-form" class="mt-4 rounded-2xl border border-line bg-surface p-4 sm:p-6" onsubmit="return false">
+    <label class="block text-sm font-bold mb-2" for="dag">Din lönedag</label>
+    <select id="dag" class="w-full sm:w-auto rounded-xl border border-line-strong bg-surface px-4 py-3 text-lg font-bold">
+      {Array.from({ length: 31 }, (_, i) => i + 1).map((n) => (
+        <option value={n} selected={n === 25}>{n === 31 ? 'Sista dagen i månaden' : `Den ${n}:e`}</option>
+      ))}
+    </select>
+    <p class="mt-2 text-xs text-ink-3">Flyttas till närmaste bankdag före om dagen är en helg eller röd dag.</p>
+  </form>
+
+  <p class="mt-4 rounded-xl border border-line bg-surface-2 p-4 text-base" data-nasta hidden></p>
+
+  <section aria-labelledby="tabell" class="mt-4">
+    <h2 id="tabell" class="text-2xl font-black">Lönedagar {ar}</h2>
+    <div class="mt-3 overflow-x-auto rounded-2xl border border-line" aria-live="polite">
+      <table class="w-full text-left text-sm sm:text-base">
+        <thead class="bg-surface-2">
+          <tr>
+            <th scope="col" class="px-3 py-2">Lön för</th>
+            <th scope="col" class="px-3 py-2">Utbetalning</th>
+            <th scope="col" class="px-3 py-2">Varför</th>
+          </tr>
+        </thead>
+        <tbody id="lon-rader">
+          {rader.map((r, i) => (
+            <tr class="border-t border-line" data-manad={i + 1}>
+              <td class="px-3 py-2 capitalize">{r.namn}</td>
+              <td class="px-3 py-2 font-bold whitespace-nowrap" data-cell="datum">{veckodag(r.d)} {formatDayMonth(r.d)}</td>
+              <td class="px-3 py-2 text-ink-2" data-cell="orsak">{r.flyttad ? `Tidigare – ${r.orsak}` : '–'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <ResultCta
+      app="tidrapport"
+      text="Se vad du tjänar innan lönen kommer – Tidrapportera räknar ut månadens lön pass för pass."
+    />
+  </section>
+
+  <Fragment slot="forklaring">
+    <h2>Så fungerar lönedagen</h2>
+    <p>
+      De flesta i Sverige får lön den 25:e varje månad. Lönen betalas ut via
+      banken, och banker gör utbetalningar bara på bankdagar. Infaller den
+      25:e på en lördag, söndag eller helgdag betalas lönen normalt ut
+      närmaste bankdag före, oftast fredagen. Midsommarafton, julafton och
+      nyårsafton är inte bankdagar, och därför kommer decemberlönen ofta
+      redan den 23 december eller tidigare.
+    </p>
+    <p>
+      Vilken dag som gäller för dig står i ditt kollektivavtal eller
+      anställningsavtal. Är du timanställd betalas lönen oftast ut i
+      efterskott, månaden efter att du jobbat.
+    </p>
+    <h2>Räkna ut vad lönen blir</h2>
+    <p>
+      Jobbar du timmar, kvällar eller helger? Räkna ut vad du får ut med
+      <a href="/verktyg/timlon-efter-skatt/">timlön efter skatt</a> och
+      <a href="/verktyg/ob-tillagg/">OB-räknaren</a>, och se vilka dagar som
+      ger storhelgstillägg bland <a href={`/verktyg/roda-dagar-${ar}/`}>röda dagar {ar}</a>.
+    </p>
+  </Fragment>
+</VerktygLayout>
+
+<script>
+  import { showResultCta } from '../../lib/result-cta';
+  import { lonedag, helgdagPa } from '../../lib/helgdagar';
+  import { stockholmToday, daysBetween, formatDayMonth, VECKODAGAR, isoWeekday, type YMD } from '../../lib/datum';
+
+  const select = document.getElementById('dag') as HTMLSelectElement;
+  const rows = [...document.querySelectorAll<HTMLTableRowElement>('#lon-rader tr')];
+  const ar = Number(location.pathname.match(/lonedag-(\d{4})/)?.[1]);
+  const vd = (d: YMD) => VECKODAGAR[isoWeekday(d) - 1];
+
+  function orsak(y: number, m: number, dag: number): string {
+    const last = new Date(Date.UTC(y, m, 0)).getUTCDate();
+    const n: YMD = { y, m, d: Math.min(dag, last) };
+    const h = helgdagPa(n);
+    if (h) return `${n.d}:e är ${h.name.toLowerCase()}`;
+    const wd = isoWeekday(n);
+    return wd >= 6 ? `${n.d}:e är en ${VECKODAGAR[wd - 1]}` : '';
+  }
+
+  function render() {
+    const dag = Number(select.value) || 25;
+    const today = stockholmToday();
+    let nasta: { d: YMD; m: number } | null = null;
+    rows.forEach((row) => {
+      const m = Number(row.dataset.manad);
+      const d = lonedag(ar, m, dag);
+      const nominell = Math.min(dag, new Date(Date.UTC(ar, m, 0)).getUTCDate());
+      const flyttad = d.d !== nominell;
+      row.querySelector('[data-cell="datum"]')!.textContent = `${vd(d)} ${formatDayMonth(d)}`;
+      const o = flyttad ? orsak(ar, m, dag) : '';
+      row.querySelector('[data-cell="orsak"]')!.textContent = flyttad ? `Tidigare${o ? ` – ${o}` : ''}` : '–';
+      const diff = daysBetween(today, d);
+      row.classList.toggle('bg-surface-2', false);
+      if (!nasta && diff >= 0) {
+        nasta = { d, m };
+        row.classList.add('bg-surface-2');
+      }
+    });
+    const el = document.querySelector<HTMLElement>('[data-nasta]')!;
+    const n = nasta as { d: YMD; m: number } | null;
+    if (n) {
+      const diff = daysBetween(today, n.d);
+      const when = diff === 0 ? 'idag' : diff === 1 ? 'imorgon' : `om ${diff} dagar`;
+      el.textContent = `Nästa lön: ${vd(n.d)} ${formatDayMonth(n.d)} – ${when}.`;
+      el.hidden = false;
+    } else {
+      el.hidden = true;
+    }
+    showResultCta();
+  }
+
+  select.addEventListener('change', render);
+  render();
+</script>

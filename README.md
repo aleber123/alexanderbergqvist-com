@@ -105,36 +105,20 @@ Prioritera per app i denna ordning för max SEO-payback:
 ### Resten
 Mall: 1 free tool + 3-5 artiklar per app.
 
-## Google Analytics 4
+## Webbanalys (Vercel Web Analytics, utan kakor)
 
-Sajten har inbyggd GA4-integration som auto-trackar pageviews + outbound clicks (App Store-länkar).
+GA4 är borttaget (2026-09-30) – det satte kakor utan samtycke. I stället
+används Vercel Web Analytics, som inte sätter kakor och bara visar
+aggregerad statistik. Se `src/components/Analytics.astro`.
 
-### Sätt upp GA4 (engångsjobb)
+1. Vercel-projekt → Analytics → Enable (engångsjobb).
+2. Kontroll: `curl -s https://alexanderbergqvist.com/_vercel/insights/script.js -o /dev/null -w '%{http_code}'` ska ge 200.
 
-1. Gå till [Google Analytics](https://analytics.google.com/) → "Skapa egendom"
-2. Egenskapsnamn: `alexanderbergqvist.com`
-3. Tidszon: Sverige · Valuta: SEK
-4. Branschkategori: "Technology"
-5. Skapa "Web data stream" → URL: `https://alexanderbergqvist.com`
-6. Kopiera **Measurement ID** (`G-XXXXXXXXXX`)
-
-### Aktivera på Vercel
-
-1. Vercel-projekt → Settings → Environment Variables
-2. Lägg till: `PUBLIC_GA_ID` = `G-XXXXXXXXXX`
-3. Apply på alla environments
-4. Trigger en omdistribuering (push valfri commit eller "Redeploy")
-
-GA aktiveras bara i prod-builds — under utveckling lokalt loggas inget.
-
-### Vad som tracker auto:
-
-- Pageviews (varje sida)
-- `outbound_click`-event för alla externa länkar med `link_url`,
-  `link_domain`, `link_text`, och `is_app_store: true/false`
-
-Det betyder att du i GA4 kan se exakt hur många klick varje
-App Store-knapp får per sida — perfekt för att mäta SEO → install-funnel.
+Scriptet laddas bara i prod-builds. Sidvisningar räknas automatiskt, och
+varje klick på en App Store-länk skickar eventet
+`app_store_click { app, position, page }` (position = `data-cta-position`:
+hero/inline/body/footer/sticky/result/qr/banner). Custom events syns bara
+på Vercel Pro – på Hobby är anropet ofarligt och sidvisningar fungerar ändå.
 
 ## OG-bilder (för länkdelningar)
 

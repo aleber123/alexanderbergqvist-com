@@ -89,9 +89,8 @@ const fontFaces = `
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    {/* Above <Analytics /> on purpose: gtag is ~130 KB async in head, and
-        while the preload is Highest priority the parser still discovers
-        in document order. Font first. Only the Latin roman is preloaded;
+    {/* Above <Analytics /> on purpose: the parser discovers in document
+        order, so the font preload goes first. Only the Latin roman is preloaded;
         Latin-Ext and italic load on demand via unicode-range. */}
     <link rel="preload" href={latin} as="font" type="font/woff2" crossorigin />
     <style is:inline set:html={fontFaces}></style>

@@ -1,0 +1,248 @@
+---
+/**
+ * /somnkoll/somncykelkalkylator/ — "när ska jag gå och lägga mig?".
+ * Rule of thumb only: ~90 min cycles (real cycles vary roughly
+ * 70–120 min) plus time to fall asleep. No invented statistics.
+ *
+ * The Sov claims are checked against the app (~/Downloads/somnkoll/lib):
+ * smart alarm that rings in light sleep within a user-chosen wake window
+ * (slider 0–45 min, default 30), bedtime reminder, snore recording,
+ * sleep sounds; phase estimates are from movement and sound, or read
+ * from Apple Watch via Apple Health.
+ */
+import VerktygLayout from '../../components/VerktygLayout.astro';
+import ResultCta from '../../components/ResultCta.astro';
+
+const inputCls =
+  'w-full rounded-xl border border-line-strong bg-surface px-4 py-3 text-lg font-bold';
+
+const pitch =
+  'Sov väcker dig när du sover lätt, inom ett väckningsfönster du väljer (upp till 45 minuter före larmet) – så slipper du räkna sömncykler.';
+
+const faq = [
+  {
+    q: 'Hur lång är en sömncykel?',
+    a: 'I genomsnitt runt 90 minuter, men längden varierar – ungefär mellan 70 och 120 minuter – både mellan personer och under natten. Tidigt på natten innehåller cyklerna mer djupsömn, mot morgonen mer REM-sömn. Därför är 90 minuter en tumregel och inte ett exakt mått.',
+  },
+  {
+    q: 'När ska jag gå och lägga mig om jag ska upp klockan 6?',
+    a: 'Med tumregeln 90 minuter per cykel och 15 minuter för att somna: kl. 20.45 för sex cykler (9 timmars sömn), kl. 22.15 för fem cykler (7,5 timmar) eller kl. 23.45 för fyra cykler (6 timmar). För de flesta vuxna är fem eller sex cykler rimligast.',
+  },
+  {
+    q: 'Hur många sömncykler behöver man?',
+    a: 'De flesta vuxna behöver ungefär 7–9 timmars sömn, vilket motsvarar ungefär fem till sex cykler. Behovet är individuellt, och hur pigg du känner dig under dagen säger mer än antalet cykler.',
+  },
+  {
+    q: 'Varför vaknar jag trött trots att jag sovit länge?',
+    a: 'Vaknar du mitt i djupsömnen kan du känna dig groggy en stund efteråt, så kallad sömninertia. Det kan också bero på för lite sömn flera nätter i rad, oregelbundna tider, alkohol sent på kvällen eller störd sömn, till exempel av snarkning. Känner du dig ofta trött trots tillräckligt med sömn, tala med en vårdcentral.',
+  },
+  {
+    q: 'Hur lång tid tar det att somna?',
+    a: 'Det varierar, men många somnar inom 10–20 minuter. Kalkylatorn räknar med 15 minuter som standard. Vet du att du brukar somna snabbare eller långsammare kan du ändra det.',
+  },
+  {
+    q: 'Hur fungerar en smart väckarklocka?',
+    a: 'En smart väckarklocka försöker väcka dig när du sover lätt, inom ett tidsfönster före den tid du ställt. Sov uppskattar sömnen från rörelse och ljud via telefonen (eller läser sömnfaser från Apple Watch via Apple Hälsa) och ringer under lätt sömn inom ditt fönster. Det är en uppskattning, inte en medicinsk mätning.',
+  },
+];
+
+const related = [
+  {
+    href: '/somnkoll/hur-mycket-somn-vuxna/',
+    title: 'Hur mycket sömn behöver vuxna?',
+    description: '7–9 timmar är riktmärket, men variationen är stor. Så hittar du din egen siffra.',
+    app: 'somnkoll',
+    group: 'ovrigt' as const,
+  },
+  {
+    href: '/somnkoll/sov-battre-7-vanor/',
+    title: 'Sov bättre – 7 vanor som funkar',
+    description: 'Konkreta sömnvanor med tider och siffror.',
+    app: 'somnkoll',
+    group: 'ovrigt' as const,
+  },
+  {
+    href: '/somnkoll/sleep-tracking-vad-mater-appar/',
+    title: 'Vad mäter sömnappar egentligen?',
+    description: 'Accelerometer, mikrofon och klocka – vad sömnspårning kan och inte kan.',
+    app: 'somnkoll',
+    group: 'ovrigt' as const,
+  },
+  {
+    href: '/somnkoll/',
+    title: 'Sov – sömnapp med smart väckning',
+    description: 'Vakna i lätt sömn, spela in snarkningar och se dina sömnfaser.',
+    app: 'somnkoll',
+    group: 'ovrigt' as const,
+  },
+];
+---
+
+<VerktygLayout
+  title="Sömncykelkalkylator – när ska jag gå och lägga mig?"
+  description="Räkna ut när du ska gå och lägga dig för att vakna mellan två sömncykler – eller när du ska ställa klockan om du lägger dig nu. Tumregel: 90 min per cykel + tid att somna."
+  keywords={['sömncykelkalkylator', 'när ska jag gå och lägga mig', 'sömncykel', 'sömncykel längd', 'sömnkalkylator', 'hur lång är en sömncykel', 'sömnkalkylator vakna']}
+  h1="Sömncykelkalkylator"
+  intro="När ska du gå och lägga dig för att vakna mellan två sömncykler? Välj när du vill vakna – eller när du lägger dig."
+  crumb="Sömncykelkalkylator"
+  faq={faq}
+  app="somnkoll"
+  ctaTitle="Vakna i lätt sömn med Sov"
+  ctaText="Sömncykler är olika långa från natt till natt. Sov följer natten med telefonens rörelse- och ljudsensorer (eller Apple Watch) och väcker dig i lätt sömn inom ditt väckningsfönster. Du får också en påminnelse när det är dags att lägga sig, snarkinspelning och sömnljud."
+  disclaimer="Kalkylatorn bygger på en tumregel: 90 minuter per sömncykel. Verkliga cykler varierar ungefär mellan 70 och 120 minuter. Den ersätter inte råd från vården – har du långvariga sömnproblem, kontakta en vårdcentral eller 1177."
+  parentCrumb={{ name: 'Sov', url: '/somnkoll/' }}
+  related={related}
+  relatedTitle="Läs mer om sömn"
+>
+  <form id="somn-form" class="mt-6 rounded-2xl border border-line bg-surface p-4 sm:p-6 md:p-8" novalidate onsubmit="return false">
+    <fieldset>
+      <legend class="block text-sm font-bold mb-2">Jag vill räkna ut</legend>
+      <div class="flex flex-wrap gap-2">
+        <label class="cursor-pointer">
+          <input type="radio" name="lage" value="vakna" class="peer sr-only" checked />
+          <span class="inline-block rounded-full border border-line-strong px-4 py-2 text-sm font-bold peer-checked:bg-ink peer-checked:text-on-ink peer-focus-visible:ring-2">När jag ska lägga mig</span>
+        </label>
+        <label class="cursor-pointer">
+          <input type="radio" name="lage" value="lagga" class="peer sr-only" />
+          <span class="inline-block rounded-full border border-line-strong px-4 py-2 text-sm font-bold peer-checked:bg-ink peer-checked:text-on-ink peer-focus-visible:ring-2">När jag ska vakna</span>
+        </label>
+      </div>
+    </fieldset>
+
+    <div class="mt-4 grid grid-cols-2 gap-4">
+      <div class="col-span-2 sm:col-span-1">
+        <label class="block text-sm font-bold mb-2" for="tid" data-tid-label>Jag vill vakna kl.</label>
+        <input id="tid" type="time" value="07:00" class={inputCls} />
+        <button type="button" id="nu" class="mt-2 text-sm font-bold text-accent underline underline-offset-4" hidden>Jag lägger mig nu</button>
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-2" for="somna">Tid att somna</label>
+        <select id="somna" class={inputCls}>
+          {[0, 5, 10, 15, 20, 30, 45].map((m) => <option value={m} selected={m === 15}>{m} min</option>)}
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-bold mb-2" for="cykel">Cykellängd <span class="font-normal text-ink-3">(tumregel 90)</span></label>
+        <select id="cykel" class={inputCls}>
+          {[80, 90, 100, 110].map((m) => <option value={m} selected={m === 90}>{m} min</option>)}
+        </select>
+      </div>
+    </div>
+  </form>
+
+  <section aria-labelledby="somn-resultat" class="mt-6">
+    <h2 id="somn-resultat" class="text-2xl font-black" data-rubrik>Gå och lägg dig kl.</h2>
+    <div aria-live="polite" aria-atomic="true">
+      <ol class="mt-3 grid gap-3" id="forslag"></ol>
+    </div>
+    <ResultCta app="somnkoll" text={pitch} />
+  </section>
+
+  <Fragment slot="forklaring">
+    <h2>Så räknar kalkylatorn</h2>
+    <p>
+      Under natten går du igenom flera sömncykler med lätt sömn, djupsömn och
+      REM-sömn. En cykel är i genomsnitt runt 90 minuter lång. Många tycker att
+      det är lättare att vakna i slutet av en cykel, när sömnen är lättare, än
+      mitt i djupsömnen.
+    </p>
+    <p>
+      Kalkylatorn räknar bakåt från när du vill vakna: antal cykler × 90
+      minuter, plus tiden det tar att somna. Ska du upp kl. 07.00 och somnar
+      på 15 minuter blir det kl. 21.45 för sex cykler, kl. 23.15 för fem och
+      kl. 00.45 för fyra.
+    </p>
+    <h2>Varför det bara är en tumregel</h2>
+    <p>
+      Cyklerna är inte lika långa. De varierar ungefär mellan 70 och 120
+      minuter, mellan olika personer och från natt till natt. Tidigt på natten
+      är det mer djupsömn, och mot morgonen blir REM-perioderna längre. Du
+      vaknar dessutom ofta kort mellan cyklerna utan att minnas det. Se
+      tiderna som en utgångspunkt och prova dig fram. Det viktigaste är att du
+      får tillräckligt med sömn totalt och har ungefär samma tider varje dag.
+      Läs mer i <a href="/somnkoll/hur-mycket-somn-vuxna/">hur mycket sömn vuxna behöver</a>
+      och <a href="/somnkoll/sov-battre-7-vanor/">7 vanor för bättre sömn</a>.
+    </p>
+  </Fragment>
+</VerktygLayout>
+
+<script>
+  import { showResultCta } from '../../lib/result-cta';
+
+  const form = document.getElementById('somn-form') as HTMLFormElement;
+  const tid = document.getElementById('tid') as HTMLInputElement;
+  const somna = document.getElementById('somna') as HTMLSelectElement;
+  const cykel = document.getElementById('cykel') as HTMLSelectElement;
+  const nu = document.getElementById('nu') as HTMLButtonElement;
+  const lista = document.getElementById('forslag') as HTMLOListElement;
+  const rubrik = document.querySelector('[data-rubrik]') as HTMLElement;
+  const tidLabel = document.querySelector('[data-tid-label]') as HTMLElement;
+
+  const DAY = 24 * 60;
+  const hhmm = (min: number) => {
+    const m = ((Math.round(min) % DAY) + DAY) % DAY;
+    return `${String(Math.floor(m / 60)).padStart(2, '0')}.${String(m % 60).padStart(2, '0')}`;
+  };
+  const langd = (min: number) => {
+    const h = Math.floor(min / 60);
+    const m = min % 60;
+    return m ? `${h} h ${m} min` : `${h} h`;
+  };
+  const lage = () => (form.querySelector('input[name="lage"]:checked') as HTMLInputElement).value;
+
+  let lastLage = lage();
+  function render() {
+    const mode = lage();
+    if (mode !== lastLage) {
+      tid.value = mode === 'vakna' ? '07:00' : '22:30';
+      lastLage = mode;
+    }
+    tidLabel.textContent = mode === 'vakna' ? 'Jag vill vakna kl.' : 'Jag lägger mig kl.';
+    rubrik.textContent = mode === 'vakna' ? 'Gå och lägg dig kl.' : 'Ställ väckarklockan på';
+    nu.hidden = mode !== 'lagga';
+
+    const [h, m] = (tid.value || '07:00').split(':').map(Number);
+    const t = h * 60 + m;
+    const fall = Number(somna.value);
+    const c = Number(cykel.value);
+
+    lista.replaceChildren();
+    for (const n of [6, 5, 4, 3]) {
+      const sleep = n * c;
+      const at = mode === 'vakna' ? t - sleep - fall : t + fall + sleep;
+      const li = document.createElement('li');
+      const bra = n === 5 || n === 6;
+      li.className = `rounded-2xl border p-4 flex items-baseline justify-between gap-3 ${bra ? 'border-ink border-2' : 'border-line'}`;
+      const left = document.createElement('div');
+      const time = document.createElement('span');
+      time.className = 'text-3xl font-black';
+      time.textContent = hhmm(at);
+      const meta = document.createElement('span');
+      meta.className = 'block text-sm text-ink-2';
+      meta.textContent = `${n} cykler · ${langd(sleep)} sömn`;
+      left.append(time, meta);
+      const tag = document.createElement('span');
+      tag.className = 'text-xs font-bold text-ink-2 text-right';
+      tag.textContent = bra ? 'Rimligt för de flesta vuxna' : n === 3 ? 'Kort natt' : 'Lite kort';
+      li.append(left, tag);
+      lista.appendChild(li);
+    }
+    const note = document.createElement('li');
+    note.className = 'text-sm text-ink-3';
+    note.textContent =
+      mode === 'vakna'
+        ? `Tiderna inkluderar ${fall} minuter för att somna.`
+        : `Räknat från att du somnar ca ${fall} minuter efter att du lagt dig.`;
+    lista.appendChild(note);
+    showResultCta();
+  }
+
+  nu.addEventListener('click', () => {
+    const d = new Date();
+    tid.value = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+    render();
+  });
+  form.addEventListener('input', render);
+  form.addEventListener('change', render);
+  render();
+</script>
