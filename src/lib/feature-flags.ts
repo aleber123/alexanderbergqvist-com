@@ -6,4 +6,4 @@
 
 /** Tidrapportera 1.1.7 (turnus / rotating schedules) is live in the
  *  App Store. While false, copy says "kommer i nästa version". */
-export const TURNUS_LIVE = false;
+export const TURNUS_LIVE = true;
