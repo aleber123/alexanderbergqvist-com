@@ -31,6 +31,11 @@ const apps = defineCollection({
     category: z.string(),
     keywords: z.array(z.string()).default([]),
     features: z.array(z.string()).default([]),
+    /** Optional App Store-style screenshots shown as a row on the landing
+     *  page (portrait, ~660×1434 webp under /public). */
+    screenshots: z
+      .array(z.object({ src: z.string(), alt: z.string() }))
+      .default([]),
     status: z.enum(['live', 'soon', 'beta']).default('live'),
     order: z.number().default(99),
   }),
