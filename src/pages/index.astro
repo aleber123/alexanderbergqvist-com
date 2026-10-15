@@ -1,5 +1,5 @@
 ---
-import { articleUrl } from '../i18n/locales';
+import { LOCALES, LOCALE_BCP47, articleUrl } from '../i18n/locales';
 import { getCollection } from 'astro:content';
 import BaseLayout from '../components/BaseLayout.astro';
 import Stat from '../components/Stat.astro';
@@ -7,6 +7,10 @@ import Stat from '../components/Stat.astro';
 const apps = (await getCollection('apps')).sort(
   (a, b) => a.data.order - b.data.order
 );
+
+// Reciprocal hreflang with the /<lang>/ homes (they already point here).
+const alternates: Record<string, string> = { 'sv-SE': new URL('/', Astro.site).href };
+for (const l of LOCALES) alternates[LOCALE_BCP47[l]] = new URL(`/${l}/`, Astro.site).href;
 
 const allArticles = await getCollection('articles', (a) => !a.data.draft);
 const recentArticles = allArticles
@@ -61,6 +65,7 @@ const tools = [
     'Alexander Bergqvist',
     'Flutter Sverige',
   ]}
+  hreflangAlternates={alternates}
 >
   <!-- ─────────── HERO ─────────── -->
   <section class="border-b border-line">

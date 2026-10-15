@@ -14,6 +14,9 @@ import BaseLayout from '../../components/BaseLayout.astro';
 // Tagged `ct=share_f` so ASC can separate installs that came from the
 // friend-to-friend share loop from ordinary SEO traffic — they are
 // different acquisition channels and should never be read as one number.
+//
+// noindex: without its ?b= payload the page is an empty "Laddar…" shell,
+// so it must never be indexed or listed in the sitemap.
 import { tagAppStoreUrl } from '../../lib/appstore';
 
 const APP_STORE_URL = tagAppStoreUrl(
@@ -26,6 +29,7 @@ const APP_STORE_URL = tagAppStoreUrl(
 <BaseLayout
   title="Kom ihåg min födelsedag"
   description="Lägg till en födelsedag i din kalender med ett klick — påminnelse varje år, helt gratis."
+  noindex="follow"
 >
   <section class="max-w-lg mx-auto px-6 py-20 text-center">
     <div id="loading" class="text-ink-3">Laddar…</div>

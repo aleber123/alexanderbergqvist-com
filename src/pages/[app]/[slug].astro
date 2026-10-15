@@ -8,6 +8,8 @@ import AppStoreBadge from '../../components/AppStoreBadge.astro';
 import AuthorBox from '../../components/AuthorBox.astro';
 import { tagAppStoreUrl } from '../../lib/appstore';
 import { resolveOgImage } from '../../lib/og';
+import { LOCALE_BCP47 } from '../../i18n/locales';
+import { articleTranslations, hreflangMap } from '../../lib/article-translations';
 
 export const getStaticPaths = (async () => {
   // Only Swedish articles live at the root /<app>/<slug>/.
@@ -55,6 +57,10 @@ const related = allArticles
   })
   .slice(0, 3);
 
+// Reciprocal hreflang between this article and its translations.
+const versions = articleTranslations(article, allArticles);
+const otherVersions = versions.filter((v) => v.lang !== 'sv');
+
 // Smart App Banner — let iOS Safari show install banner above the
 // article when the parent app is live in App Store. Big install
 // driver since SEO articles bring iOS-curious organic traffic.
@@ -80,6 +86,7 @@ const heroAppStoreUrl = tagAppStoreUrl(app?.data.appStoreUrl, Astro.url.pathname
   keywords={article.data.keywords}
   image={resolveOgImage(article.data.app, articleSlug)}
   appStoreId={appStoreId}
+  hreflangAlternates={hreflangMap(versions)}
 >
   <article class="max-w-3xl mx-auto px-6 py-8 md:py-10">
     {app && (
@@ -209,6 +216,18 @@ const heroAppStoreUrl = tagAppStoreUrl(app?.data.appStoreUrl, Astro.url.pathname
           })}
         </div>
       </section>
+    )}
+
+    {otherVersions.length > 0 && (
+      <p class="mt-10 text-sm text-ink-2">
+        <span class="font-bold text-ink">Finns även på:</span>{' '}
+        {otherVersions.map((v, i) => (
+          <Fragment>
+            {i > 0 && ' · '}
+            <a href={v.path} hreflang={LOCALE_BCP47[v.lang]} lang={LOCALE_BCP47[v.lang]} class="underline">{v.label}</a>
+          </Fragment>
+        ))}
+      </p>
     )}
   </article>
 </BaseLayout>

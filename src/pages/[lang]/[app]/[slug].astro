@@ -11,9 +11,11 @@ import { resolveOgImage } from '../../../lib/og';
 import {
   LOCALES,
   LOCALE_BCP47,
+  appSupportsLocale,
   localizeAppStoreUrl,
   type Locale,
 } from '../../../i18n/locales';
+import { articleTranslations, hreflangMap } from '../../../lib/article-translations';
 
 export const getStaticPaths = (async () => {
   const articles = await getCollection(
@@ -45,21 +47,21 @@ const app = apps.find((a) => a.id === article.data.app);
 // otherwise English/German/French page.
 const ARTICLE_UI: Record<
   Locale,
-  { home: string; readMore: string; updated: string; inGuide: string; get: string }
+  { home: string; readMore: string; updated: string; inGuide: string; get: string; otherLangs: string }
 > = {
-  en: { home: 'Home', readMore: 'Read more', updated: 'Updated', inGuide: 'The app in this guide', get: 'Get' },
-  de: { home: 'Start', readMore: 'Mehr lesen', updated: 'Aktualisiert', inGuide: 'Die App in dieser Anleitung', get: 'Holen' },
-  no: { home: 'Hjem', readMore: 'Les mer', updated: 'Oppdatert', inGuide: 'Appen i denne guiden', get: 'Hent' },
-  da: { home: 'Hjem', readMore: 'Læs mere', updated: 'Opdateret', inGuide: 'Appen i denne guide', get: 'Hent' },
-  es: { home: 'Inicio', readMore: 'Leer más', updated: 'Actualizado', inGuide: 'La app de esta guía', get: 'Obtener' },
-  fr: { home: 'Accueil', readMore: 'Lire la suite', updated: 'Mis à jour', inGuide: 'L’app de ce guide', get: 'Obtenir' },
-  fi: { home: 'Etusivu', readMore: 'Lue lisää', updated: 'Päivitetty', inGuide: 'Tämän oppaan sovellus', get: 'Hae' },
-  is: { home: 'Heim', readMore: 'Lesa meira', updated: 'Uppfært', inGuide: 'Appið í þessari handbók', get: 'Sækja' },
-  it: { home: 'Home', readMore: 'Leggi di più', updated: 'Aggiornato', inGuide: 'L’app di questa guida', get: 'Scarica' },
-  el: { home: 'Αρχική', readMore: 'Διαβάστε περισσότερα', updated: 'Ενημερώθηκε', inGuide: 'Η εφαρμογή αυτού του οδηγού', get: 'Λήψη' },
-  nl: { home: 'Home', readMore: 'Lees meer', updated: 'Bijgewerkt', inGuide: 'De app in deze gids', get: 'Download' },
-  pl: { home: 'Strona główna', readMore: 'Czytaj więcej', updated: 'Zaktualizowano', inGuide: 'Aplikacja z tego poradnika', get: 'Pobierz' },
-  pt: { home: 'Início', readMore: 'Ler mais', updated: 'Atualizado', inGuide: 'O app deste guia', get: 'Obter' },
+  en: { home: 'Home', readMore: 'Read more', updated: 'Updated', inGuide: 'The app in this guide', get: 'Get', otherLangs: 'Also available in' },
+  de: { home: 'Start', readMore: 'Mehr lesen', updated: 'Aktualisiert', inGuide: 'Die App in dieser Anleitung', get: 'Holen', otherLangs: 'Auch verfügbar auf' },
+  no: { home: 'Hjem', readMore: 'Les mer', updated: 'Oppdatert', inGuide: 'Appen i denne guiden', get: 'Hent', otherLangs: 'Også tilgjengelig på' },
+  da: { home: 'Hjem', readMore: 'Læs mere', updated: 'Opdateret', inGuide: 'Appen i denne guide', get: 'Hent', otherLangs: 'Også tilgængelig på' },
+  es: { home: 'Inicio', readMore: 'Leer más', updated: 'Actualizado', inGuide: 'La app de esta guía', get: 'Obtener', otherLangs: 'También disponible en' },
+  fr: { home: 'Accueil', readMore: 'Lire la suite', updated: 'Mis à jour', inGuide: 'L’app de ce guide', get: 'Obtenir', otherLangs: 'Également disponible en' },
+  fi: { home: 'Etusivu', readMore: 'Lue lisää', updated: 'Päivitetty', inGuide: 'Tämän oppaan sovellus', get: 'Hae', otherLangs: 'Saatavilla myös kielellä' },
+  is: { home: 'Heim', readMore: 'Lesa meira', updated: 'Uppfært', inGuide: 'Appið í þessari handbók', get: 'Sækja', otherLangs: 'Einnig á' },
+  it: { home: 'Home', readMore: 'Leggi di più', updated: 'Aggiornato', inGuide: 'L’app di questa guida', get: 'Scarica', otherLangs: 'Disponibile anche in' },
+  el: { home: 'Αρχική', readMore: 'Διαβάστε περισσότερα', updated: 'Ενημερώθηκε', inGuide: 'Η εφαρμογή αυτού του οδηγού', get: 'Λήψη', otherLangs: 'Διαθέσιμο επίσης στα' },
+  nl: { home: 'Home', readMore: 'Lees meer', updated: 'Bijgewerkt', inGuide: 'De app in deze gids', get: 'Download', otherLangs: 'Ook beschikbaar in' },
+  pl: { home: 'Strona główna', readMore: 'Czytaj więcej', updated: 'Zaktualizowano', inGuide: 'Aplikacja z tego poradnika', get: 'Pobierz', otherLangs: 'Dostępne także w języku' },
+  pt: { home: 'Início', readMore: 'Ler mais', updated: 'Atualizado', inGuide: 'O app deste guia', get: 'Obter', otherLangs: 'Também disponível em' },
 };
 const ui = ARTICLE_UI[lang];
 
@@ -81,6 +83,16 @@ const related = allArticles
     return b.data.publishedAt.getTime() - a.data.publishedAt.getTime();
   })
   .slice(0, 3);
+
+// Reciprocal hreflang between this article and its translations.
+const versions = articleTranslations(article, allArticles);
+const otherVersions = versions.filter((v) => v.lang !== lang);
+
+// /<lang>/<app>/ only exists for apps with a listing in that locale
+// (e.g. there is no /en/rita/ — the breadcrumb used to 404 there).
+const appHomeUrl = app
+  ? appSupportsLocale(app.id, lang) ? `/${lang}/${app.id}/` : `/${app.id}/`
+  : undefined;
 
 const appStoreId = app?.data.appStoreUrl
   ? app.data.appStoreUrl.match(/\/id(\d+)/)?.[1]
@@ -111,13 +123,14 @@ const heroAppStoreUrl = tagAppStoreUrl(localizedAppStoreUrl, Astro.url.pathname,
   image={resolveOgImage(article.data.app, articleSlug)}
   appStoreId={appStoreId}
   htmlLang={LOCALE_BCP47[lang]}
+  hreflangAlternates={hreflangMap(versions)}
 >
   <article class="max-w-3xl mx-auto px-6 py-8 md:py-10">
     {app && (
       <Breadcrumbs
         trail={[
           { name: ui.home, url: `/${lang}/` },
-          { name: app.data.name, url: `/${lang}/${app.id}/` },
+          { name: app.data.name, url: appHomeUrl },
           { name: article.data.title },
         ]}
       />
@@ -235,6 +248,18 @@ const heroAppStoreUrl = tagAppStoreUrl(localizedAppStoreUrl, Astro.url.pathname,
           })}
         </div>
       </section>
+    )}
+
+    {otherVersions.length > 0 && (
+      <p class="mt-10 text-sm text-ink-2">
+        <span class="font-bold text-ink">{ui.otherLangs}:</span>{' '}
+        {otherVersions.map((v, i) => (
+          <Fragment>
+            {i > 0 && ' · '}
+            <a href={v.path} hreflang={LOCALE_BCP47[v.lang]} lang={LOCALE_BCP47[v.lang]} class="underline">{v.label}</a>
+          </Fragment>
+        ))}
+      </p>
     )}
   </article>
 </BaseLayout>

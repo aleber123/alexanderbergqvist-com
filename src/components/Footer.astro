@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import { LANG_PREFIXES } from '../lib/app-section';
+import { LOCALES, LOCALE_BCP47, LOCALE_LABELS } from '../i18n/locales';
 const apps = (await getCollection('apps')).sort(
   (a, b) => a.data.order - b.data.order
 );
@@ -35,13 +36,29 @@ const isSv = !LANG_PREFIXES.has(Astro.url.pathname.split('/').filter(Boolean)[0]
         {isSv && <li><a href="/namnsdag/" class="hover:text-ink">Dagens namnsdag</a></li>}
         {isSv && <li><a href="/vecka/" class="hover:text-ink">Vilken vecka är det?</a></li>}
         <li><a href="/blog/" class="hover:text-ink">Blog</a></li>
+        <li><a href="/appar/" class="hover:text-ink">Alla appar</a></li>
         <li><a href="/om/" class="hover:text-ink">Om mig</a></li>
+        <li><a href="/press/" class="hover:text-ink">Press</a></li>
+        <li><a href="/support/" class="hover:text-ink">Support</a></li>
+        <li><a href="/integritet/" class="hover:text-ink">Integritet</a></li>
+        <li><a href="/villkor/" class="hover:text-ink">Villkor</a></li>
         <li>
           <a href="mailto:alexander.bergqvist@gmail.com" class="hover:text-ink">Kontakt</a>
         </li>
       </ul>
     </div>
   </div>
+  {/* Every language home one click from every page — /el/, /nl/, /pl/
+      and /pt/ were otherwise unreachable by links. */}
+  <nav aria-label="Språk" class="max-w-6xl mx-auto px-6 pb-6 text-xs text-ink-3">
+    <a href="/" hreflang="sv-SE" lang="sv-SE" class="hover:text-ink">Svenska</a>
+    {LOCALES.map((l) => (
+      <Fragment>
+        {' · '}
+        <a href={`/${l}/`} hreflang={LOCALE_BCP47[l]} lang={LOCALE_BCP47[l]} class="hover:text-ink">{LOCALE_LABELS[l]}</a>
+      </Fragment>
+    ))}
+  </nav>
   <div class="border-t border-line py-4 text-center text-xs text-ink-3">
     © {year} Alexander Bergqvist
   </div>

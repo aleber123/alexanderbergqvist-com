@@ -8,6 +8,13 @@ import AppStoreQr from '../../components/AppStoreQr.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
 import TidrapportLanding from '../../components/landing/TidrapportLanding.astro';
 import { AKTUELLT_AR } from '../../data/verktyg';
+import {
+  LOCALES,
+  LOCALE_BCP47,
+  LOCALE_LABELS,
+  appSupportsLocale,
+  articleUrl,
+} from '../../i18n/locales';
 
 export const getStaticPaths = (async () => {
   const apps = await getCollection('apps');
@@ -43,6 +50,29 @@ const appArticles = allArticles
   .filter((a) => a.data.app === app.id && a.data.lang === 'sv')
   .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
 
+// Articles in other languages for this app, grouped by language, so every
+// article is linked from its app page (they used to be reachable only via
+// /blog/ or the /<lang>/<app>/ pages, which Google rarely got to).
+const foreignArticles = LOCALES.map((l) => ({
+  lang: l,
+  list: allArticles
+    .filter((a) => a.data.app === app.id && a.data.lang === l)
+    .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()),
+})).filter((g) => g.list.length > 0);
+
+// Reciprocal hreflang with /<lang>/<app>/ — those pages already point
+// here as sv-SE, but this page never pointed back, so Google ignored
+// the whole set.
+let alternates: Record<string, string> | undefined;
+if (LOCALES.some((l) => appSupportsLocale(app.id, l))) {
+  alternates = { 'sv-SE': new URL(`/${app.id}/`, Astro.site).href };
+  for (const l of LOCALES) {
+    if (appSupportsLocale(app.id, l)) {
+      alternates[LOCALE_BCP47[l]] = new URL(`/${l}/${app.id}/`, Astro.site).href;
+    }
+  }
+}
+
 // Hand-curated map of free tool slugs per app. Each entry shows up
 // as a card on the landing page.
 const toolsByApp: Record<
@@ -51,6 +81,12 @@ const toolsByApp: Record<
 > = {
   'snusfri-resa': [
     {
+      slug: 'sluta-snusa',
+      title: 'Sluta snusa dag för dag',
+      description:
+        'Vad händer i kroppen när du slutar snusa? Tidslinje dag för dag – abstinens, sug och återhämtning.',
+    },
+    {
       slug: 'kalkylator',
       title: 'Snusfri-kalkylator',
       description:
@@ -58,6 +94,11 @@ const toolsByApp: Record<
     },
   ],
   fodelsedagar: [
+    {
+      slug: 'grattis',
+      title: 'Grattis-hälsningar',
+      description: 'Färdiga födelsedagshälsningar till mamma, pappa, vän och kollega – kopiera med ett klick.',
+    },
     {
       href: '/namnsdag/',
       title: 'Dagens namnsdag',
@@ -158,6 +199,13 @@ const toolsByApp: Record<
       href: `/verktyg/lonedag-${AKTUELLT_AR}/`,
       title: `Lönedag ${AKTUELLT_AR}`,
       description: 'När kommer lönen varje månad om lönedagen är den 25:e?',
+    },
+  ],
+  renovera: [
+    {
+      slug: 'betongkalkylator',
+      title: 'Betongkalkylator',
+      description: 'Hur många säckar betong behöver du? Plintar, plattor och murar.',
     },
   ],
   somnkoll: [
@@ -288,6 +336,7 @@ const appStoreId = appStoreUrl
   keywords={keywords}
   image={resolveOgImage(app.id, '')}
   appStoreId={appStoreId}
+  hreflangAlternates={alternates}
 >
   <script
     type="application/ld+json"
@@ -452,6 +501,28 @@ const appStoreId = appStoreUrl
               </a>
             );
           })}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {foreignArticles.length > 0 && (
+    <section class="border-t border-line py-12">
+      <div class="max-w-6xl mx-auto px-6">
+        <h2 class="text-xl md:text-2xl font-black mb-6">Artiklar på andra språk</h2>
+        <div class="grid md:grid-cols-2 gap-x-10 gap-y-6">
+          {foreignArticles.map((g) => (
+            <div lang={LOCALE_BCP47[g.lang]}>
+              <h3 class="font-bold text-ink">{LOCALE_LABELS[g.lang]}</h3>
+              <ul class="mt-2 space-y-1 text-sm text-ink-2">
+                {g.list.map((a) => (
+                  <li>
+                    <a href={articleUrl(a.id, a.data.app, a.data.lang)} class="underline">{a.data.title}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </div>
     </section>
