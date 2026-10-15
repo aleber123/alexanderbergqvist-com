@@ -5,6 +5,7 @@
  */
 import { NAMNSDAGAR, TILLAGG_2027 } from '../data/namnsdagar';
 import { MANADER, mdKey, type YMD } from './datum';
+import { POPULARA_NAMN, URSPRUNG, relatedNames } from '../data/namnsdag-populara';
 
 export { NAMNSDAGAR, TILLAGG_2027 };
 
@@ -103,3 +104,22 @@ export const monthUrl = (m: number) => `/namnsdag/${MANADER[m - 1]}/`;
 
 export const SOURCE_URL =
   'https://sv.wikipedia.org/wiki/Lista_%C3%B6ver_namnsdagar_i_Sverige_i_datumordning';
+
+/* ── Indexable name pages ────────────────────────────────────────────
+   Only the most common names (src/data/namnsdag-populara.ts) get an
+   indexable page + a sitemap entry; the rest are `noindex, follow`. */
+
+for (const n of POPULARA_NAMN) {
+  if (!NAME_BY_NAME[n]) throw new Error(`namnsdag-populara: ${n} is not in the almanac`);
+}
+const INDEXED = new Set<string>(POPULARA_NAMN);
+
+/** Does this name have an indexable page? */
+export const isIndexedName = (name: string) => INDEXED.has(name);
+
+/** URL paths of the indexable name pages (for the sitemap). */
+export const INDEXED_NAME_PATHS: string[] = POPULARA_NAMN.map((n) => nameUrl(n));
+
+export const ursprung = (name: string): string | undefined => URSPRUNG[name];
+export const relaterade = (name: string): NameEntry[] =>
+  relatedNames(name, (n) => !!NAME_BY_NAME[n]).map((n) => NAME_BY_NAME[n]);

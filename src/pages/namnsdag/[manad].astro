@@ -3,6 +3,11 @@
  * /namnsdag/<månad>/ — every name day in one month. Weekdays are rendered
  * for the build year and recomputed client-side for the current year
  * (Europe/Stockholm); today's row is highlighted.
+ *
+ * Every name in the almanac is listed here — this page is the indexable
+ * home for all of them. Only the common names (data/namnsdag-populara.ts)
+ * link to their own page; the rest are plain text because their pages
+ * are noindexed.
  */
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../components/BaseLayout.astro';
@@ -17,7 +22,7 @@ import {
   mdKey,
   stockholmToday,
 } from '../../lib/datum';
-import { NAMNLOSA_DAGAR, monthUrl, nameUrl, namesForKey } from '../../lib/namnsdag';
+import { NAMNLOSA_DAGAR, isIndexedName, monthUrl, nameUrl, namesForKey } from '../../lib/namnsdag';
 
 export const getStaticPaths = (() =>
   MANADER.map((manad, i) => ({ params: { manad }, props: { m: i + 1 } }))) satisfies GetStaticPaths;
@@ -63,8 +68,8 @@ const next = m === 12 ? 1 : m + 1;
       Namnsdagar i {manad} <span data-nd-year>{year}</span>
     </h1>
     <p class="mt-3 text-lg text-ink-2">
-      {nameCount} namn har namnsdag i {manad}. Tryck på ett namn för att se
-      vilka som delar dagen och hur länge det är kvar.
+      {nameCount} namn har namnsdag i {manad}. Understrukna namn har en egen
+      sida med nedräkning, namnets ursprung och liknande namn.
       {hasAdditions && ' Namn märkta ”från 2027” är nya i almanackan och firas första gången 2027.'}
     </p>
 
@@ -89,7 +94,9 @@ const next = m === 12 ? 1 : m + 1;
                   ? r.names.map((x, i) => (
                       <Fragment>
                         {i > 0 && ', '}
-                        <a href={nameUrl(x.name)} class="font-bold underline">{x.name}</a>
+                        {isIndexedName(x.name)
+                          ? <a href={nameUrl(x.name)} class="font-bold underline">{x.name}</a>
+                          : <span class="font-bold">{x.name}</span>}
                         {x.from2027 && <span class="text-xs text-ink-3"> (från 2027)</span>}
                       </Fragment>
                     ))

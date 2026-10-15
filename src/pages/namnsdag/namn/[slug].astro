@@ -1,15 +1,24 @@
 ---
 /**
  * /namnsdag/namn/<slug>/ — "När har X namnsdag?", one page per name in
- * the Swedish almanac. Kept deliberately compact: the date-specific facts
- * (date, weekday, names sharing the day, neighbouring days, the rest of
- * the month) are what differ between pages; the countdown is computed
- * client-side in Europe/Stockholm.
+ * the Swedish almanac. The date-specific facts (date, weekday, names
+ * sharing the day, neighbouring days, the rest of the month) are what
+ * differ between pages; the countdown is computed client-side in
+ * Europe/Stockholm.
+ *
+ * Only the ~150 most common names (data/namnsdag-populara.ts) are
+ * indexable; they also get an origin note, related names and an FAQ.
+ * Every other name page is `noindex, follow` and kept out of the
+ * sitemap — the URL still works, and the name is listed on its month
+ * page. Links from these pages go to indexable name pages only, so
+ * crawlers are not sent round the ~480 noindexed ones.
  */
 import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../../components/BaseLayout.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import ResultCta from '../../../components/ResultCta.astro';
+import FAQ from '../../../components/FAQ.astro';
+import AppCta from '../../../components/namnsdag/AppCta.astro';
 import Kalla from '../../../components/namnsdag/Kalla.astro';
 import {
   addDays,
@@ -24,9 +33,12 @@ import {
   NAMES,
   NAMNLOSA_DAGAR,
   TILLAGG_FRAN_AR,
+  isIndexedName,
   monthUrl,
   nameUrl,
   namesForKey,
+  relaterade,
+  ursprung,
   type NameEntry,
 } from '../../../lib/namnsdag';
 
@@ -58,16 +70,39 @@ const neighbours = [neighbour(-1), neighbour(1)];
 
 const sameMonth = NAMES.filter((n) => n.m === m && n.name !== name).sort((a, b) => a.d - b.d);
 
+const indexed = isIndexedName(name);
+// Swedish genitive: Annas, but Lars, Agnes, Max (no extra s).
+const genitiv = /[sxz]$/i.test(name) ? name : `${name}s`;
+const origin = indexed ? ursprung(name) : undefined;
+const related = indexed ? relaterade(name) : [];
+
 const sharesText =
   sameDay.length === 0
     ? `${name} har dagen för sig själv – inget annat namn i almanackan delar den.`
     : `${name} delar namnsdag med ${sameDay.map((x) => x.name).join(' och ')}.`;
+
+const faq = indexed
+  ? [
+      {
+        q: `När har ${name} namnsdag?`,
+        a: `${name} har namnsdag den ${dateText} varje år${from2027 ? ', från och med 2027' : ''}, enligt den svenska almanackan.`,
+      },
+      {
+        q: `Vilka mer har namnsdag den ${dateText}?`,
+        a: sameDay.length === 0
+          ? `Ingen – ${name} har dagen för sig själv i almanackan.`
+          : `${sameDay.map((x) => x.name).join(' och ')} har också namnsdag den ${dateText}.`,
+      },
+      ...(origin ? [{ q: `Vad betyder namnet ${name}?`, a: origin }] : []),
+    ]
+  : [];
 ---
 
 <BaseLayout
   title={`När har ${name} namnsdag? – ${dateText}`}
   description={`${name} har namnsdag den ${dateText}${from2027 ? ' – ett nytt namn i almanackan från 2027' : ''}. ${sharesText} Se hur många dagar det är kvar och vilka andra som har namnsdag i ${manad}.`}
   keywords={[`${name.toLowerCase()} namnsdag`, `när har ${name.toLowerCase()} namnsdag`, `namnsdag ${dateText}`]}
+  noindex={indexed ? undefined : 'follow'}
 >
   <section class="max-w-3xl mx-auto px-4 sm:px-6 py-8">
     <Breadcrumbs
@@ -111,13 +146,42 @@ const sharesText =
           {sameDay.map((x, i) => (
             <Fragment>
               {i > 0 && (i === sameDay.length - 1 ? ' och ' : ', ')}
-              <a href={nameUrl(x.name)} class="font-bold underline">{x.name}</a>
+              {isIndexedName(x.name)
+                ? <a href={nameUrl(x.name)} class="font-bold underline">{x.name}</a>
+                : <strong>{x.name}</strong>}
               {x.from2027 && ' (från 2027)'}
             </Fragment>
           ))}.
         </Fragment>
       )}
     </p>
+
+    {indexed && (
+      <Fragment>
+        <h2 class="mt-8 text-xl font-black">Om namnet {name}</h2>
+        <p class="mt-2 text-ink-2">
+          {origin && <Fragment>{origin}{' '}</Fragment>}
+          {name} hör till de vanligaste tilltalsnamnen i Sverige enligt SCB:s
+          namnstatistik, så de flesta känner någon som firar den {dateText}.
+        </p>
+      </Fragment>
+    )}
+
+    {related.length > 0 && (
+      <Fragment>
+        <h2 class="mt-8 text-xl font-black">Liknande namn</h2>
+        <ul class="mt-2 space-y-1 text-ink-2">
+          {related.map((r) => (
+            <li>
+              {isIndexedName(r.name)
+                ? <a href={nameUrl(r.name)} class="font-bold underline">{r.name}</a>
+                : <strong>{r.name}</strong>}
+              <span class="text-ink-3"> – namnsdag {formatDayMonth(r)}{r.from2027 && ' (från 2027)'}</span>
+            </li>
+          ))}
+        </ul>
+      </Fragment>
+    )}
 
     <h2 class="mt-8 text-xl font-black">Dagarna runt omkring</h2>
     <ul class="mt-2 space-y-1 text-ink-2">
@@ -126,7 +190,9 @@ const sharesText =
           <span class="text-ink-3">{formatDayMonth(nb.dt)}:</span>{' '}
           {nb.names.length > 0
             ? nb.names.map((x, i) => (
-                <Fragment>{i > 0 && ', '}<a href={nameUrl(x.name)} class="font-bold underline">{x.name}</a></Fragment>
+                <Fragment>{i > 0 && ', '}{isIndexedName(x.name)
+                  ? <a href={nameUrl(x.name)} class="font-bold underline">{x.name}</a>
+                  : <strong>{x.name}</strong>}</Fragment>
               ))
             : `ingen namnsdag (${nb.reason})`}
         </li>
@@ -144,11 +210,19 @@ const sharesText =
       {sameMonth.map((x, i) => (
         <Fragment>
           {i > 0 && ' · '}
-          <a href={nameUrl(x.name)} class="underline">{x.name}</a>
+          {isIndexedName(x.name) ? <a href={nameUrl(x.name)} class="underline">{x.name}</a> : x.name}
           <span class="text-ink-3"> {x.d}/{x.m}</span>
         </Fragment>
       ))}
     </p>
+
+    <AppCta
+      heading={`Kom ihåg ${genitiv} namnsdag – och alla födelsedagar`}
+      text="Födelsedagar (gratis) samlar namnsdagar och födelsedagar på ett ställe och påminner dig i god tid, så att du hinner gratulera."
+      position="footer"
+    />
+
+    {faq.length > 0 && <FAQ items={faq} />}
 
     <p class="mt-8 font-bold">
       <a href={monthUrl(m)} class="underline">Alla namnsdagar i {manad}</a>

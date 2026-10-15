@@ -21,7 +21,11 @@ interface Props {
   updatedAt?: Date;
   keywords?: string[];
   author?: Author;
-  noindex?: boolean;
+  /** true → `noindex, nofollow` (admin, private pages). 'follow' →
+   *  `noindex, follow`: keep the page out of the index but let Google
+   *  follow its links (thin programmatic pages such as the less common
+   *  /namnsdag/namn/ pages). */
+  noindex?: boolean | 'follow';
   /**
    * App Store numeric ID. When set, iOS Safari renders an
    * "Open in App Store" banner above the page — high-conversion
@@ -123,7 +127,9 @@ const articleLd = type === 'article' && publishedAt
 {keywords.length > 0 && <meta name="keywords" content={keywords.join(', ')} />}
 <meta name="author" content={author?.name ?? 'Alexander Bergqvist'} />
 <link rel="canonical" href={url} />
-{noindex && <meta name="robots" content="noindex, nofollow" />}
+{noindex && (
+  <meta name="robots" content={noindex === 'follow' ? 'noindex, follow' : 'noindex, nofollow'} />
+)}
 {!noindex && (
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
 )}
@@ -139,7 +145,7 @@ const articleLd = type === 'article' && publishedAt
     <link
       rel="alternate"
       hreflang="x-default"
-      href={hreflangAlternates['sv-SE'] ?? url}
+      href={hreflangAlternates['sv-SE'] ?? hreflangAlternates['en-US'] ?? url}
     />
   </>
 ) : (

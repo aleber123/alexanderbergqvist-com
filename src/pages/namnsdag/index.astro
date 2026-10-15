@@ -23,8 +23,10 @@ import {
   isoWeekday,
 } from '../../lib/datum';
 import {
+  NAMES,
   NAMNLOSA_DAGAR,
   TILLAGG_2027,
+  isIndexedName,
   monthUrl,
   nameUrl,
   namesOn,
@@ -34,6 +36,9 @@ const today = stockholmToday();
 const year = today.y;
 const tomorrow = addDays(today, 1);
 const week = Array.from({ length: 7 }, (_, i) => addDays(today, i + 2));
+
+// The common names that have their own indexable page, A–Ö.
+const popular = NAMES.filter((n) => isIndexedName(n.name));
 
 const additions = Object.entries(TILLAGG_2027).flatMap(([key, names]) =>
   names.map((name) => {
@@ -170,6 +175,21 @@ const faq = [
         </a>
       ))}
     </div>
+
+    <h2 class="mt-12 text-2xl font-black">Vanliga namn och deras namnsdagar</h2>
+    <p class="mt-3 text-ink-2">
+      De {popular.length} vanligaste namnen i Sverige som finns i almanackan, A–Ö.
+      Övriga namn hittar du i månadslistorna ovan.
+    </p>
+    <p class="mt-4 leading-relaxed text-ink-2">
+      {popular.map((n, i) => (
+        <Fragment>
+          {i > 0 && ' · '}
+          <a href={nameUrl(n.name)} class="underline">{n.name}</a>
+          <span class="text-ink-3"> {n.d}/{n.m}</span>
+        </Fragment>
+      ))}
+    </p>
 
     <h2 class="mt-12 text-2xl font-black">Nya namnsdagar 2027</h2>
     <p class="mt-3 text-ink-2">

@@ -17,7 +17,7 @@ interface Props {
   publishedAt?: Date;
   updatedAt?: Date;
   keywords?: string[];
-  noindex?: boolean;
+  noindex?: boolean | 'follow';
   /** Explicit Smart App Banner id. Optional: pages under an app section
    *  (/<app>/…, /<lang>/<app>/…, mapped /verktyg/ calculators, /f/) get
    *  it derived centrally from the pathname — see lib/app-section.ts. */
