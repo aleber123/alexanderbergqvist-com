@@ -20,6 +20,15 @@
       ]
     },
     {
+      "source": "/admin/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
       "source": "/_astro/(.*)",
       "headers": [
         {
@@ -48,6 +57,28 @@
     }
   ],
   "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "alexanderbergqvist-com.vercel.app"
+        }
+      ],
+      "destination": "https://alexanderbergqvist.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.alexanderbergqvist.com"
+        }
+      ],
+      "destination": "https://alexanderbergqvist.com/:path*",
+      "permanent": true
+    },
     {
       "source": "/",
       "has": [
@@ -1045,6 +1076,36 @@
     {
       "source": "/snusfri-resa/abstinens-tidslinje/",
       "destination": "/snusfri-resa/sluta-snusa/",
+      "permanent": true
+    },
+    {
+      "source": "/en/rita",
+      "destination": "/rita/",
+      "permanent": true
+    },
+    {
+      "source": "/en/rita/",
+      "destination": "/rita/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/:app/:slug",
+      "destination": "/:app/:slug/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/:app/:slug/",
+      "destination": "/:app/:slug/",
+      "permanent": true
+    },
+    {
+      "source": "/apps/:name.png",
+      "destination": "/apps/:name.webp",
+      "permanent": true
+    },
+    {
+      "source": "/sitemap-0.xml",
+      "destination": "/sitemap-index.xml",
       "permanent": true
     }
   ]

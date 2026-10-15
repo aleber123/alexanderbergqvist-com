@@ -5,8 +5,22 @@ import vercel from '@astrojs/vercel';
 import tailwindcss from '@tailwindcss/vite';
 import { rehypeAppStoreAttribution } from './src/lib/rehype-appstore-attribution';
 import { rehypeVerdictMarks } from './src/lib/rehype-verdict-marks';
+import { INDEXED_NAME_PATHS } from './src/lib/namnsdag';
+import { lastmodFor, sectionOf, verifySitemapIntegration } from './scripts/sitemap-helpers.mjs';
 
 const SITE = 'https://alexanderbergqvist.com';
+
+// Kept out of the sitemap: anything noindexed. The less common
+// /namnsdag/namn/ pages are `noindex, follow` (only the names in
+// src/data/namnsdag-populara.ts are indexable), /f/ is an empty shell
+// without its ?b= payload, and /admin/ is private.
+const INDEXED_NAMES = new Set(INDEXED_NAME_PATHS.map((p) => SITE + p));
+const inSitemap = (url) => {
+  const path = new URL(url).pathname;
+  if (path.startsWith('/admin/') || path.startsWith('/api/') || path === '/f/') return false;
+  if (path.startsWith('/namnsdag/namn/')) return INDEXED_NAMES.has(url);
+  return true;
+};
 // Build-cache bust 2026-06-26: force Astro to re-sync the content layer so
 // newly added article pages are emitted on Vercel (cached store was serving
 // stale getStaticPaths output — sitemap had the URL but the page 404'd).
@@ -54,10 +68,24 @@ export default defineConfig({
           pt: 'pt-PT',
         },
       },
+      filter: inSitemap,
+      // One sitemap per section (sitemap-apps-0.xml, sitemap-articles-0.xml,
+      // …) under sitemap-index.xml, so Search Console reports indexing
+      // coverage per section. Everything else lands in sitemap-pages-0.xml.
+      chunks: {
+        apps: (item) => (sectionOf(item.url) === 'apps' ? item : undefined),
+        articles: (item) => (sectionOf(item.url) === 'articles' ? item : undefined),
+        tools: (item) => (sectionOf(item.url) === 'tools' ? item : undefined),
+        namnsdag: (item) => (sectionOf(item.url) === 'namnsdag' ? item : undefined),
+      },
       changefreq: 'weekly',
       priority: 0.7,
       // Boost priority for landing + tools (most important pages to crawl).
+      // lastmod = when the page's content last changed (frontmatter date /
+      // last git commit of its sources), never the build time.
       serialize: (item) => {
+        const lastmod = lastmodFor(item.url);
+        if (lastmod) item.lastmod = lastmod.toISOString();
         if (item.url === SITE + '/') {
           item.priority = 1.0;
           item.changefreq = 'daily';
@@ -71,6 +99,9 @@ export default defineConfig({
         return item;
       },
     }),
+    // Must run after sitemap(): fails the build if a sitemap URL is
+    // missing, noindexed or not self-canonical.
+    verifySitemapIntegration(),
   ],
   // Tags the ~152 raw apps.apple.com links written inline in MDX bodies
   // with pt/ct, so ASC stops reporting only the bottom-of-page badge.
