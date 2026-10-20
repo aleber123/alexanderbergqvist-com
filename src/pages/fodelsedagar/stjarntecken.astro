@@ -5,11 +5,20 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
 import ResultCta from '../../components/ResultCta.astro';
+import FodelsedagarTools from '../../components/FodelsedagarTools.astro';
 
 const app = await getEntry('apps', 'fodelsedagar');
 const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
 
 const faq = [
+  {
+    q: 'Vilket stjärntecken är jag?',
+    a: 'Det avgörs av din födelsedag. Stenbocken 22 dec–19 jan, Vattumannen 20 jan–18 feb, Fiskarna 19 feb–20 mar, Väduren 21 mar–19 apr, Oxen 20 apr–20 maj, Tvillingarna 21 maj–20 jun, Kräftan 21 jun–22 jul, Lejonet 23 jul–22 aug, Jungfrun 23 aug–22 sep, Vågen 23 sep–22 okt, Skorpionen 23 okt–21 nov och Skytten 22 nov–21 dec.',
+  },
+  {
+    q: 'Vilket stjärntecken är man om man är född i mars?',
+    a: 'Född 1–20 mars är du Fiskarna, född 21–31 mars är du Väduren. Varje månad delas mellan två tecken – se tabellen ”Stjärntecken månad för månad” på sidan.',
+  },
   {
     q: 'Hur räknar man ut sitt stjärntecken?',
     a: 'Stjärntecken bestäms av födelsedatum, inte år. Varje tecken sträcker sig ungefär en månad. Räknaren här ovan tar din födelsedag och returnerar exakt tecken — du kan också se gränsdatum för varje tecken nedan.',
@@ -27,6 +36,35 @@ const faq = [
     a: 'Aszendenten (stigande tecknet) kräver exakt klockslag och födelseort — något räknaren inte frågar efter. Aszendent beräknas separat via en specialiserad astrologitjänst. Det vi visar här är ditt sol-tecken, det som folk i allmänhet menar med "stjärntecken".',
   },
 ];
+
+// Month → the two signs it is split between. Same boundaries as `signs`.
+const byMonth = [
+  { m: 'Januari', a: ['1–19', 'Stenbocken'], b: ['20–31', 'Vattumannen'] },
+  { m: 'Februari', a: ['1–18', 'Vattumannen'], b: ['19–29', 'Fiskarna'] },
+  { m: 'Mars', a: ['1–20', 'Fiskarna'], b: ['21–31', 'Väduren'] },
+  { m: 'April', a: ['1–19', 'Väduren'], b: ['20–30', 'Oxen'] },
+  { m: 'Maj', a: ['1–20', 'Oxen'], b: ['21–31', 'Tvillingarna'] },
+  { m: 'Juni', a: ['1–20', 'Tvillingarna'], b: ['21–30', 'Kräftan'] },
+  { m: 'Juli', a: ['1–22', 'Kräftan'], b: ['23–31', 'Lejonet'] },
+  { m: 'Augusti', a: ['1–22', 'Lejonet'], b: ['23–31', 'Jungfrun'] },
+  { m: 'September', a: ['1–22', 'Jungfrun'], b: ['23–30', 'Vågen'] },
+  { m: 'Oktober', a: ['1–22', 'Vågen'], b: ['23–31', 'Skorpionen'] },
+  { m: 'November', a: ['1–21', 'Skorpionen'], b: ['22–30', 'Skytten'] },
+  { m: 'December', a: ['1–21', 'Skytten'], b: ['22–31', 'Stenbocken'] },
+];
+
+const webApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Stjärntecken-räknare – vilket stjärntecken är jag?',
+  url: new URL('/fodelsedagar/stjarntecken/', Astro.site).href,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Alla (körs i webbläsaren)',
+  inLanguage: 'sv-SE',
+  isAccessibleForFree: true,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
+  author: { '@type': 'Person', name: 'Alexander Bergqvist', url: 'https://alexanderbergqvist.com/' },
+};
 
 const signs = [
   { name: 'Stenbocken', latin: 'Capricornus', emoji: '♑', element: 'Jord', range: '22 dec – 19 jan' },
@@ -46,7 +84,7 @@ const signs = [
 
 <BaseLayout
   title="Vilket stjärntecken är jag? Räkna ut ditt stjärntecken"
-  description="Skriv in ditt födelsedatum så ser du ditt stjärntecken direkt. Gratis räknare med datumintervall, element och egenskaper för alla 12 stjärntecken."
+  description="Vilket stjärntecken är du? Skriv födelsedatumet och se ditt tecken direkt. Datum för alla 12 stjärntecken, månad för månad, med element och egenskaper."
   keywords={[
     'vilket stjärntecken är jag',
     'stjärntecken räknare',
@@ -57,7 +95,8 @@ const signs = [
   ]}
   appStoreId={appStoreId}
 >
-  <section class="max-w-3xl mx-auto px-6 py-8">
+  <script type="application/ld+json" set:html={JSON.stringify(webApp)} />
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 py-8">
     <Breadcrumbs
       trail={[
         { name: 'Hem', url: '/' },
@@ -65,19 +104,16 @@ const signs = [
         { name: 'Stjärntecken-räknare' },
       ]}
     />
-    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-ink-3">
-      Fri kalkylator
-    </span>
-    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+    <h1 class="mt-6 text-3xl md:text-5xl font-black tracking-tight">
       Vilket stjärntecken är jag?
     </h1>
-    <p class="mt-3 text-lg text-ink-2">
-      Skriv in ditt födelsedatum så får du veta direkt. Räknaren visar
-      svenskt och latinskt namn, element och vilket datumintervall ditt
-      tecken täcker.
+    <p class="mt-3 text-base sm:text-lg text-ink-2" id="svar">
+      Ditt stjärntecken bestäms av födelsedagen, inte året. <strong class="text-ink">Är
+      du född 1 maj är du Oxen</strong> (20 april–20 maj), född 1 augusti är du
+      Lejonet (23 juli–22 augusti). Skriv ditt datum nedan så ser du ditt tecken direkt.
     </p>
 
-    <div class="mt-10 rounded-2xl border border-line bg-surface p-6 md:p-8">
+    <div class="mt-4 rounded-2xl border border-line bg-surface p-4 sm:p-6 md:p-8">
       <label class="block text-sm font-bold mb-2" for="bdate">
         Ditt födelsedatum
       </label>
@@ -89,7 +125,7 @@ const signs = [
 
       <div
         id="result"
-        class="mt-6 rounded-2xl bg-gradient-to-br from-pink-500 to-pink-700 p-6 text-white"
+        class="mt-4 rounded-2xl bg-gradient-to-br from-pink-500 to-pink-700 p-6 text-white"
       >
         <div class="flex items-center gap-4">
           <span class="text-5xl" data-out="emoji">♈</span>
@@ -114,7 +150,7 @@ const signs = [
       </div>
     </div>
 
-    <ResultCta app="fodelsedagar" text="Glöm aldrig en födelsedag – Födelsedagar påminner dig i tid (gratis)." />
+    <ResultCta app="fodelsedagar" text="Få påminnelse om födelsedagar – ladda ner Födelsedagar." />
 
     <div class="mt-10 rounded-2xl border border-line bg-gradient-to-br from-pink-50 to-surface p-6 md:p-8">
       <h2 class="text-xl font-black">Glöm aldrig en födelsedag igen</h2>
@@ -162,6 +198,35 @@ const signs = [
         </tbody>
       </table>
 
+      <h2 id="manad">Stjärntecken månad för månad</h2>
+      <p>
+        Varje månad delas mellan två stjärntecken. Vet du bara vilken månad
+        någon är född i kan du ändå ringa in tecknet:
+      </p>
+      <table class="w-full border-collapse mt-4">
+        <thead>
+          <tr class="border-b-2 border-line-strong">
+            <th class="text-left py-2">Född i</th>
+            <th class="text-left py-2">Datum</th>
+            <th class="text-left py-2">Datum</th>
+          </tr>
+        </thead>
+        <tbody>
+          {byMonth.map((r) => (
+            <tr class="border-b border-line">
+              <th scope="row" class="text-left py-2 font-bold">{r.m}</th>
+              <td class="py-2 text-ink-2">{r.a[0]}: <strong class="text-ink">{r.a[1]}</strong></td>
+              <td class="py-2 text-ink-2">{r.b[0]}: <strong class="text-ink">{r.b[1]}</strong></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p>
+        Gränsdatumen kan skilja en dag mellan olika källor, eftersom solen
+        går in i nästa tecken vid lite olika klockslag olika år. Är du född
+        precis på en gräns kan du alltså se två olika svar.
+      </p>
+
       <h2>Eld-, Jord-, Luft- och Vatten-tecken</h2>
       <p>
         De 12 tecknen grupperas i fyra element. Eld-tecken (Vädur, Lejon,
@@ -191,6 +256,8 @@ const signs = [
         kalkylator för det också</a>.
       </p>
     </div>
+
+    <FodelsedagarTools current="/fodelsedagar/stjarntecken/" />
 
     <FAQ items={faq} />
   </section>

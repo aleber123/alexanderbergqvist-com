@@ -1,0 +1,46 @@
+---
+/**
+ * Cross-links between the free /fodelsedagar/ tools + the app page.
+ * One list so every tool links to every other tool with a descriptive
+ * anchor (the six tools used to link to one or two siblings each, in
+ * random places in the body copy). The current page is left out.
+ */
+interface Props {
+  /** Path of the page this sits on, e.g. '/fodelsedagar/stjarntecken/'. */
+  current: string;
+  title?: string;
+}
+const { current, title = 'Fler gratis verktyg för födelsedagar' } = Astro.props;
+
+const tools = [
+  { href: '/fodelsedagar/aldersrakna/', title: 'Hur gammal är jag?', text: 'Åldersräknare: skriv födelseåret och se åldern direkt – plus tabell för alla födelseår.' },
+  { href: '/fodelsedagar/personnummer-alder/', title: 'Ålder från personnummer', text: 'Klistra in 10 eller 12 siffror – ålder och födelsedatum direkt.' },
+  { href: '/fodelsedagar/veckodag-fodelsedag/', title: 'Vilken veckodag är jag född?', text: 'Veckodagen du föddes och dina tio kommande födelsedagar.' },
+  { href: '/fodelsedagar/stjarntecken/', title: 'Vilket stjärntecken är jag?', text: 'Stjärntecken, element och datum för alla tolv tecken.' },
+  { href: '/fodelsedagar/kinesiskt-stjarntecken/', title: 'Kinesiskt stjärntecken', text: 'Ditt djur utifrån födelseåret – med kinesiska nyårsdatum för varje år.' },
+  { href: '/fodelsedagar/samma-fodelsedag/', title: 'Vem delar födelsedag med dig?', text: 'Kända personer som fyller år samma dag – eller idag.' },
+  { href: '/fodelsedagar/grattis/', title: 'Födelsedagshälsningar', text: 'Färdiga grattis att kopiera – till mamma, vän, kollega och fler.' },
+  { href: '/fodelsedagar/present-ideer/', title: 'Presenttips efter ålder', text: 'Idéer på presenter beroende på vem som fyller år.' },
+].filter((t) => t.href !== current);
+---
+
+<section class="mt-12" aria-labelledby="fdg-tools-title">
+  <h2 id="fdg-tools-title" class="text-xl font-black">{title}</h2>
+  <ul class="mt-4 grid sm:grid-cols-2 gap-3 list-none p-0">
+    {tools.map((t) => (
+      <li>
+        <a class="block h-full rounded-xl border border-line p-4 hover:border-pink-400" href={t.href}>
+          <span class="font-bold">{t.title}</span>
+          <span class="block text-sm text-ink-2">{t.text}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+  <p class="mt-4 text-sm text-ink-2">
+    Vill du slippa hålla datumen i huvudet?
+    <a class="font-bold underline" href="/fodelsedagar/">Födelsedagar-appen</a>
+    påminner dig om alla födelsedagar och namnsdagar i iPhone.
+    Se också <a class="underline" href="/namnsdag/">dagens namnsdag</a> och
+    <a class="underline" href="/vecka/">vilken vecka det är</a>.
+  </p>
+</section>

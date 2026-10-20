@@ -40,4 +40,4 @@ export function nextBirthdaySentence(month: number, day: number): string {
 }
 
 export const FODELSEDAGAR_PITCH =
-  'Glöm aldrig en födelsedag – Födelsedagar påminner dig i tid (gratis).';
+  'Få påminnelse om födelsedagar – ladda ner Födelsedagar.';

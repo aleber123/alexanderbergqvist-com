@@ -5,6 +5,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
 import ResultCta from '../../components/ResultCta.astro';
+import FodelsedagarTools from '../../components/FodelsedagarTools.astro';
 
 const app = await getEntry('apps', 'fodelsedagar');
 const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
@@ -20,25 +21,42 @@ const faq = [
   },
   {
     q: 'Kan jag dela resultatet?',
-    a: 'Ja. Tryck på "Skapa delningsbar bild" så genereras en 9:16-bild (Instagram Stories / WhatsApp Status-format) med din match. Du kan spara eller dela direkt till valfri app.',
+    a: 'Ja. Välj en person under ”Skapa inlägg om en person” så genereras en kvadratisk bild (1080×1080) med texten, som passar Facebook och Instagram. Du kan spara den eller dela direkt till valfri app.',
   },
   {
     q: 'Funkar det för 29 februari?',
     a: 'Ja. Skottdagen har också Wikipedia-data. Bara att den är något kortare än andra datum eftersom färre personer fyller år just då.',
   },
   {
-    q: 'Vad bygger appen Födelsedagar in?',
-    a: 'Födelsedagar-appen visar både stjärntecken och milstolpe-flagga för alla i din lista. Med Premium kan du även se "vem delar födelsedag med vem" inom din krets — kul vid stora familjeträffar.',
+    q: 'Vilka kändisar fyller år idag?',
+    a: 'Öppna sidan så visas dagens datum automatiskt: du ser vilka kända personer som är födda idag enligt svenska Wikipedia, och vilka historiska händelser som inträffat samma datum. Byt datum för att se en annan dag.',
+  },
+  {
+    q: 'Kan jag få påminnelse om mina vänners födelsedagar?',
+    a: 'Ja, med Födelsedagar-appen för iPhone. Lägg in personerna eller importera dem från Kontakter så påminner appen dig i tid. Den är gratis för upp till fem personer.',
   },
 ];
 
-const today = new Date();
+const webApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Vem delar du födelsedag med?',
+  url: new URL('/fodelsedagar/samma-fodelsedag/', Astro.site).href,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Alla (körs i webbläsaren)',
+  inLanguage: 'sv-SE',
+  isAccessibleForFree: true,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
+  author: { '@type': 'Person', name: 'Alexander Bergqvist', url: 'https://alexanderbergqvist.com/' },
+};
 ---
 
 <BaseLayout
   title="Vem delar du födelsedag med? Hitta kändisar samma dag"
-  description="Skriv in ditt födelsedatum så ser du vilka berömda svenskar och världen som fyller år samma dag som dig. Plus historiska händelser. Gratis verktyg."
+  description="Se vilka kända personer – svenska och internationella – som fyller år samma dag som du, eller vilka kändisar som fyller år idag. Plus historiska händelser."
   keywords={[
+    'vilka kändisar fyller år idag',
+    'födelsedagar personer',
     'kändisar samma födelsedag',
     'vem delar jag födelsedag med',
     'vem fyller år 12 maj',
@@ -48,7 +66,8 @@ const today = new Date();
   ]}
   appStoreId={appStoreId}
 >
-  <section class="max-w-3xl mx-auto px-6 py-8">
+  <script type="application/ld+json" set:html={JSON.stringify(webApp)} />
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 py-8">
     <Breadcrumbs
       trail={[
         { name: 'Hem', url: '/' },
@@ -56,19 +75,17 @@ const today = new Date();
         { name: 'Samma födelsedag' },
       ]}
     />
-    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-ink-3">
-      Fri kalkylator
-    </span>
-    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+    <h1 class="mt-6 text-3xl md:text-5xl font-black tracking-tight">
       Vem delar du födelsedag med?
     </h1>
-    <p class="mt-3 text-lg text-ink-2">
-      Skriv in din födelsedag så ser du vilka kändisar — svenskar och andra
-      — som fyller år samma dag, plus vilka historiska händelser som hänt
-      genom åren. Data från Wikipedia, helt fri.
+    <p class="mt-3 text-base sm:text-lg text-ink-2" id="svar">
+      Välj din födelsedag så hämtar vi alla kända personer som är födda
+      samma dag från svenska Wikipedia – plus historiska händelser.
+      <strong class="text-ink">Sidan öppnar på dagens datum, så du ser direkt
+      vilka kändisar som fyller år idag.</strong>
     </p>
 
-    <div class="mt-10 rounded-2xl border border-line bg-surface p-6 md:p-8">
+    <div class="mt-4 rounded-2xl border border-line bg-surface p-4 sm:p-6 md:p-8">
       <label class="block text-sm font-bold mb-2" for="bdate">
         Ditt födelsedatum (datum + månad räcker)
       </label>
@@ -78,7 +95,7 @@ const today = new Date();
         class="w-full rounded-xl border border-line-strong px-4 py-3 text-lg font-bold focus:border-pink-500"
       />
 
-      <div id="loading" class="mt-6 hidden text-ink-3 text-sm">
+      <div id="loading" class="mt-4 hidden text-ink-3 text-sm">
         Hämtar från Wikipedia…
       </div>
       <div
@@ -86,7 +103,7 @@ const today = new Date();
         class="mt-6 hidden rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
       ></div>
 
-      <section id="results" class="mt-8 hidden">
+      <section id="results" class="mt-4 hidden">
         <div class="rounded-2xl bg-gradient-to-br from-pink-500 to-pink-700 p-6 text-white mb-6">
           <div class="text-xs font-black uppercase tracking-widest opacity-80">
             Du delar födelsedag med
@@ -98,7 +115,7 @@ const today = new Date();
         </div>
 
         <div class="mb-6">
-          <ResultCta app="fodelsedagar" text="Glöm aldrig en födelsedag – Födelsedagar påminner dig i tid (gratis)." />
+          <ResultCta app="fodelsedagar" text="Få påminnelse om födelsedagar – ladda ner Födelsedagar." />
         </div>
 
         <h2 class="text-xl font-black mb-3">🎂 Födda samma dag</h2>
@@ -266,12 +283,14 @@ const today = new Date();
       </p>
     </div>
 
+    <FodelsedagarTools current="/fodelsedagar/samma-fodelsedag/" />
+
     <FAQ items={faq} />
   </section>
 </BaseLayout>
 
 <script>
-  import { showResultCta } from '../../lib/result-cta';
+  import { showResultCta, FODELSEDAGAR_PITCH } from '../../lib/result-cta';
   const inp = document.getElementById('bdate') as HTMLInputElement;
   const loading = document.getElementById('loading')!;
   const errorBox = document.getElementById('error')!;
@@ -608,7 +627,7 @@ const today = new Date();
       .join('');
 
     results.classList.remove('hidden');
-    showResultCta(`Du delar födelsedag med ${currentHero.name}. Glöm aldrig en födelsedag – Födelsedagar påminner dig i tid (gratis).`);
+    showResultCta(`Du delar födelsedag med ${currentHero.name}. ${FODELSEDAGAR_PITCH}`);
     loading.classList.add('hidden');
     errorBox.classList.add('hidden');
   }

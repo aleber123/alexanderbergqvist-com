@@ -5,11 +5,31 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
 import ResultCta from '../../components/ResultCta.astro';
+import FodelsedagarTools from '../../components/FodelsedagarTools.astro';
 
 const app = await getEntry('apps', 'fodelsedagar');
 const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
 
+const Y = new Date().getFullYear();
+
+const webApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Räkna ut ålder från personnummer',
+  url: new URL('/fodelsedagar/personnummer-alder/', Astro.site).href,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Alla (körs i webbläsaren)',
+  inLanguage: 'sv-SE',
+  isAccessibleForFree: true,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
+  author: { '@type': 'Person', name: 'Alexander Bergqvist', url: 'https://alexanderbergqvist.com/' },
+};
+
 const faq = [
+  {
+    q: 'Hur räknar man ut ålder från ett personnummer?',
+    a: `De sex första siffrorna (ÅÅMMDD) är födelsedatumet. Ta ${Y} minus födelseåret och dra bort ett år om personen inte har fyllt år ännu i år. 080315-XXXX betyder alltså född 15 mars 2008, och personen fyller ${Y - 2008} år ${Y}.`,
+  },
   {
     q: 'Räknar du ut ålder ur personnumret automatiskt?',
     a: 'Ja. Skriv in 10 eller 12 siffror (med eller utan bindestreck) så plockar räknaren ut födelsedatum och beräknar din ålder i år, månader och dagar.',
@@ -46,7 +66,8 @@ const faq = [
   ]}
   appStoreId={appStoreId}
 >
-  <section class="max-w-3xl mx-auto px-6 py-8">
+  <script type="application/ld+json" set:html={JSON.stringify(webApp)} />
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 py-8">
     <Breadcrumbs
       trail={[
         { name: 'Hem', url: '/' },
@@ -54,19 +75,17 @@ const faq = [
         { name: 'Personnummer-ålder' },
       ]}
     />
-    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-ink-3">
-      Fri kalkylator
-    </span>
-    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+    <h1 class="mt-6 text-3xl md:text-5xl font-black tracking-tight">
       Räkna ut ålder från personnummer
     </h1>
-    <p class="mt-3 text-lg text-ink-2">
-      Skriv in ett svenskt personnummer (10 eller 12 siffror, med eller
-      utan bindestreck) så plockar räknaren ut födelsedatum, ålder och
-      könssiffra direkt i din webbläsare. Inget skickas någonstans.
+    <p class="mt-3 text-base sm:text-lg text-ink-2" id="svar">
+      Födelsedatumet står i personnumrets sex första siffror (ÅÅMMDD).
+      <strong class="text-ink">080315-XXXX är född 15 mars 2008 och fyller
+      {Y - 2008} år {Y}.</strong> Skriv in 10 eller 12 siffror nedan så räknas
+      exakt ålder ut – direkt i din webbläsare, inget skickas någonstans.
     </p>
 
-    <div class="mt-10 rounded-2xl border border-line bg-surface p-6 md:p-8">
+    <div class="mt-4 rounded-2xl border border-line bg-surface p-4 sm:p-6 md:p-8">
       <label class="block text-sm font-bold mb-2" for="pnr">
         Personnummer
       </label>
@@ -85,7 +104,7 @@ const faq = [
 
       <div
         id="result"
-        class="mt-6 hidden rounded-2xl bg-gradient-to-br from-pink-500 to-pink-700 p-6 text-white"
+        class="mt-4 hidden rounded-2xl bg-gradient-to-br from-pink-500 to-pink-700 p-6 text-white"
       >
         <div class="text-xs font-black uppercase tracking-widest opacity-80">
           Resultat
@@ -115,7 +134,7 @@ const faq = [
       </div>
     </div>
 
-    <ResultCta app="fodelsedagar" text="Glöm aldrig en födelsedag – Födelsedagar påminner dig i tid (gratis)." />
+    <ResultCta app="fodelsedagar" text="Få påminnelse om födelsedagar – ladda ner Födelsedagar." />
 
     <div class="mt-10 rounded-2xl border border-line bg-gradient-to-br from-pink-50 to-surface p-6 md:p-8">
       <h2 class="text-xl font-black">Vill du komma ihåg födelsedagar i appen?</h2>
@@ -180,6 +199,8 @@ const faq = [
         den parsar bara strängen lokalt.
       </p>
     </div>
+
+    <FodelsedagarTools current="/fodelsedagar/personnummer-alder/" />
 
     <FAQ items={faq} />
   </section>

@@ -5,11 +5,43 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
 import ResultCta from '../../components/ResultCta.astro';
+import FodelsedagarTools from '../../components/FodelsedagarTools.astro';
+import { KINESISKT_NYAR, ANIMALS, animalForYear, yearElement, svDate } from '../../data/kinesiskt-nyar';
 
 const app = await getEntry('apps', 'fodelsedagar');
 const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
 
+const Y = new Date().getFullYear();
+const cur = animalForYear(Y);
+const next = animalForYear(Y + 1);
+const lastYear = Math.max(...Object.keys(KINESISKT_NYAR).map(Number));
+// 1940 … next year, newest first.
+const tableYears = Array.from({ length: Math.min(Y + 1, lastYear) - 1940 + 1 }, (_, i) => Math.min(Y + 1, lastYear) - i);
+const decades = [...new Set(tableYears.map((y) => Math.floor(y / 10) * 10))];
+const dayBefore = (y: number) => {
+  const [m, d] = KINESISKT_NYAR[y].split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d - 1));
+  return svDate(`${dt.getUTCMonth() + 1}-${dt.getUTCDate()}`);
+};
+
+const webApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Kinesiskt stjärntecken – räkna ut ditt djur',
+  url: new URL('/fodelsedagar/kinesiskt-stjarntecken/', Astro.site).href,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Alla (körs i webbläsaren)',
+  inLanguage: 'sv-SE',
+  isAccessibleForFree: true,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
+  author: { '@type': 'Person', name: 'Alexander Bergqvist', url: 'https://alexanderbergqvist.com/' },
+};
+
 const faq = [
+  {
+    q: `Vilket kinesiskt djur är ${Y}?`,
+    a: `${Y} är ${cur.gen.toLowerCase()} år (${yearElement(Y).toLowerCase()}-${cur.sv.toLowerCase()}). Det kinesiska året började ${svDate(KINESISKT_NYAR[Y])} ${Y}${KINESISKT_NYAR[Y + 1] ? ` och pågår till och med ${dayBefore(Y + 1)} ${Y + 1}, när ${next.gen.toLowerCase()} år tar över` : ''}.`,
+  },
   {
     q: 'Hur räknar man ut sitt kinesiska stjärntecken?',
     a: 'Kinesiska stjärntecken bygger på födelseår — inte datum som västerländska. Cykeln är 12 år lång och börjar på Råttan. Räknaren här ovan tar ditt födelseår och pekar ut djuret direkt.',
@@ -20,7 +52,7 @@ const faq = [
   },
   {
     q: 'Varför börjar inte cykeln första januari?',
-    a: 'Kinesiskt nyår infaller någonstans i januari–februari beroende på månkalendern. Strikt sett byter du tecken vid kinesiska nyåret, inte vid 1 januari. Räknaren här använder förenklat västerländskt år för enkelhet — om du är född i januari eller början av februari kan ditt riktiga kinesiska tecken vara det föregående året. Slå upp exakt nyårsdatum för ditt år om du vill veta säkert.',
+    a: 'Kinesiskt nyår infaller någonstans i januari–februari beroende på månkalendern. Strikt sett byter du tecken vid kinesiska nyåret, inte vid 1 januari. Räknaren och tabellen på sidan visar nyårsdatumet för varje år från 1940: är du född före det datumet hör du till föregående års djur.',
   },
   {
     q: 'Är kinesisk astrologi vetenskap?',
@@ -32,25 +64,12 @@ const faq = [
   },
 ];
 
-const animals = [
-  { sv: 'Råtta', cn: '鼠', emoji: '🐀', element: 'Vatten', traits: 'Smart, anpassningsbar, snabbtänkt' },
-  { sv: 'Oxe', cn: '牛', emoji: '🐂', element: 'Jord', traits: 'Pålitlig, tålmodig, hårt arbetande' },
-  { sv: 'Tiger', cn: '虎', emoji: '🐅', element: 'Trä', traits: 'Modig, självsäker, karismatisk' },
-  { sv: 'Kanin', cn: '兔', emoji: '🐇', element: 'Trä', traits: 'Vänlig, elegant, försiktig' },
-  { sv: 'Drake', cn: '龙', emoji: '🐉', element: 'Jord', traits: 'Energisk, beslutsam, lycklig' },
-  { sv: 'Orm', cn: '蛇', emoji: '🐍', element: 'Eld', traits: 'Vis, mystisk, introspektiv' },
-  { sv: 'Häst', cn: '马', emoji: '🐎', element: 'Eld', traits: 'Aktiv, fri, social' },
-  { sv: 'Get', cn: '羊', emoji: '🐐', element: 'Jord', traits: 'Kreativ, empatisk, fredsälskande' },
-  { sv: 'Apa', cn: '猴', emoji: '🐒', element: 'Metall', traits: 'Listig, lekfull, uppfinningsrik' },
-  { sv: 'Tupp', cn: '鸡', emoji: '🐓', element: 'Metall', traits: 'Observant, hårt arbetande, modig' },
-  { sv: 'Hund', cn: '狗', emoji: '🐕', element: 'Jord', traits: 'Lojal, ärlig, ansvarsfull' },
-  { sv: 'Gris', cn: '猪', emoji: '🐖', element: 'Vatten', traits: 'Generös, omsorgsfull, ärlig' },
-];
+const animals = ANIMALS;
 ---
 
 <BaseLayout
   title="Kinesiskt stjärntecken — räkna ut ditt djur från födelseår"
-  description="Skriv in födelseåret så ser du ditt kinesiska stjärntecken direkt. Alla 12 djur: Råtta, Oxe, Tiger, Kanin, Drake, Orm, Häst, Get, Apa, Tupp, Hund, Gris."
+  description={`Skriv födelseåret och se ditt kinesiska stjärntecken direkt. ${Y} är ${cur.gen.toLowerCase()} år. Tabell med djur, element och kinesiskt nyår för varje år 1940–${Y + 1}.`}
   keywords={[
     'kinesiskt stjärntecken',
     'kinesisk astrologi',
@@ -61,7 +80,8 @@ const animals = [
   ]}
   appStoreId={appStoreId}
 >
-  <section class="max-w-3xl mx-auto px-6 py-8">
+  <script type="application/ld+json" set:html={JSON.stringify(webApp)} />
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 py-8">
     <Breadcrumbs
       trail={[
         { name: 'Hem', url: '/' },
@@ -69,32 +89,34 @@ const animals = [
         { name: 'Kinesiskt stjärntecken' },
       ]}
     />
-    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-ink-3">
-      Fri kalkylator
-    </span>
-    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
+    <h1 class="mt-6 text-3xl md:text-5xl font-black tracking-tight">
       Kinesiskt stjärntecken
     </h1>
-    <p class="mt-3 text-lg text-ink-2">
-      Skriv in födelseåret — räknaren visar vilket av de 12 djuren i den
-      kinesiska zodiaken som tillhör dig.
+    <p class="mt-3 text-base sm:text-lg text-ink-2" id="svar">
+      Ditt kinesiska djur bestäms av födelseåret, räknat från kinesiskt nyår.
+      <strong class="text-ink">{Y} är {cur.gen.toLowerCase()} år</strong> – det
+      började {svDate(KINESISKT_NYAR[Y])}. Född 1988 är du Drake, född 2000
+      också Drake, född 1990 Häst. Skriv ditt födelseår nedan.
     </p>
 
-    <div class="mt-10 rounded-2xl border border-line bg-surface p-6 md:p-8">
+    <div class="mt-4 rounded-2xl border border-line bg-surface p-4 sm:p-6 md:p-8">
       <label class="block text-sm font-bold mb-2" for="year">
         Födelseår
       </label>
       <input
         id="year"
-        type="number"
-        min="1900"
-        max="2100"
+        type="text"
+        inputmode="numeric"
+        pattern="[0-9]*"
+        maxlength="4"
+        autocomplete="bday-year"
+        placeholder="ÅÅÅÅ"
         class="w-full rounded-xl border border-line-strong px-4 py-3 text-lg font-bold focus:border-pink-500"
       />
 
       <div
         id="result"
-        class="mt-6 rounded-2xl bg-gradient-to-br from-pink-500 to-pink-700 p-6 text-white"
+        class="mt-4 rounded-2xl bg-gradient-to-br from-pink-500 to-pink-700 p-6 text-white"
       >
         <div class="flex items-center gap-4">
           <span class="text-6xl" data-out="emoji">🐉</span>
@@ -108,7 +130,7 @@ const animals = [
         </div>
         <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
           <div class="rounded-lg bg-white/15 p-3">
-            <div class="font-bold opacity-80 text-xs uppercase tracking-wide">Element</div>
+            <div class="font-bold opacity-80 text-xs uppercase tracking-wide">Årets element</div>
             <div class="font-black text-base" data-out="element">Jord</div>
           </div>
           <div class="rounded-lg bg-white/15 p-3">
@@ -116,10 +138,10 @@ const animals = [
             <div class="font-medium text-sm" data-out="traits">Energisk</div>
           </div>
         </div>
+        <p class="mt-4 text-sm opacity-95" data-out="cny" aria-live="polite"></p>
       </div>
+      <ResultCta app="fodelsedagar" text="Få påminnelse om födelsedagar – ladda ner Födelsedagar." />
     </div>
-
-    <ResultCta app="fodelsedagar" text="Glöm aldrig en födelsedag – Födelsedagar påminner dig i tid (gratis)." />
 
     <div class="mt-10 rounded-2xl border border-line bg-gradient-to-br from-pink-50 to-surface p-6 md:p-8">
       <h2 class="text-xl font-black">Spåra alla födelsedagar i appen</h2>
@@ -166,6 +188,49 @@ const animals = [
         </tbody>
       </table>
 
+      <h2 id="ar-for-ar">Kinesiska stjärntecken år för år</h2>
+      <p>
+        Det kinesiska året börjar inte 1 januari utan vid kinesiskt nyår, som
+        infaller mellan 21 januari och 20 februari. Är du född före nyårsdagen
+        ditt födelseår hör du till föregående års djur. Elementet följer
+        årtalets sista siffra: 0–1 metall, 2–3 vatten, 4–5 trä, 6–7 eld och 8–9 jord.
+      </p>
+    </div>
+
+    <div class="mt-4 space-y-6">
+      {decades.map((d) => (
+        <div>
+          <h3 class="text-lg font-black">{d}-talet</h3>
+          <div class="mt-2 overflow-x-auto rounded-xl border border-line">
+            <table class="w-full text-sm sm:text-base">
+              <thead class="bg-surface-2 text-left">
+                <tr>
+                  <th class="px-2 sm:px-3 py-2">År</th>
+                  <th class="px-2 sm:px-3 py-2">Djur</th>
+                  <th class="px-2 sm:px-3 py-2">Element</th>
+                  <th class="px-2 sm:px-3 py-2">Nyår</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tableYears.filter((y) => Math.floor(y / 10) * 10 === d).map((y) => {
+                  const a = animalForYear(y);
+                  return (
+                    <tr id={`ar-${y}`} class="border-t border-line scroll-mt-24 target:bg-pink-50">
+                      <th scope="row" class="px-2 sm:px-3 py-2 text-left font-bold">{y}</th>
+                      <td class="px-2 sm:px-3 py-2 font-bold"><span aria-hidden="true">{a.emoji}</span> {a.sv}</td>
+                      <td class="px-2 sm:px-3 py-2">{yearElement(y)}</td>
+                      <td class="px-2 sm:px-3 py-2">{svDate(KINESISKT_NYAR[y])}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="prose mt-12">
       <h2>Skillnaden mot västerländska stjärntecken</h2>
       <p>
         Västerländska tecken delar in året i 12 perioder av cirka 30 dagar
@@ -182,8 +247,9 @@ const animals = [
       <p>
         Utöver de 12 djuren har kinesisk astrologi också fem element
         (Trä, Eld, Jord, Metall, Vatten) som roterar i en 10-årscykel.
-        Kombinationen av djur + element ger en 60-årscykel. Räknaren här
-        visar bara djuret — men du kan se elementet i tabellen ovan.
+        Kombinationen av djur + element ger en 60-årscykel. Räknaren visar
+        både djuret och årets element, och i tabellen ovan ser du elementet för
+        varje år.
       </p>
 
       <h2>Tur eller otur enligt djur?</h2>
@@ -195,12 +261,15 @@ const animals = [
       </p>
     </div>
 
+    <FodelsedagarTools current="/fodelsedagar/kinesiskt-stjarntecken/" />
+
     <FAQ items={faq} />
   </section>
 </BaseLayout>
 
 <script>
   import { showResultCta, FODELSEDAGAR_PITCH } from '../../lib/result-cta';
+  import { KINESISKT_NYAR, animalForYear, yearElement, svDate } from '../../data/kinesiskt-nyar';
   const inp = document.getElementById('year') as HTMLInputElement;
   const out = {
     emoji: document.querySelector('[data-out="emoji"]')!,
@@ -208,39 +277,23 @@ const animals = [
     cn: document.querySelector('[data-out="cn"]')!,
     element: document.querySelector('[data-out="element"]')!,
     traits: document.querySelector('[data-out="traits"]')!,
+    cny: document.querySelector('[data-out="cny"]')!,
   };
 
-  const animals = [
-    { sv: 'Råtta', cn: '鼠', emoji: '🐀', element: 'Vatten', traits: 'Smart, anpassningsbar, snabbtänkt' },
-    { sv: 'Oxe', cn: '牛', emoji: '🐂', element: 'Jord', traits: 'Pålitlig, tålmodig, hårt arbetande' },
-    { sv: 'Tiger', cn: '虎', emoji: '🐅', element: 'Trä', traits: 'Modig, självsäker, karismatisk' },
-    { sv: 'Kanin', cn: '兔', emoji: '🐇', element: 'Trä', traits: 'Vänlig, elegant, försiktig' },
-    { sv: 'Drake', cn: '龙', emoji: '🐉', element: 'Jord', traits: 'Energisk, beslutsam, lycklig' },
-    { sv: 'Orm', cn: '蛇', emoji: '🐍', element: 'Eld', traits: 'Vis, mystisk, introspektiv' },
-    { sv: 'Häst', cn: '马', emoji: '🐎', element: 'Eld', traits: 'Aktiv, fri, social' },
-    { sv: 'Get', cn: '羊', emoji: '🐐', element: 'Jord', traits: 'Kreativ, empatisk, fredsälskande' },
-    { sv: 'Apa', cn: '猴', emoji: '🐒', element: 'Metall', traits: 'Listig, lekfull, uppfinningsrik' },
-    { sv: 'Tupp', cn: '鸡', emoji: '🐓', element: 'Metall', traits: 'Observant, hårt arbetande, modig' },
-    { sv: 'Hund', cn: '狗', emoji: '🐕', element: 'Jord', traits: 'Lojal, ärlig, ansvarsfull' },
-    { sv: 'Gris', cn: '猪', emoji: '🐖', element: 'Vatten', traits: 'Generös, omsorgsfull, ärlig' },
-  ];
-
-  // 2020 = Råtta (index 0). Formula: (year - 2020) mod 12, but handle
-  // negative years (before 2020) via positive-modulo trick.
-  function animalFor(year: number) {
-    const idx = ((year - 2020) % 12 + 12) % 12;
-    return animals[idx];
-  }
-
   function compute() {
+    if (!/^\d{4}$/.test(inp.value)) return;
     const val = parseInt(inp.value, 10);
-    if (isNaN(val) || val < 1900 || val > 2100) return;
-    const a = animalFor(val);
+    if (val < 1900 || val > 2100) return;
+    const a = animalForYear(val);
     out.emoji.textContent = a.emoji;
     out.name.textContent = a.sv;
     out.cn.textContent = a.cn;
-    out.element.textContent = a.element;
+    out.element.textContent = yearElement(val);
     out.traits.textContent = a.traits;
+    const ny = KINESISKT_NYAR[val];
+    out.cny.textContent = ny
+      ? `Kinesiskt nyår ${val} var ${svDate(ny)}. Är du född före det datumet är du i stället ${animalForYear(val - 1).sv}.`
+      : 'Är du född i januari eller början av februari kan du höra till föregående års djur.';
     showResultCta(`Ditt kinesiska stjärntecken: ${a.sv}. ${FODELSEDAGAR_PITCH}`);
   }
 

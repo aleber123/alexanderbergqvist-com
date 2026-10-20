@@ -4,6 +4,7 @@ import BaseLayout from '../../components/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
+import FodelsedagarTools from '../../components/FodelsedagarTools.astro';
 
 const app = await getEntry('apps', 'fodelsedagar');
 const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
@@ -22,6 +23,12 @@ const läsår = `${LY}/${String(LY + 1).slice(2)}`;
 
 // 1940 … Y-1, newest first, grouped by decade for readability.
 const birthYears = Array.from({ length: Y - 1940 }, (_, i) => Y - 1 - i);
+// Birth years people actually search for most ("hur gammal är man om
+// man är född 2008" etc., GSC 90 d to 2026-10). Linked as anchors into
+// the table below — no thin per-year pages.
+const popularYears = [2008, 2009, 2007, 2011, 2006, 2012, 2013, 2010, 2005, 2004, 2002, 1992, 1988, 1979, 1967, 1963]
+  .filter((y) => y < Y)
+  .sort((a, b) => b - a);
 const decades = [...new Set(birthYears.map((y) => Math.floor(y / 10) * 10))];
 
 // Skolplikt starts in förskoleklass the calendar year the child turns 6
@@ -69,6 +76,10 @@ const faq = [
     a: `Du fyller ${Y - 2009} år under ${Y}. Före födelsedagen är du ${Y - 2010} år, efter den ${Y - 2009}.`,
   },
   {
+    q: `Hur gammal är man om man är född 2007?`,
+    a: `Du fyller ${Y - 2007} år under ${Y}. Före födelsedagen är du ${Y - 2008} år, efter den ${Y - 2007}.`,
+  },
+  {
     q: 'Hur gammal är man i 6:an?',
     a: `I årskurs 6 fyller man 12 år under hösten när läsåret börjar. På höstterminen är man alltså 11 eller 12 år, och på vårterminen 12 eller 13. Läsåret ${läsår} går de som är födda ${LY - 12} i 6:an.`,
   },
@@ -103,23 +114,11 @@ const webApp = {
   author: { '@type': 'Person', name: 'Alexander Bergqvist', url: 'https://alexanderbergqvist.com/' },
 };
 
-const related = [
-  { href: '/fodelsedagar/personnummer-alder/', title: 'Räkna ut ålder från personnummer', text: 'Klistra in 10 eller 12 siffror – ålder och födelsedatum direkt.' },
-  { href: '/fodelsedagar/veckodag-fodelsedag/', title: 'Vilken veckodag föddes jag?', text: 'Se veckodagen du föddes och dina kommande födelsedagar.' },
-  { href: '/fodelsedagar/samma-fodelsedag/', title: 'Vem delar födelsedag med dig?', text: 'Kändisar och historiska personer som fyller år samma dag.' },
-  { href: '/fodelsedagar/stjarntecken/', title: 'Vilket stjärntecken är jag?', text: 'Stjärntecken och datumintervall utifrån födelsedagen.' },
-  { href: '/fodelsedagar/kinesiskt-stjarntecken/', title: 'Kinesiskt stjärntecken', text: 'Ditt kinesiska djurtecken utifrån födelseåret.' },
-  { href: '/fodelsedagar/grattis/', title: 'Födelsedagshälsningar', text: 'Färdiga grattis att kopiera – till mamma, vän, kollega och fler.' },
-  { href: '/fodelsedagar/present-ideer/', title: 'Presenttips efter ålder', text: 'Idéer på födelsedagspresenter beroende på vem som fyller år.' },
-  { href: '/namnsdag/', title: 'Dagens namnsdag', text: 'Vem har namnsdag idag? Sök ett namn och se när det har namnsdag.' },
-  { href: '/vecka/', title: 'Vilken vecka är det?', text: 'Dagens veckonummer och alla veckor i år med datum.' },
-  { href: '/fodelsedagar/', title: 'Födelsedagar-appen', text: 'Påminnelser om alla födelsedagar och namnsdagar i iPhone.' },
-];
 ---
 
 <BaseLayout
   title="Hur gammal är jag? Åldersräknare – räkna ut exakt ålder"
-  description={`Gratis åldersräknare: skriv bara ditt födelseår eller hela datumet och se direkt hur gammal du är i år, månader och dagar. Tabell för alla födda 1940–${Y - 1}.`}
+  description={`Hur gammal är du? Skriv födelseåret och få svaret direkt – född 2008 fyller ${Y - 2008} år ${Y}. Exakt ålder i år, månader och dagar, tabell för alla födda 1940–${Y - 1}.`}
   keywords={[
     'hur gammal är jag',
     'åldersräknare',
@@ -142,13 +141,17 @@ const related = [
     <h1 class="mt-6 text-3xl md:text-5xl font-black tracking-tight">
       Hur gammal är jag? Åldersräknare
     </h1>
-    <p class="mt-3 text-lg text-ink-2">
-      Skriv ditt födelseår så får du svaret direkt. Lägg till månad och dag
-      om du vill veta exakt ålder i år, månader och dagar – och hur länge
-      det är kvar till nästa födelsedag.
+    {/* Direct answer, kept short and computed from the build year so it
+        never goes stale: this is the paragraph Google can lift as a
+        snippet for "hur gammal är man om man är född 2008". */}
+    <p class="mt-3 text-base sm:text-lg text-ink-2" id="svar">
+      Ta {Y} minus ditt födelseår. <strong class="text-ink">Är du född 2008
+      fyller du {Y - 2008} år {Y}</strong> – före födelsedagen är du {Y - 2009}.
+      Född 2009 fyller du {Y - 2009}, född 1990 fyller du {Y - 1990}. Skriv ditt
+      födelseår nedan så räknar vi ut exakt ålder.
     </p>
 
-    <form class="mt-6 rounded-2xl border border-line bg-surface p-4 sm:p-6" id="age-form" onsubmit="return false">
+    <form class="mt-4 rounded-2xl border border-line bg-surface p-4 sm:p-6" id="age-form" onsubmit="return false">
       <div class="grid grid-cols-3 gap-2 sm:gap-3">
         <div>
           <label class="block text-sm font-bold mb-1" for="by">Födelseår</label>
@@ -228,8 +231,8 @@ const related = [
         Din nästa födelsedag är snart.
       </p>
       <p class="mt-2 text-ink-2">
-        <strong class="text-ink">Glöm aldrig en födelsedag – Födelsedagar påminner dig i tid (gratis).</strong>
-        Samla alla viktiga personers datum och importera från Kontakter —
+        <strong class="text-ink">Få påminnelse om födelsedagar – ladda ner Födelsedagar.</strong>
+        Samla alla viktiga personers datum och importera från Kontakter –
         inget konto, allt sparas på din telefon.
       </p>
       <div class="mt-6" data-ios-only>
@@ -261,7 +264,7 @@ const related = [
     </nav>
 
     <div class="prose mt-10 max-w-none">
-      <h2 id="fodd-ar">Född år X – hur gammal är man {Y}?</h2>
+      <h2 id="fodd-ar" class="scroll-mt-24">Född år X – hur gammal är man {Y}?</h2>
       <p>
         Under {Y} fyller du årets årtal minus ditt födelseår. Fram till
         födelsedagen är du ett år yngre. Den som är född 2008 (en
@@ -269,6 +272,16 @@ const related = [
         Samma sak om du söker på ”född 68”: då är du född 1968 och fyller {Y - 1968}.
       </p>
     </div>
+    <p class="mt-4 text-sm font-bold">Vanligaste födelseåren:</p>
+    <ul class="mt-2 flex flex-wrap gap-2 list-none p-0" aria-label="Hoppa till födelseår">
+      {popularYears.map((y) => (
+        <li>
+          <a class="inline-block rounded-full border border-line px-3 py-1 text-sm hover:border-pink-400" href={`#fodd-${y}`}>
+            Född {y}: {Y - y} år
+          </a>
+        </li>
+      ))}
+    </ul>
 
     <div class="mt-4 space-y-6">
       {decades.map((d) => (
@@ -285,8 +298,8 @@ const related = [
               </thead>
               <tbody>
                 {birthYears.filter((y) => Math.floor(y / 10) * 10 === d).map((y) => (
-                  <tr id={`fodd-${y}`} class="border-t border-line">
-                    <th scope="row" class="px-2 sm:px-3 py-2 text-left font-bold">{y}</th>
+                  <tr id={`fodd-${y}`} class="border-t border-line scroll-mt-24 target:bg-pink-50">
+                    <th scope="row" class="px-2 sm:px-3 py-2 text-left font-bold">Född {y}</th>
                     <td class="px-2 sm:px-3 py-2">{Y - y - 1 === 0 ? 'under 1 år' : `${Y - y - 1} år`}</td>
                     <td class="px-2 sm:px-3 py-2 font-bold">{Y - y} år</td>
                   </tr>
@@ -399,19 +412,7 @@ const related = [
       </p>
     </div>
 
-    <div class="mt-12">
-      <h2 class="text-xl font-black">Fler gratis verktyg för födelsedagar</h2>
-      <ul class="mt-4 grid sm:grid-cols-2 gap-3 list-none p-0">
-        {related.map((r) => (
-          <li>
-            <a class="block rounded-xl border border-line p-4 hover:border-pink-400" href={r.href}>
-              <span class="font-bold">{r.title}</span>
-              <span class="block text-sm text-ink-2">{r.text}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <FodelsedagarTools current="/fodelsedagar/aldersrakna/" />
 
     <div id="fragor">
       <FAQ items={faq} />

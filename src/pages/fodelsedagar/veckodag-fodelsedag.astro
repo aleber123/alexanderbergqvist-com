@@ -5,18 +5,44 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
 import ResultCta from '../../components/ResultCta.astro';
+import FodelsedagarTools from '../../components/FodelsedagarTools.astro';
 
 const app = await getEntry('apps', 'fodelsedagar');
 const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
 
+/* Worked examples for the direct answer, computed (UTC, so the build
+   machine's time zone can't shift a day) rather than typed by hand. */
+const WD = ['söndag', 'måndag', 'tisdag', 'onsdag', 'torsdag', 'fredag', 'lördag'];
+const wd = (y: number, m: number, d: number) => WD[new Date(Date.UTC(y, m - 1, d)).getUTCDay()];
+const Y = new Date().getFullYear();
+const ex1 = wd(2000, 1, 1);
+const ex2 = wd(1990, 12, 24);
+
+const webApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Vilken veckodag är jag född? – veckodagsräknare',
+  url: new URL('/fodelsedagar/veckodag-fodelsedag/', Astro.site).href,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Alla (körs i webbläsaren)',
+  inLanguage: 'sv-SE',
+  isAccessibleForFree: true,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'SEK' },
+  author: { '@type': 'Person', name: 'Alexander Bergqvist', url: 'https://alexanderbergqvist.com/' },
+};
+
 const faq = [
   {
-    q: 'Vilken veckodag fyller jag år 2027?',
-    a: 'Det beror helt på ditt födelsedatum. Skriv in det i räknaren ovan så ser du veckodagen för varje år 2026–2035. Tipset: fredagar och lördagar är guld om man vill kalasa — söndagar och måndagar lite trist.',
+    q: 'Vilken veckodag är jag född?',
+    a: `Skriv in ditt födelsedatum i räknaren så ser du veckodagen direkt. Exempel: den som är född 1 januari 2000 föddes på en ${ex1}, och den som är född 24 december 1990 på en ${ex2}.`,
   },
   {
-    q: 'Vilken veckodag är jag född på?',
-    a: 'Räknaren visar det också. Många vet inte sin egen födelsedags-veckodag. Det sägs ge ledtrådar om personlighet i vissa kulturer — t.ex. "Söndagsbarn är glada".',
+    q: `Vilken veckodag fyller jag år ${Y + 1}?`,
+    a: `Det beror helt på ditt födelsedatum. Skriv in det i räknaren ovan så ser du veckodagen för de kommande tio åren. Tipset: fredagar och lördagar är guld om man vill kalasa — söndagar och måndagar lite trist.`,
+  },
+  {
+    q: 'Varför flyttas min födelsedag en veckodag varje år?',
+    a: 'Ett vanligt år har 365 dagar, alltså 52 veckor och en dag. Därför hamnar födelsedagen en veckodag senare för varje år. Passerar en skottdag (29 februari) flyttas den två veckodagar.',
   },
   {
     q: 'Hur räknar man ut en framtida veckodag?',
@@ -30,9 +56,11 @@ const faq = [
 ---
 
 <BaseLayout
-  title="Vilken veckodag fyller jag år? Räkna ut nästa 10 år"
-  description="Skriv in ditt födelsedatum så ser du vilken veckodag du fyller år 2026, 2027, 2028 och framåt. Gratis veckodagsräknare för födelsedagar."
+  title="Vilken veckodag är jag född? Räkna ut veckodagen direkt"
+  description={`Skriv ditt födelsedatum och se vilken veckodag du föddes på – och vilken veckodag du fyller år ${Y}, ${Y + 1} och de kommande tio åren. Gratis veckodagsräknare.`}
   keywords={[
+    'vilken veckodag är jag född',
+    'vilken dag är jag född',
     'vilken veckodag fyller jag år',
     'födelsedag veckodag',
     'födelsedag 2027 veckodag',
@@ -42,7 +70,8 @@ const faq = [
   ]}
   appStoreId={appStoreId}
 >
-  <section class="max-w-3xl mx-auto px-6 py-8">
+  <script type="application/ld+json" set:html={JSON.stringify(webApp)} />
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 py-8">
     <Breadcrumbs
       trail={[
         { name: 'Hem', url: '/' },
@@ -50,19 +79,17 @@ const faq = [
         { name: 'Veckodag-räknare' },
       ]}
     />
-    <span class="inline-block mt-6 text-xs font-black uppercase tracking-widest text-ink-3">
-      Fri kalkylator
-    </span>
-    <h1 class="mt-2 text-3xl md:text-5xl font-black tracking-tight">
-      Vilken veckodag fyller jag år?
+    <h1 class="mt-6 text-3xl md:text-5xl font-black tracking-tight">
+      Vilken veckodag är jag född?
     </h1>
-    <p class="mt-3 text-lg text-ink-2">
-      Skriv in ditt födelsedatum så ser du veckodagen för dina kommande
-      10 födelsedagar — plus vilken veckodag du själv är född på. Bra
-      för att planera firande långt i förväg.
+    <p class="mt-3 text-base sm:text-lg text-ink-2" id="svar">
+      Skriv ditt födelsedatum så ser du veckodagen direkt – och vilken
+      veckodag du fyller år de kommande tio åren. <strong class="text-ink">Född
+      1 januari 2000? Då föddes du på en {ex1}.</strong> Den som är född 24
+      december 1990 föddes på en {ex2}.
     </p>
 
-    <div class="mt-10 rounded-2xl border border-line bg-surface p-6 md:p-8">
+    <div class="mt-4 rounded-2xl border border-line bg-surface p-4 sm:p-6 md:p-8">
       <label class="block text-sm font-bold mb-2" for="bdate">
         Ditt födelsedatum
       </label>
@@ -72,14 +99,18 @@ const faq = [
         class="w-full rounded-xl border border-line-strong px-4 py-3 text-lg font-bold focus:border-pink-500"
       />
 
-      <div class="mt-6 rounded-2xl bg-pink-50 border border-pink-200 p-5">
+      <div class="mt-4 rounded-2xl bg-pink-50 border border-pink-200 p-5">
         <div class="text-xs font-black uppercase tracking-widest text-pink-700">
           Du är född på en
         </div>
         <div class="mt-1 text-2xl font-black text-pink-900" data-out="birthWeekday">–</div>
       </div>
 
-      <table class="w-full mt-6 border-collapse">
+      <ResultCta app="fodelsedagar" text="Få påminnelse om födelsedagar – ladda ner Födelsedagar." />
+
+      <h2 class="mt-6 text-lg font-black">Så faller dina kommande födelsedagar</h2>
+
+      <table class="w-full mt-2 border-collapse">
         <thead>
           <tr class="border-b-2 border-line-strong">
             <th class="text-left py-3">År</th>
@@ -91,8 +122,6 @@ const faq = [
         <tbody id="yearTable"></tbody>
       </table>
     </div>
-
-    <ResultCta app="fodelsedagar" text="Glöm aldrig en födelsedag – Födelsedagar påminner dig i tid (gratis)." />
 
     <div class="mt-10 rounded-2xl border border-line bg-gradient-to-br from-pink-50 to-surface p-6 md:p-8">
       <h2 class="text-xl font-black">Få påminnelse i god tid</h2>
@@ -134,14 +163,23 @@ const faq = [
         i icke-skottår — du kan välja vilket själv.
       </p>
 
-      <h2>När faller flest svenska födelsedagar?</h2>
+      <h2>Varför byter födelsedagen veckodag varje år?</h2>
       <p>
-        SCB-statistik visar att juli–september är populäraste
-        födelsemånaderna i Sverige, vilket räknas tillbaka 9 månader
-        till oktober–december (mörka, mysiga månader). Februari är
-        minst populär — kortast månad + svenska vintern.
+        Ett vanligt år har 365 dagar – 52 hela veckor plus en dag. Därför
+        hamnar din födelsedag en veckodag senare för varje år: fyllde du år
+        på en tisdag i år blir det en onsdag nästa år. Ligger en skottdag
+        (29 februari) emellan hoppar den två steg. Samma veckodag som du
+        föddes på kommer därför tillbaka med några års mellanrum, oftast
+        efter 5, 6 eller 11 år.
+      </p>
+      <p>
+        Vill du veta hur gammal du blir vid en viss födelsedag, eller exakt
+        hur många dagar du har levt? Använd
+        <a href="/fodelsedagar/aldersrakna/">åldersräknaren</a>.
       </p>
     </div>
+
+    <FodelsedagarTools current="/fodelsedagar/veckodag-fodelsedag/" />
 
     <FAQ items={faq} />
   </section>
