@@ -66,11 +66,16 @@ const next = idx < DAYS.length - 1 ? DAYS[idx + 1] : null;
       <h2 class="text-xl font-black">Håll räkningen — det hjälper mer än man tror</h2>
       <p class="mt-2 text-ink-2">
         Snusfri Resa visar snusfri tid och sparade kronor i realtid, plus en
-        hälsotimeline som gäller snus — inte rökning. Gratis.
+        hälsotidslinje som gäller snus — inte rökning, och en SOS-skärm med
+        andningsövning när suget kommer. Gratis att börja.
       </p>
-      <div class="mt-5">
+      <div class="mt-5" data-ios-only>
         <AppStoreBadge url={app?.data.appStoreUrl} status={app?.data.status} />
       </div>
+      <p class="mt-4 text-sm text-ink-2">
+        Funderar du på vilken app du ska välja? Läs
+        <a href="/snusfri-resa/basta-app-sluta-snusa/" class="underline font-bold">bästa appen för att sluta snusa</a>.
+      </p>
     </div>
 
     <nav class="mt-10 flex justify-between gap-4 text-sm font-bold">

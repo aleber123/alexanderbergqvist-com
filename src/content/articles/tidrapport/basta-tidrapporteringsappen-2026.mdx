@@ -3,16 +3,21 @@ title: "Bästa tidrapporteringsappen 2026 – så väljer du rätt"
 description: "Vilken tidrapporteringsapp är bäst 2026? Svaret beror på om du är timanställd, konsult eller företagare. Så väljer du rätt – ärlig guide med checklista."
 app: tidrapport
 publishedAt: 2026-05-23
-updatedAt: 2026-09-30
+updatedAt: 2026-10-20
 keywords:
   - bästa tidrapporteringsappen
   - bästa tidrapportering app
   - tidrapporteringsapp
   - app för tidsredovisning
   - tidrapportering app gratis
+  - app för tidrapportering
+  - tidredovisning app
+  - enkel tidrapportering app
 faq:
   - q: "Vilken är den bästa tidrapporteringsappen?"
     a: "Det finns ingen som är bäst för alla. Är du timanställd eller jobbar skift och vill kontrollera lön och OB passar en personlig tidrapport-app som Tidrapportera. Fakturerar du kunder per projekt passar en projektbaserad tidtagare bättre, och ett företag med anställda behöver ett system som kopplas till lönen."
+  - q: "Vilken tidrapporteringsapp är enklast?"
+    a: "För en anställd är den enklaste appen den där ett pass loggas med några tryck och lönen syns direkt, utan konto och utan projektkoder. Tidrapportera är byggd så: starta timern eller skriv in tid och rast, så räknas timmar, OB och lön ut. Konsulter behöver ofta projekt och kunder, och då blir appen mer avancerad."
   - q: "Finns det en gratis app för tidrapportering?"
     a: "Ja, flera appar har en gratisnivå. I Tidrapportera kan du logga obegränsat med pass och se OB och lön för två arbetsgivare utan att betala; obegränsad export kräver Premium. Kontrollera alltid vad som ingår gratis innan du lägger in en hel månads tider."
   - q: "Vilken app räknar ut OB-tillägg?"
@@ -23,13 +28,17 @@ faq:
     a: "Nej. I branscher med krav på personalliggare, till exempel bygg och restaurang, ska arbetsgivaren föra en elektronisk personalliggare enligt Skatteverkets regler. En personlig tidrapport-app är ett komplement för dig som anställd."
 ---
 
+import AppStoreBadge from '../../../components/AppStoreBadge.astro';
+
+
 Frågan ”vilken är den bästa tidrapporteringsappen?” har tre olika svar
 beroende på vem som frågar. En undersköterska som vill kontrollera sin
 OB, en IT-konsult som fakturerar tre kunder och ett byggföretag med
 tjugo anställda behöver helt olika saker.
 
-Den här guiden hjälper dig att hitta rätt *typ* av app och vad du ska
-kontrollera innan du väljer. **Öppet redovisat:** jag har själv byggt
+Den här guiden hjälper dig att hitta rätt *typ* av app för
+tidrapportering (eller tidredovisning, som det också kallas) och vad du
+ska kontrollera innan du väljer. **Öppet redovisat:** jag har själv byggt
 [tidrapporteringsappen Tidrapportera](/tidrapport/). Den är bra för en
 av grupperna nedan och fel val för de andra, och det skriver jag ut.
 
@@ -101,6 +110,7 @@ att lönen stämmer.
 - Övertid, semesterersättning och en uppskattad lön efter skatt
 - Flera arbetsgivare med egen timlön och löneperiod
 - Tidrapport som PDF med signaturrader, eller CSV till Excel
+- Turnus: roterande scheman som 2-2-3, 4 på/4 av och 5-5-4 i kalendern
 - Inget konto, ingen reklam, data sparas i telefonen
 
 **Det här gör den inte**
@@ -109,11 +119,35 @@ att lönen stämmer.
 - Ingen synk mellan enheter och ingen team- eller attestfunktion
 - Skatten är en uppskattning utifrån den procentsats du anger, inte en
   skattetabell
-- Turnus (roterande scheman) kommer först i version 1.1.7
+- Finns bara för iPhone
 
 **Pris:** gratis att logga pass och följa två arbetsgivare. Premium
 (månad, år eller engångsköp) ger obegränsad export, fler arbetsgivare,
 äldre lönehistorik och kontroll mot lönespecifikationen.
+
+<div class="not-prose my-6 rounded-2xl border-2 border-ink bg-surface p-5">
+  <p class="font-black text-ink">Timanställd eller skiftarbetare? Testa Tidrapportera gratis.</p>
+  <p class="mt-1 text-sm text-ink-2">Logga ditt nästa pass och se OB och lön direkt – inget konto behövs.</p>
+  <div class="mt-4" data-ios-only>
+    <AppStoreBadge url="https://apps.apple.com/se/app/tidrapportera/id6762660992" status="live" position="inline" campaign="basta-tidrapporteringsappen" />
+  </div>
+  <p class="mt-3 text-sm text-ink-2" data-android-only>Tidrapportera finns just nu bara för iPhone.</p>
+</div>
+
+## Jämförelse: vad de olika typerna brukar klara
+
+Tabellen jämför *typer* av verktyg, inte enskilda produkter – funktioner
+skiljer sig mellan apparna inom varje typ, så kontrollera det du behöver
+hos den app du funderar på.
+
+| | Tidrapportera | Projektbaserad tidtagare | Företagssystem | Excel-mall |
+|---|---|---|---|---|
+| Byggd för | Anställda med timlön | Konsulter, frilansare | Arbetsgivare | Alla |
+| OB efter ditt avtal | Ja, automatiskt | Sällan | Ja, enligt arbetsgivarens inställningar | Du räknar själv |
+| Kunder och projekt | Nej | Ja | Ofta | Om du bygger det |
+| Lön efter skatt | Uppskattning | Sällan | På lönebeskedet | Nej |
+| Synk mellan enheter | Nej, data i telefonen | Oftast | Ja | Via molnlagring |
+| Attest av chef | Nej (PDF med signaturrader) | Varierar | Ja | Papper eller mejl |
 
 ## Projektbaserade tidtagare – för konsulter
 

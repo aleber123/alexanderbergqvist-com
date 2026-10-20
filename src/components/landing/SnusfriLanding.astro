@@ -1,0 +1,66 @@
+---
+/**
+ * Extra landing content for /snusfri-resa/ — the app page for
+ * "sluta snusa app / snusfri app".
+ *
+ * Feature claims verified against the app source
+ * (~/Downloads/slutasnusa/lib, oktober 2026): SOS screen = 3-min
+ * countdown with 4-4-4 breathing + rotating tips + the user's own why;
+ * trigger log has 10 categories (no place/mood); insights, savings goals,
+ * program days 3–21 and extra reminders are Premium. There is NO export,
+ * NO widget, NO community, and reminders are NOT timed to cravings — do
+ * not claim any of those. Health copy: snus-specific, cautious, no
+ * cardiovascular promises.
+ */
+import FAQ from '../FAQ.astro';
+
+const faq = [
+  {
+    q: 'Är Snusfri Resa gratis?',
+    a: 'Appen är gratis att ladda ner. Räknaren för snusfri tid och sparade pengar, hälsotidslinjen, SOS-skärmen när suget kommer och loggningen av triggers ingår gratis. Premium låser upp hela programmet på 21 dagar, analys av dina triggers, sparmål och fler påminnelser.',
+  },
+  {
+    q: 'Hur hjälper appen när suget kommer?',
+    a: 'Tryck på SOS så startar en tre minuters nedräkning med en andningsövning, korta tips och ditt eget skäl till att sluta. Ett sug brukar klinga av inom några minuter – appen hjälper dig igenom dem. Efteråt kan du notera vad som utlöste suget.',
+  },
+  {
+    q: 'Gäller tidslinjen snus eller rökning?',
+    a: 'Snus. Tidslinjen och texterna är skrivna för snusare och handlar om nikotinet, abstinensen och munnen – inte om lungorna. Vill du läsa mer finns <a href="/snusfri-resa/sluta-snusa/">sluta snusa dag för dag</a> här på sajten.',
+  },
+  {
+    q: 'Vad händer om jag tar en prilla?',
+    a: 'Tryck på ”Tog en prilla”. Räknaren börjar om, men pengarna du sparat, din längsta snusfria period och antalet försök finns kvar. Många behöver flera försök – det viktiga är att börja igen.',
+  },
+  {
+    q: 'Behöver jag skapa ett konto?',
+    a: 'Nej. Allt sparas i telefonen och appen har inget konto. Den finns just nu för iPhone, på svenska, norska, danska, finska, tyska och engelska.',
+  },
+];
+---
+
+<section class="max-w-3xl mx-auto px-4 sm:px-6 py-12">
+  <div class="prose max-w-none">
+    <h2>En sluta snusa-app byggd för snus</h2>
+    <p>
+      De flesta appar för att sluta är gjorda för rökare och räknar i
+      cigaretter. Snusfri Resa räknar i <strong>dosor och kronor</strong>, och
+      tidslinjen beskriver det som händer när man slutar <em>snusa</em>.
+    </p>
+    <h3>Så funkar det</h3>
+    <ol>
+      <li><strong>Ange ditt slutdatum</strong>, vad en dosa kostar och hur många dosor du brukar gå igenom per dag.</li>
+      <li><strong>Se framstegen</strong> – snusfri tid och sparade kronor tickar uppåt, och notiser kommer vid varje milstolpe.</li>
+      <li><strong>Tryck på SOS när suget kommer</strong> – tre minuter med andningsövning och tips.</li>
+      <li><strong>Lär känna dina triggers</strong> – logga vad som utlöste suget och planera för de situationerna.</li>
+    </ol>
+    <p>
+      Appen ersätter inte stödsamtal eller nikotinläkemedel. Sluta-röka-linjen
+      hjälper även snusare, gratis, på
+      <a href="https://www.slutarokalinjen.se/" rel="noopener">slutarokalinjen.se</a>.
+      Undrar du hur appar för att sluta snusa skiljer sig åt? Läs
+      <a href="/snusfri-resa/basta-app-sluta-snusa/">bästa appen för att sluta snusa</a>.
+    </p>
+  </div>
+
+  <FAQ title="Vanliga frågor om Snusfri Resa" items={faq} />
+</section>

@@ -153,7 +153,9 @@ const faq = [
       <legend class="text-sm font-bold">Timmar och OB-nivå per kategori</legend>
       <div class="mt-3 space-y-4">
         {categories.map((c) => {
-          const [unit, value] = initial.rows[c.id];
+          // Widen the literal tuple type: Handels is all-%, but the select
+          // still needs both options (astro check ts2367 otherwise).
+          const [unit, value] = initial.rows[c.id] as readonly ['pct' | 'kr', number];
           return (
             <div class="rounded-xl border border-line p-3 sm:p-4">
               <div class="font-bold text-ink">

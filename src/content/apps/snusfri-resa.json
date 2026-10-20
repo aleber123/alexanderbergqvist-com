@@ -3,7 +3,7 @@
   "seoTitle": "Sluta snusa-app – kalkylator, abstinenstidslinje, motivation",
   "metaDescription": "Snusfri Resa hjälper dig sluta snusa: se snusfri tid och sparade kronor live, följ kroppens återhämtning i en tidslinje för snusare och få stöd när suget kommer.",
   "tagline": "Räkna timmar och kronor sparade — på vägen till ett snusfritt liv.",
-  "description": "Snusfri Resa är iOS-appen för dig som vill bli snusfri på riktigt. Live-räknare för snusfri tid och sparade kronor. Smarta motivations-pushar. Hälsotimeline med 10 milstolpar specifikt för snus — inte rökning.",
+  "description": "Snusfri Resa är iOS-appen för dig som vill bli snusfri på riktigt. Live-räknare för snusfri tid och sparade kronor, en SOS-skärm som hjälper dig genom suget och en hälsotidslinje med 10 milstolpar specifikt för snus — inte rökning. Inget konto, allt sparas i telefonen.",
   "icon": "/apps/snusfri-resa.webp",
   "accent": "#2ECC71",
   "accentDark": "#27AE60",
@@ -20,7 +20,9 @@
   ],
   "features": [
     "Live-räknare för snusfri tid och sparade kronor",
-    "Smarta motivations-pushar när du behöver dem mest",
+    "SOS när suget kommer: tre minuters andningsövning, tips och ditt eget varför",
+    "Logga vad som utlöste suget – och se dina mönster med Premium",
+    "Notiser vid milstolpar och motivation med dina egna siffror",
     "Hälsotimeline med 10 milstolpar för just snusare",
     "Statistik över sparade kronor och undvikna dosor",
     "Ärlig relapse-knapp utan skam"

@@ -1,19 +1,23 @@
 ---
-title: "Tidrapport mall: gratis Excel och PDF att ladda ner"
-description: "Ladda ner en gratis tidrapport-mall: veckomall i Excel som räknar timmar, OB och lön åt dig, och en månadsmall som PDF att skriva ut. Så fyller du i den."
+title: "Tidrapport mall gratis: Excel och PDF för vecka och månad"
+description: "Gratis tidrapport-mallar: månadsmall i Excel med OB för kväll, natt och helg, veckomall i Excel och månadsmall som PDF att skriva ut. Så fyller du i dem."
 app: tidrapport
 publishedAt: 2026-05-04
-updatedAt: 2026-09-30
+updatedAt: 2026-10-20
 keywords:
   - tidrapport mall
   - mall tidrapport
   - tidrapport mall pdf gratis
   - tidrapport excel
   - tidrapport månad
+  - tidrapport mall månad
+  - tidrapport mall excel gratis
   - tidrapport mall timanställd
 faq:
   - q: "Finns det en gratis tidrapport-mall?"
-    a: "Ja. Här på sidan finns en veckomall i Excel (fungerar även i Google Kalkylark och Numbers) och en månadsmall som PDF att skriva ut. Båda är gratis och kräver ingen registrering."
+    a: "Ja. Här på sidan finns en månadsmall och en veckomall i Excel (fungerar även i Google Kalkylark och Numbers), en månadsmall som PDF att skriva ut och samma månadsmall som CSV. Alla är gratis och kräver ingen registrering."
+  - q: "Finns det en tidrapport-mall för en hel månad?"
+    a: "Ja. Månadsmallen i Excel har en rad per dag och fyller själv i datum och veckodag när du skrivit in månaden. Den räknar arbetade timmar och har kolumner för OB kväll, OB natt, OB helg, övertid och frånvaro. Fyller du i timlön och tillägg räknas lönen före skatt ut. Vill du skriva för hand finns samma upplägg som PDF."
   - q: "Hur räknar man arbetade timmar i Excel?"
     a: "Skriv start och slut som klockslag (07:30, 16:00) och rast i minuter. Formeln =MOD(slut-start;1)*24-rast/60 ger arbetade timmar som decimaltal. MOD gör att pass som slutar efter midnatt också räknas rätt. Formeln finns redan i Excel-mallen."
   - q: "Räknas rasten som arbetstid?"
@@ -26,23 +30,56 @@ faq:
 
 import AppStoreBadge from '../../../components/AppStoreBadge.astro';
 
-Här kan du ladda ner en **gratis tidrapport-mall** – en veckomall i
-Excel som räknar ut timmarna åt dig och en månadsmall som PDF som du
-skriver ut och fyller i för hand. Längre ner förklarar vi hur du fyller
-i dem, och hur du räknar OB-timmar.
+Här kan du ladda ner en **gratis tidrapport-mall** för en hel månad
+eller en vecka – i Excel som räknar timmar, OB och lön åt dig, eller
+som PDF att skriva ut och fylla i för hand. Ingen registrering.
+Längre ner förklarar vi hur du fyller i dem och hur du räknar OB-timmar.
 
 <div class="not-prose my-8 grid gap-3 sm:grid-cols-2">
-  <a href="/downloads/tidrapport-mall-vecka.xlsx" download class="block rounded-2xl border-2 border-ink bg-surface p-5 no-underline hover:bg-surface-2">
-    <span class="block text-lg font-black text-ink">Ladda ner Excel-mall (vecka)</span>
-    <span class="block mt-1 text-sm text-ink-2">.xlsx · räknar timmar, OB-tillägg och lön · Excel, Google Kalkylark, Numbers</span>
+  <a href="/downloads/tidrapport-mall-manad.xlsx" download class="block rounded-2xl border-2 border-ink bg-surface p-5 no-underline hover:bg-surface-2">
+    <span class="block text-lg font-black text-ink">Excel-mall (månad)</span>
+    <span class="block mt-1 text-sm text-ink-2">.xlsx · dag 1–31 · OB kväll, natt och helg, övertid, frånvaro · räknar lön före skatt</span>
   </a>
   <a href="/downloads/tidrapport-mall-manad.pdf" download class="block rounded-2xl border-2 border-ink bg-surface p-5 no-underline hover:bg-surface-2">
-    <span class="block text-lg font-black text-ink">Ladda ner PDF-mall (månad)</span>
-    <span class="block mt-1 text-sm text-ink-2">.pdf · A4 att skriva ut · rader för dag 1–31 och underskrift</span>
+    <span class="block text-lg font-black text-ink">PDF-mall (månad)</span>
+    <span class="block mt-1 text-sm text-ink-2">.pdf · A4 att skriva ut · OB-kolumner, övertid och underskrift</span>
+  </a>
+  <a href="/downloads/tidrapport-mall-vecka.xlsx" download class="block rounded-2xl border border-line bg-surface p-5 no-underline hover:bg-surface-2">
+    <span class="block text-lg font-black text-ink">Excel-mall (vecka)</span>
+    <span class="block mt-1 text-sm text-ink-2">.xlsx · måndag–söndag · räknar timmar, OB-tillägg och lön</span>
+  </a>
+  <a href="/downloads/tidrapport-mall-manad.csv" download class="block rounded-2xl border border-line bg-surface p-5 no-underline hover:bg-surface-2">
+    <span class="block text-lg font-black text-ink">CSV (månad)</span>
+    <span class="block mt-1 text-sm text-ink-2">.csv · samma kolumner utan formler · för program som inte öppnar .xlsx</span>
   </a>
 </div>
 
+<div class="not-prose my-8 rounded-2xl border-2 border-ink bg-surface p-5 sm:p-6">
+  <p class="text-lg font-black text-ink">Slipp mallen – appen räknar OB och lön åt dig</p>
+  <p class="mt-2 text-ink-2">
+    Med Tidrapportera för iPhone stämplar du in eller skriver in passet,
+    så räknar appen ut OB för kväll, natt, helg och röda dagar, övertid
+    och ungefärlig lön efter skatt. Tidrapporten skickar du som PDF eller
+    CSV när månaden är slut.
+  </p>
+  <div class="mt-4 flex flex-wrap items-center gap-3" data-ios-only>
+    <AppStoreBadge url="https://apps.apple.com/se/app/tidrapportera/id6762660992" status="live" position="result" campaign="tidrapport-mall" />
+    <span class="text-sm text-ink-3">Gratis att ladda ner · iPhone</span>
+  </div>
+  <p class="mt-3 text-sm text-ink-2" data-android-only>Tidrapportera finns just nu bara för iPhone – mallarna ovan fungerar överallt.</p>
+</div>
+
 ## Vad finns i mallarna?
+
+**Excel-mallen (månad)** har en rad för varje dag i månaden. Skriv in
+månaden högst upp så fylls datum och veckodag i automatiskt (dag 29–31
+blir tomma de månader som är kortare). Kolumnerna är start, slut, rast,
+arbetade timmar, **OB kväll, OB natt, OB helg**, övertid, frånvaro
+(sjuk, vab, semester med mera) och anteckning. Högst upp fyller du i
+timlön och tillägg – varje OB-nivå antingen i **procent av timlönen**
+eller i **kronor per timme**, som det står i ditt avtal. Mallen räknar
+sedan grundlön, OB-tillägg per nivå, övertidstillägg och summa före
+skatt. Procentsatserna som står ifyllda är bara exempel.
 
 **Excel-mallen (vecka)** har en rad per dag, måndag till söndag:
 
@@ -60,9 +97,14 @@ timlön och OB-procent räknar mallen också ut **grundlön, OB-tillägg
 och summa före skatt**.
 
 **PDF-mallen (månad)** har rader för dag 1–31 med kolumnerna start,
-slut, rast, arbetade timmar, OB-timmar, övertid och anteckning, plus
-rader för underskrift av dig och den som attesterar. Den passar
+slut, rast, arbetade timmar, OB kväll, OB natt, OB helg, övertid,
+frånvaro och anteckning, plus rader för timlön, vilka tillägg som
+gäller och underskrift av dig och den som attesterar. Den passar
 arbetsplatser som vill ha tidrapporten på papper.
+
+**CSV-filen** har samma kolumner som månadsmallen men inga formler.
+Den öppnas i alla kalkylprogram och passar om du vill bygga en egen
+mall eller klistra in tiderna i ett lönesystem.
 
 ## Så fyller du i Excel-mallen
 
@@ -91,9 +133,10 @@ ger kvälls-OB från 18:00 och natt-OB från 22:00. Då blir det:
 - 7,5 arbetade timmar (8 timmar minus rast)
 - 4 timmar kvälls-OB (18–22) och 1 timme natt-OB (22–23)
 
-Har kväll och natt olika procentsatser skriver du dem på varsin rad i
-anteckningen, eller räknar på vår [OB-räknare](/verktyg/ob-tillagg/)
-som hanterar flera OB-nivåer samtidigt.
+I månadsmallen skriver du de 4 timmarna i *OB kväll* och den 1 timmen
+i *OB natt*, så räknas varje nivå med sin egen procentsats. Vill du
+räkna på ett enstaka pass först kan du använda vår
+[OB-räknare](/verktyg/ob-tillagg/) som hanterar flera OB-nivåer samtidigt.
 
 ## Vad ska en tidrapport innehålla?
 

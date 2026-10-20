@@ -82,13 +82,23 @@ const faq = [
     </p>
 
     <h3>Turnus och schema {TURNUS_LIVE ? '' : '(kommer i 1.1.7)'}</h3>
-    <p>
-      Jobbar du rullande schema? I version 1.1.7 lägger du upp turnus – till
-      exempel 2-2-3, 4 på/4 av eller 5-5-4 – och ser planerade pass i
-      kalendern, med påminnelse före varje pass och en lönprognos för
-      månaden. Vill du se hur ditt schema faller ut redan nu? Prova vår
-      <a href="/verktyg/turnusschema/">turnusschema-generator</a>.
-    </p>
+    {TURNUS_LIVE ? (
+      <p>
+        Jobbar du rullande schema? Lägg upp din turnus – till exempel 2-2-3,
+        4 på/4 av eller 5-5-4 – så ser du planerade pass i kalendern, med
+        påminnelse före varje pass och en lönprognos för månaden. Vill du
+        först se hur ett schema faller ut kan du prova vår
+        <a href="/verktyg/turnusschema/">turnusschema-generator</a>.
+      </p>
+    ) : (
+      <p>
+        Jobbar du rullande schema? I version 1.1.7 lägger du upp turnus – till
+        exempel 2-2-3, 4 på/4 av eller 5-5-4 – och ser planerade pass i
+        kalendern, med påminnelse före varje pass och en lönprognos för
+        månaden. Vill du se hur ditt schema faller ut redan nu? Prova vår
+        <a href="/verktyg/turnusschema/">turnusschema-generator</a>.
+      </p>
+    )}
 
     <h3>Tidrapportera eller en tidrapport-mall?</h3>
     <p>
@@ -100,7 +110,70 @@ const faq = [
       <a href="/tidrapport/basta-tidrapporteringsappen-2026/">jämförelsen av tidrapporteringsappar 2026</a>
       eller vår <a href="/tidrapport/tidrapportering-guide/">guide till tidrapportering</a>.
     </p>
+
+    <h3 id="jamforelse">App, Excel-mall eller arbetsgivarens system?</h3>
+    <p>
+      Tidrapportera ersätter inte ett tidrapporteringssystem som din
+      arbetsgivare redan använder – den är till för att <em>du</em> ska ha
+      koll på dina timmar och din lön. Så här skiljer sig de tre vanligaste
+      sätten att tidrapportera:
+    </p>
   </div>
+
+  <div class="mt-4 overflow-x-auto rounded-xl border border-line">
+    <table class="w-full text-sm">
+      <thead class="bg-surface-2 text-left">
+        <tr>
+          <th class="px-3 py-2"><span class="sr-only">Egenskap</span></th>
+          <th class="px-3 py-2">Tidrapportera</th>
+          <th class="px-3 py-2">Excel-mall</th>
+          <th class="px-3 py-2">Arbetsgivarens system</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-t border-line">
+          <th scope="row" class="px-3 py-2 text-left font-bold">Logga pass</th>
+          <td class="px-3 py-2">Timer eller i efterhand, i mobilen</td>
+          <td class="px-3 py-2">Skriv in tider i kalkylarket</td>
+          <td class="px-3 py-2">Enligt arbetsplatsens rutin</td>
+        </tr>
+        <tr class="border-t border-line">
+          <th scope="row" class="px-3 py-2 text-left font-bold">OB-tillägg</th>
+          <td class="px-3 py-2">Räknas per pass efter dina regler</td>
+          <td class="px-3 py-2">Du räknar OB-timmarna själv</td>
+          <td class="px-3 py-2">Enligt arbetsgivarens inställningar</td>
+        </tr>
+        <tr class="border-t border-line">
+          <th scope="row" class="px-3 py-2 text-left font-bold">Lön efter skatt</th>
+          <td class="px-3 py-2">Uppskattning direkt</td>
+          <td class="px-3 py-2">Nej, bara före skatt</td>
+          <td class="px-3 py-2">Syns på lönebeskedet</td>
+        </tr>
+        <tr class="border-t border-line">
+          <th scope="row" class="px-3 py-2 text-left font-bold">Flera jobb</th>
+          <td class="px-3 py-2">Ja, egen timlön och OB per arbetsgivare</td>
+          <td class="px-3 py-2">En fil per jobb</td>
+          <td class="px-3 py-2">Bara det egna företaget</td>
+        </tr>
+        <tr class="border-t border-line">
+          <th scope="row" class="px-3 py-2 text-left font-bold">Till chefen</th>
+          <td class="px-3 py-2">PDF med signaturrader eller CSV</td>
+          <td class="px-3 py-2">Skriv ut eller mejla filen</td>
+          <td class="px-3 py-2">Attest i systemet</td>
+        </tr>
+        <tr class="border-t border-line">
+          <th scope="row" class="px-3 py-2 text-left font-bold">Kostnad</th>
+          <td class="px-3 py-2">Gratis att börja, Premium valfritt</td>
+          <td class="px-3 py-2">Gratis</td>
+          <td class="px-3 py-2">Betalas av arbetsgivaren</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="mt-3 text-sm text-ink-2">
+    Vill du hellre ha papper eller Excel? Ladda ner vår
+    <a class="underline" href="/tidrapport/tidrapport-mall/">gratis tidrapport-mall för vecka eller månad</a>.
+  </p>
 
   <div class="mt-8 grid sm:grid-cols-2 gap-3">
     <div class="rounded-2xl border border-line bg-surface p-5">

@@ -113,6 +113,10 @@ const faq = [
     q: 'Är det farligt att sluta snusa tvärt?',
     a: 'Nej. Nikotinabstinens är obehaglig men inte farlig. Vill du lindra symtomen kan nikotinläkemedel som plåster, tuggummi eller sugtabletter hjälpa – fråga på apoteket. Får du besvär som oroar dig, som hjärtklappning eller kraftig nedstämdhet, kontakta vården via 1177.',
   },
+  {
+    q: 'Finns det en app som hjälper dig sluta snusa?',
+    a: 'Ja. Snusfri Resa för iPhone är byggd för snus: den räknar snusfri tid och sparade kronor, visar en tidslinje för snusare och har en SOS-skärm med andningsövning när suget kommer. Grunderna är gratis. En app ersätter inte stödsamtal eller nikotinläkemedel, men kan vara ett bra komplement – läs mer om <a href="/snusfri-resa/basta-app-sluta-snusa/">vad en bra sluta snusa-app ska klara</a>.',
+  },
   ...FAQ_COMMON.filter((f) => /vikt|pengar|nikotinfritt/i.test(f.q)),
 ];
 ---
@@ -251,6 +255,29 @@ const faq = [
         och räkna ut
         <a href="/snusfri-resa/kalkylator/">vad du sparar på att sluta</a>.
       </p>
+    </div>
+
+    <div class="prose mt-12">
+      <h2 id="app">Sluta snusa med app</h2>
+      <p>
+        De första veckorna handlar mycket om att ta sig igenom sugattackerna,
+        några minuter i taget, och om att se att det faktiskt går framåt. Det
+        är där en app kan hjälpa. I <a href="/snusfri-resa/">Snusfri Resa</a> ser
+        du hur länge du har varit snusfri och hur mycket du har sparat, och
+        vilken milstolpe i tidslinjen du just passerat. När suget kommer
+        öppnar du SOS-skärmen: en tre minuters nedräkning med andningsövning
+        och en påminnelse om varför du slutade. Efteråt kan du notera vad som
+        utlöste suget, så ser du dina mönster.
+      </p>
+      <p>
+        Appen ersätter inte stödsamtal eller nikotinläkemedel – se den som ett
+        komplement. Vill du jämföra vad olika appar erbjuder? Läs
+        <a href="/snusfri-resa/basta-app-sluta-snusa/">bästa appen för att sluta snusa</a>.
+      </p>
+    </div>
+    <div class="mt-4 flex flex-wrap items-center gap-3" data-ios-only>
+      <AppStoreBadge url={app?.data.appStoreUrl} status={app?.data.status} position="body" campaign="sluta-snusa-app" />
+      <span class="text-sm text-ink-3">Gratis att ladda ner · iPhone</span>
     </div>
 
     <h2 class="mt-12 text-2xl font-black">Dag för dag: välj var du är</h2>

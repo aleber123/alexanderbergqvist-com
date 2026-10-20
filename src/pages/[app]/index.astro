@@ -7,6 +7,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import AppStoreQr from '../../components/AppStoreQr.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
 import TidrapportLanding from '../../components/landing/TidrapportLanding.astro';
+import SnusfriLanding from '../../components/landing/SnusfriLanding.astro';
 import { AKTUELLT_AR } from '../../data/verktyg';
 import {
   LOCALES,
@@ -119,7 +120,7 @@ const toolsByApp: Record<
     {
       slug: 'aldersrakna',
       title: 'Hur gammal är jag?',
-      description: 'Räkna ut exakt ålder i år, månader, dagar och sekunder.',
+      description: 'Åldersräknare: exakt ålder i år, månader och dagar – och tabell för alla födelseår.',
     },
     {
       slug: 'stjarntecken',
@@ -131,13 +132,13 @@ const toolsByApp: Record<
       slug: 'kinesiskt-stjarntecken',
       title: 'Kinesiskt stjärntecken',
       description:
-        'Drake? Tiger? Råtta? Skriv in födelseåret för att se ditt djur.',
+        'Drake? Tiger? Råtta? Ditt djur från födelseåret – med kinesiskt nyår för varje år.',
     },
     {
       slug: 'veckodag-fodelsedag',
-      title: 'Vilken veckodag fyller jag år?',
+      title: 'Vilken veckodag är jag född?',
       description:
-        'Se veckodagen för dina kommande 10 födelsedagar — och planera firandet.',
+        'Veckodagen du föddes på – och dina kommande tio födelsedagar.',
     },
     {
       slug: 'personnummer-alder',
@@ -430,6 +431,7 @@ const appStoreId = appStoreUrl
   )}
 
   {app.id === 'tidrapport' && <TidrapportLanding accent={accent} />}
+  {app.id === 'snusfri-resa' && <SnusfriLanding />}
 
   {tools.length > 0 && (
     <section class="max-w-6xl mx-auto px-6 py-16">
