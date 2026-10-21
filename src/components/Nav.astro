@@ -1,5 +1,19 @@
 ---
+import { LOCALES, t, type Locale } from '../i18n/locales';
+
+/* Swedish pages live at the root and keep the Swedish menu. Localized
+   pages (/en/, /de/, …) only have a home page with the app list and the
+   app pages themselves, so their menu links there plus back to Swedish. */
+interface Props {
+  lang?: string;
+}
 const path = Astro.url.pathname;
+// The first path segment decides (also covers /<lang>/ home pages,
+// which have no app section); the prop is the fallback.
+const { lang = 'sv' } = Astro.props;
+const isLocale = (l: string): l is Locale => (LOCALES as readonly string[]).includes(l);
+const seg = path.split('/')[1] ?? '';
+const locale = isLocale(seg) ? seg : isLocale(lang) ? lang : undefined;
 const isActive = (prefix: string) =>
   prefix === '/' ? path === '/' : path.startsWith(prefix);
 ---
@@ -9,11 +23,21 @@ const isActive = (prefix: string) =>
     class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3"
   >
     <a
-      href="/"
+      href={locale ? `/${locale}/` : '/'}
       class="font-black text-[15px] sm:text-base tracking-tight whitespace-nowrap text-ink hover:text-ink-2 transition"
     >
       Alexander Bergqvist
     </a>
+    {locale ? (
+    <nav class="flex items-center gap-3 sm:gap-8 text-[13px] sm:text-sm font-bold tracking-tight whitespace-nowrap">
+      <a href={`/${locale}/#apps`} class="text-ink-3 hover:text-ink transition">
+        {t(locale).ui.appsTitle}
+      </a>
+      <a href="/" hreflang="sv" lang="sv" class="text-ink-3 hover:text-ink transition">
+        Svenska
+      </a>
+    </nav>
+    ) : (
     <nav class="flex items-center gap-3 sm:gap-8 text-[13px] sm:text-sm font-bold tracking-tight whitespace-nowrap">
       <a
         href="/appar/"
@@ -50,5 +74,6 @@ const isActive = (prefix: string) =>
         Om
       </a>
     </nav>
+    )}
   </div>
 </header>

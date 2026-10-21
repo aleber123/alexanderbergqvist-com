@@ -117,7 +117,7 @@ const fontFaces = `
       // never auto-redirect them again. Lets manual lang choices stick.
       document.cookie = `preferred_lang=${pageLang}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
     </script>
-    <Nav />
+    <Nav lang={pageLang} />
     <main class="flex-1">
       <slot />
     </main>
