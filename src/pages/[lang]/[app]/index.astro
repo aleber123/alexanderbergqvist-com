@@ -6,6 +6,7 @@ import BaseLayout from '../../../components/BaseLayout.astro';
 import AppStoreQr from '../../../components/AppStoreQr.astro';
 import AppStoreBadge from '../../../components/AppStoreBadge.astro';
 import LangSwitcher from '../../../components/LangSwitcher.astro';
+import GuideTeaser from '../../../components/outfit-guide/GuideTeaser.astro';
 import {
   LOCALES,
   LOCALE_BCP47,
@@ -246,6 +247,8 @@ const articlesHeading = ARTICLES_HEADING[lang];
       </div>
     </section>
   )}
+
+  {appId === 'todays-outfit' && lang === 'en' && <GuideTeaser lang="en" />}
 
   {localizedArticles.length > 0 && (
     <section class="max-w-6xl mx-auto px-6 py-16">

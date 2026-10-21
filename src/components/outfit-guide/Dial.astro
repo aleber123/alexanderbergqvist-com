@@ -1,0 +1,181 @@
+---
+/**
+ * Temperature dial (hub). Native <input type=range> so keyboard, touch
+ * and screen readers work out of the box; ~2 KB of vanilla JS turns it
+ * into a live "what to wear at N°" answer that links to the right band
+ * and, when one exists, the exact-temperature page.
+ *
+ * Without JS it still renders a complete, linked answer for 15 °C, and
+ * the band grid below covers every temperature.
+ *
+ * Unit choice (°C/°F) is remembered in localStorage (try/catch: private
+ * mode or blocked storage just falls back to the browser locale).
+ */
+import { BANDS, POINTS, bandForC, cOf, guideUrl, rangeC, rangeF } from '../../data/outfit-guide';
+
+const short = (b: (typeof BANDS)[number]) =>
+  [b.formula.base, b.formula.top, b.formula.outer]
+    .filter((s) => !/^none/i.test(s))
+    .join(' · ');
+const data = {
+  bands: BANDS.map((b) => ({
+    key: b.band,
+    name: b.name,
+    url: guideUrl(b.slug),
+    crumb: b.crumb,
+    range: `${rangeC(b)} · ${rangeF(b)}`,
+    short: short(b),
+  })),
+  points: POINTS.map((p) => ({
+    c: Math.round(cOf(p) * 10) / 10,
+    label: `${p.value} °${p.unit}${p.twin ? ` / ${p.twin.value} °${p.twin.unit}` : ''}`,
+    url: guideUrl(p.slug),
+  })),
+};
+const initC = 15;
+const initBand = BANDS.find((b) => b.band === bandForC(initC))!;
+const initPoint = POINTS.find((p) => p.key === '60f')!;
+---
+
+<div class="og-dial" data-og-dial>
+  <div>
+    <div class="og-dial__top">
+      <label for="og-dial-range" class="og-eyebrow">Set the temperature · feels-like</label>
+      <div class="og-units" role="group" aria-label="Temperature unit">
+        <button type="button" data-unit="C" aria-pressed="true">°C</button>
+        <button type="button" data-unit="F" aria-pressed="false">°F</button>
+      </div>
+    </div>
+    <div class="og-dial__value" aria-hidden="true">
+      <span class="og-num" data-out-num>{initC}</span>
+      <span class="og-dial__unit" data-out-unit>°C</span>
+    </div>
+    <p class="og-dial__alt" data-out-alt>= 59&nbsp;°F</p>
+    <input
+      id="og-dial-range"
+      class="og-range"
+      type="range"
+      min="-20"
+      max="40"
+      step="1"
+      value={initC}
+      aria-valuetext={`${initC} °C, ${initBand.name}`}
+      data-range
+    />
+    <div class="og-scale" aria-hidden="true">
+      <span data-scale-min>−20°</span><span data-scale-mid>10°</span><span data-scale-max>40°</span>
+    </div>
+  </div>
+  <div class="og-dial__result" aria-live="polite">
+    <p class="og-eyebrow og-mute" data-out-range>{rangeC(initBand)} · {rangeF(initBand)}</p>
+    <p class="og-display og-dial__band" data-out-band>{initBand.name}</p>
+    <p data-out-short>{short(initBand)}</p>
+    <div class="og-dial__links">
+      <a class="og-arrow" href={guideUrl(initBand.slug)} data-out-link>{initBand.crumb} guide</a>
+      <a class="og-arrow" href={guideUrl(initPoint.slug)} data-out-exact>Exact: 60&nbsp;°F / 15&nbsp;°C</a>
+    </div>
+  </div>
+  <script type="application/json" data-og-dial-data set:html={JSON.stringify(data)} />
+</div>
+
+<script>
+  type D = {
+    bands: { key: string; name: string; url: string; crumb: string; range: string; short: string }[];
+    points: { c: number; label: string; url: string }[];
+  };
+  const root = document.querySelector<HTMLElement>('[data-og-dial]');
+  const raw = root?.querySelector('[data-og-dial-data]')?.textContent;
+  if (root && raw) {
+    const data = JSON.parse(raw) as D;
+    const $ = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
+    const range = $<HTMLInputElement>('[data-range]');
+    const KEY = 'og-unit';
+    const order = ['freezing', 'cold', 'chilly', 'cool', 'mild', 'warm', 'hot'];
+    const bandFor = (c: number) => {
+      const t = Math.round(c);
+      const i = t < 0 ? 0 : t < 6 ? 1 : t < 12 ? 2 : t < 17 ? 3 : t < 22 ? 4 : t < 26 ? 5 : 6;
+      return data.bands.find((b) => b.key === order[i])!;
+    };
+    const toC = (f: number) => ((f - 32) * 5) / 9;
+    const toF = (c: number) => (c * 9) / 5 + 32;
+    const minus = (n: number) => (n < 0 ? `−${Math.abs(n)}` : String(n));
+    let unit: 'C' | 'F' = 'C';
+
+    const render = () => {
+      const v = Number(range.value);
+      const c = unit === 'C' ? v : toC(v);
+      const other = unit === 'C' ? Math.round(toF(v)) : Math.round(c);
+      const b = bandFor(c);
+      $('[data-out-num]').textContent = minus(v);
+      $('[data-out-unit]').textContent = `°${unit}`;
+      $('[data-out-alt]').textContent = `= ${minus(other)} °${unit === 'C' ? 'F' : 'C'}`;
+      $('[data-out-band]').textContent = b.name;
+      $('[data-out-range]').textContent = b.range;
+      $('[data-out-short]').textContent = b.short;
+      const link = $<HTMLAnchorElement>('[data-out-link]');
+      link.href = b.url;
+      link.textContent = `${b.crumb} guide`;
+      const exact = $<HTMLAnchorElement>('[data-out-exact]');
+      let best: D['points'][number] | undefined;
+      for (const p of data.points) {
+        const d = Math.abs(p.c - c);
+        if (d <= 1.2 && (!best || d < Math.abs(best.c - c))) best = p;
+      }
+      exact.hidden = !best;
+      if (best) {
+        exact.href = best.url;
+        exact.textContent = `Exact: ${best.label}`;
+      }
+      range.setAttribute('aria-valuetext', `${minus(v)} °${unit}, ${b.name}`);
+    };
+
+    const setUnit = (u: 'C' | 'F', persist: boolean) => {
+      if (u === unit) return render();
+      const v = Number(range.value);
+      const c = unit === 'C' ? v : toC(v);
+      unit = u;
+      if (u === 'F') {
+        range.min = '-4';
+        range.max = '104';
+        range.value = String(Math.round(toF(c)));
+      } else {
+        range.min = '-20';
+        range.max = '40';
+        range.value = String(Math.round(c));
+      }
+      $('[data-scale-min]').textContent = u === 'F' ? '−4°' : '−20°';
+      $('[data-scale-mid]').textContent = u === 'F' ? '50°' : '10°';
+      $('[data-scale-max]').textContent = u === 'F' ? '104°' : '40°';
+      root.querySelectorAll<HTMLButtonElement>('[data-unit]').forEach((btn) => {
+        btn.setAttribute('aria-pressed', String(btn.dataset.unit === u));
+      });
+      if (persist) {
+        try {
+          localStorage.setItem(KEY, u);
+        } catch {
+          /* storage blocked: preference lasts for this page view only */
+        }
+      }
+      render();
+    };
+
+    let initial: 'C' | 'F' = /-(US|LR|MM)$/i.test(navigator.language) ? 'F' : 'C';
+    try {
+      const saved = localStorage.getItem(KEY);
+      if (saved === 'C' || saved === 'F') initial = saved;
+    } catch {
+      /* ignore */
+    }
+    if (initial === 'F') {
+      unit = 'C';
+      range.value = '16';
+      setUnit('F', false);
+      range.value = '60';
+    }
+    render();
+    range.addEventListener('input', render);
+    root.querySelectorAll<HTMLButtonElement>('[data-unit]').forEach((btn) =>
+      btn.addEventListener('click', () => setUnit(btn.dataset.unit as 'C' | 'F', true)),
+    );
+  }
+</script>

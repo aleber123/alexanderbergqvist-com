@@ -1,0 +1,74 @@
+---
+/**
+ * Full-bleed dark campaign band: image + pitch + App Store button +
+ * desktop QR (same idea as components/AppStoreQr.astro, re-drawn
+ * square for this design; ct = qr_towtw_<key>).
+ */
+import QRCode from 'qrcode';
+import GuideImage from './GuideImage.astro';
+import AppButton from './AppButton.astro';
+import { tagAppStoreUrl } from '../../lib/appstore';
+import { GUIDE_APP_STORE_URL, guideCampaign, nb } from '../../data/outfit-guide';
+
+interface Props {
+  campaignKey: string;
+  /** What the app does in this situation (verified rule text). */
+  rule?: string;
+  heading?: string;
+}
+const {
+  campaignKey,
+  rule,
+  heading = 'Get your outfit for today’s weather automatically',
+} = Astro.props;
+const qrUrl = tagAppStoreUrl(GUIDE_APP_STORE_URL, Astro.url.pathname, {
+  campaign: guideCampaign(campaignKey),
+  position: 'qr',
+});
+const svg = qrUrl
+  ? await QRCode.toString(qrUrl, {
+      type: 'svg',
+      margin: 0,
+      errorCorrectionLevel: 'M',
+      color: { dark: '#0e0e0e', light: '#ffffff' },
+    })
+  : '';
+---
+
+<section class="og-band" aria-labelledby={`og-band-${campaignKey}`}>
+  <div class="og-band__grid">
+    <div class="og-band__img">
+      <GuideImage
+        name="hero-wide-2"
+        alt="Woman leaning on a sunlit stone wall in a grey tailored blazer, white shirt and black trousers, a cream tote on her shoulder"
+        sizes="(min-width: 900px) 55vw, 100vw"
+        focus="22% 30%"
+        label="Today’s Outfit"
+      />
+    </div>
+    <div class="og-band__body">
+      <p class="og-eyebrow og-mute">The app · iPhone</p>
+      <h2 id={`og-band-${campaignKey}`}>{heading}</h2>
+      <p class="og-mute" style="max-width:34rem">
+        Today’s Outfit puts together two outfits every morning from the clothes you already own — matched to
+        the feels-like temperature, wind, rain, slush and sun. No account, and your photos never leave your phone.
+      </p>
+      {rule && <p style="max-width:34rem"><strong>How it dresses for this weather:</strong> {nb(rule)}</p>}
+      <ul class="og-features" style="max-width:34rem">
+        <li>Two complete outfits every morning, plus a widget and a morning notification</li>
+        <li>Tap any piece to swap it — alternatives ranked and explained</li>
+        <li>Snap your wardrobe with a guided camera that removes the background on-device</li>
+      </ul>
+      <div class="og-band__actions">
+        <AppButton campaignKey={campaignKey} position="inline" light />
+        {svg && (
+          <figure class="og-qr" data-cta-position="qr" data-qr-url={qrUrl}>
+            <div class="og-qr__code" role="img" aria-label="QR code: Today’s Outfit on the App Store" set:html={svg} />
+            <figcaption>Scan with your iPhone camera</figcaption>
+          </figure>
+        )}
+      </div>
+      <p class="og-cta-note">Free download with up to 25 garments. Premium is optional.</p>
+    </div>
+  </div>
+</section>

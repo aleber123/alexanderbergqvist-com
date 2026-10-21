@@ -1,0 +1,259 @@
+---
+/**
+ * Body of every band, exact-temperature and topic page. One template so
+ * all 27 pages share the same order: direct answer → formula →
+ * womenswear/menswear → situations or table → fabrics/avoid → app band
+ * → tips → related → FAQ → temperature index.
+ */
+import GuideImage from './GuideImage.astro';
+import AppButton from './AppButton.astro';
+import AppBand from './AppBand.astro';
+import Formula from './Formula.astro';
+import Variants from './Variants.astro';
+import FabricsAvoid from './FabricsAvoid.astro';
+import Faq from './Faq.astro';
+import TempIndex from './TempIndex.astro';
+import {
+  BAND_BY_KEY,
+  BANDS,
+  TOPICS,
+  guideUrl,
+  nb,
+  pointsInBand,
+  POINTS_SORTED,
+  rangeC,
+  rangeF,
+  cOf,
+  type AnyGuidePage,
+  type Band,
+  type Point,
+  type Topic,
+} from '../../data/outfit-guide';
+
+interface Props {
+  entry: AnyGuidePage;
+}
+const { entry } = Astro.props;
+const page = entry.page;
+
+const band: Band | undefined =
+  entry.type === 'band' ? entry.page : entry.type === 'point' ? BAND_BY_KEY[entry.page.band] : undefined;
+const point: Point | undefined = entry.type === 'point' ? entry.page : undefined;
+const topic: Topic | undefined = entry.type === 'topic' ? entry.page : undefined;
+
+const fabrics = topic?.fabrics ?? band!.fabrics;
+const avoid = topic?.avoid ?? band!.avoid;
+const tips = point?.tips ?? topic?.tips ?? band!.tips;
+const rule = topic?.appRule ?? band!.appRule;
+
+// Hero numerals
+const fmt = (n: number) => (n < 0 ? `−${Math.abs(n)}` : String(n));
+let bigNum = '';
+let bigUnit = '';
+let altTemp = '';
+let isRange = false;
+if (point) {
+  bigNum = fmt(point.value);
+  bigUnit = `°${point.unit}`;
+  const other = point.twin
+    ? point.twin
+    : point.unit === 'F'
+      ? { value: Math.round(cOf(point)), unit: 'C' as const }
+      : { value: Math.round((point.value * 9) / 5 + 32), unit: 'F' as const };
+  altTemp = `${point.twin ? '≈ ' : ''}${fmt(other.value)} °${other.unit}`;
+} else if (band) {
+  isRange = true;
+  bigNum =
+    band.minC === null ? `<0` : band.maxC === null ? `${band.minC}+` : `${band.minC}–${band.maxC}`;
+  bigUnit = '°C';
+  altTemp = rangeF(band);
+}
+
+// Related links
+const bandIdx = band ? BANDS.findIndex((b) => b.band === band.band) : -1;
+const colder = bandIdx > 0 ? BANDS[bandIdx - 1] : undefined;
+const warmer = bandIdx >= 0 && bandIdx < BANDS.length - 1 ? BANDS[bandIdx + 1] : undefined;
+const pIdx = point ? POINTS_SORTED.findIndex((p) => p.key === point.key) : -1;
+const prevPoint = pIdx > 0 ? POINTS_SORTED[pIdx - 1] : undefined;
+const nextPoint = pIdx >= 0 && pIdx < POINTS_SORTED.length - 1 ? POINTS_SORTED[pIdx + 1] : undefined;
+const bandPoints = band ? pointsInBand(band.band) : [];
+const ptLabel = (p: Point) =>
+  `${fmt(p.value)} °${p.unit}${p.twin ? ` / ${p.twin.value} °${p.twin.unit}` : ''}`;
+
+const heroLabel = point ? `${point.value}°${point.unit}` : band ? band.name : topic!.crumb;
+---
+
+<article>
+  <!-- Hero: direct answer first (featured-snippet shape), photo beside it -->
+  <header class="og-wrap og-hero">
+    <div class="og-hero__text">
+      <div style="display:flex;flex-direction:column;gap:1.25rem">
+        <p class="og-eyebrow">{nb(page.eyebrow)}</p>
+        <h1>{page.h1}</h1>
+      </div>
+      {bigNum && (
+        <div class="og-hero__temp" aria-hidden="true">
+          <span class={`og-num${isRange ? ' og-num--range' : ''}`}>{bigNum}<span style="font-size:.4em;vertical-align:.95em;font-weight:500">{bigUnit}</span></span>
+          <span class="og-hero__alt">{altTemp}</span>
+        </div>
+      )}
+      <div class="og-answer">
+        <p class="og-eyebrow og-mute">The short answer</p>
+        <p>{nb(page.answer)}</p>
+      </div>
+      <div>
+        <AppButton campaignKey={page.key} position="hero" label="Get today’s outfit — free" />
+        <p class="og-cta-note">Today’s Outfit dresses you for the real forecast, from clothes you already own. iPhone.</p>
+      </div>
+    </div>
+    <GuideImage
+      name={page.image}
+      alt={page.imageAlt}
+      sizes="(min-width: 900px) 42vw, 100vw"
+      priority
+      class="og-img--portrait"
+      label={heroLabel}
+      focus={page.image === 'hero-wide-2' ? '20% 30%' : undefined}
+    />
+  </header>
+
+  <!-- 01 Formula -->
+  <section class="og-section og-wrap" aria-labelledby="og-formula-h">
+    <div class="og-section-head">
+      <h2 id="og-formula-h">The outfit formula</h2>
+      <span class="og-index">01 / Layers</span>
+    </div>
+    <Formula formula={page.formula} />
+  </section>
+
+  <!-- 02 Women / men -->
+  <section class="og-section og-wrap" aria-labelledby="og-var-h">
+    <div class="og-section-head">
+      <h2 id="og-var-h">Two ways to wear it</h2>
+      <span class="og-index">02 / Womenswear · Menswear</span>
+    </div>
+    <Variants women={page.women} men={page.men} />
+  </section>
+
+  <!-- 03 Feel / intro + situations or table -->
+  <section class="og-section og-wrap" aria-labelledby="og-ctx-h">
+    <div class="og-section-head">
+      <h2 id="og-ctx-h">
+        {point ? `How ${point.value} °${point.unit} feels` : topic ? topic.tableTitle : `Dressing for ${band!.name.toLowerCase()} days`}
+      </h2>
+      <span class="og-index">03 / Context</span>
+    </div>
+    <div class="og-narrow" style="margin-bottom:2.5rem">
+      {point && <p class="og-lede">{nb(point.feel)}</p>}
+      {!point && (topic ?? band)!.intro.map((p, i) => (i === 0 ? <p class="og-lede">{nb(p)}</p> : <p>{nb(p)}</p>))}
+    </div>
+    {topic ? (
+      <div class="og-table">
+        {topic.rows.map((r) => (
+          <div class="og-table__row">
+            <div class="og-table__label">{nb(r.label)}</div>
+            <div>
+              {nb(r.outfit)}
+              {r.note && <span class="og-table__note">Note: {nb(r.note)}</span>}
+            </div>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div class="og-three">
+        {(
+          [
+            ['Commute', (point ?? band)!.situations.commute],
+            ['Office', (point ?? band)!.situations.office],
+            ['Evening', (point ?? band)!.situations.evening],
+          ] as const
+        ).map(([h, t]) => (
+          <div>
+            <h3>{h}</h3>
+            <p>{nb(t)}</p>
+          </div>
+        ))}
+      </div>
+    )}
+  </section>
+
+  <!-- 04 Fabrics -->
+  <section class="og-section og-wrap" aria-labelledby="og-fab-h">
+    <div class="og-section-head">
+      <h2 id="og-fab-h">Fabrics &amp; what to skip</h2>
+      <span class="og-index">04 / Materials</span>
+    </div>
+    <FabricsAvoid fabrics={fabrics} avoid={avoid} />
+  </section>
+
+  <AppBand campaignKey={page.key} rule={rule} />
+
+  <!-- 05 Tips + related -->
+  <section class="og-section og-wrap" aria-labelledby="og-tips-h">
+    <div class="og-section-head">
+      <h2 id="og-tips-h">Stylist notes</h2>
+      <span class="og-index">05 / Tips</span>
+    </div>
+    <div class="og-two">
+      <ol class="og-list" style="list-style:none">
+        {tips.map((t, i) => (
+          <li>
+            <span class="og-list__mark">{String(i + 1).padStart(2, '0')}</span>
+            <span>{nb(t)}</span>
+          </li>
+        ))}
+      </ol>
+      <nav aria-label="Related guides">
+        <h3 style="margin-bottom:1rem">Keep reading</h3>
+        <ul class="og-list">
+          {point && band && (
+            <li>
+              <span class="og-list__mark" aria-hidden="true">↗</span>
+              <span>The full band: <a href={guideUrl(band.slug)}>{band.crumb} ({rangeC(band)} · {rangeF(band)})</a></span>
+            </li>
+          )}
+          {prevPoint && (
+            <li>
+              <span class="og-list__mark" aria-hidden="true">←</span>
+              <span>Colder: <a href={guideUrl(prevPoint.slug)}>What to wear at {ptLabel(prevPoint)}</a></span>
+            </li>
+          )}
+          {nextPoint && (
+            <li>
+              <span class="og-list__mark" aria-hidden="true">→</span>
+              <span>Warmer: <a href={guideUrl(nextPoint.slug)}>What to wear at {ptLabel(nextPoint)}</a></span>
+            </li>
+          )}
+          {entry.type === 'band' && bandPoints.map((p) => (
+            <li>
+              <span class="og-list__mark" aria-hidden="true">°</span>
+              <span>Exact temperature: <a href={guideUrl(p.slug)}>What to wear at {ptLabel(p)}</a></span>
+            </li>
+          ))}
+          {entry.type === 'band' && colder && (
+            <li>
+              <span class="og-list__mark" aria-hidden="true">←</span>
+              <span>Colder band: <a href={guideUrl(colder.slug)}>{colder.crumb}</a></span>
+            </li>
+          )}
+          {entry.type === 'band' && warmer && (
+            <li>
+              <span class="og-list__mark" aria-hidden="true">→</span>
+              <span>Warmer band: <a href={guideUrl(warmer.slug)}>{warmer.crumb}</a></span>
+            </li>
+          )}
+          {TOPICS.filter((t) => t.key !== topic?.key && (topic ? true : t.kind === 'weather')).map((t) => (
+            <li>
+              <span class="og-list__mark" aria-hidden="true">↗</span>
+              <span><a href={guideUrl(t.slug)}>{t.h1}</a></span>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  </section>
+
+  <Faq items={page.faq} title="Questions" index="06 / FAQ" />
+
+  <TempIndex currentSlug={page.slug} />
+</article>

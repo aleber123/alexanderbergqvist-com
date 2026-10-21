@@ -1,0 +1,75 @@
+---
+/**
+ * Editorial photo for the What-to-wear guide.
+ *
+ * Masters live in public/todays-outfit/guide/<name>.jpg; WebP variants
+ * (<name>-<w>.webp) come from scripts/outfit-guide-images.mjs. Both are
+ * looked up at build time, so a missing variant just drops out of the
+ * srcset and a missing master renders a typographic card instead of a
+ * broken image.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import type { ImageKey } from '../../data/outfit-guide/types';
+
+interface Props {
+  name: ImageKey;
+  alt: string;
+  /** `sizes` attribute for the srcset. */
+  sizes: string;
+  /** LCP image: eager + high priority. */
+  priority?: boolean;
+  /** Word shown on the placeholder card. */
+  label?: string;
+  /** Extra class on the wrapper (e.g. og-img--portrait). */
+  class?: string;
+  /** CSS object-position, for landscape photos cropped to portrait. */
+  focus?: string;
+}
+
+const { name, alt, sizes, priority = false, label, class: cls = '', focus } = Astro.props;
+
+const DIMS: Record<string, [number, number]> = {
+  'hero-wide': [1916, 821],
+  'hero-wide-2': [1536, 1024],
+};
+const [w, h] = DIMS[name] ?? [1024, 1536];
+
+const dir = path.join(process.cwd(), 'public', 'todays-outfit', 'guide');
+let files: string[] = [];
+try {
+  files = fs.readdirSync(dir);
+} catch {
+  files = [];
+}
+const master = files.includes(`${name}.jpg`) ? `/todays-outfit/guide/${name}.jpg` : undefined;
+const variants = files
+  .map((f) => f.match(new RegExp(`^${name}-(\\d+)\\.webp$`)))
+  .filter((m): m is RegExpMatchArray => !!m)
+  .map((m) => Number(m[1]))
+  .sort((a, b) => a - b);
+const srcset = variants.map((v) => `/todays-outfit/guide/${name}-${v}.webp ${v}w`).join(', ');
+---
+
+<div class={`og-img ${cls}`}>
+  {master ? (
+    <picture>
+      {srcset && <source type="image/webp" srcset={srcset} sizes={sizes} />}
+      <img
+        src={master}
+        alt={alt}
+        width={w}
+        height={h}
+        loading={priority ? 'eager' : 'lazy'}
+        decoding={priority ? 'sync' : 'async'}
+        fetchpriority={priority ? 'high' : 'auto'}
+        style={focus ? `object-position:${focus}` : undefined}
+      />
+    </picture>
+  ) : (
+    <div class="og-ph" role="img" aria-label={alt}>
+      <span class="og-eyebrow">Today’s Outfit</span>
+      <span class="og-ph__word">{label ?? name}</span>
+    </div>
+  )}
+</div>

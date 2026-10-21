@@ -1,0 +1,52 @@
+---
+/** Every band and exact-temperature page: the guide's internal-link spine. */
+import { BANDS, POINTS_SORTED, guideUrl, rangeC, rangeF, cOf } from '../../data/outfit-guide';
+
+interface Props {
+  currentSlug?: string;
+}
+const { currentSlug } = Astro.props;
+const f = POINTS_SORTED.filter((p) => p.unit === 'F');
+const c = POINTS_SORTED.filter((p) => p.unit === 'C' || p.twin?.unit === 'C');
+const cLabel = (p: (typeof c)[number]) => (p.unit === 'C' ? p.value : p.twin!.value);
+const fSub = (p: (typeof f)[number]) => `${Math.round(cOf(p))} °C`;
+const cSub = (p: (typeof c)[number]) => `${Math.round((cLabel(p) * 9) / 5 + 32)}\u00a0°F`;
+---
+
+<section class="og-section og-wrap" aria-labelledby="og-index-h">
+  <div class="og-section-head">
+    <h2 id="og-index-h">Every temperature</h2>
+    <a class="og-arrow" href={guideUrl()}>Guide home</a>
+  </div>
+  <h3 class="og-eyebrow og-mute" style="margin-bottom:.75rem">By band · feels-like</h3>
+  <ul class="og-chips" style="margin-bottom:2rem">
+    {BANDS.map((b) => (
+      <li>
+        <a href={guideUrl(b.slug)} aria-current={currentSlug === b.slug ? 'page' : undefined}>
+          {b.name}
+          <span class="og-chips__sub">{rangeC(b)} · {rangeF(b)}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+  <h3 class="og-eyebrow og-mute" style="margin-bottom:.75rem">Fahrenheit</h3>
+  <ul class="og-chips" style="margin-bottom:2rem">
+    {f.map((p) => (
+      <li>
+        <a href={guideUrl(p.slug)} aria-current={currentSlug === p.slug ? 'page' : undefined}>
+          {p.value}&nbsp;°F<span class="og-chips__sub">{fSub(p)}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+  <h3 class="og-eyebrow og-mute" style="margin-bottom:.75rem">Celsius</h3>
+  <ul class="og-chips">
+    {c.map((p) => (
+      <li>
+        <a href={guideUrl(p.slug)} aria-current={currentSlug === p.slug ? 'page' : undefined}>
+          {cLabel(p)}&nbsp;°C<span class="og-chips__sub">{cSub(p)}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</section>

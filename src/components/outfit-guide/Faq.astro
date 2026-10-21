@@ -1,0 +1,37 @@
+---
+/** Accordion FAQ + FAQPage JSON-LD (plain-text answers, same text as shown). */
+import type { QA } from '../../data/outfit-guide/types';
+import { nb } from '../../data/outfit-guide';
+
+interface Props {
+  items: QA[];
+  title?: string;
+  index?: string;
+}
+const { items, title = 'Questions', index } = Astro.props;
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: items.map((i) => ({
+    '@type': 'Question',
+    name: i.q,
+    acceptedAnswer: { '@type': 'Answer', text: i.a },
+  })),
+};
+---
+
+<section class="og-section og-wrap" aria-labelledby="og-faq-h">
+  <div class="og-section-head">
+    <h2 id="og-faq-h">{title}</h2>
+    {index && <span class="og-index">{index}</span>}
+  </div>
+  <div class="og-faq og-narrow" style="max-width:56rem">
+    {items.map((qa, i) => (
+      <details open={i === 0}>
+        <summary>{nb(qa.q)}</summary>
+        <div><p>{nb(qa.a)}</p></div>
+      </details>
+    ))}
+  </div>
+</section>
+<script type="application/ld+json" set:html={JSON.stringify(ld)} />

@@ -32,9 +32,13 @@ interface Props {
   appStoreUrl: string;
   /** Page locale: 'sv' or a /<lang>/ prefix. */
   lang?: string;
+  /** Explicit `ct` campaign (else derived from the pathname). */
+  campaign?: string;
+  /** Explicit App Store URL, used as-is (no storefront rewrite). */
+  urlOverride?: string;
 }
 
-const { app, name, tagline, icon, appStoreUrl, lang = 'sv' } = Astro.props;
+const { app, name, tagline, icon, appStoreUrl, lang = 'sv', campaign, urlOverride } = Astro.props;
 const s = ctaStrings(lang);
 
 let displayName = name;
@@ -46,9 +50,10 @@ if (lang !== 'sv') {
 }
 
 const href = tagAppStoreUrl(
-  lang === 'sv' ? appStoreUrl : localizeAppStoreUrl(appStoreUrl, lang as Locale),
+  urlOverride ??
+    (lang === 'sv' ? appStoreUrl : localizeAppStoreUrl(appStoreUrl, lang as Locale)),
   Astro.url.pathname,
-  { position: 'sticky' },
+  { position: 'sticky', campaign },
 );
 ---
 

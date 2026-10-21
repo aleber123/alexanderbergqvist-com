@@ -1,0 +1,60 @@
+---
+/**
+ * Shell for the English "What to wear" guide. Wraps the site's
+ * BaseLayout (nav, footer, analytics, Smart App Banner and sticky CTA
+ * stay identical to the rest of the site) and adds the guide's own
+ * faces and scoped stylesheet.
+ *
+ * Fonts: Archivo (wdth 100–125, wght 300–900) and Inter (wght 400–700),
+ * both SIL OFL (src/fonts/OFL-*.txt), subset to Latin from the same
+ * files the app bundles. Imported with ?url so Vite hashes them into
+ * /_astro/ (immutable caching on Vercel). Only the display face is
+ * preloaded; body text uses font-display: swap over the system stack.
+ */
+import BaseLayout from '../BaseLayout.astro';
+import Crumbs from './Crumbs.astro';
+import '../../styles/outfit-guide.css';
+import { GUIDE_APP_STORE_URL, guideCampaign } from '../../data/outfit-guide';
+
+interface Props {
+  title: string;
+  description: string;
+  trail: { name: string; url?: string }[];
+  campaignKey: string;
+  publishedAt?: Date;
+  updatedAt?: Date;
+}
+const { title, description, trail, campaignKey, publishedAt, updatedAt } = Astro.props;
+
+const archivo = (await import('../../fonts/archivo-wide-latin.woff2?url')).default;
+const inter = (await import('../../fonts/inter-latin.woff2?url')).default;
+const faces = `
+@font-face{font-family:"Archivo Guide";font-style:normal;font-weight:300 900;font-stretch:100% 125%;font-display:swap;src:url(${archivo}) format("woff2")}
+@font-face{font-family:"Inter Guide";font-style:normal;font-weight:400 700;font-display:swap;src:url(${inter}) format("woff2")}
+`.trim();
+
+const PUBLISHED = new Date('2026-10-21T00:00:00Z');
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  htmlLang="en-US"
+  type="article"
+  publishedAt={publishedAt ?? PUBLISHED}
+  updatedAt={updatedAt}
+  image="/og/todays-outfit-guide.jpg"
+  app="todays-outfit"
+  stickyCampaign={guideCampaign(campaignKey)}
+  stickyUrl={GUIDE_APP_STORE_URL}
+  skipSerifPreload
+>
+  <Fragment slot="head">
+    <link rel="preload" href={archivo} as="font" type="font/woff2" crossorigin />
+    <style is:inline set:html={faces}></style>
+  </Fragment>
+  <div class="og">
+    <Crumbs trail={trail} />
+    <slot />
+  </div>
+</BaseLayout>

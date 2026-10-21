@@ -1,0 +1,182 @@
+---
+/**
+ * /en/todays-outfit/what-to-wear/ — hub of the English weather style
+ * guide for Today's Outfit. Dial → band grid → exact temperatures →
+ * weather & occasions → how the rules work → app band → FAQ.
+ */
+import GuideLayout from '../../../../components/outfit-guide/GuideLayout.astro';
+import GuideImage from '../../../../components/outfit-guide/GuideImage.astro';
+import AppButton from '../../../../components/outfit-guide/AppButton.astro';
+import AppBand from '../../../../components/outfit-guide/AppBand.astro';
+import Dial from '../../../../components/outfit-guide/Dial.astro';
+import Faq from '../../../../components/outfit-guide/Faq.astro';
+import TempIndex from '../../../../components/outfit-guide/TempIndex.astro';
+import { BANDS, TOPICS, APP_LANDING, guideUrl, rangeC, rangeF } from '../../../../data/outfit-guide';
+
+const weather = TOPICS.filter((t) => t.kind === 'weather');
+const occasions = TOPICS.filter((t) => t.kind === 'occasion');
+
+const faq = [
+  {
+    q: 'What should I wear today?',
+    a: 'Check the feels-like temperature for the coldest part of your day, find its band above and follow the formula: below 6 °C (42 °F) a knit under a warm coat; 6–11 °C (42–52 °F) a knit and a transitional jacket; 12–16 °C (53–61 °F) one light layer; 17–21 °C (62–70 °F) a T-shirt with an optional layer; 22 °C (71 °F) and up, one breathable layer. Add waterproofs when it rains.',
+  },
+  {
+    q: 'At what temperature do you need a jacket?',
+    a: 'Below about 12 °C (53 °F) feels-like you need a jacket every time. From 12 to 16 °C (53–61 °F) you need one with short sleeves, a dress or wind; from 17 to 21 °C (62–70 °F) only for a cold morning or wind; above that only for rain.',
+  },
+  {
+    q: 'Why does the guide use feels-like temperature?',
+    a: 'Because wind and humidity change how cold or hot it is on your skin. 5 °C (41 °F) with a strong wind feels close to 0 °C (32 °F); 30 °C (86 °F) with high humidity feels hotter. The bands here use the same feels-like logic as the Today’s Outfit app.',
+  },
+  {
+    q: 'What should I wear in 60 degree weather?',
+    a: 'At 60 °F (15–16 °C) wear a T-shirt or long-sleeve top with one light layer — a denim jacket, cardigan, overshirt or blazer — with jeans or trousers and sneakers. See the full 60 °F guide for women’s and men’s outfits.',
+  },
+  {
+    q: 'Is there an app that tells you what to wear for the weather?',
+    a: 'Yes — Today’s Outfit for iPhone. It reads the forecast every morning and puts together two outfits from the clothes you have photographed, using the same rules as this guide: feels-like temperature, wind, rain, slush and sun.',
+  },
+];
+---
+
+<GuideLayout
+  title="What to Wear for the Weather: Outfits by Temperature"
+  description="What to wear in any weather: outfit formulas for every temperature from below freezing to 30 °C+ (32–90 °F), plus rain, wind and snow — for women and men, by the Today’s Outfit app."
+  campaignKey="hub"
+  trail={[
+    { name: 'Home', url: '/en/' },
+    { name: 'Today’s Outfit', url: APP_LANDING },
+    { name: 'What to wear' },
+  ]}
+>
+  <header class="og-cover">
+    <GuideImage
+      name="hero-wide"
+      alt="Woman walking on a wet city pavement in a long camel wool coat, cream roll-neck, cream wide-leg trousers and black loafers"
+      sizes="100vw"
+      priority
+      label="What to wear"
+    />
+    <div class="og-cover__text">
+      <p class="og-eyebrow">Today’s Outfit · The weather style guide</p>
+      <h1>What to wear for the weather</h1>
+      <p class="og-lede">
+        One outfit formula for every temperature — from below freezing to 30&nbsp;°C+ (90&nbsp;°F) — plus rain, wind
+        and snow. Built on the same rules the Today’s Outfit app uses to dress you every morning.
+      </p>
+      <div>
+        <AppButton campaignKey="hub" position="hero" label="Get today’s outfit — free" />
+      </div>
+    </div>
+  </header>
+
+  <section class="og-section og-wrap" aria-labelledby="og-dial-h">
+    <div class="og-section-head">
+      <h2 id="og-dial-h">What to wear at…</h2>
+      <span class="og-index">01 / Temperature</span>
+    </div>
+    <Dial />
+  </section>
+
+  <section class="og-section og-wrap" aria-labelledby="og-bands-h">
+    <div class="og-section-head">
+      <h2 id="og-bands-h">Seven temperature bands</h2>
+      <span class="og-index">02 / Feels-like</span>
+    </div>
+    <ul class="og-grid og-grid--4">
+      {BANDS.map((b, i) => (
+        <li>
+          <a class="og-tile" href={guideUrl(b.slug)}>
+            <GuideImage
+              name={b.image}
+              alt={b.imageAlt}
+              sizes="(min-width: 900px) 25vw, 50vw"
+              class="og-img--portrait"
+              label={b.name}
+            />
+            <span class="og-tile__meta">
+              <span class="og-index">{String(i + 1).padStart(2, '0')}</span>
+              <span class="og-tile__name">{b.name}</span>
+              <span class="og-tile__range">{rangeC(b)} · {rangeF(b)}</span>
+            </span>
+          </a>
+        </li>
+      ))}
+      <li>
+        <a class="og-tile og-tile--feature" href={guideUrl('rain')}>
+          <span class="og-eyebrow">+ Weather</span>
+          <span>
+            <span class="og-tile__name" style="display:block;margin-bottom:.5rem">Raining?</span>
+            <span class="og-tile__range" style="color:var(--og-on-dark-mute)">Waterproof outfits for every temperature →</span>
+          </span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <section class="og-section og-wrap" aria-labelledby="og-wx-h">
+    <div class="og-section-head">
+      <h2 id="og-wx-h">Rain, wind &amp; snow</h2>
+      <span class="og-index">03 / Conditions</span>
+    </div>
+    <ul class="og-grid og-grid--3">
+      {weather.map((t) => (
+        <li>
+          <a class="og-tile" href={guideUrl(t.slug)}>
+            <GuideImage name={t.image} alt={t.imageAlt} sizes="(min-width: 900px) 33vw, 50vw" class="og-img--portrait" label={t.crumb} />
+            <span class="og-tile__meta">
+              <span class="og-tile__name">{t.crumb}</span>
+              <span class="og-tile__range">{t.h1}</span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="og-section og-wrap" aria-labelledby="og-occ-h">
+    <div class="og-section-head">
+      <h2 id="og-occ-h">By occasion</h2>
+      <span class="og-index">04 / Office · Evening · Travel</span>
+    </div>
+    <ul class="og-list">
+      {occasions.map((t, i) => (
+        <li>
+          <span class="og-list__mark">{String(i + 1).padStart(2, '0')}</span>
+          <span>
+            <a href={guideUrl(t.slug)}><strong>{t.h1}</strong></a>
+            <span class="og-mute"> — {t.answer.split('. ')[0].replace(/\.+$/, '')}.</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="og-section og-wrap" aria-labelledby="og-rules-h">
+    <div class="og-section-head">
+      <h2 id="og-rules-h">How the guide decides</h2>
+      <span class="og-index">05 / Method</span>
+    </div>
+    <p class="og-lede og-narrow" style="margin-bottom:2rem">
+      Every band and threshold on these pages comes from the outfit engine inside the Today’s Outfit app — the
+      rules it uses to put together your outfit each morning.
+    </p>
+    <ol class="og-rules">
+      <li><span>Bands use the <strong>feels-like</strong> temperature: wind chill at 10&nbsp;°C and below, the heat index from 27&nbsp;°C.</span></li>
+      <li><span>Dress for the <strong>cooler part of the day</strong>: the day is weighted 60/40 towards its coldest feels-like.</span></li>
+      <li><span>Humid days between 0 and 10&nbsp;°C feel <strong>2&nbsp;°C colder</strong> than the thermometer says.</span></li>
+      <li><span>Below 12&nbsp;°C an <strong>outer layer is required</strong>; from 22&nbsp;°C it is left off on dry days.</span></li>
+      <li><span>A <strong>scarf</strong> below 8&nbsp;°C (12&nbsp;°C when windy); <strong>hat and gloves</strong> below 3&nbsp;°C.</span></li>
+      <li><span><strong>Rain</strong> from 0.5&nbsp;mm needs a water-resistant layer; above 2&nbsp;mm, waterproof.</span></li>
+      <li><span><strong>Slush</strong> (wet, −2 to +3&nbsp;°C): waterproof boots, no suede, canvas or loafers.</span></li>
+      <li><span>A swing of more than 8&nbsp;°C over the day means <strong>layers you can take off</strong>.</span></li>
+    </ol>
+  </section>
+
+  <AppBand campaignKey="hub" />
+
+  <Faq items={faq} title="Questions" index="06 / FAQ" />
+
+  <TempIndex />
+</GuideLayout>

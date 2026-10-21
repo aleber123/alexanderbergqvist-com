@@ -33,9 +33,25 @@ interface Props {
    *  in other locales. The localized [lang]/* pages turn this on with
    *  their alternates map. */
   hreflangAlternates?: Record<string, string>;
+  /** Overrides for the sticky mobile CTA: an explicit App Store `ct`
+   *  campaign (the pathname-derived one is truncated for long URLs, so
+   *  sibling pages could collide) and an explicit App Store URL. */
+  stickyCampaign?: string;
+  stickyUrl?: string;
+  /** Pages with their own display face (the Today's Outfit guide) skip
+   *  the Instrument Serif preload they never use. */
+  skipSerifPreload?: boolean;
 }
 
-const { htmlLang = 'sv', hreflangAlternates, app: appOverride, ...props } = Astro.props;
+const {
+  htmlLang = 'sv',
+  hreflangAlternates,
+  app: appOverride,
+  stickyCampaign,
+  stickyUrl,
+  skipSerifPreload = false,
+  ...props
+} = Astro.props;
 
 /* Which app does this page belong to? Derived centrally so the Smart
    App Banner and the sticky mobile CTA appear on every app-section page
@@ -92,7 +108,7 @@ const fontFaces = `
     {/* Above <Analytics /> on purpose: the parser discovers in document
         order, so the font preload goes first. Only the Latin roman is preloaded;
         Latin-Ext and italic load on demand via unicode-range. */}
-    <link rel="preload" href={latin} as="font" type="font/woff2" crossorigin />
+    {!skipSerifPreload && <link rel="preload" href={latin} as="font" type="font/woff2" crossorigin />}
     <style is:inline set:html={fontFaces}></style>
     {/* htmlLang was destructured here and never forwarded, so SEO.astro
         fell back to Swedish for og:locale, inLanguage and hreflang on
@@ -108,6 +124,7 @@ const fontFaces = `
       locale={htmlLang.includes('-') ? htmlLang : 'sv-SE'}
     />
     <Analytics />
+    <slot name="head" />
   </head>
   <body class="min-h-screen flex flex-col">
     <script is:inline define:vars={{ pageLang: htmlLang.split('-')[0] }}>
@@ -130,6 +147,8 @@ const fontFaces = `
         icon={appEntry.data.icon}
         appStoreUrl={appEntry.data.appStoreUrl!}
         lang={pageLang}
+        campaign={stickyCampaign}
+        urlOverride={stickyUrl}
       />
     )}
   </body>
