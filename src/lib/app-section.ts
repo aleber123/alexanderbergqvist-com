@@ -34,6 +34,7 @@ export const APP_SLUGS = [
   'stark',
   'surdeg',
   'tidrapport',
+  'top-up',
   'vab-koll',
 ] as const;
 

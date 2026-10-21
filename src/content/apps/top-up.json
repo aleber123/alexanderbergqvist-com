@@ -1,0 +1,30 @@
+{
+  "name": "Top Up: Protein Coach",
+  "seoTitle": "Top Up: Protein Coach – protein and calorie tracker without a food scale",
+  "metaDescription": "Top Up is a protein and calorie coach for strength training: log meals in three taps with hand portions, get an evening top-up idea, research-based targets. No account.",
+  "tagline": "Proteincoach för styrketräning – logga med handen, ingen köksvåg.",
+  "description": "Top Up uppskattar protein och kalorier från handportioner och säger varje kväll hur du fyller på. Mål enligt forskningen (1,6 g protein per kg), valfri koppling till Apple Hälsa och all data stannar på telefonen.",
+  "icon": "/apps/top-up.webp",
+  "accent": "#D9480F",
+  "accentDark": "#A8360A",
+  "bundleId": "com.alexanderbergqvist.protein",
+  "category": "Hälsa och träning",
+  "keywords": [
+    "protein tracker",
+    "protein coach",
+    "calorie tracker",
+    "muscle gain",
+    "proteinräknare",
+    "hand portions"
+  ],
+  "features": [
+    "Logga en måltid med tre tryck – handen som mått",
+    "Kvällens besked med konkret påfyllnadsförslag",
+    "Proteinmål 1,6 g/kg enligt forskningen",
+    "Apple Hälsa & Apple Watch styr kalorimålet (Premium)",
+    "Inget konto – all data stannar på iPhonen"
+  ],
+  "status": "soon",
+  "customPage": true,
+  "order": 14
+}

@@ -1,0 +1,211 @@
+---
+/**
+ * Top Up: Protein Coach — English landing + support page (global app, so
+ * English first; the Swedish [app] template skips it via `customPage`).
+ * Doubles as the App Store support and marketing URL. The App Store button
+ * appears once the collection entry is `status: 'live'` with an
+ * `appStoreUrl`; until then a "coming soon" note is shown.
+ */
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../components/BaseLayout.astro';
+import FAQ from '../../components/FAQ.astro';
+import { tagAppStoreUrl } from '../../lib/appstore';
+
+const app = (await getEntry('apps', 'top-up'))!;
+const { appStoreUrl, status, accent, accentDark } = app.data;
+const live = status === 'live' && !!appStoreUrl;
+const storeUrl = live ? tagAppStoreUrl(appStoreUrl, Astro.url.pathname, { position: 'hero' }) : undefined;
+const email = 'alexander.bergqvist@gmail.com';
+const eula = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/';
+
+const title = 'Top Up: Protein Coach – protein & calorie tracker, no food scale';
+const description =
+  'Top Up is a protein and calorie coach for strength training. Log a meal in three taps with hand portions, get an evening top-up idea and research-based targets. No account.';
+
+const shots = [
+  { src: '/apps/top-up/en_1.webp', alt: 'Evening verdict: about 25 g protein short, top up with cottage cheese and oatmeal' },
+  { src: '/apps/top-up/en_2.webp', alt: 'Logging dinner with hand portions: one palm of fish, one fist of pasta' },
+  { src: '/apps/top-up/en_3.webp', alt: 'Today: protein ring and calories against the daily target' },
+  { src: '/apps/top-up/en_4.webp', alt: 'Calories burned from Apple Health set the calorie target' },
+  { src: '/apps/top-up/en_5.webp', alt: 'Daily targets: 1.6 g protein per kg body weight and the calorie math' },
+  { src: '/apps/top-up/en_6.webp', alt: 'History: protein for the last seven days against the target line' },
+];
+
+const how = [
+  {
+    t: 'Log with your hand',
+    d: 'Tap what is on your plate, then size it with your hand: a palm of chicken, a fist of rice, a cupped hand of yogurt. Three taps, no scale, no barcode scanning.',
+  },
+  {
+    t: 'Get the evening verdict',
+    d: 'Each evening Top Up tells you whether you are short on protein or calories – and suggests a concrete top-up, like 200 g cottage cheese or a protein shake.',
+  },
+  {
+    t: 'Targets from research',
+    d: '1.6 g protein per kg of body weight, where extra muscle gains level off in a meta-analysis of 49 trials (Morton et al., 2018). Calories from Mifflin–St Jeor and your training days.',
+  },
+];
+
+const faq = [
+  {
+    q: 'How do I restore Top Up Premium on a new iPhone?',
+    a: 'Open Settings › Top Up Premium in the app and tap "Restore purchases". Use the same Apple Account you bought Premium with.',
+  },
+  {
+    q: 'How do I cancel my subscription?',
+    a: 'Subscriptions are managed by Apple: open the Settings app on your iPhone, tap your name › Subscriptions › Top Up, and cancel at least 24 hours before the current period ends. You keep Premium until the end of the paid period. In Top Up you can also go to Settings › Top Up Premium › Manage subscription.',
+  },
+  {
+    q: 'My calorie target does not follow my Apple Watch. Why?',
+    a: 'Apple Health is a Premium feature. Turn on Settings › Use Apple Health in Top Up, then check that Top Up may read Active Energy and Resting Energy in the Health app › Sharing › Apps › Top Up. By default Top Up counts 75 % of the measured active energy, because wrist devices often overestimate it – you can change this between 50 and 100 %.',
+  },
+  {
+    q: 'Do I need an account? Where is my data stored?',
+    a: 'No account is needed. Everything you log stays on your iPhone – there are no servers, no ads and no tracking. Deleting the app deletes the data, or use Settings › Delete all data.',
+  },
+  {
+    q: 'Can I use pounds and inches?',
+    a: 'Yes. Choose kg · cm or lb · in when you enter your body data, or change it later in Settings.',
+  },
+  {
+    q: 'Is Top Up medical advice?',
+    a: 'No. Top Up gives general nutrition estimates for healthy adults. Talk to a doctor before raising your protein intake if you have kidney disease, diabetes, are pregnant or breastfeeding, or have any other medical condition.',
+  },
+];
+
+const ldJson = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Top Up: Protein Coach',
+  description,
+  applicationCategory: 'HealthApplication',
+  operatingSystem: 'iOS',
+  inLanguage: ['en', 'sv', 'de', 'fr', 'es', 'pt-BR', 'ja', 'ko'],
+  url: new URL('/top-up/', Astro.site).href,
+  image: new URL('/apps/top-up/icon-256.webp', Astro.site).href,
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+    availability: live ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
+  },
+  author: { '@type': 'Person', name: 'Alexander Bergqvist', url: 'https://alexanderbergqvist.com/' },
+  ...(appStoreUrl && live && { downloadUrl: appStoreUrl, installUrl: appStoreUrl }),
+};
+---
+
+<BaseLayout title={title} description={description} htmlLang="en" keywords={app.data.keywords}>
+  <script type="application/ld+json" set:html={JSON.stringify(ldJson)} />
+
+  <section class="relative overflow-hidden" style={`background: linear-gradient(135deg, ${accent}, ${accentDark ?? accent});`}>
+    <div class="max-w-6xl mx-auto px-6 py-16 md:py-24 text-white">
+      <div class="grid md:grid-cols-[180px_1fr] gap-8 md:gap-12 items-center">
+        <img
+          src="/apps/top-up/icon-256.webp"
+          alt="Top Up app icon"
+          width="160"
+          height="160"
+          class="w-32 h-32 md:w-40 md:h-40 rounded-3xl shadow-2xl mx-auto md:mx-0"
+        />
+        <div class="text-center md:text-left">
+          <span class="inline-block text-xs font-black uppercase tracking-widest opacity-80">Health &amp; Fitness · iPhone</span>
+          <h1 class="mt-2 text-4xl md:text-6xl font-black tracking-tight">Top Up: Protein Coach</h1>
+          <p class="mt-4 text-lg md:text-xl opacity-95 max-w-2xl">
+            Build muscle without a food scale. Log meals with your hand, hit your protein, and get a concrete top-up idea every evening.
+          </p>
+          <div class="mt-8 flex flex-wrap gap-3 justify-center md:justify-start">
+            {live ? (
+              <a
+                href={storeUrl}
+                data-cta-position="hero"
+                class="inline-flex items-center gap-3 rounded-xl px-5 py-3 font-bold bg-white text-ink hover:scale-[1.02] transition"
+              >
+                <svg viewBox="0 0 384 512" class="w-5 h-5 fill-current" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" /></svg>
+                <span class="flex flex-col items-start leading-tight">
+                  <span class="text-[10px] font-medium opacity-80">Download on the</span>
+                  <span class="text-base font-bold">App Store</span>
+                </span>
+              </a>
+            ) : (
+              <span class="inline-flex items-center rounded-xl px-5 py-3 font-bold text-sm bg-white/20 text-white">
+                Coming soon to the App Store
+              </span>
+            )}
+            <a href="#support" class="inline-flex items-center rounded-xl px-5 py-3 font-bold text-sm border border-white/50 hover:bg-white/10">
+              Support
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-6 py-12">
+    <ul class="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 md:grid md:grid-cols-6 md:overflow-visible">
+      {shots.map((s) => (
+        <li class="snap-start flex-shrink-0 w-[62%] sm:w-[40%] md:w-auto">
+          <img src={s.src} alt={s.alt} width="660" height="1434" loading="lazy" class="w-full h-auto block rounded-2xl border border-line shadow-md" />
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="bg-surface-2 border-y border-line py-16">
+    <div class="max-w-6xl mx-auto px-6">
+      <h2 class="text-2xl md:text-3xl font-black mb-8">How it works</h2>
+      <div class="grid md:grid-cols-3 gap-4">
+        {how.map((h, i) => (
+          <div class="bg-surface rounded-xl p-6 border border-line">
+            <span class="inline-flex w-8 h-8 rounded-full items-center justify-center text-white font-black text-sm" style={`background: ${accent};`}>{i + 1}</span>
+            <h3 class="mt-3 font-bold text-lg text-ink">{h.t}</h3>
+            <p class="mt-2 text-ink-2">{h.d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-3xl mx-auto px-6 py-16 prose">
+    <h2>Free and Premium</h2>
+    <p>
+      <strong>Free:</strong> logging, daily protein and calorie targets, meal reminders, the evening verdict,
+      the last 7 days of history, 2 favourite meals and 1 extra top-up idea a day.
+    </p>
+    <p><strong>Top Up Premium adds:</strong></p>
+    <ul>
+      <li>Apple Health &amp; Apple Watch: a calorie target that follows what you actually burn, and meals saved to Health</li>
+      <li>Full history with 30- and 90-day averages and weekly trends</li>
+      <li>Unlimited favourite meals</li>
+      <li>Unlimited “Another idea” suggestions</li>
+    </ul>
+    <p>
+      Premium is a monthly or yearly auto-renewing subscription; eligible new subscribers get a 7-day free trial.
+      Payment is charged to your Apple Account. The subscription renews automatically unless cancelled at least
+      24 hours before the end of the current period, and can be managed or cancelled in your Apple Account settings.
+      <a href={eula}>Terms of Use (Apple standard EULA)</a>.
+    </p>
+
+    <h2>Privacy</h2>
+    <p>
+      No account, no ads, no tracking. Everything you log stays on your iPhone. If you connect Apple Health,
+      Top Up reads your active and resting energy only to adapt your calorie target, and – only if you turn it on –
+      saves each meal's energy and protein to Health. Health data never leaves your iPhone. Purchases are handled
+      by Apple. Read the full <a href="/integritet/#english">Privacy Policy</a>.
+    </p>
+
+    <h2>Languages</h2>
+    <p>English, Swedish, German, French, Spanish, Brazilian Portuguese, Japanese and Korean.</p>
+  </section>
+
+  <section id="support" class="max-w-3xl mx-auto px-6 pb-20">
+    <FAQ title="Support" items={faq} />
+    <div class="rounded-2xl border border-line bg-surface-2 p-6">
+      <h2 class="text-xl font-black">Contact</h2>
+      <p class="mt-2 text-ink-2">
+        Top Up is made by one developer, Alexander Bergqvist. Email
+        <a class="underline font-semibold" href={`mailto:${email}?subject=Top%20Up%20support`}>{email}</a>
+        – please include your iPhone model, iOS version and the app version (Settings › About). I usually reply within 1–3 working days.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

@@ -33,6 +33,9 @@ const apps = defineCollection({
     features: z.array(z.string()).default([]),
     status: z.enum(['live', 'soon', 'beta']).default('live'),
     order: z.number().default(99),
+    /** The app has its own page at src/pages/<slug>/index.astro (e.g. an
+     *  English-first global app), so the Swedish [app] template skips it. */
+    customPage: z.boolean().default(false),
   }),
 });
 

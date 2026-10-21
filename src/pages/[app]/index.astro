@@ -18,7 +18,7 @@ import {
 } from '../../i18n/locales';
 
 export const getStaticPaths = (async () => {
-  const apps = await getCollection('apps');
+  const apps = await getCollection('apps', (a) => !a.data.customPage);
   return apps.map((app) => ({
     params: { app: app.id },
     props: { app },
