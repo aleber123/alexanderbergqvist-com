@@ -33,6 +33,16 @@ const isActive = (prefix: string) =>
       <a href={`/${locale}/#apps`} class="text-ink-3 hover:text-ink transition">
         {t(locale).ui.appsTitle}
       </a>
+      {locale === 'en' && (
+        <a
+          href="/en/todays-outfit/what-to-wear/"
+          class={path.startsWith('/en/todays-outfit/what-to-wear')
+            ? 'text-ink'
+            : 'text-ink-3 hover:text-ink transition'}
+        >
+          Style guide
+        </a>
+      )}
       <a href="/" hreflang="sv" lang="sv" class="text-ink-3 hover:text-ink transition">
         Svenska
       </a>

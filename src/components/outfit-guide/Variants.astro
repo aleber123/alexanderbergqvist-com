@@ -1,0 +1,39 @@
+---
+/** Women's and men's version of the same outfit, side by side. */
+import type { Formula } from '../../data/outfit-guide/types';
+import { nb } from '../../data/outfit-guide';
+
+interface Props {
+  women: Formula;
+  men: Formula;
+}
+const { women, men } = Astro.props;
+const SLOTS: [keyof Formula, string][] = [
+  ['base', 'Base'],
+  ['top', 'Mid layer'],
+  ['bottom', 'Bottoms'],
+  ['shoes', 'Shoes'],
+  ['outer', 'Outerwear'],
+  ['accessories', 'Extras'],
+];
+const cols = [
+  { title: 'Womenswear', f: women },
+  { title: 'Menswear', f: men },
+];
+---
+
+<div class="og-two">
+  {cols.map((c) => (
+    <div class="og-variant">
+      <h3>{c.title}</h3>
+      <dl class="og-dl">
+        {SLOTS.map(([k, label]) => (
+          <div>
+            <dt>{label}</dt>
+            <dd>{nb(c.f[k])}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  ))}
+</div>

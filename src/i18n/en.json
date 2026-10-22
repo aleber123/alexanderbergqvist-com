@@ -67,6 +67,20 @@
         "Track your plants with photos",
         "Watering reminders"
       ]
+    },
+    "todays-outfit": {
+      "name": "Today's Outfit",
+      "tagline": "Your outfit for today's weather.",
+      "description": "Today's Outfit puts together two outfits every morning from the clothes you already own, matched to the weather, the occasion and your style. Feels-like temperature, wind, rain, slush and sun all count. Snap your wardrobe with the guided camera, swap any piece, dress the whole family — no account, and your photos never leave your phone.",
+      "features": [
+        "Two complete outfits every morning, matched to today's weather",
+        "Layers that make sense: a knit when it's fresh, a coat when it's cold, rain-ready shoes when it pours",
+        "Tap any piece to swap it — alternatives ranked and explained",
+        "Guided camera removes the background on your iPhone",
+        "Morning notification and a home-screen widget",
+        "Profiles for the whole family, including kids",
+        "No account, no sign-in — everything stays on your phone"
+      ]
     }
   }
 }

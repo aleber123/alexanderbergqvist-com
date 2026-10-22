@@ -1,0 +1,30 @@
+---
+/** Six numbered, labelled outfit slots. "None" is said in words. */
+import type { Formula } from '../../data/outfit-guide/types';
+import { nb } from '../../data/outfit-guide';
+
+interface Props {
+  formula: Formula;
+}
+const { formula } = Astro.props;
+const SLOTS: [keyof Formula, string][] = [
+  ['base', 'Base layer'],
+  ['top', 'Mid layer'],
+  ['bottom', 'Bottoms'],
+  ['shoes', 'Shoes'],
+  ['outer', 'Outerwear'],
+  ['accessories', 'Accessories'],
+];
+---
+
+<ol class="og-formula">
+  {SLOTS.map(([k, label], i) => (
+    <li>
+      <span class="og-formula__label">
+        <span>{label}</span>
+        <span aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+      </span>
+      <span class="og-formula__value">{nb(formula[k])}</span>
+    </li>
+  ))}
+</ol>

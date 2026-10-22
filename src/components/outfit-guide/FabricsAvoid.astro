@@ -1,0 +1,36 @@
+---
+/** "Fabrics that work" vs "Avoid" — glyph + word, never colour alone. */
+import type { Fabric } from '../../data/outfit-guide/types';
+import { nb } from '../../data/outfit-guide';
+
+interface Props {
+  fabrics: Fabric[];
+  avoid: string[];
+}
+const { fabrics, avoid } = Astro.props;
+---
+
+<div class="og-two">
+  <div>
+    <h3 style="margin-bottom:1rem">Fabrics that work</h3>
+    <ul class="og-list">
+      {fabrics.map((f) => (
+        <li>
+          <span class="og-list__mark" aria-hidden="true">✓</span>
+          <span><span class="og-sr">Works: </span><strong>{f.name}.</strong> {nb(f.why)}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+  <div>
+    <h3 style="margin-bottom:1rem">Avoid</h3>
+    <ul class="og-list">
+      {avoid.map((a) => (
+        <li>
+          <span class="og-list__mark" aria-hidden="true">✕</span>
+          <span><span class="og-sr">Avoid: </span>{nb(a)}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,40 @@
+---
+/**
+ * Link block from the Today's Outfit landing pages (/todays-outfit/ and
+ * /en/todays-outfit/) into the English weather style guide. Uses the
+ * site's Tailwind tokens, since it sits on the regular app pages.
+ */
+import { BANDS, GUIDE_BASE, guideUrl, rangeC } from '../../data/outfit-guide';
+
+interface Props {
+  lang: 'sv' | 'en';
+}
+const { lang } = Astro.props;
+const sv = lang === 'sv';
+---
+
+<section class="max-w-6xl mx-auto px-6 py-16 border-t border-line" lang="en" aria-labelledby="to-guide-h">
+  <p class="text-xs font-bold uppercase tracking-[0.16em] text-ink-3" lang={lang}>
+    {sv ? 'Guide (på engelska)' : 'Style guide'}
+  </p>
+  <h2 id="to-guide-h" class="mt-2 text-2xl md:text-3xl font-black uppercase tracking-wide">
+    What to wear for the weather
+  </h2>
+  <p class="mt-3 text-ink-2 max-w-2xl" lang={lang}>
+    {sv
+      ? 'Outfit-formler för varje temperatur – från minusgrader till 30 °C – plus regn, blåst och snö. Samma regler som appen använder.'
+      : 'Outfit formulas for every temperature, from below freezing to 30 °C+, plus rain, wind and snow — built on the same rules as the app.'}
+  </p>
+  <ul class="mt-6 flex flex-wrap gap-2">
+    {BANDS.map((b) => (
+      <li>
+        <a href={guideUrl(b.slug)} class="inline-block border border-ink px-3 py-2 text-sm font-bold hover:bg-ink hover:text-surface transition">
+          {b.name} <span class="font-normal text-ink-3">{rangeC(b)}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+  <p class="mt-6">
+    <a href={GUIDE_BASE} class="font-bold underline underline-offset-4">Open the guide →</a>
+  </p>
+</section>

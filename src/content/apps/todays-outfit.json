@@ -1,0 +1,40 @@
+{
+  "name": "Today's Outfit",
+  "seoTitle": "Vad ska jag ha på mig idag? – outfit-app efter vädret",
+  "metaDescription": "Today's Outfit sätter ihop dagens outfit av kläderna du redan har – anpassad efter vädret, regnet och kylan. Garderob i fickan, barnprofiler och helt privat.",
+  "h1": "Today's Outfit – vad ska jag ha på mig idag?",
+  "tagline": "Dagens outfit av dina egna kläder, efter vädret.",
+  "description": "Today's Outfit är din personliga stylist i iPhone. Fota dina kläder med den guidade kameran så klipper appen ut dem automatiskt. Varje morgon får du en färdig outfit av det du redan äger – anpassad efter känns-som-temperatur, regn, slask och blåst, med rätt lager för svenska årstider. Byt ett plagg så hänger resten med, se var allt ligger och klä hela familjen inför förskolan. Inget konto och ingen spårning – dina bilder lämnar aldrig telefonen.",
+  "icon": "/apps/todays-outfit.webp",
+  "accent": "#111111",
+  "accentDark": "#000000",
+  "appStoreUrl": "https://apps.apple.com/se/app/todays-outfit/id6818838930",
+  "bundleId": "com.alexanderbergqvist.dressday",
+  "category": "Livsstil",
+  "keywords": [
+    "vad ska jag ha på mig idag",
+    "outfit app",
+    "dagens outfit",
+    "klädapp väder",
+    "digital garderob",
+    "kapselgarderob"
+  ],
+  "features": [
+    "Färdig outfit varje morgon efter vädret",
+    "Byt ett plagg – resten anpassar sig",
+    "Guidad kamera som klipper ut plaggen",
+    "Sök i garderoben och se var allt ligger",
+    "Barnprofiler för förskola och regn",
+    "Fråga din stylist – \"något till bröllop i regn\"",
+    "Säsongens trender med dina egna kläder",
+    "Helt privat – inget konto, inga bilder laddas upp"
+  ],
+  "screenshots": [
+    { "src": "/apps/todays-outfit/sv_1.webp", "alt": "Dagens outfit efter vädret: 8 grader och mulet i Stockholm, kappa, stickad tröja, jeans och mockaskor" },
+    { "src": "/apps/todays-outfit/sv_2.webp", "alt": "Byt ett plagg: förslag på andra skor som passar outfiten" },
+    { "src": "/apps/todays-outfit/sv_3.webp", "alt": "Garderoben med sök på färg, plagg eller plats" },
+    { "src": "/apps/todays-outfit/sv_4.webp", "alt": "Guidad kamera som fotar och klipper ut ett par jeans" }
+  ],
+  "status": "live",
+  "order": 13
+}

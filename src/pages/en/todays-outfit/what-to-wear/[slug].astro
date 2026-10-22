@@ -1,0 +1,36 @@
+---
+/**
+ * /en/todays-outfit/what-to-wear/<slug>/ — one page per temperature
+ * band, exact temperature (°F / °C) and topic (rain, wind, snow, office,
+ * date night, travel). Content: src/data/outfit-guide/.
+ *
+ * English only, self-canonical, no hreflang alternates (none exist).
+ * Exact-temperature pages link up to their band and sideways to their
+ * neighbours; °C values that equal a °F page (5/10/15/30 °C) are
+ * answered on that page rather than duplicated.
+ */
+import type { GetStaticPaths } from 'astro';
+import GuideLayout from '../../../../components/outfit-guide/GuideLayout.astro';
+import GuideArticle from '../../../../components/outfit-guide/GuideArticle.astro';
+import { ALL_PAGES, GUIDE_BASE, APP_LANDING, type AnyGuidePage } from '../../../../data/outfit-guide';
+
+export const getStaticPaths = (() =>
+  ALL_PAGES.map((entry) => ({ params: { slug: entry.page.slug }, props: { entry } }))) satisfies GetStaticPaths;
+
+const { entry } = Astro.props as { entry: AnyGuidePage };
+const page = entry.page;
+---
+
+<GuideLayout
+  title={page.title}
+  description={page.metaDescription}
+  campaignKey={page.key}
+  trail={[
+    { name: 'Home', url: '/en/' },
+    { name: 'Today’s Outfit', url: APP_LANDING },
+    { name: 'What to wear', url: GUIDE_BASE },
+    { name: page.crumb },
+  ]}
+>
+  <GuideArticle entry={entry} />
+</GuideLayout>

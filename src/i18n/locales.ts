@@ -104,6 +104,7 @@ export const UNIVERSAL_APPS: readonly string[] = [
   'rita',
   'surdeg',
   'plantera',
+  'todays-outfit',
 ];
 
 /**
@@ -132,6 +133,11 @@ export const APP_LOCALES: Record<string, readonly (Locale | 'sv')[]> = {
   ],
   rita: [
     'sv',
+  ],
+  // English listing exists; the other 8 ASC languages have no site
+  // locale strings yet, so only sv + en pages are claimed.
+  'todays-outfit': [
+    'sv', 'en',
   ],
 };
 

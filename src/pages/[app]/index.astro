@@ -8,6 +8,7 @@ import AppStoreQr from '../../components/AppStoreQr.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
 import TidrapportLanding from '../../components/landing/TidrapportLanding.astro';
 import SnusfriLanding from '../../components/landing/SnusfriLanding.astro';
+import GuideTeaser from '../../components/outfit-guide/GuideTeaser.astro';
 import { AKTUELLT_AR } from '../../data/verktyg';
 import {
   LOCALES,
@@ -37,6 +38,7 @@ const {
   accent,
   accentDark,
   status,
+  screenshots,
   appStoreUrl,
   features,
   keywords,
@@ -409,6 +411,25 @@ const appStoreId = appStoreUrl
     </section>
   )}
 
+  {screenshots.length > 0 && (
+    <section class="max-w-6xl mx-auto px-6 pb-12">
+      <ul class="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 md:grid md:grid-cols-4 md:overflow-visible">
+        {screenshots.map((s) => (
+          <li class="snap-start flex-shrink-0 w-[62%] sm:w-[40%] md:w-auto">
+            <img
+              src={s.src}
+              alt={s.alt}
+              width="660"
+              height="1434"
+              loading="lazy"
+              class="w-full h-auto block rounded-2xl border border-line shadow-md"
+            />
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
   {features.length > 0 && (
     <section class="bg-surface-2 border-y border-line py-16">
       <div class="max-w-6xl mx-auto px-6">
@@ -432,6 +453,8 @@ const appStoreId = appStoreUrl
 
   {app.id === 'tidrapport' && <TidrapportLanding accent={accent} />}
   {app.id === 'snusfri-resa' && <SnusfriLanding />}
+
+  {app.id === 'todays-outfit' && <GuideTeaser lang="sv" />}
 
   {tools.length > 0 && (
     <section class="max-w-6xl mx-auto px-6 py-16">
