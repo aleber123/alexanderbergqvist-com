@@ -24,7 +24,8 @@
     "Apple Hälsa & Apple Watch styr kalorimålet (Premium)",
     "Inget konto – all data stannar på iPhonen"
   ],
-  "status": "soon",
+  "status": "live",
   "customPage": true,
-  "order": 14
+  "order": 14,
+  "appStoreUrl": "https://apps.apple.com/app/top-up-protein-coach/id6825494977"
 }
