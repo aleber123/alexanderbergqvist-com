@@ -139,13 +139,15 @@ const articleLd = type === 'article' && publishedAt
      we fall back to Swedish-only (existing behaviour). -->
 {hreflangAlternates ? (
   <>
-    {Object.entries(hreflangAlternates).map(([lang, href]) => (
+    {/* An explicit 'x-default' key wins (global pages whose default is
+        English); otherwise x-default is the Swedish page. */}
+    {Object.entries(hreflangAlternates).filter(([lang]) => lang !== 'x-default').map(([lang, href]) => (
       <link rel="alternate" hreflang={lang} href={href} />
     ))}
     <link
       rel="alternate"
       hreflang="x-default"
-      href={hreflangAlternates['sv-SE'] ?? hreflangAlternates['en-US'] ?? url}
+      href={hreflangAlternates['x-default'] ?? hreflangAlternates['sv-SE'] ?? hreflangAlternates['en-US'] ?? url}
     />
   </>
 ) : (

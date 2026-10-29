@@ -125,6 +125,13 @@ export const VERKTYG: Verktyg[] = [
     group: 'ovrigt',
   },
   {
+    href: '/proteinkalkylator/',
+    title: 'Proteinkalkylator',
+    description: 'Hur mycket protein behöver du per dag och måltid för att bygga muskler – och kalorierna.',
+    app: 'top-up',
+    group: 'ovrigt',
+  },
+  {
     href: '/fodelsedagar/aldersrakna/',
     title: 'Åldersräknare',
     description: 'Exakt ålder i år, månader, dagar och sekunder.',

@@ -92,7 +92,8 @@ export default defineConfig({
         } else if (
           item.url.includes('/kalkylator') ||
           item.url.includes('/verktyg/') ||
-          item.url.includes('/rakna')
+          item.url.includes('/rakna') ||
+          /\/(protein-calculator|proteinkalkylator|eiweiss-rechner)\/$/.test(item.url)
         ) {
           item.priority = 0.9;
         }

@@ -67,6 +67,10 @@ const OTHER_APP: Record<string, string> = {
   // week-number widget, so these date pages funnel there.
   namnsdag: 'fodelsedagar',
   vecka: 'fodelsedagar',
+  // Protein calculator (en / sv / de) funnels into Top Up.
+  'protein-calculator': 'top-up',
+  proteinkalkylator: 'top-up',
+  'eiweiss-rechner': 'top-up',
 };
 
 export interface AppSection {

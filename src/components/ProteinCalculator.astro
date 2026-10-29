@@ -1,0 +1,558 @@
+---
+/**
+ * Protein calculator page body, shared by /en/protein-calculator/,
+ * /proteinkalkylator/ and /de/eiweiss-rechner/. Copy, formulas and
+ * references live in src/data/protein-calculator.ts (mirrors the Top Up
+ * app). The page files only choose the language.
+ *
+ * Order on a 375 px phone: crumbs → H1 → direct answer → weight + goal →
+ * result (above the fold) → result CTA → optional calories → food
+ * example → table → explanation → sources → disclaimer → FAQ.
+ *
+ * Colour is never the only signal: selected options are filled ink with
+ * white text (luminance contrast), the result is a number with a unit.
+ */
+import { getEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from './Breadcrumbs.astro';
+import FAQ from './FAQ.astro';
+import AppStoreBadge from './AppStoreBadge.astro';
+import AppStoreQr from './AppStoreQr.astro';
+import {
+  PC,
+  PC_COPY,
+  PC_FOODS,
+  PC_PATHS,
+  PC_REFS,
+  PC_KG_ROWS,
+  PC_LB_ROWS,
+  PC_POPULAR_KG,
+  PC_POPULAR_LB,
+  grams,
+  type PcFood,
+  type PcLang,
+} from '../data/protein-calculator';
+
+interface Props {
+  lang: PcLang;
+}
+const { lang } = Astro.props;
+const c = PC_COPY[lang];
+const ui = c.ui;
+
+const app = (await getEntry('apps', 'top-up'))!;
+const appStoreUrl = app.data.appStoreUrl!;
+const accent = app.data.accent;
+const campaign = PC_PATHS[lang].split('/').filter(Boolean).pop()!; // protein-calculator | proteinkalkylator | eiweiss-rechner
+
+const abs = (p: string) => new URL(p, Astro.site).href;
+const alternates = {
+  en: abs(PC_PATHS.en),
+  'sv-SE': abs(PC_PATHS.sv),
+  'de-DE': abs(PC_PATHS.de),
+  'x-default': abs(PC_PATHS.en),
+};
+
+const nf = new Intl.NumberFormat(c.numberLocale);
+const nf1 = new Intl.NumberFormat(c.numberLocale, { maximumFractionDigits: 1 });
+const lbOf = (kg: number) => Math.round(kg / PC.kgPerLb);
+const kgOf = (lb: number) => lb * PC.kgPerLb;
+const showLb = lang === 'en';
+
+const portionGrams: Record<PcFood, string> = {
+  meat: '~110 g',
+  fish: '~120 g',
+  eggs: '~110 g',
+  dairy: '~150 g',
+  legumes: '~150 g',
+  shake: '30 g',
+};
+const foodOrder: PcFood[] = ['meat', 'fish', 'eggs', 'dairy', 'legumes', 'shake'];
+const portionLabel = (f: PcFood) =>
+  ui.portions[f][f === 'eggs' ? 1 : 0].replace('{n}', '1').replace('{e}', '2');
+
+const webApp = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: c.webAppName,
+  url: abs(PC_PATHS[lang]),
+  applicationCategory: 'HealthApplication',
+  operatingSystem: lang === 'de' ? 'Alle (läuft im Browser)' : lang === 'sv' ? 'Alla (körs i webbläsaren)' : 'Any (runs in the browser)',
+  inLanguage: c.htmlLang === 'sv' ? 'sv-SE' : c.htmlLang,
+  isAccessibleForFree: true,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: c.currency },
+  author: { '@type': 'Person', name: 'Alexander Bergqvist', url: 'https://alexanderbergqvist.com/' },
+  citation: PC_REFS.filter((r) => r.doi).map((r) => `https://doi.org/${r.doi}`),
+};
+
+const config = { ui, numberLocale: c.numberLocale, lang, gStd: PC.gStd, gMax: PC.gMax, foods: PC_FOODS };
+const exampleKg = 80;
+const tableId = c.toc[0].href.slice(1);
+const portionsId = c.toc[1].href.slice(1);
+const sourcesId = c.toc[3].href.slice(1);
+const faqId = c.toc[4].href.slice(1);
+const rowId = (kg: number) => `kg-${kg}`;
+const pill =
+  'cursor-pointer select-none rounded-full border border-line-strong px-3 py-2 text-sm font-bold text-ink has-[:checked]:bg-ink has-[:checked]:border-ink has-[:checked]:text-white has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-ink';
+const field =
+  'w-full rounded-xl border border-line-strong bg-surface px-3 py-2.5 text-lg font-bold focus:border-ink focus:outline-none';
+---
+
+<BaseLayout
+  title={c.title}
+  description={c.description}
+  keywords={c.keywords}
+  htmlLang={c.htmlLang}
+  hreflangAlternates={alternates}
+  app="top-up"
+  stickyCampaign={campaign}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(webApp)} />
+  <script type="application/json" id="pc-config" set:html={JSON.stringify(config)} />
+
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 pt-4 pb-10 sm:py-8">
+    <Breadcrumbs trail={c.crumbs} label={c.crumbLabel} />
+    <h1 class="mt-3 sm:mt-6 text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight">{c.h1}</h1>
+    {/* Direct answer: the paragraph Google can lift as a snippet. */}
+    <p class="mt-2 sm:mt-3 text-[15px] sm:text-lg text-ink-2 leading-snug sm:leading-normal" set:html={c.answerHtml} />
+
+    <form id="pc-form" class="mt-3 rounded-2xl border border-line bg-surface p-3 sm:p-5" onsubmit="return false" novalidate>
+      <div class="flex flex-wrap items-end gap-x-4 gap-y-2">
+        <div class="flex-1 min-w-[9rem]">
+          <label class="block text-sm font-bold mb-1" for="pc-w">{ui.weight}</label>
+          <input id="pc-w" type="text" inputmode="decimal" autocomplete="off" maxlength="6" placeholder={String(exampleKg)} class={field} />
+        </div>
+        <fieldset class="flex gap-1.5" aria-label={ui.weight}>
+          <label class={pill}><input class="sr-only" type="radio" name="pc-unit" value="kg" checked />{ui.kg}</label>
+          <label class={pill}><input class="sr-only" type="radio" name="pc-unit" value="lb" />{ui.lb}</label>
+        </fieldset>
+      </div>
+
+      <fieldset class="mt-3">
+        <legend class="text-sm font-bold mb-1">{ui.goal}</legend>
+        <div class="flex flex-wrap gap-1.5">
+          <label class={pill}><input class="sr-only" type="radio" name="pc-goal" value="build" checked />{ui.goals.build}</label>
+          <label class={pill}><input class="sr-only" type="radio" name="pc-goal" value="maintain" />{ui.goals.maintain}</label>
+          <label class={pill}><input class="sr-only" type="radio" name="pc-goal" value="cut" />{ui.goals.cut}</label>
+        </div>
+      </fieldset>
+
+      <div class="mt-3 rounded-xl p-3 sm:p-4 text-white" style={`background:${app.data.accentDark ?? accent}`} aria-live="polite">
+        <p class="text-sm font-semibold opacity-90" data-pc="example">{ui.example.replace('{w}', `${exampleKg} kg`)}</p>
+        <p class="leading-none"><span class="text-5xl font-black tabular-nums" data-pc="grams">{grams(exampleKg, PC.gStd)}</span> <span class="text-lg font-bold">{ui.perDay}</span></p>
+        <p class="mt-2 text-sm sm:text-base font-semibold" data-pc="meal">{ui.perMeal.replace('{g}', String(grams(exampleKg, PC.perMealStd)))}</p>
+        <p class="mt-0.5 text-sm opacity-90" data-pc="range">{ui.range.replace('{lo}', String(grams(exampleKg, PC.gStd))).replace('{hi}', String(grams(exampleKg, PC.gMax)))}</p>
+      </div>
+      <p class="mt-2 text-sm font-bold text-ink" data-pc="error" role="alert" hidden></p>
+
+      <fieldset class="mt-3">
+        <legend class="sr-only">{ui.level}</legend>
+        <div class="flex flex-wrap gap-1.5">
+          <label class={pill}><input class="sr-only" type="radio" name="pc-level" value="std" checked />{ui.levelStd}</label>
+          <label class={pill}><input class="sr-only" type="radio" name="pc-level" value="max" />{ui.levelMax}</label>
+        </div>
+      </fieldset>
+
+      {/* Result CTA: revealed once there is a real result. */}
+      <div data-pc="cta" hidden class="mt-4 rounded-2xl border-2 border-ink bg-surface p-4">
+        <div class="flex items-start gap-3">
+          <img src={app.data.icon} alt="" width="48" height="48" loading="lazy" class="w-12 h-12 rounded-xl border border-line flex-shrink-0" />
+          <p class="text-base font-semibold text-ink leading-snug" data-pc="cta-text">{ui.ctaDefault}</p>
+        </div>
+        <div class="mt-4 flex flex-wrap items-center gap-4" data-ios-only>
+          <AppStoreBadge url={appStoreUrl} status="live" position="result" campaign={campaign} lang={lang} />
+          <span class="text-sm text-ink-3">{c.ctaFree}</span>
+          <AppStoreQr url={appStoreUrl} lang={lang} campaign={campaign} />
+        </div>
+        <p class="mt-3 text-sm text-ink-2" data-android-only>{c.ctaIphoneOnly}</p>
+        <p class="mt-3 text-xs text-ink-3">{c.ctaAside}</p>
+      </div>
+
+      <fieldset class="mt-5 border-t border-line pt-4">
+        <legend class="text-base font-black">{ui.calTitle}</legend>
+        <p class="text-sm text-ink-2">{ui.calIntro}</p>
+        <div class="mt-3 grid grid-cols-2 gap-2 sm:gap-3">
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-sm font-bold mb-1" for="pc-days">{ui.days}</label>
+            <select id="pc-days" class={field}>
+              {ui.daysOpt.map((o, i) => <option value={i} selected={i === 3}>{o}</option>)}
+            </select>
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-sm font-bold mb-1" for="pc-sex">{ui.sex}</label>
+            <select id="pc-sex" class={field}>
+              <option value="x">{ui.sexX}</option>
+              <option value="m">{ui.sexM}</option>
+              <option value="f">{ui.sexF}</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-bold mb-1" for="pc-age">{ui.age}</label>
+            <input id="pc-age" type="text" inputmode="numeric" maxlength="3" autocomplete="off" class={field} />
+          </div>
+          <div data-pc="h-metric">
+            <label class="block text-sm font-bold mb-1" for="pc-cm">{ui.height} ({ui.cm})</label>
+            <input id="pc-cm" type="text" inputmode="numeric" maxlength="3" autocomplete="off" class={field} />
+          </div>
+          <div data-pc="h-imperial" hidden>
+            <span class="block text-sm font-bold mb-1" id="pc-h-label">{ui.height}</span>
+            <div class="flex gap-1.5" role="group" aria-labelledby="pc-h-label">
+              <input id="pc-ft" type="text" inputmode="numeric" maxlength="1" aria-label={`${ui.height} (${ui.ft})`} placeholder={ui.ft} class={field} />
+              <input id="pc-in" type="text" inputmode="numeric" maxlength="2" aria-label={`${ui.height} (${ui.inch})`} placeholder={ui.inch} class={field} />
+            </div>
+          </div>
+        </div>
+        <div class="mt-3 rounded-xl bg-surface-2 border border-line p-3 text-sm sm:text-base" aria-live="polite">
+          <p data-pc="cal-msg" class="text-ink-2">{ui.calNeedMore}</p>
+          <dl data-pc="cal" hidden class="grid grid-cols-[1fr_auto] gap-x-3 gap-y-1">
+            <dt class="text-ink-2">{ui.bmr}</dt><dd class="font-bold tabular-nums text-right" data-pc="bmr"></dd>
+            <dt class="text-ink-2">{ui.maintenance}</dt><dd class="font-bold tabular-nums text-right" data-pc="tdee"></dd>
+          </dl>
+          <p data-pc="cal-goal" hidden class="mt-2 font-bold text-ink"></p>
+        </div>
+      </fieldset>
+    </form>
+
+    <section class="mt-8" aria-labelledby="pc-food-h">
+      <h2 id="pc-food-h" class="text-xl sm:text-2xl font-black" data-pc="food-title">{ui.foodTitle.replace('{g}', String(grams(exampleKg, PC.gStd)))}</h2>
+      <p class="mt-1 text-ink-2">{ui.foodIntro}</p>
+      <ul class="mt-3 space-y-2 list-none p-0" data-pc="food-list"></ul>
+      <p class="mt-2 font-bold" data-pc="food-total"></p>
+    </section>
+
+    <nav class="mt-8 text-sm" aria-label={c.onPage}>
+      <p class="font-bold">{c.onPage}</p>
+      <ul class="mt-2 flex flex-wrap gap-2 list-none p-0">
+        {c.toc.map((t) => (
+          <li><a class="inline-block rounded-full border border-line px-3 py-1 hover:border-line-strong" href={t.href}>{t.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <h2 id={tableId} class="mt-10 text-2xl font-black scroll-mt-24">{c.tableTitle}</h2>
+    <p class="mt-2 text-ink-2">{c.tableIntro}</p>
+    <p class="mt-3 text-sm font-bold">{c.tablePopular}</p>
+    <ul class="mt-2 flex flex-wrap gap-2 list-none p-0">
+      {PC_POPULAR_KG.map((kg) => (
+        <li><a class="inline-block rounded-full border border-line px-3 py-1 text-sm hover:border-line-strong" href={`#${rowId(kg)}`}>{kg} kg: {grams(kg, PC.gStd)} g</a></li>
+      ))}
+      {showLb && PC_POPULAR_LB.map((l) => (
+        <li><a class="inline-block rounded-full border border-line px-3 py-1 text-sm hover:border-line-strong" href={`#lb-${l}`}>{l} lb: {grams(kgOf(l), PC.gStd)} g</a></li>
+      ))}
+    </ul>
+    <div class="mt-4 overflow-x-auto rounded-xl border border-line">
+      <table class="w-full text-sm sm:text-base">
+        <thead class="bg-surface-2 text-left">
+          <tr>
+            <th class="px-2 sm:px-3 py-2">{c.th.weight}</th>
+            <th class="px-2 sm:px-3 py-2">{c.th.std}</th>
+            <th class="px-2 sm:px-3 py-2">{c.th.max}</th>
+            <th class="px-2 sm:px-3 py-2">{c.th.meal}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {PC_KG_ROWS.map((kg) => (
+            <tr id={rowId(kg)} class="border-t border-line scroll-mt-24 target:bg-surface-2 target:outline target:outline-2 target:outline-ink">
+              <th scope="row" class="px-2 sm:px-3 py-2 text-left font-bold">{kg} kg{showLb && <span class="font-normal text-ink-3"> ({lbOf(kg)} lb)</span>}</th>
+              <td class="px-2 sm:px-3 py-2 font-bold tabular-nums">{grams(kg, PC.gStd)} g</td>
+              <td class="px-2 sm:px-3 py-2 tabular-nums">{grams(kg, PC.gMax)} g</td>
+              <td class="px-2 sm:px-3 py-2 tabular-nums">{grams(kg, PC.perMealStd)} g</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    {showLb && c.lbTableTitle && (
+      <>
+        <h3 class="mt-8 text-lg font-black">{c.lbTableTitle}</h3>
+        <div class="mt-3 overflow-x-auto rounded-xl border border-line">
+          <table class="w-full text-sm sm:text-base">
+            <thead class="bg-surface-2 text-left">
+              <tr>
+                <th class="px-2 sm:px-3 py-2">{c.th.weight}</th>
+                <th class="px-2 sm:px-3 py-2">0.73 g/lb</th>
+                <th class="px-2 sm:px-3 py-2">1 g/lb</th>
+                <th class="px-2 sm:px-3 py-2">{c.th.meal}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {PC_LB_ROWS.map((l) => (
+                <tr id={`lb-${l}`} class="border-t border-line scroll-mt-24 target:bg-surface-2 target:outline target:outline-2 target:outline-ink">
+                  <th scope="row" class="px-2 sm:px-3 py-2 text-left font-bold">{l} lb<span class="font-normal text-ink-3"> ({nf1.format(kgOf(l))} kg)</span></th>
+                  <td class="px-2 sm:px-3 py-2 font-bold tabular-nums">{grams(kgOf(l), PC.gStd)} g</td>
+                  <td class="px-2 sm:px-3 py-2 tabular-nums">{grams(kgOf(l), PC.gMax)} g</td>
+                  <td class="px-2 sm:px-3 py-2 tabular-nums">{grams(kgOf(l), PC.perMealStd)} g</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </>
+    )}
+
+    <h2 id={portionsId} class="mt-12 text-2xl font-black scroll-mt-24">{c.portionTitle}</h2>
+    <p class="mt-2 text-ink-2">{c.portionIntro}</p>
+    <div class="mt-4 overflow-x-auto rounded-xl border border-line">
+      <table class="w-full text-sm sm:text-base">
+        <thead class="bg-surface-2 text-left">
+          <tr>
+            <th class="px-2 sm:px-3 py-2">{c.portionTh.food}</th>
+            <th class="px-2 sm:px-3 py-2">{c.portionTh.portion}</th>
+            <th class="px-2 sm:px-3 py-2">{c.portionTh.protein}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foodOrder.map((f) => (
+            <tr class="border-t border-line">
+              <th scope="row" class="px-2 sm:px-3 py-2 text-left font-bold">{ui.foodNames[f].charAt(0).toUpperCase() + ui.foodNames[f].slice(1)}</th>
+              <td class="px-2 sm:px-3 py-2">{portionLabel(f)} ({portionGrams[f]})</td>
+              <td class="px-2 sm:px-3 py-2 font-bold tabular-nums">≈ {nf.format(PC_FOODS[f])} g</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="prose mt-12 max-w-none">
+      {c.sections.map((s) => (
+        <>
+          <h2 id={s.id} class="scroll-mt-24">{s.h2}</h2>
+          <Fragment set:html={s.html} />
+        </>
+      ))}
+    </div>
+
+    <section class="mt-10" aria-labelledby={sourcesId}>
+      <h2 id={sourcesId} class="text-2xl font-black scroll-mt-24">{c.sourcesTitle}</h2>
+      <p class="mt-1 text-sm text-ink-2">{c.sourcesIntro}</p>
+      <ol class="mt-3 space-y-3 text-sm list-decimal pl-5">
+        {PC_REFS.map((r) => (
+          <li>
+            {r.year ? `${r.authors} (${r.year}). ` : `${r.authors}. `}<cite class="not-italic font-semibold">{r.title}</cite>. {r.journal}.
+            {r.doi && <> <a class="underline break-all" href={`https://doi.org/${r.doi}`} rel="noopener">doi:{r.doi}</a></>}
+            {r.url && <> <a class="underline break-all" href={r.url} rel="noopener">{r.url.replace(/^https:\/\//, '').replace(/\/$/, '')}</a></>}
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <aside class="mt-8 rounded-2xl border-2 border-ink bg-surface-2 p-4 sm:p-5" aria-labelledby="pc-disc-h">
+      <h2 id="pc-disc-h" class="text-lg font-black">{c.disclaimerTitle}</h2>
+      <p class="mt-1 text-sm sm:text-base text-ink-2">{c.disclaimer}</p>
+    </aside>
+
+    <div id={faqId} class="scroll-mt-24">
+      <FAQ title={c.faqTitle} items={c.faq} />
+    </div>
+
+    <h2 class="mt-4 text-xl font-black">{c.relatedTitle}</h2>
+    <ul class="mt-3 grid sm:grid-cols-2 gap-3 list-none p-0">
+      {c.related.map((r) => (
+        <li>
+          <a href={r.href} hreflang={r.href.startsWith('/en/') || r.href === '/top-up/' ? 'en' : r.href.startsWith('/de/') ? 'de' : 'sv'} class="block h-full rounded-2xl border border-line p-4 hover:border-line-strong hover:bg-surface-2 transition">
+            <span class="font-bold text-ink">{r.title} →</span>
+            <span class="block mt-1 text-sm text-ink-2">{r.text}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <p class="mt-8 text-sm text-ink-3">{c.updated}</p>
+  </section>
+</BaseLayout>
+
+<script>
+  type Food = 'meat' | 'fish' | 'eggs' | 'dairy' | 'legumes' | 'shake';
+  interface Cfg {
+    ui: Record<string, any>;
+    numberLocale: string;
+    lang: string;
+    gStd: number;
+    gMax: number;
+    foods: Record<Food, number>;
+  }
+  const cfgEl = document.getElementById('pc-config');
+  const form = document.getElementById('pc-form') as HTMLFormElement | null;
+  if (cfgEl && form) {
+    const cfg = JSON.parse(cfgEl.textContent || '{}') as Cfg;
+    const ui = cfg.ui;
+    const KG_PER_LB = 0.45359237;
+    const nf = new Intl.NumberFormat(cfg.numberLocale);
+    const $ = <T extends HTMLElement>(sel: string) => form.ownerDocument.querySelector(sel) as T;
+    const out = (k: string) => $<HTMLElement>(`[data-pc="${k}"]`);
+    const radio = (name: string) =>
+      (form.querySelector(`input[name="${name}"]:checked`) as HTMLInputElement | null)?.value ?? '';
+    const setRadio = (name: string, value: string) => {
+      const el = form.querySelector(`input[name="${name}"][value="${value}"]`) as HTMLInputElement | null;
+      if (el) el.checked = true;
+    };
+    const num = (id: string) => {
+      const v = ($<HTMLInputElement>(id).value || '').replace(',', '.').replace(/\s/g, '');
+      return v === '' ? NaN : Number(v);
+    };
+    const fill = (s: string, vars: Record<string, string | number>) =>
+      s.replace(/\{(\w+)\}/g, (_, k) => (k in vars ? String(vars[k]) : `{${k}}`));
+    const round10 = (v: number) => Math.round(v / 10) * 10;
+    const half = (n: number) => {
+      const w = Math.floor(n);
+      const h = n - w >= 0.5 ? '½' : '';
+      return w === 0 ? h || '0' : `${w}${h}`;
+    };
+
+    // US English visitors get pounds by default.
+    if (cfg.lang === 'en' && /^en-US$/i.test(navigator.language || '')) setRadio('pc-unit', 'lb');
+
+    function weightKg(): number {
+      const v = num('#pc-w');
+      if (isNaN(v)) return NaN;
+      return radio('pc-unit') === 'lb' ? v * KG_PER_LB : v;
+    }
+
+    function sampleDay(target: number) {
+      const F = cfg.foods;
+      const shakes = target < 100 ? 0 : target >= 190 ? 2 : 1;
+      const dairy = target >= 230 ? 2 : 1;
+      const fixed = F.eggs + dairy * F.dairy + F.legumes + shakes * F.shake;
+      const palms = Math.max(1, Math.round(((target - fixed) / ((F.meat + F.fish) / 2)) * 2) / 2);
+      const halves = Math.round(palms * 2);
+      const lunch = Math.ceil(halves / 2) / 2;
+      const dinner = (halves - Math.ceil(halves / 2)) / 2;
+      const meals: [string, [Food, number][]][] = [
+        [ui.mealNames[0], [['eggs', 1], ['dairy', 1]]],
+        [ui.mealNames[1], [['meat', lunch], ['legumes', 1]]],
+        [ui.mealNames[2], [...(shakes ? [['shake', shakes] as [Food, number]] : []), ...(dairy > 1 ? [['dairy', 1] as [Food, number]] : [])]],
+        [ui.mealNames[3], [['fish', dinner]]],
+      ];
+      return meals.filter(([, items]) => items.some(([, n]) => n > 0));
+    }
+
+    function renderFood(target: number) {
+      out('food-title').textContent = fill(ui.foodTitle, { g: nf.format(target) });
+      const list = out('food-list');
+      list.textContent = '';
+      let total = 0;
+      for (const [meal, items] of sampleDay(target)) {
+        let g = 0;
+        const parts = items
+          .filter(([, n]) => n > 0)
+          .map(([f, n]) => {
+            g += cfg.foods[f] * n;
+            const forms = ui.portions[f] as [string, string];
+            const p = fill(forms[f === 'eggs' ? 1 : n > 1 ? 1 : 0], { n: half(n), e: String(2 * n) });
+            return f === 'eggs' ? p : `${p} ${ui.foodNames[f]}`;
+          });
+        total += g;
+        const li = document.createElement('li');
+        li.className = 'rounded-xl border border-line px-3 py-2 flex justify-between gap-3';
+        const left = document.createElement('span');
+        const b = document.createElement('strong');
+        b.textContent = meal + ': ';
+        left.append(b, parts.join(' + '));
+        const right = document.createElement('span');
+        right.className = 'font-bold tabular-nums whitespace-nowrap';
+        right.textContent = `≈ ${nf.format(Math.round(g))} g`;
+        li.append(left, right);
+        list.append(li);
+      }
+      out('food-total').textContent = fill(ui.total, { g: nf.format(Math.round(total)) });
+    }
+
+    function compute() {
+      const unit = radio('pc-unit');
+      $<HTMLElement>('[data-pc="h-metric"]').hidden = unit === 'lb';
+      $<HTMLElement>('[data-pc="h-imperial"]').hidden = unit !== 'lb';
+      $<HTMLInputElement>('#pc-w').placeholder = unit === 'lb' ? '176' : '80';
+
+      const raw = $<HTMLInputElement>('#pc-w').value.trim();
+      let kg = weightKg();
+      const err = out('error');
+      const isExample = raw === '';
+      const valid = !isNaN(kg) && kg >= 30 && kg <= 300;
+      if (!isExample && !valid) {
+        err.textContent = ui.invalid;
+        err.hidden = raw.length < 2;
+        out('cta').hidden = true;
+        return;
+      }
+      err.hidden = true;
+      if (isExample) kg = unit === 'lb' ? 176 * KG_PER_LB : 80;
+
+      const max = radio('pc-level') === 'max';
+      const gpk = max ? cfg.gMax : cfg.gStd;
+      const target = Math.round(kg * gpk);
+      const perMeal = Math.round(kg * (max ? 0.55 : 0.4));
+      const ex = out('example');
+      ex.hidden = !isExample;
+      ex.textContent = fill(ui.example, { w: unit === 'lb' ? '176 lb' : '80 kg' });
+      out('grams').textContent = nf.format(target);
+      out('meal').textContent = fill(max ? ui.perMealMax : ui.perMeal, { g: nf.format(perMeal) });
+      out('range').textContent = fill(ui.range, {
+        lo: nf.format(Math.round(kg * cfg.gStd)),
+        hi: nf.format(Math.round(kg * cfg.gMax)),
+      });
+      renderFood(target);
+
+      const cta = out('cta');
+      if (!isExample) {
+        out('cta-text').textContent = fill(ui.ctaResult, { g: nf.format(target) });
+        cta.hidden = false;
+      }
+
+      // Calories: Mifflin–St Jeor × activity factor + goal (same as the app).
+      const age = num('#pc-age');
+      const cm = unit === 'lb'
+        ? ((num('#pc-ft') || 0) * 12 + (num('#pc-in') || 0)) * 2.54
+        : num('#pc-cm');
+      const msg = out('cal-msg');
+      const dl = out('cal');
+      const goalLine = out('cal-goal');
+      const haveHeight = unit === 'lb' ? !isNaN(num('#pc-ft')) : !isNaN(cm);
+      if (isExample || isNaN(age) || !haveHeight) {
+        msg.hidden = false;
+        msg.textContent = ui.calNeedMore;
+        dl.hidden = goalLine.hidden = true;
+        return;
+      }
+      if (age < 18 || age > 100 || cm < 120 || cm > 230) {
+        msg.hidden = false;
+        msg.textContent = ui.calInvalid;
+        dl.hidden = goalLine.hidden = true;
+        return;
+      }
+      const sex = $<HTMLSelectElement>('#pc-sex').value;
+      const days = Number($<HTMLSelectElement>('#pc-days').value);
+      const bmr = 10 * kg + 6.25 * cm - 5 * age + (sex === 'm' ? 5 : sex === 'f' ? -161 : -78);
+      const af = days <= 1 ? 1.2 : days <= 3 ? 1.375 : days <= 5 ? 1.55 : 1.725;
+      const tdee = bmr * af;
+      out('bmr').textContent = `${nf.format(Math.round(bmr))} ${ui.kcal}`;
+      out('tdee').textContent = `${nf.format(round10(tdee))} ${ui.kcal}`;
+      const goal = radio('pc-goal');
+      goalLine.textContent =
+        goal === 'build'
+          ? fill(ui.targetBuild, { k: nf.format(round10(tdee * 1.1)), l: nf.format(round10(tdee * 1.05)) })
+          : goal === 'cut'
+            ? fill(ui.targetCut, { k: nf.format(round10(tdee)) })
+            : fill(ui.targetMaintain, { k: nf.format(round10(tdee)) });
+      msg.hidden = true;
+      dl.hidden = goalLine.hidden = false;
+    }
+
+    form.addEventListener('input', compute);
+    form.addEventListener('change', (e) => {
+      const t = e.target as HTMLInputElement;
+      // Fat loss → upper end of the range; other goals → standard.
+      if (t.name === 'pc-goal') setRadio('pc-level', t.value === 'cut' ? 'max' : 'std');
+      // Keep the number when switching units.
+      if (t.name === 'pc-unit') {
+        const w = $<HTMLInputElement>('#pc-w');
+        const v = Number((w.value || '').replace(',', '.'));
+        if (w.value && !isNaN(v)) {
+          const conv = t.value === 'lb' ? v / KG_PER_LB : v * KG_PER_LB;
+          w.value = String(Math.round(conv));
+        }
+      }
+      compute();
+    });
+    compute();
+  }
+</script>

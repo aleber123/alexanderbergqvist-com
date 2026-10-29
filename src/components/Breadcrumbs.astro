@@ -12,9 +12,11 @@ interface Crumb {
 }
 interface Props {
   trail: Crumb[];
+  /** aria-label of the nav; Swedish by default. */
+  label?: string;
 }
 
-const { trail } = Astro.props;
+const { trail, label = 'Brödsmulor' } = Astro.props;
 const ldJson = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
@@ -27,7 +29,7 @@ const ldJson = {
 };
 ---
 
-<nav aria-label="Brödsmulor" class="text-sm text-ink-3">
+<nav aria-label={label} class="text-sm text-ink-3">
   <ol class="flex flex-wrap gap-1.5 items-center">
     {trail.map((c, i) => (
       <li class="flex items-center gap-1.5">

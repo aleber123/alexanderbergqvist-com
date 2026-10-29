@@ -82,6 +82,7 @@ const DATA_DEPS = [
   [/^\/fodelsedagar\/grattis\//, ['src/data/grattis.ts']],
   [/^\/snusfri-resa\/sluta-snusa\//, ['src/data/slutasnusa.ts']],
   [/^\/verktyg\//, ['src/data/verktyg.ts']],
+  [/^\/(en\/protein-calculator|proteinkalkylator|de\/eiweiss-rechner)\/$/, ['src/data/protein-calculator.ts', 'src/components/ProteinCalculator.astro']],
 ];
 
 function sourcesFor(path) {
@@ -114,6 +115,8 @@ export function lastmodFor(url) {
 }
 
 /* ── sections ──────────────────────────────────────────────────────── */
+/** Stand-alone calculators outside /verktyg/ and /<app>/ (any locale). */
+const TOOL_SLUGS = new Set(['protein-calculator', 'proteinkalkylator', 'eiweiss-rechner']);
 const APP_IDS = new Set(readdirSync(join(SRC, 'content/apps')).map((f) => f.replace(/\.json$/, '')));
 export function sectionOf(url) {
   const seg = new URL(url).pathname.split('/').filter(Boolean);
@@ -122,6 +125,7 @@ export function sectionOf(url) {
   if (rest.length === 2 && existsSync(join(SRC, 'content/articles', rest[0], `${rest[1]}.mdx`))) return 'articles';
   if (rest.length === 1 && APP_IDS.has(rest[0])) return 'apps';
   if (rest[0] === 'appar' && rest.length === 1) return 'apps';
+  if (rest.length === 1 && TOOL_SLUGS.has(rest[0])) return 'tools';
   if (rest[0] === 'verktyg' || (rest.length >= 2 && APP_IDS.has(rest[0]))) return 'tools';
   return 'pages';
 }
