@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../../components/BaseLayout.astro';
+
+// Short link for creators: alexanderbergqvist.com/outfit → Today's Outfit in
+// the App Store. Every visit is a Vercel Web Analytics page view (cookieless),
+// so clicks per day are visible right away, while installs and proceeds come
+// later from ASC Campaigns via `ct`. One campaign token per creator — add a
+// new page (e.g. /outfit/<handle>/) for the next one instead of reusing this.
+//
+// The redirect waits ~0.7 s so the analytics beacon is sent first; the
+// button covers browsers that block the script. noindex + kept out of the
+// sitemap: it is a redirect, not content.
+const CAMPAIGN = 'influencer-2611';
+const APP_STORE_URL = `https://apps.apple.com/se/app/id6818838930?pt=127704372&ct=${CAMPAIGN}&mt=8`;
+---
+
+<BaseLayout
+  title="Today's Outfit – öppnar App Store"
+  description="Today's Outfit: dagens outfit utifrån vädret och kläderna du redan har."
+  noindex
+>
+  <section class="max-w-lg mx-auto px-6 py-24 text-center">
+    <p class="text-sm tracking-[0.25em] uppercase text-ink-3 mb-3">Today's Outfit</p>
+    <h1 class="text-3xl font-bold text-ink mb-8">Öppnar App Store…</h1>
+    <a
+      id="go"
+      href={APP_STORE_URL}
+      data-cta-position="redirect"
+      class="inline-block w-full rounded-xl bg-ink text-white font-semibold px-6 py-4 text-lg hover:bg-ink-2 transition"
+    >
+      Hämta Today's Outfit
+    </a>
+  </section>
+  <script define:vars={{ url: APP_STORE_URL }}>
+    setTimeout(() => location.replace(url), 700);
+  </script>
+</BaseLayout>

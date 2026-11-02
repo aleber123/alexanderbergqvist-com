@@ -17,7 +17,7 @@ const SITE = 'https://alexanderbergqvist.com';
 const INDEXED_NAMES = new Set(INDEXED_NAME_PATHS.map((p) => SITE + p));
 const inSitemap = (url) => {
   const path = new URL(url).pathname;
-  if (path.startsWith('/admin/') || path.startsWith('/api/') || path === '/f/') return false;
+  if (path.startsWith('/admin/') || path.startsWith('/api/') || path === '/f/' || path.startsWith('/outfit/')) return false;
   if (path.startsWith('/namnsdag/namn/')) return INDEXED_NAMES.has(url);
   return true;
 };
