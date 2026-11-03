@@ -1,0 +1,263 @@
+---
+/**
+ * Alice ABC: Learn to Read — English landing page. Swedish twin:
+ * /alice-abc/. Not part of UNIVERSAL_APPS (the [lang]/[app] template
+ * skips it); this page is hand-written like /top-up/.
+ */
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../../components/BaseLayout.astro';
+import FAQ from '../../../components/FAQ.astro';
+import { tagAppStoreUrl } from '../../../lib/appstore';
+
+const app = (await getEntry('apps', 'alice-abc'))!;
+const { appStoreUrl, status, accent, accentDark } = app.data;
+const live = status === 'live' && !!appStoreUrl;
+// Country-less link so Apple opens the visitor's own storefront.
+const enStoreUrl = appStoreUrl?.replace(/apps\.apple\.com\/[a-z]{2}\//, 'apps.apple.com/');
+const heroUrl = live ? tagAppStoreUrl(enStoreUrl, Astro.url.pathname, { position: 'hero' }) : undefined;
+const footerUrl = live ? tagAppStoreUrl(enStoreUrl, Astro.url.pathname, { position: 'footer' }) : undefined;
+const email = 'alexander.bergqvist@gmail.com';
+
+const title = 'Alice ABC: Learn to Read – phonics for kids in your own voice';
+const description =
+  'Alice ABC teaches children aged 4–7 to read with phonics: sounds, blending, words and sentences. Record your own voice. No ads, no data collected, works offline.';
+
+const alternates = {
+  'sv-SE': new URL('/alice-abc/', Astro.site).href,
+  'en-US': new URL('/en/alice-abc/', Astro.site).href,
+};
+
+const shots = [
+  { src: '/apps/alice-abc/en_1.webp', alt: 'Your child hears your voice: a parent records the letter sound T' },
+  { src: '/apps/alice-abc/en_2.webp', alt: 'Learns to read with sounds: s-u-n makes sun' },
+  { src: '/apps/alice-abc/en_3.webp', alt: 'The map with four levels: Sounds, Blending, Reading words and Sentences' },
+  { src: '/apps/alice-abc/en_4.webp', alt: 'Build the word: hear it, then build it letter by letter' },
+  { src: '/apps/alice-abc/en_5.webp', alt: '10+ games: Balloons, Memory and Build the word' },
+  { src: '/apps/alice-abc/en_6.webp', alt: 'Reads aloud on device: the child reads the word drum' },
+  { src: '/apps/alice-abc/en_7.webp', alt: 'Grown-ups area: progress, recorded sounds and practice time' },
+  { src: '/apps/alice-abc/en_8.webp', alt: 'Sticker reward – no ads, offline, no data' },
+];
+
+const levels = [
+  { t: 'Sounds', d: 'Your child learns what the letters say – the sound, not the name. Trace each letter and find the first sound in words.' },
+  { t: 'Blending', d: 'Sounds are pulled together into a word: s-u-n becomes sun. This is where it clicks.' },
+  { t: 'Reading words', d: 'Your child reads whole words and matches them to pictures. New words arrive when the old ones stick.' },
+  { t: 'Sentences', d: 'Short sentences built from words your child already knows – the last step from sounding out to reading.' },
+];
+
+const games = [
+  'Letter sounds with tracing',
+  'Balloons',
+  'First sound',
+  'Blending',
+  'Build the word',
+  'Memory',
+  'Missing word',
+  'Read aloud',
+];
+
+const faq = [
+  {
+    q: 'What age is Alice ABC for?',
+    a: 'Children aged 4–7. It starts with letter sounds and moves at your child’s pace all the way to sentences.',
+  },
+  {
+    q: 'Which languages are included?',
+    a: 'English and Swedish, in the same app – great for bilingual families. Choose the language in the grown-ups area.',
+  },
+  {
+    q: 'How do I record my own voice?',
+    a: 'Open the grown-ups area (the gear on the map, behind a parental gate) and choose Record. You can record every sound, word, sentence, instruction and cheer. Anything you have recorded replaces the synthetic voice.',
+  },
+  {
+    q: 'Why does the app need the microphone?',
+    a: 'Only for two things: when a parent records their voice, and for the Read aloud exercise if a parent turns it on. Speech recognition runs on the device using Apple’s frameworks. No audio or text leaves the device, and recordings are stored only on it.',
+  },
+  {
+    q: 'Does it need the internet?',
+    a: 'No. Alice ABC works fully offline. There are no servers and no accounts.',
+  },
+  {
+    q: 'How much does it cost?',
+    a: 'Free to start: all of level 1 (Sounds) and the first part of level 2 (Blending). Unlock everything with one purchase – no subscription. Family Sharing is included, so one purchase covers the whole family.',
+  },
+];
+
+const ldJson = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Alice ABC: Learn to Read',
+  description,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'iOS, iPadOS',
+  inLanguage: ['en', 'sv'],
+  url: new URL('/en/alice-abc/', Astro.site).href,
+  image: new URL('/apps/alice-abc/icon-256.webp', Astro.site).href,
+  audience: { '@type': 'PeopleAudience', suggestedMinAge: 4, suggestedMaxAge: 7 },
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+    availability: live ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
+  },
+  author: { '@type': 'Person', name: 'Alexander Bergqvist', url: 'https://alexanderbergqvist.com/' },
+  ...(live && { downloadUrl: enStoreUrl, installUrl: enStoreUrl }),
+};
+
+const appleSvg = 'M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z';
+---
+
+<BaseLayout title={title} description={description} htmlLang="en-US" hreflangAlternates={alternates} keywords={['phonics app', 'learn to read', 'reading app for kids', 'letter sounds', 'bilingual']}>
+  <script type="application/ld+json" set:html={JSON.stringify(ldJson)} />
+
+  <section class="relative overflow-hidden" style={`background: linear-gradient(135deg, ${accent}, ${accentDark ?? accent});`}>
+    <div class="max-w-6xl mx-auto px-6 py-16 md:py-24 text-white">
+      <div class="grid md:grid-cols-[180px_1fr] gap-8 md:gap-12 items-center">
+        <img src="/apps/alice-abc/icon-256.webp" alt="Alice ABC app icon" width="160" height="160" class="w-32 h-32 md:w-40 md:h-40 rounded-3xl shadow-2xl mx-auto md:mx-0" />
+        <div class="text-center md:text-left">
+          <span class="inline-block text-xs font-black uppercase tracking-widest opacity-80">Ages 4–7 · iPhone &amp; iPad</span>
+          <h1 class="mt-2 text-4xl md:text-6xl font-black tracking-tight">Alice ABC: Learn to Read</h1>
+          <p class="mt-3 text-xl md:text-2xl font-bold opacity-95">Phonics with your own voice</p>
+          <p class="mt-4 text-lg opacity-90 max-w-2xl">
+            Alice ABC teaches your child to read step by step: letter sounds, blending, reading words and
+            sentences. And the voice your child hears can be yours.
+          </p>
+          <div class="mt-8 flex flex-wrap gap-3 justify-center md:justify-start">
+            {live ? (
+              <a href={heroUrl} data-cta-position="hero" class="inline-flex items-center gap-3 rounded-xl px-5 py-3 font-bold bg-white text-ink hover:scale-[1.02] transition">
+                <svg viewBox="0 0 384 512" class="w-5 h-5 fill-current" aria-hidden="true"><path d={appleSvg} /></svg>
+                <span class="flex flex-col items-start leading-tight">
+                  <span class="text-[10px] font-medium opacity-80">Download on the</span>
+                  <span class="text-base font-bold">App Store</span>
+                </span>
+              </a>
+            ) : (
+              <span class="inline-flex items-center rounded-xl px-5 py-3 font-bold text-sm bg-white/20 text-white">Coming soon to the App Store</span>
+            )}
+            <a href="#price" class="inline-flex items-center rounded-xl px-5 py-3 font-bold text-sm border border-white/50 hover:bg-white/10">Free to start</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-6 py-10">
+    <ul class="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 md:grid md:grid-cols-4 md:overflow-visible">
+      {shots.map((s, i) => (
+        <li class="snap-start flex-shrink-0 w-[62%] sm:w-[40%] md:w-auto">
+          <img src={s.src} alt={s.alt} width="660" height="1434" loading={i < 2 ? 'eager' : 'lazy'} class="w-full h-auto block rounded-2xl border border-line shadow-md" />
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="bg-surface-2 border-y border-line py-16">
+    <div class="max-w-3xl mx-auto px-6">
+      <span class="text-xs font-black uppercase tracking-widest" style={`color: ${accent};`}>What makes Alice ABC different</span>
+      <h2 class="mt-2 text-2xl md:text-4xl font-black">Your voice, not a robot’s</h2>
+      <p class="mt-4 text-lg text-ink-2">
+        In the grown-ups area you can record every sound, word, sentence, instruction and cheer. Your child
+        hears <em>you</em> say “Well done!” or “mmm, like in mouse”. Start with a few sounds – the app shows
+        which ones come next – and add more over time.
+      </p>
+    </div>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-6 py-16">
+    <h2 class="text-2xl md:text-3xl font-black mb-8">How it works: four levels</h2>
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {levels.map((l, i) => (
+        <div class="bg-surface rounded-xl p-6 border border-line">
+          <span class="inline-flex w-8 h-8 rounded-full items-center justify-center text-white font-black text-sm" style={`background: ${accent};`}>{i + 1}</span>
+          <h3 class="mt-3 font-bold text-lg text-ink">{l.t}</h3>
+          <p class="mt-2 text-ink-2">{l.d}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="bg-surface-2 border-y border-line py-16">
+    <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-10">
+      <div>
+        <h2 class="text-2xl md:text-3xl font-black">10+ playful games</h2>
+        <p class="mt-3 text-ink-2">Every exercise is a short game. Alice cheers your child on, with stickers to collect along the way. The app adapts: tricky sounds come back more often.</p>
+        <ul class="mt-6 flex flex-wrap gap-2">
+          {games.map((g) => (
+            <li class="rounded-full border border-line bg-surface px-3 py-1.5 text-sm font-semibold text-ink-2">{g}</li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h2 class="text-2xl md:text-3xl font-black">Long and short vowels</h2>
+        <p class="mt-3 text-ink-2">
+          In Swedish, vowel length changes the meaning of a word (<em>mat</em> and <em>matta</em>). The Swedish
+          course trains your child to hear the difference. In <strong>Read aloud</strong> your child reads the word
+          out loud and the app listens – speech recognition runs on the device only.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-6 py-16">
+    <h2 class="text-2xl md:text-3xl font-black mb-8">Safe for kids</h2>
+    <div class="grid md:grid-cols-3 gap-4">
+      <div class="rounded-xl border border-line p-6"><h3 class="font-bold text-lg">No ads</h3><p class="mt-2 text-ink-2">No ads, no outbound links. Purchases and settings sit behind a parental gate.</p></div>
+      <div class="rounded-xl border border-line p-6"><h3 class="font-bold text-lg">Works offline</h3><p class="mt-2 text-ink-2">No server, no account, no sign-in. Everything works without the internet.</p></div>
+      <div class="rounded-xl border border-line p-6"><h3 class="font-bold text-lg">Data Not Collected</h3><p class="mt-2 text-ink-2">No analytics, no tracking, no third-party SDKs. <a class="underline" href="/alice-abc/integritet/#english">Privacy Policy</a>.</p></div>
+    </div>
+  </section>
+
+  <section id="price" class="bg-surface-2 border-y border-line py-16 scroll-mt-20">
+    <div class="max-w-3xl mx-auto px-6">
+      <h2 class="text-2xl md:text-3xl font-black">Free to start, one purchase for the whole family</h2>
+      <div class="mt-8 grid md:grid-cols-2 gap-4">
+        <div class="rounded-xl border border-line bg-surface p-6">
+          <h3 class="font-black text-lg">Free</h3>
+          <ul class="mt-3 space-y-2 text-ink-2">
+            <li>All of level 1: every letter sound</li>
+            <li>The first part of level 2 – your child blends their first words</li>
+            <li>Record your own voice</li>
+            <li>Progress overview for grown-ups</li>
+          </ul>
+        </div>
+        <div class="rounded-xl border-2 bg-surface p-6" style={`border-color: ${accent};`}>
+          <h3 class="font-black text-lg">Unlock everything</h3>
+          <ul class="mt-3 space-y-2 text-ink-2">
+            <li>The rest of level 2, level 3 Reading words and level 4 Sentences</li>
+            <li>All games and all stickers</li>
+            <li><strong>One-time purchase</strong> – no subscription</li>
+            <li><strong>Family Sharing</strong> included</li>
+          </ul>
+        </div>
+      </div>
+      <p class="mt-4 text-sm text-ink-3">Already bought it? Tap “Restore purchases” in the grown-ups area – see <a class="underline" href="/support/#alice-abc">support</a>.</p>
+    </div>
+  </section>
+
+  <section class="max-w-3xl mx-auto px-6 py-8">
+    <FAQ title="FAQ" items={faq} />
+  </section>
+
+  <section class="max-w-3xl mx-auto px-6 pb-20 text-center">
+    <p class="text-ink-2">Made by a Swedish dad for his daughter Alice.</p>
+    <div class="mt-6 inline-flex">
+      {live ? (
+        <a href={footerUrl} data-cta-position="footer" class="inline-flex items-center gap-3 rounded-xl px-5 py-3 font-bold text-sm bg-ink text-white hover:bg-ink-2 transition">
+          <svg viewBox="0 0 384 512" class="w-5 h-5 fill-current" aria-hidden="true"><path d={appleSvg} /></svg>
+          <span class="flex flex-col items-start leading-tight">
+            <span class="text-[10px] font-medium opacity-80">Download on the</span>
+            <span class="text-base font-bold">App Store</span>
+          </span>
+        </a>
+      ) : (
+        <span class="inline-flex items-center rounded-xl px-5 py-3 font-bold text-sm bg-surface-2 text-ink-3">Coming soon to the App Store</span>
+      )}
+    </div>
+    <p class="mt-6 text-sm text-ink-3">
+      Questions? Email <a class="underline" href={`mailto:${email}?subject=Alice%20ABC`}>{email}</a> ·
+      <a class="underline" href="/alice-abc/integritet/#english">Privacy Policy</a> ·
+      <a class="underline" href="/support/#alice-abc">Support</a> ·
+      <a class="underline" href="/alice-abc/" hreflang="sv">På svenska</a>
+    </p>
+  </section>
+</BaseLayout>

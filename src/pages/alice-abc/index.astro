@@ -1,0 +1,329 @@
+---
+/**
+ * Alice ABC: Lär dig läsa — Swedish landing page (custom layout, so the
+ * [app] template skips it via `customPage`). English twin: /en/alice-abc/.
+ * Privacy policy: /alice-abc/integritet/ (the app links to exactly that).
+ *
+ * The App Store button appears once the collection entry is
+ * `status: 'live'`; until then "Kommer snart i App Store" is shown.
+ */
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../components/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FAQ from '../../components/FAQ.astro';
+import { tagAppStoreUrl } from '../../lib/appstore';
+
+const app = (await getEntry('apps', 'alice-abc'))!;
+const { appStoreUrl, status, accent, accentDark, keywords } = app.data;
+const live = status === 'live' && !!appStoreUrl;
+const heroUrl = live ? tagAppStoreUrl(appStoreUrl, Astro.url.pathname, { position: 'hero' }) : undefined;
+const footerUrl = live ? tagAppStoreUrl(appStoreUrl, Astro.url.pathname, { position: 'footer' }) : undefined;
+const email = 'alexander.bergqvist@gmail.com';
+
+const title = app.data.seoTitle!;
+const description = app.data.metaDescription!;
+
+const alternates = {
+  'sv-SE': new URL('/alice-abc/', Astro.site).href,
+  'en-US': new URL('/en/alice-abc/', Astro.site).href,
+};
+
+const shots = [
+  { src: '/apps/alice-abc/sv_1.webp', alt: 'Barnet hör din röst: föräldern spelar in bokstavsljudet L' },
+  { src: '/apps/alice-abc/sv_2.webp', alt: 'Ljuda ihop: s-o-l blir sol' },
+  { src: '/apps/alice-abc/sv_3.webp', alt: 'Kartan med fyra nivåer: Ljud, Ljuda ihop, Läsa ord och Meningar' },
+  { src: '/apps/alice-abc/sv_4.webp', alt: 'Lång eller kort? Barnet hör vokalen i ordet mål' },
+  { src: '/apps/alice-abc/sv_5.webp', alt: 'Över tio spel: Ballonger, Memory och Bygg ordet' },
+  { src: '/apps/alice-abc/sv_6.webp', alt: 'Läs högt: barnet läser ordet mål och taligenkänningen körs på telefonen' },
+  { src: '/apps/alice-abc/sv_7.webp', alt: 'Föräldradelen: framsteg, inspelade ljud och övningstid' },
+  { src: '/apps/alice-abc/sv_8.webp', alt: 'Belöning med klistermärken – ingen reklam, offline och ingen data' },
+];
+
+const levels = [
+  {
+    t: 'Ljud',
+    d: 'Barnet lär sig vad bokstäverna säger – ljudet, inte namnet. "Mmm som i mus." Spåra bokstaven med fingret och hitta första ljudet i ord.',
+  },
+  {
+    t: 'Ljuda ihop',
+    d: 'Ljuden dras ihop till ett ord: s-o-l blir sol. Det är här det klickar, när barnet hör att ljuden faktiskt blir ett ord.',
+  },
+  {
+    t: 'Läsa ord',
+    d: 'Barnet läser hela ord själv och matchar dem med bilder. Nya ord kommer när de gamla sitter.',
+  },
+  {
+    t: 'Meningar',
+    d: 'Korta meningar att läsa och förstå, med ord barnet redan kan. Sista steget från att ljuda till att läsa.',
+  },
+];
+
+const games = [
+  'Bokstavsljud med spårning',
+  'Ballonger',
+  'Första ljudet',
+  'Ljuda ihop',
+  'Lång eller kort?',
+  'Bygg ordet',
+  'Memory',
+  'Vilket ord saknas?',
+  'Läs högt',
+];
+
+const faq = [
+  {
+    q: 'Vilken ålder passar Alice ABC för?',
+    a: 'Barn 4–7 år, alltså från förskolan till och med första klass. Appen börjar med bokstavsljud och går i egen takt hela vägen till meningar, så den fungerar både för den som precis blivit nyfiken på bokstäver och för den som håller på att knäcka läskoden.',
+  },
+  {
+    q: 'Vilka språk finns?',
+    a: 'Svenska och engelska, i samma app. Du väljer språk i föräldradelen. Det passar tvåspråkiga familjer och svenska barn som bor utomlands.',
+  },
+  {
+    q: 'Hur spelar jag in min egen röst?',
+    a: 'Öppna föräldradelen (kugghjulet på kartan, bakom en föräldraspärr) och välj Spela in. Där kan du spela in varje ljud, ord, mening, instruktion och beröm. Det du har spelat in använder Alice i stället för talsyntesen. Du kan börja med några få ljud och fylla på efterhand.',
+  },
+  {
+    q: 'Varför behöver appen mikrofonen?',
+    a: 'Bara till två saker: när en förälder spelar in sin röst, och i övningen Läs högt om föräldern har slagit på den. Taligenkänningen körs på telefonen eller surfplattan med Apples egna ramverk. Inget ljud och ingen text skickas någonstans, och inspelningarna sparas bara på enheten.',
+  },
+  {
+    q: 'Behövs internet?',
+    a: 'Nej. Alice ABC fungerar helt offline, även på flyget eller i stugan. Appen har inga servrar och inga konton.',
+  },
+  {
+    q: 'Vad kostar det?',
+    a: 'Det är gratis att börja: hela nivå 1 (Ljud) och första delen av nivå 2 (Ljuda ihop). Hela appen låser du upp med ett engångsköp på 129 kr, utan prenumeration. Familjedelning ingår, så ett köp räcker för hela familjen.',
+  },
+  {
+    q: 'Kan barnet råka köpa något?',
+    a: 'Nej. Köpet och inställningarna ligger i föräldradelen bakom en föräldraspärr. Barnet ser aldrig något pris eller någon köpknapp.',
+  },
+];
+
+const ldJson = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Alice ABC: Lär dig läsa',
+  description,
+  applicationCategory: 'EducationalApplication',
+  operatingSystem: 'iOS, iPadOS',
+  inLanguage: ['sv', 'en'],
+  url: new URL('/alice-abc/', Astro.site).href,
+  image: new URL('/apps/alice-abc/icon-256.webp', Astro.site).href,
+  audience: { '@type': 'PeopleAudience', suggestedMinAge: 4, suggestedMaxAge: 7 },
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'SEK',
+    availability: live ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
+  },
+  author: { '@type': 'Person', name: 'Alexander Bergqvist', url: 'https://alexanderbergqvist.com/' },
+  ...(live && { downloadUrl: appStoreUrl, installUrl: appStoreUrl }),
+};
+---
+
+<BaseLayout title={title} description={description} keywords={keywords} hreflangAlternates={alternates}>
+  <script type="application/ld+json" set:html={JSON.stringify(ldJson)} />
+
+  <section class="relative overflow-hidden" style={`background: linear-gradient(135deg, ${accent}, ${accentDark ?? accent});`}>
+    <div class="max-w-6xl mx-auto px-6 py-16 md:py-24 text-white">
+      <div class="grid md:grid-cols-[180px_1fr] gap-8 md:gap-12 items-center">
+        <img
+          src="/apps/alice-abc/icon-256.webp"
+          alt="Alice ABC appikon"
+          width="160"
+          height="160"
+          class="w-32 h-32 md:w-40 md:h-40 rounded-3xl shadow-2xl mx-auto md:mx-0"
+        />
+        <div class="text-center md:text-left">
+          <span class="inline-block text-xs font-black uppercase tracking-widest opacity-80">Barn 4–7 år · iPhone och iPad</span>
+          <h1 class="mt-2 text-4xl md:text-6xl font-black tracking-tight">Alice ABC: Lär dig läsa</h1>
+          <p class="mt-3 text-xl md:text-2xl font-bold opacity-95">Ljudmetoden med din egen röst</p>
+          <p class="mt-4 text-lg opacity-90 max-w-2xl">
+            Alice ABC lär ditt barn att läsa steg för steg, som i förskoleklassen: bokstavsljud, ljuda ihop,
+            läsa ord och meningar. Och rösten barnet hör kan vara din.
+          </p>
+          <div class="mt-8 flex flex-wrap gap-3 justify-center md:justify-start">
+            {live ? (
+              <a
+                href={heroUrl}
+                data-cta-position="hero"
+                class="inline-flex items-center gap-3 rounded-xl px-5 py-3 font-bold bg-white text-ink hover:scale-[1.02] transition"
+              >
+                <svg viewBox="0 0 384 512" class="w-5 h-5 fill-current" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" /></svg>
+                <span class="flex flex-col items-start leading-tight">
+                  <span class="text-[10px] font-medium opacity-80">Ladda ner i</span>
+                  <span class="text-base font-bold">App Store</span>
+                </span>
+              </a>
+            ) : (
+              <span class="inline-flex items-center rounded-xl px-5 py-3 font-bold text-sm bg-white/20 text-white">
+                Kommer snart i App Store
+              </span>
+            )}
+            <a href="#pris" class="inline-flex items-center rounded-xl px-5 py-3 font-bold text-sm border border-white/50 hover:bg-white/10">
+              Gratis att börja
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="max-w-6xl mx-auto px-6 pt-6">
+    <Breadcrumbs trail={[{ name: 'Hem', url: '/' }, { name: 'Appar', url: '/appar/' }, { name: 'Alice ABC' }]} />
+  </div>
+
+  <section class="max-w-6xl mx-auto px-6 py-10">
+    <ul class="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 md:grid md:grid-cols-4 md:overflow-visible">
+      {shots.map((s, i) => (
+        <li class="snap-start flex-shrink-0 w-[62%] sm:w-[40%] md:w-auto">
+          <img src={s.src} alt={s.alt} width="660" height="1434" loading={i < 2 ? 'eager' : 'lazy'} class="w-full h-auto block rounded-2xl border border-line shadow-md" />
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="bg-surface-2 border-y border-line py-16">
+    <div class="max-w-3xl mx-auto px-6">
+      <span class="text-xs font-black uppercase tracking-widest" style={`color: ${accent};`}>Det som gör Alice ABC unik</span>
+      <h2 class="mt-2 text-2xl md:text-4xl font-black">Din röst – inte en robots</h2>
+      <p class="mt-4 text-lg text-ink-2">
+        I föräldradelen kan du spela in varje ljud, ord, mening, instruktion och beröm. Då är det mamma eller
+        pappa barnet hör när Alice säger "Bra jobbat!" eller "mmm som i mus". Barn lyssnar på rösterna de
+        känner, och du hör själv exakt vad barnet övar på.
+      </p>
+      <p class="mt-4 text-ink-2">
+        Du behöver inte spela in allt på en gång. Börja med de första ljuden – appen visar vilka som kommer
+        härnäst – och fyll på efterhand. Det du inte har spelat in läser talsyntesen.
+      </p>
+    </div>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-6 py-16">
+    <h2 class="text-2xl md:text-3xl font-black mb-3">Så fungerar det: fyra nivåer</h2>
+    <p class="text-ink-2 mb-8 max-w-2xl">
+      Ljudmetoden är samma väg som förskoleklassen tar. Alice ABC följer den på en karta där barnet går
+      vidare när det sitter – och det som är svårt kommer tillbaka oftare.
+    </p>
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {levels.map((l, i) => (
+        <div class="bg-surface rounded-xl p-6 border border-line">
+          <span class="inline-flex w-8 h-8 rounded-full items-center justify-center text-white font-black text-sm" style={`background: ${accent};`}>{i + 1}</span>
+          <h3 class="mt-3 font-bold text-lg text-ink">{l.t}</h3>
+          <p class="mt-2 text-ink-2">{l.d}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="bg-surface-2 border-y border-line py-16">
+    <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-10">
+      <div>
+        <h2 class="text-2xl md:text-3xl font-black">Över tio spel</h2>
+        <p class="mt-3 text-ink-2">
+          Varje övning är ett kort spel, så att läsningen känns som lek. Alice peppar, och barnet samlar
+          klistermärken längs vägen.
+        </p>
+        <ul class="mt-6 flex flex-wrap gap-2">
+          {games.map((g) => (
+            <li class="rounded-full border border-line bg-surface px-3 py-1.5 text-sm font-semibold text-ink-2">{g}</li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h2 class="text-2xl md:text-3xl font-black">Lång eller kort vokal</h2>
+        <p class="mt-3 text-ink-2">
+          Svenska har långa och korta vokaler, och de ändrar vad ordet betyder: <em>mat</em> och <em>matta</em>,
+          <em>glas</em> och <em>glass</em>. Många läsappar är översatta och hoppar över det. I Alice ABC
+          övar barnet på att höra skillnaden, så som svenska faktiskt låter.
+        </p>
+        <p class="mt-4 text-ink-2">
+          I övningen <strong>Läs högt</strong> läser barnet ordet högt och appen lyssnar. Taligenkänningen körs
+          på enheten – inget ljud lämnar telefonen.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-6xl mx-auto px-6 py-16">
+    <h2 class="text-2xl md:text-3xl font-black mb-8">Tryggt för barn</h2>
+    <div class="grid md:grid-cols-3 gap-4">
+      <div class="rounded-xl border border-line p-6">
+        <h3 class="font-bold text-lg">Ingen reklam</h3>
+        <p class="mt-2 text-ink-2">Inga annonser, inga länkar ut och inga distraktioner. Köp och inställningar ligger bakom en föräldraspärr.</p>
+      </div>
+      <div class="rounded-xl border border-line p-6">
+        <h3 class="font-bold text-lg">Fungerar offline</h3>
+        <p class="mt-2 text-ink-2">Ingen server, inget konto, ingen inloggning. Allt fungerar utan internet, även på flyget.</p>
+      </div>
+      <div class="rounded-xl border border-line p-6">
+        <h3 class="font-bold text-lg">Ingen data samlas in</h3>
+        <p class="mt-2 text-ink-2">
+          Ingen analys, ingen spårning och inga tredjepartsverktyg. Inspelningar och framsteg stannar på enheten.
+          <a class="underline" href="/alice-abc/integritet/">Integritetspolicy</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="pris" class="bg-surface-2 border-y border-line py-16 scroll-mt-20">
+    <div class="max-w-3xl mx-auto px-6">
+      <h2 class="text-2xl md:text-3xl font-black">Pris: gratis att börja, ett köp för hela familjen</h2>
+      <div class="mt-8 grid md:grid-cols-2 gap-4">
+        <div class="rounded-xl border border-line bg-surface p-6">
+          <h3 class="font-black text-lg">Gratis</h3>
+          <ul class="mt-3 space-y-2 text-ink-2">
+            <li>Hela nivå 1: alla bokstavsljud</li>
+            <li>Första delen av nivå 2 – barnet hinner ljuda sina första ord</li>
+            <li>Spela in din egen röst</li>
+            <li>Föräldraöversikt med framsteg</li>
+            <li>Svenska och engelska</li>
+          </ul>
+        </div>
+        <div class="rounded-xl border-2 bg-surface p-6" style={`border-color: ${accent};`}>
+          <h3 class="font-black text-lg">Hela appen – 129 kr</h3>
+          <ul class="mt-3 space-y-2 text-ink-2">
+            <li>Resten av nivå 2, nivå 3 Läsa ord och nivå 4 Meningar</li>
+            <li>Alla spel, bland annat Lång eller kort?, Bygg ordet, Memory och Läs högt</li>
+            <li>Alla klistermärken</li>
+            <li><strong>Engångsköp</strong> – ingen prenumeration</li>
+            <li><strong>Familjedelning</strong> ingår</li>
+          </ul>
+        </div>
+      </div>
+      <p class="mt-4 text-sm text-ink-3">
+        Köpet görs i föräldradelen och hanteras av Apple. Har du redan köpt? Välj "Återställ köp" i föräldradelen –
+        se <a class="underline" href="/support/#alice-abc">support</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="max-w-3xl mx-auto px-6 py-8">
+    <FAQ items={faq} />
+  </section>
+
+  <section class="max-w-3xl mx-auto px-6 pb-20 text-center">
+    <p class="text-ink-2">Gjord av en svensk pappa till hans dotter Alice.</p>
+    <div class="mt-6 inline-flex">
+      {live ? (
+        <a href={footerUrl} data-cta-position="footer" class="inline-flex items-center gap-3 rounded-xl px-5 py-3 font-bold text-sm bg-ink text-white hover:bg-ink-2 transition">
+          <svg viewBox="0 0 384 512" class="w-5 h-5 fill-current" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" /></svg>
+          <span class="flex flex-col items-start leading-tight">
+            <span class="text-[10px] font-medium opacity-80">Ladda ner i</span>
+            <span class="text-base font-bold">App Store</span>
+          </span>
+        </a>
+      ) : (
+        <span class="inline-flex items-center rounded-xl px-5 py-3 font-bold text-sm bg-surface-2 text-ink-3">Kommer snart i App Store</span>
+      )}
+    </div>
+    <p class="mt-6 text-sm text-ink-3">
+      Frågor? Mejla <a class="underline" href={`mailto:${email}?subject=Alice%20ABC`}>{email}</a> ·
+      <a class="underline" href="/alice-abc/integritet/">Integritetspolicy</a> ·
+      <a class="underline" href="/support/#alice-abc">Support</a> ·
+      <a class="underline" href="/en/alice-abc/" hreflang="en">In English</a>
+    </p>
+  </section>
+</BaseLayout>

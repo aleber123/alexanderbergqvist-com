@@ -23,6 +23,7 @@
  *  src/content/apps/*.json (checked at runtime in BaseLayout: an
  *  unknown slug simply resolves to no app). */
 export const APP_SLUGS = [
+  'alice-abc',
   'andas',
   'fodelsedagar',
   'plantera',

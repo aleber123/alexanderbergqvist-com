@@ -1,0 +1,39 @@
+{
+  "name": "Alice ABC: Lär dig läsa",
+  "seoTitle": "Alice ABC – lär barn läsa med ljudmetoden och din egen röst",
+  "metaDescription": "Alice ABC lär barn 4–7 år att läsa med ljudmetoden: ljud, ljuda ihop, ord och meningar. Spela in din egen röst. Ingen reklam, ingen data, fungerar offline.",
+  "h1": "Alice ABC: Lär dig läsa",
+  "tagline": "Ljudmetoden med din egen röst – läsappen för barn 4–7 år.",
+  "description": "Alice ABC lär barn 4–7 år att läsa steg för steg med ljudmetoden: bokstavsljud, ljuda ihop, läsa ord och meningar. Föräldern kan spela in sin egen röst för allt Alice säger. Ingen reklam, inga konton, ingen data samlas in och allt fungerar offline.",
+  "icon": "/apps/alice-abc.webp",
+  "accent": "#1F6E72",
+  "accentDark": "#154F52",
+  "appStoreUrl": "https://apps.apple.com/se/app/id6829534435",
+  "bundleId": "com.alexanderbergqvist.aliceabc",
+  "category": "Barn",
+  "keywords": [
+    "ljudmetoden",
+    "lära sig läsa",
+    "läsapp barn",
+    "bokstavsljud",
+    "läsinlärning",
+    "förskoleklass"
+  ],
+  "features": [
+    "Spela in din egen röst – barnet hör mamma eller pappa",
+    "Ljudmetoden i fyra nivåer: Ljud, Ljuda ihop, Läsa ord, Meningar",
+    "Över tio spel, bland annat Ballonger, Bygg ordet och Memory",
+    "Lång eller kort vokal – hör skillnaden mellan mat och matta",
+    "Svenska och engelska i samma app",
+    "Ingen reklam, inga konton, ingen data – fungerar offline"
+  ],
+  "screenshots": [
+    { "src": "/apps/alice-abc/sv_1.webp", "alt": "Barnet hör din röst: föräldern spelar in bokstavsljudet L" },
+    { "src": "/apps/alice-abc/sv_2.webp", "alt": "Ljuda ihop: s-o-l blir sol" },
+    { "src": "/apps/alice-abc/sv_3.webp", "alt": "Kartan med fyra nivåer: Ljud, Ljuda ihop, Läsa ord och Meningar" },
+    { "src": "/apps/alice-abc/sv_4.webp", "alt": "Lång eller kort vokal i ordet mål" }
+  ],
+  "status": "soon",
+  "customPage": true,
+  "order": 15
+}

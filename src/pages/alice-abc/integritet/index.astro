@@ -1,0 +1,177 @@
+---
+/**
+ * Alice ABC privacy policy (sv + English section). The app links to
+ * exactly this URL, so keep the path stable. Same structure as the
+ * shared /integritet/ page.
+ */
+import BaseLayout from '../../../components/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+
+const updated = '3 november 2026';
+const updatedEn = 'November 3, 2026';
+const email = 'alexander.bergqvist@gmail.com';
+---
+
+<BaseLayout
+  title="Integritetspolicy för Alice ABC / Privacy Policy"
+  description="Integritetspolicy för Alice ABC: Lär dig läsa. Ingen data samlas in, inga konton, ingen reklam, ingen spårning. Inspelningar stannar på enheten. / Privacy Policy for Alice ABC."
+>
+  <article class="max-w-3xl mx-auto px-6 py-8 md:py-12">
+    <Breadcrumbs trail={[{ name: 'Hem', url: '/' }, { name: 'Alice ABC', url: '/alice-abc/' }, { name: 'Integritetspolicy' }]} />
+    <h1 class="mt-6 text-3xl md:text-4xl font-black tracking-tight">Integritetspolicy för Alice ABC</h1>
+    <p class="mt-2 text-ink-3 text-sm">
+      Senast uppdaterad: {updated} · <a href="#english">English version below ↓</a>
+    </p>
+
+    <div class="prose mt-8">
+      <p>
+        Den här policyn gäller iOS- och iPadOS-appen <strong>Alice ABC: Lär dig läsa</strong>
+        ("appen"), en läsapp för barn 4–7 år. Personuppgiftsansvarig är Alexander Bergqvist,
+        Sverige ("vi").
+      </p>
+
+      <h2>Sammanfattning</h2>
+      <ul>
+        <li><strong>Ingen data samlas in.</strong> Appen skickar inga uppgifter om dig eller ditt barn till oss eller till någon annan.</li>
+        <li><strong>Inga konton</strong> och ingen inloggning.</li>
+        <li><strong>Ingen reklam, ingen analys och ingen spårning.</strong> Appen innehåller inga tredjeparts-SDK:er.</li>
+        <li><strong>Inspelningar stannar på enheten</strong> och laddas aldrig upp.</li>
+        <li><strong>Köp</strong> hanteras av Apple. Vi får inga personuppgifter.</li>
+      </ul>
+
+      <h2>Data som stannar på enheten</h2>
+      <p>
+        Barnets framsteg (vilka bokstäver och ord barnet kan, klistermärken, övningstid) och
+        appens inställningar sparas bara lokalt på enheten. Vi har inga servrar som tar emot
+        något och kan inte se uppgifterna.
+      </p>
+
+      <h2>Mikrofon och inspelningar</h2>
+      <p>Mikrofonen används bara i två fall:</p>
+      <ol>
+        <li>när en förälder spelar in sin egen röst i föräldradelen, och</li>
+        <li>i övningen "Läs högt", om en förälder har slagit på den.</li>
+      </ol>
+      <p>
+        Behörigheten efterfrågas bara från föräldradelen, som ligger bakom en föräldraspärr.
+        Inspelningarna sparas bara på enheten och laddas aldrig upp. De kan ingå i din egen
+        iCloud- eller datorsäkerhetskopia av enheten, som vi inte har någon åtkomst till. Du
+        kan radera enskilda inspelningar i föräldradelen.
+      </p>
+
+      <h2>Taligenkänning</h2>
+      <p>
+        I "Läs högt" körs taligenkänningen helt på enheten med Apples egna ramverk. Varken
+        ljud eller text lämnar enheten, och det som barnet säger sparas inte. Om enheten inte
+        stöder taligenkänning på enheten används ingen server som reserv – i stället bedömer
+        en vuxen svaret.
+      </p>
+
+      <h2>Köp</h2>
+      <p>
+        Engångsköpet "Hela appen" görs i föräldradelen och hanteras helt av Apple via App Store.
+        Appen kontrollerar bara med App Store om köpet finns. Vi får inga personuppgifter eller
+        betaluppgifter.
+      </p>
+
+      <h2>Barn</h2>
+      <p>
+        Appen är gjord för barn och ligger i App Stores kategori för barn (Kids). Vi samlar inte
+        in några personuppgifter från barn, och därför behövs inget föräldrasamtycke för
+        behandling (GDPR art. 8, COPPA). Köp, inställningar och inspelning ligger bakom en
+        föräldraspärr, och appen har inga länkar ut och ingen reklam.
+      </p>
+
+      <h2>Radera data och dina rättigheter</h2>
+      <p>
+        Eftersom vi inte samlar in några uppgifter har vi ingen data om dig eller ditt barn att
+        lämna ut eller radera. All data i appen raderas när du tar bort appen från enheten.
+        Du kan alltid klaga hos Integritetsskyddsmyndigheten (IMY).
+      </p>
+
+      <h2>Ändringar och kontakt</h2>
+      <p>
+        Ändringar publiceras på den här sidan med nytt datum. Frågor om integritet:
+        <a href={`mailto:${email}`}>{email}</a>. Alexander Bergqvist, Sverige.
+      </p>
+      <p>
+        Se även den gemensamma <a href="/integritet/">integritetspolicyn för alla appar</a>
+        och <a href="/support/#alice-abc">support för Alice ABC</a>.
+      </p>
+
+      <hr />
+
+      <h2 id="english">Privacy Policy – Alice ABC (English)</h2>
+      <p class="text-ink-3 text-sm">Last updated: {updatedEn}</p>
+      <p>
+        This policy applies to the iOS and iPadOS app <strong>Alice ABC: Learn to Read</strong>
+        (the "app"), a reading app for children aged 4–7. The data controller is Alexander
+        Bergqvist, Sweden ("we").
+      </p>
+
+      <h3>Summary</h3>
+      <ul>
+        <li><strong>No data is collected.</strong> The app sends no information about you or your child to us or to anyone else.</li>
+        <li><strong>No accounts</strong> and no sign-in.</li>
+        <li><strong>No ads, no analytics and no tracking.</strong> The app contains no third-party SDKs.</li>
+        <li><strong>Recordings stay on the device</strong> and are never uploaded.</li>
+        <li><strong>Purchases</strong> are handled by Apple. We receive no personal data.</li>
+      </ul>
+
+      <h3>Data stored on the device</h3>
+      <p>
+        Your child's progress (letters and words learned, stickers, practice time) and the app
+        settings are stored only on the device. We run no servers that receive anything and
+        cannot see this data.
+      </p>
+
+      <h3>Microphone and recordings</h3>
+      <p>The microphone is used only:</p>
+      <ol>
+        <li>when a parent records their own voice in the grown-ups area, and</li>
+        <li>in the "Read aloud" exercise, if a parent has turned it on.</li>
+      </ol>
+      <p>
+        Permission is requested only from the grown-ups area, which sits behind a parental gate.
+        Recordings are stored only on the device and are never uploaded. They may be included in
+        your own iCloud or computer backup of the device, which we have no access to. You can
+        delete individual recordings in the grown-ups area.
+      </p>
+
+      <h3>Speech recognition</h3>
+      <p>
+        In "Read aloud", speech recognition runs entirely on the device using Apple's own
+        frameworks. No audio or text leaves the device, and what your child says is not stored.
+        If the device does not support on-device recognition, no server is used as a fallback –
+        a grown-up judges the answer instead.
+      </p>
+
+      <h3>Purchases</h3>
+      <p>
+        The one-time "Unlock everything" purchase is made in the grown-ups area and is handled
+        entirely by Apple through the App Store. The app only checks with the App Store whether
+        the purchase exists. We receive no personal or payment data.
+      </p>
+
+      <h3>Children</h3>
+      <p>
+        The app is made for children and is listed in the App Store Kids category. We collect no
+        personal information from children, so no parental consent for processing is required
+        (COPPA, GDPR Art. 8). Purchases, settings and recording sit behind a parental gate, and
+        the app has no outbound links and no ads.
+      </p>
+
+      <h3>Deleting data and your rights</h3>
+      <p>
+        Because we collect no data, we hold nothing about you or your child to access or delete.
+        All data in the app is deleted when you delete the app from the device.
+      </p>
+
+      <h3>Changes and contact</h3>
+      <p>
+        Changes are published on this page with a new date. Privacy questions:
+        <a href={`mailto:${email}`}>{email}</a>. Alexander Bergqvist, Sweden.
+      </p>
+    </div>
+  </article>
+</BaseLayout>
