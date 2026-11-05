@@ -33,7 +33,7 @@
     { "src": "/apps/alice-abc/sv_3.webp", "alt": "Kartan med fyra nivåer: Ljud, Ljuda ihop, Läsa ord och Meningar" },
     { "src": "/apps/alice-abc/sv_4.webp", "alt": "Lång eller kort vokal i ordet mål" }
   ],
-  "status": "soon",
+  "status": "live",
   "customPage": true,
   "order": 15
 }
