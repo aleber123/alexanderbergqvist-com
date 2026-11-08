@@ -25,6 +25,7 @@ const description =
 const alternates = {
   'sv-SE': new URL('/alice-abc/', Astro.site).href,
   'en-US': new URL('/en/alice-abc/', Astro.site).href,
+  'de-DE': new URL('/de/alice-abc/', Astro.site).href,
 };
 
 const shots = [
@@ -257,7 +258,8 @@ const appleSvg = 'M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84
       Questions? Email <a class="underline" href={`mailto:${email}?subject=Alice%20ABC`}>{email}</a> ·
       <a class="underline" href="/alice-abc/integritet/#english">Privacy Policy</a> ·
       <a class="underline" href="/support/#alice-abc">Support</a> ·
-      <a class="underline" href="/alice-abc/" hreflang="sv">På svenska</a>
+      <a class="underline" href="/alice-abc/" hreflang="sv">På svenska</a> ·
+      <a class="underline" href="/de/alice-abc/" hreflang="de">Auf Deutsch</a>
     </p>
   </section>
 </BaseLayout>
