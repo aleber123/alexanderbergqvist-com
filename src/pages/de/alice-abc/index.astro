@@ -13,7 +13,7 @@ import BaseLayout from '../../../components/BaseLayout.astro';
 import FAQ from '../../../components/FAQ.astro';
 import { tagAppStoreUrl } from '../../../lib/appstore';
 
-const GERMAN_LIVE = false;
+const GERMAN_LIVE = true;
 
 const app = (await getEntry('apps', 'alice-abc'))!;
 const { appStoreUrl, status, accent, accentDark } = app.data;
