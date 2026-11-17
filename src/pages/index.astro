@@ -2,6 +2,7 @@
 import { LOCALES, LOCALE_BCP47, articleUrl } from '../i18n/locales';
 import { getCollection } from 'astro:content';
 import BaseLayout from '../components/BaseLayout.astro';
+import { VERKTYG } from '../data/verktyg';
 import Stat from '../components/Stat.astro';
 
 const apps = (await getCollection('apps')).sort(
@@ -21,7 +22,21 @@ const recentArticles = allArticles
 // rest because it's what I'm shipping this week.
 const wip = ['andas'];
 
+// Wage tools first: /verktyg/ has been in the nav since September but Google
+// had still not crawled it in November ("discovered – not indexed"), so the
+// home page — the page crawled most often — links to them directly.
+const wageTools = VERKTYG.filter((v) =>
+  ['/verktyg/ob-tillagg/', '/verktyg/timlon-efter-skatt/'].includes(v.href) ||
+  v.href.startsWith('/verktyg/lonedag-')
+).map(({ href, title, description }) => ({ href, title, description }));
+
 const tools = [
+  ...wageTools,
+  {
+    href: '/tidrapport/tidrapport-mall/',
+    title: 'Tidrapport-mall',
+    description: 'Gratis mall i Excel och PDF för vecka och månad, med OB-kolumner.',
+  },
   {
     href: '/snusfri-resa/kalkylator/',
     title: 'Snusfri-kalkylator',
