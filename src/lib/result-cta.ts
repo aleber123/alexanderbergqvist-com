@@ -41,3 +41,15 @@ export function nextBirthdaySentence(month: number, day: number): string {
 
 export const FODELSEDAGAR_PITCH =
   'Få påminnelse om födelsedagar – ladda ner Födelsedagar.';
+
+/* Intent-matched pitches for the /fodelsedagar/ tools (GSC audit
+   2026-11: the generic pitch above ignored what the visitor came for).
+   Honest about pricing: free to download, Premium in-app. The app shows
+   age and the western zodiac sign per person — NOT the Chinese one, so
+   that page's pitch doesn't claim it. */
+export const PITCH_STJARNTECKEN =
+  'Appen visar stjärntecken och ålder för alla du känner – och påminner innan de fyller år. Gratis att ladda ner.';
+export const PITCH_KINESISKT =
+  'Samla hela familjens födelsedagar i appen – den visar hur gamla alla blir och påminner innan de fyller år. Gratis att ladda ner.';
+export const PITCH_SAMMA_FODELSEDAG =
+  'Samla födelsedagarna för alla du känner i appen – den påminner dig i god tid så att du hinner gratta. Gratis att ladda ner.';

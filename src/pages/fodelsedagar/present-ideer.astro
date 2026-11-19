@@ -4,6 +4,7 @@ import BaseLayout from '../../components/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
+import ResultCta from '../../components/ResultCta.astro';
 
 const app = await getEntry('apps', 'fodelsedagar');
 const appStoreId = app?.data.appStoreUrl?.match(/\/id(\d+)/)?.[1];
@@ -273,6 +274,14 @@ const bands: AgeBand[] = [
         id="ideas"
         class="mt-4 grid gap-3"
       ></div>
+
+      {/* CTA right under the ideas, where intent peaks (GSC 2026-11: the
+          only badge sat in a box further down). ct=result_present-ideer. */}
+      <ResultCta
+        app="fodelsedagar"
+        campaign="present-ideer"
+        text="Spara presentidéerna per person i appen och få en påminnelse i god tid före födelsedagen. Gratis att ladda ner."
+      />
     </div>
 
     <div class="mt-10 rounded-2xl border border-line bg-gradient-to-br from-pink-50 to-surface p-6 md:p-8">
@@ -337,6 +346,8 @@ const bands: AgeBand[] = [
 </BaseLayout>
 
 <script>
+  import { showResultCta } from '../../lib/result-cta';
+
   type Idea = { title: string; price: string; emoji: string };
   type AgeBand = {
     range: string;
@@ -383,6 +394,7 @@ const bands: AgeBand[] = [
         </div>`,
       )
       .join('');
+    showResultCta();
   }
 
   ageInp.addEventListener('input', render);

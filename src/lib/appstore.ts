@@ -61,6 +61,28 @@ export function campaignWithPosition(campaign: string, position?: CtaPosition): 
   return (prefix + campaign).slice(0, 40);
 }
 
+/** App Store Custom Product Pages, chosen by page path. A CPP shows
+ *  screenshots/text matching the intent of the page the visitor came
+ *  from; Apple selects it via the `ppid` query param. Only applied when
+ *  the link points at the matching app id, so e.g. a different app's
+ *  badge on the same page is left alone.
+ *    Födelsedagar "Namnsdagar" CPP (approved, sv + da) → /namnsdag/** */
+const CUSTOM_PRODUCT_PAGES: { pathPrefix: string; appId: string; ppid: string }[] = [
+  {
+    pathPrefix: '/namnsdag/',
+    appId: '6758899294',
+    ppid: 'da7269dd-ee30-4593-bd09-226acd38af47',
+  },
+];
+
+export function customProductPageFor(pathname: string, appUrl: URL): string | undefined {
+  const appId = appUrl.pathname.match(/\/id(\d+)/)?.[1];
+  if (!appId) return undefined;
+  return CUSTOM_PRODUCT_PAGES.find(
+    (c) => c.appId === appId && pathname.startsWith(c.pathPrefix),
+  )?.ppid;
+}
+
 export interface TagOptions {
   /** Overrides the pathname-derived campaign. */
   campaign?: string;
@@ -91,6 +113,10 @@ export function tagAppStoreUrl(
     // Apple's legacy "this is an app" marker. Some attribution tools
     // still look for it; cheap to include.
     if (!u.searchParams.has('mt')) u.searchParams.set('mt', '8');
+    if (!u.searchParams.has('ppid')) {
+      const ppid = customProductPageFor(pathname, u);
+      if (ppid) u.searchParams.set('ppid', ppid);
+    }
     return u.toString();
   } catch {
     return rawUrl;

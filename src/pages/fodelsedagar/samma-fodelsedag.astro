@@ -5,6 +5,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
 import ResultCta from '../../components/ResultCta.astro';
+import { PITCH_SAMMA_FODELSEDAG } from '../../lib/result-cta';
 import FodelsedagarTools from '../../components/FodelsedagarTools.astro';
 
 const app = await getEntry('apps', 'fodelsedagar');
@@ -115,7 +116,7 @@ const webApp = {
         </div>
 
         <div class="mb-6">
-          <ResultCta app="fodelsedagar" text="Få påminnelse om födelsedagar – ladda ner Födelsedagar." />
+          <ResultCta app="fodelsedagar" text={PITCH_SAMMA_FODELSEDAG} />
         </div>
 
         <h2 class="text-xl font-black mb-3">🎂 Födda samma dag</h2>
@@ -290,7 +291,7 @@ const webApp = {
 </BaseLayout>
 
 <script>
-  import { showResultCta, FODELSEDAGAR_PITCH } from '../../lib/result-cta';
+  import { showResultCta, PITCH_SAMMA_FODELSEDAG } from '../../lib/result-cta';
   const inp = document.getElementById('bdate') as HTMLInputElement;
   const loading = document.getElementById('loading')!;
   const errorBox = document.getElementById('error')!;
@@ -627,7 +628,7 @@ const webApp = {
       .join('');
 
     results.classList.remove('hidden');
-    showResultCta(`Du delar födelsedag med ${currentHero.name}. ${FODELSEDAGAR_PITCH}`);
+    showResultCta(`Du delar födelsedag med ${currentHero.name}. ${PITCH_SAMMA_FODELSEDAG}`);
     loading.classList.add('hidden');
     errorBox.classList.add('hidden');
   }

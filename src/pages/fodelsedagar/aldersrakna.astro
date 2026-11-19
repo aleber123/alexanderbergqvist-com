@@ -117,8 +117,8 @@ const webApp = {
 ---
 
 <BaseLayout
-  title="Hur gammal är jag? Åldersräknare – räkna ut exakt ålder"
-  description={`Hur gammal är du? Skriv födelseåret och få svaret direkt – född 2008 fyller ${Y - 2008} år ${Y}. Exakt ålder i år, månader och dagar, tabell för alla födda 1940–${Y - 1}.`}
+  title="Hur gammal är man? Åldersräknare – född 2008, 2009, 1990"
+  description={`Hur gammal är man om man är född 2008? ${Y - 2008} år ${Y}, ${Y - 2009} före födelsedagen. Räkna ut ålder för alla födda 1940–${Y - 1} – exakt i år, månader och dagar.`}
   keywords={[
     'hur gammal är jag',
     'åldersräknare',
@@ -139,16 +139,16 @@ const webApp = {
       ]}
     />
     <h1 class="mt-6 text-3xl md:text-5xl font-black tracking-tight">
-      Hur gammal är jag? Åldersräknare
+      Hur gammal är man? Åldersräknare för alla födelseår
     </h1>
     {/* Direct answer, kept short and computed from the build year so it
         never goes stale: this is the paragraph Google can lift as a
         snippet for "hur gammal är man om man är född 2008". */}
     <p class="mt-3 text-base sm:text-lg text-ink-2" id="svar">
-      Ta {Y} minus ditt födelseår. <strong class="text-ink">Är du född 2008
-      fyller du {Y - 2008} år {Y}</strong> – före födelsedagen är du {Y - 2009}.
-      Född 2009 fyller du {Y - 2009}, född 1990 fyller du {Y - 1990}. Skriv ditt
-      födelseår nedan så räknar vi ut exakt ålder.
+      Ta {Y} minus födelseåret. <strong class="text-ink">Den som är född 2008
+      fyller {Y - 2008} år {Y}</strong> – före födelsedagen är hen {Y - 2009}.
+      Född 2009 fyller {Y - 2009}, född 1990 fyller {Y - 1990}. Skriv ett
+      födelseår nedan – ditt eget eller någon annans – så räknar vi ut exakt ålder.
     </p>
 
     <form class="mt-4 rounded-2xl border border-line bg-surface p-4 sm:p-6" id="age-form" onsubmit="return false">
@@ -231,7 +231,7 @@ const webApp = {
         Din nästa födelsedag är snart.
       </p>
       <p class="mt-2 text-ink-2">
-        <strong class="text-ink">Få påminnelse om födelsedagar – ladda ner Födelsedagar.</strong>
+        <strong class="text-ink">Slipp räkna – appen visar hur gamla alla du känner blir och påminner i tid.</strong>
         Samla alla viktiga personers datum och importera från Kontakter –
         inget konto, allt sparas på din telefon.
       </p>

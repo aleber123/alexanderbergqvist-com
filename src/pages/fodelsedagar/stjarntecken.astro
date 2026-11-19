@@ -5,6 +5,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppStoreBadge from '../../components/AppStoreBadge.astro';
 import ResultCta from '../../components/ResultCta.astro';
+import { PITCH_STJARNTECKEN } from '../../lib/result-cta';
 import FodelsedagarTools from '../../components/FodelsedagarTools.astro';
 
 const app = await getEntry('apps', 'fodelsedagar');
@@ -150,7 +151,7 @@ const signs = [
       </div>
     </div>
 
-    <ResultCta app="fodelsedagar" text="Få påminnelse om födelsedagar – ladda ner Födelsedagar." />
+    <ResultCta app="fodelsedagar" text={PITCH_STJARNTECKEN} />
 
     <div class="mt-10 rounded-2xl border border-line bg-gradient-to-br from-pink-50 to-surface p-6 md:p-8">
       <h2 class="text-xl font-black">Glöm aldrig en födelsedag igen</h2>
@@ -264,7 +265,7 @@ const signs = [
 </BaseLayout>
 
 <script>
-  import { showResultCta, nextBirthdaySentence, FODELSEDAGAR_PITCH } from '../../lib/result-cta';
+  import { showResultCta, nextBirthdaySentence, PITCH_STJARNTECKEN } from '../../lib/result-cta';
   const inp = document.getElementById('bdate') as HTMLInputElement;
   const out = {
     emoji: document.querySelector('[data-out="emoji"]')!,
@@ -321,7 +322,7 @@ const signs = [
     out.latin.textContent = sign.latin;
     out.element.textContent = sign.element;
     out.range.textContent = sign.range;
-    showResultCta(`Du är ${sign.name}. ${nextBirthdaySentence(birth.getMonth(), birth.getDate())} ${FODELSEDAGAR_PITCH}`);
+    showResultCta(`Du är ${sign.name}. ${nextBirthdaySentence(birth.getMonth(), birth.getDate())} ${PITCH_STJARNTECKEN}`);
   }
 
   inp.addEventListener('input', compute);

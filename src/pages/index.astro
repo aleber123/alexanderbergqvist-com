@@ -4,6 +4,8 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../components/BaseLayout.astro';
 import { VERKTYG } from '../data/verktyg';
 import Stat from '../components/Stat.astro';
+import { monthUrl } from '../lib/namnsdag';
+import { MANADER } from '../lib/datum';
 
 const apps = (await getCollection('apps')).sort(
   (a, b) => a.data.order - b.data.order
@@ -30,6 +32,20 @@ const wageTools = VERKTYG.filter((v) =>
   v.href.startsWith('/verktyg/lonedag-')
 ).map(({ href, title, description }) => ({ href, title, description }));
 
+// Name-day month pages: GSC (2026-11) listed /namnsdag/november/ and
+// /namnsdag/december/ as "unknown to Google" while /namnsdag/oktober/
+// already earned impressions. Link this month and next straight from the
+// most-crawled page. Derived from the build date in Swedish time, so each
+// deploy rolls them forward.
+const stockholmMonth = Number(
+  new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Stockholm', month: 'numeric' }).format(new Date()),
+);
+const nameDayMonths = [stockholmMonth, (stockholmMonth % 12) + 1].map((m) => ({
+  href: monthUrl(m),
+  title: `Namnsdagar i ${MANADER[m - 1]}`,
+  description: `Alla som har namnsdag i ${MANADER[m - 1]}, dag för dag.`,
+}));
+
 const tools = [
   ...wageTools,
   {
@@ -52,6 +68,7 @@ const tools = [
     title: 'Dagens namnsdag',
     description: 'Vem har namnsdag idag? Sök ett namn eller se hela månaden.',
   },
+  ...nameDayMonths,
   {
     href: '/vecka/',
     title: 'Vilken vecka är det?',
